@@ -198,6 +198,7 @@ def probe_one(code: str, label: str, year: int, verbose: bool) -> dict:
         "tables_found": 0,
         "rows_found": 0,
         "raw_file": None,
+        "host_failures": [],
         "note": "",
     }
 
@@ -212,15 +213,11 @@ def probe_one(code: str, label: str, year: int, verbose: bool) -> dict:
         time.sleep(POLITE_DELAY)
 
         if err and status is None:
-            result["note"] = f"{host}: {err}"
-            if verbose:
-                print(f"      {host} → {err}")
+            result["host_failures"].append(f"{host}: {err}")
             continue
 
         if is_blocked(text):
-            result["note"] = "DIBLOKIR — halaman security TWSE (tetap HTTP 200)"
-            if verbose:
-                print(f"      {host} → diblokir")
+            result["host_failures"].append(f"{host}: diblokir (halaman security TWSE)")
             continue
 
         # Berhasil sampai. Simpan bukti mentahnya lebih dulu, apa pun isinya.
@@ -261,6 +258,7 @@ def probe_one(code: str, label: str, year: int, verbose: bool) -> dict:
                 }, f, ensure_ascii=False, indent=2)
             result["header_guess"] = rows[0]
             result["sample_row"] = rows[1] if len(rows) > 1 else []
+            result["note"] = ""          # host sebelumnya boleh gagal; yang ini berhasil
         else:
             result["note"] = (
                 f"terhubung, tapi tidak menemukan tabel pengumuman "
@@ -268,6 +266,7 @@ def probe_one(code: str, label: str, year: int, verbose: bool) -> dict:
             )
         return result
 
+    result["note"] = "; ".join(result["host_failures"]) or "tidak ada host yang merespons"
     return result
 
 
@@ -292,7 +291,9 @@ def main() -> int:
         r = probe_one(code, label, year, verbose)
         results.append(r)
         if r["ok"]:
-            print(f"OK — {r['rows_found']} baris")
+            host = (r["host_used"] or "").replace("https://", "")
+            fell_back = " (host utama gagal)" if r["host_failures"] else ""
+            print(f"OK — {r['rows_found']} baris via {host}{fell_back}")
             if verbose and r.get("header_guess"):
                 print(f"      kolom  : {r['header_guess']}")
                 print(f"      contoh : {r.get('sample_row', [])}")
@@ -312,16 +313,22 @@ def main() -> int:
 
     ok = [r for r in results if r["ok"]]
     total_rows = sum(r["rows_found"] for r in ok)
-    blocked = [r for r in results if "DIBLOKIR" in r["note"]]
+    blocked = [r for r in results if not r["ok"] and "diblokir" in r["note"]]
+    fellback = [r for r in results if r["ok"] and r["host_failures"]]
 
     print("\n" + "=" * 68)
     print(f"Hasil: {len(ok)}/{len(results)} emiten berhasil · {total_rows} baris pengumuman")
     print(f"Ringkasan tersimpan di {os.path.relpath(summary_path, ROOT)}")
 
+    if fellback:
+        print(f"\n{len(fellback)} emiten terlayani oleh host cadangan — host utama menolak.")
+        print("  Tidak masalah, tapi catat host mana yang dipakai di data/spike-report.json")
+        print("  supaya pipeline nanti langsung menembak host yang benar.")
+
     if blocked:
-        print(f"\n{len(blocked)} emiten diblokir berdasarkan IP.")
-        print("  Ini bukan kesalahan kode. Pastikan skrip dijalankan dari jaringan")
-        print("  kampus di Taiwan, dan VPN ke luar negeri dimatikan.")
+        print(f"\n{len(blocked)} emiten gagal di semua host.")
+        print("  Pastikan skrip dijalankan dari jaringan kampus di Taiwan,")
+        print("  dan VPN ke luar negeri dimatikan.")
 
     if total_rows >= 20:
         print("\n>>> LOLOS. Target uji 72 jam tercapai (>= 20 pengumuman).")

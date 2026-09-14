@@ -101,22 +101,54 @@ data/spike-report.json         ringkasan seluruh percobaan
 Seluruh isi `data/` sengaja tidak ikut di-commit (besar dan bisa dibuat ulang),
 tapi **jangan dihapus dari komputer** — nanti dipakai untuk membangun parser yang presisi.
 
-## Langkah 5 — Kirim balik hasilnya
-
-Supaya parser presisi bisa ditulis, kirim tiga hal ini:
-
-1. Isi `data/spike-report.json`
-2. Baris `kolom :` dan `contoh :` yang tercetak di layar
-3. Kalau ada yang gagal: 40 baris pertama salah satu berkas di `data/raw/`
+## Langkah 5 — Ubah jadi catatan yang bisa disitasi
 
 ```bash
-cat data/spike-report.json
-head -40 data/raw/*.html | head -60
+python3 scripts/parse_mops.py
 ```
 
-Skrip ini sengaja **menemukan** struktur tabel MOPS, bukan mengasumsikannya — karena
-struktur aslinya belum pernah dilihat langsung. Setelah hasilnya masuk, parser yang presisi
-baru ditulis.
+Berjalan di HTML yang **sudah tersimpan** di `data/raw/` — tidak menembak MOPS lagi,
+jadi aman dijalankan berkali-kali.
+
+Struktur kolom yang ditangani sudah terkonfirmasi dari tarikan 14 September:
+
+```
+公司代號  公司名稱  發言日期  發言時間  主旨  [tombol 詳細資料]
+```
+
+Kolom terakhir tampak kosong kalau hanya teksnya diambil, karena isinya tombol.
+Parameter di balik tombol itulah yang memberi tiap pengumuman **alamat permanennya
+sendiri** — dan tanpa itu, sitasi tidak bisa diverifikasi juri.
+
+Keluarannya:
+
+```
+data/parsed/announcements.json   catatan lengkap, terbaru di atas
+data/parsed/announcements.csv    versi untuk dibuka di Excel
+```
+
+Tiap catatan berisi kode, nama, tanggal (sudah dikonversi dari kalender ROC ke masehi),
+jam, subjek, **alamat sitasi**, waktu pengambilan, dan nama berkas mentah asalnya.
+
+Penyaringan:
+
+```bash
+python3 scripts/parse_mops.py --since 2026-06-01   # tanggal tertentu ke atas
+python3 scripts/parse_mops.py --code 2330          # satu emiten saja
+```
+
+## Langkah 6 — Kirim balik hasilnya
+
+Kalau `parse_mops.py` melaporkan ada berkas yang **tidak menghasilkan alamat sitasi**,
+skrip akan mencetak contoh potongan tombolnya. Kirim potongan itu — artinya bentuk
+tombolnya berbeda dari dugaan, dan polanya tinggal disesuaikan. Teks pengumumannya
+sendiri tetap aman.
+
+Selebihnya cukup:
+
+```bash
+python3 scripts/parse_mops.py | tail -20
+```
 
 ---
 
