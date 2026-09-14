@@ -77,3 +77,18 @@ Jalur praktis untuk sekarang: export PNG/PDF dari canvas hidup di atas dan pakai
 sebagai acuan tim. Kalau koneksi Figma pulih, layar-layar ini bisa dibangun ulang di sana
 sebagai layer asli — bentuk akhirnya sudah terkunci di berkas `.dc.html` ini, jadi tidak
 ada keputusan desain yang perlu diulang.
+
+## Export untuk Figma / deck
+
+```
+node scripts/render_design.js
+```
+
+Menulis PNG 2x ke `design/export/`. Script ini menunggu Instrument Sans dan IBM Plex
+Mono benar-benar termuat sebelum memotret — tanpa itu hasilnya jatuh ke font sistem dan
+seluruh tata letak bergeser.
+
+`RiwayatNilaiWajar-chart.svg` adalah grafiknya saja, diekstrak sebagai SVG berdiri
+sendiri. Ini satu-satunya berkas yang masuk ke Figma sebagai **layer asli** — garis jadi
+vector path, angka sumbu jadi text layer yang bisa diedit. PNG yang lain masuk sebagai
+gambar rata, bukan layer.
