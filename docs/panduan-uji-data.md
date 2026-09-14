@@ -98,7 +98,7 @@ data/parsed/<kode>.json        hasil ekstraksi + URL sumber + waktu pengambilan
 data/spike-report.json         ringkasan seluruh percobaan
 ```
 
-`data/raw/` dan `data/parsed/` sengaja tidak ikut di-commit (besar dan bisa dibuat ulang),
+Seluruh isi `data/` sengaja tidak ikut di-commit (besar dan bisa dibuat ulang),
 tapi **jangan dihapus dari komputer** — nanti dipakai untuk membangun parser yang presisi.
 
 ## Langkah 5 — Kirim balik hasilnya
