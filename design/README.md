@@ -88,6 +88,14 @@ Menulis PNG 2x ke `design/export/`. Script ini menunggu Instrument Sans dan IBM 
 Mono benar-benar termuat sebelum memotret — tanpa itu hasilnya jatuh ke font sistem dan
 seluruh tata letak bergeser.
 
+```
+python3 scripts/build_figma_svg.py
+```
+
+Menggabungkan seluruh PNG jadi satu `design/export/Sentinel-Saham-figma.svg`, tersusun
+sesuai `canvas.json`. **Ini berkas yang diseret ke Figma** — sekali import, seluruh papan
+terbentuk lengkap dengan judul tiap layar.
+
 `RiwayatNilaiWajar-chart.svg` adalah grafiknya saja, diekstrak sebagai SVG berdiri
 sendiri. Ini satu-satunya berkas yang masuk ke Figma sebagai **layer asli** — garis jadi
 vector path, angka sumbu jadi text layer yang bisa diedit. PNG yang lain masuk sebagai
