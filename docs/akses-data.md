@@ -41,6 +41,23 @@ Catatan lapangan:
 - Beri jeda antar-request (0,5–1 detik). Tidak ada dokumentasi rate limit resmi, jadi bersikap sopan.
 - Beberapa endpoint mengembalikan CSV walau diminta JSON. Periksa `Content-Type`.
 
+### Terkonfirmasi dari tarikan 14 September 2026
+
+Dijalankan dari jaringan kampus di Taiwan, 5 emiten, 711 pengumuman, 100% bersitasi:
+
+| Fakta | Nilai |
+|---|---|
+| Host yang melayani | `mopsov.twse.com.tw` — **bukan** `mops.twse.com.tw`, yang menolak bahkan dari Taiwan |
+| Endpoint daftar | `POST /mops/web/ajax_t05st01` dengan `co_id`, `year` (ROC), `step=1`, `firstin=1` |
+| Kolom tabel | 公司代號 · 公司名稱 · 發言日期 · 發言時間 · 主旨 · [tombol 詳細資料] |
+| Parameter jenis pasar | `TYPEK=sii` untuk perusahaan tercatat — bukan `all` |
+| Alamat per pengumuman | `GET /mops/web/ajax_t05st01?step=2&firstin=1&TYPEK=sii&co_id=…&seq_no=…&spoke_date=…&spoke_time=…` |
+| Cakupan | Satu tahun ROC penuh per permintaan (115 = 1 Jan – 11 Sep 2026) |
+
+Parameter alamat itu hidup di dalam `onclick` tombol 詳細資料, dalam bentuk
+`namaField.value='isi';` — bukan di teks sel. Tanpa membacanya, pengumuman tidak
+punya alamat yang bisa diverifikasi juri.
+
 ### Lapis 2 — MOPS (sumber pengungkapan sebenarnya, tidak punya REST API)
 
 MOPS adalah form-POST yang mengembalikan tabel HTML, bukan API. Ini sumber utama untuk
