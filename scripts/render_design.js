@@ -4,16 +4,30 @@
  * Dipakai supaya Ferry dan PDK tidak perlu buka canvas — dan supaya
  * layar-layar ini bisa diseret ke Figma / ditempel ke deck.
  *
- *   node scripts/render_design.js
+ *   node scripts/render_design.js            # folder design/
+ *   node scripts/render_design.js wireframe  # folder wireframe/
  *
  * Butuh Chromium yang sudah terpasang (PLAYWRIGHT_BROWSERS_PATH).
  * Jangan jalankan "playwright install" — browsernya sudah ada.
  */
-const { chromium } = require('playwright');
+// Playwright terpasang global di lingkungan ini, bukan di node_modules proyek —
+// jadi require biasa gagal. Coba keduanya sebelum menyerah.
+function loadPlaywright() {
+  const candidates = ['playwright', '/opt/node22/lib/node_modules/playwright'];
+  for (const c of candidates) {
+    try { return require(c); } catch (e) { /* coba berikutnya */ }
+  }
+  throw new Error(
+    'Playwright tidak ditemukan. Pasang dengan "npm i -D playwright" ' +
+    '(jangan jalankan "playwright install" — browsernya sudah ada).');
+}
+const { chromium } = loadPlaywright();
 const fs = require('fs');
 const path = require('path');
 
-const SRC = path.join(__dirname, '..', 'design');
+// Argumen pertama memilih folder: "design" (hi-fi) atau "wireframe" (lo-fi).
+const DIR = process.argv[2] || 'design';
+const SRC = path.join(__dirname, '..', DIR);
 const OUT = path.join(SRC, 'export');
 
 (async () => {

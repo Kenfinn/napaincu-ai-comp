@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Instrument Sans", system-ui, sans-serif; }
+    a { color: #A86A0B; } a:hover { color: #8A560A; }
+    * { box-sizing: border-box; }
+    .z  { border: 1px solid #C9CDD2; background: #FFFFFF; }
+    .zf { border: 1px solid #C9CDD2; background: #F3F4F6; }
+    .zd { border: 1px dashed #C9CDD2; background: #FAFBFB; }
+    .bar { background: #D7DBDF; border-radius: 2px; height: 9px; }
+    .bard { background: #AEB4BB; border-radius: 2px; height: 11px; }
+    .lbl { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; color: #7A828C; }
+    .mono { font-family: "IBM Plex Mono", monospace; }
+    .txt { font-size: 12.5px; color: #4A515A; }
+    .hd  { font-size: 15px; font-weight: 600; color: #2B313A; }
+    .cal { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; color: #FFFFFF; background: #A86A0B; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; }
+    .legn { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; color: #A86A0B; flex: none; width: 15px; }
+    .leg { font-size: 11.5px; color: #4A515A; line-height: 1.5; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 860px; display: flex; flex-direction: column; background: #FFFFFF; color: #2B313A;">
+  <div style="border-bottom: 1px solid #C9CDD2; padding: 15px 24px; display: flex; align-items: center; gap: 12px;">
+    <div class="z" style="width: 26px; height: 26px; border-radius: 5px;"></div>
+    <span class="hd" style="font-size: 14px;">Tanya Jawab</span>
+    <div style="margin-left: auto; display: flex; gap: 7px;">
+      <div class="z" style="width: 96px; height: 26px; border-radius: 5px;"></div>
+      <div style="width: 118px; height: 26px; border-radius: 5px; background: #59616B;"></div>
+    </div>
+  </div>
+<div style="flex: 1; display: flex; min-height: 0; background: #F6F7F8;">
+  <div style="flex: 1; min-width: 0; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px;">
+
+    <div style="display: flex; align-items: center; gap: 9px;"><div class="cal">2</div><span class="lbl">jawaban selalu membawa sitasi</span></div>
+    <div style="display: flex; justify-content: flex-end;"><div style="max-width: 58%; background: #59616B; border-radius: 9px; padding: 13px 15px;"><div style="height: 9px; background: #939AA2; border-radius: 2px; width: 210px;"></div><div style="height: 9px; background: #939AA2; border-radius: 2px; width: 140px; margin-top: 6px;"></div></div></div><div class="z" style="border-radius: 9px; padding: 15px 17px;"><div class="bard" style="width: 94%; margin-top: 0px;"></div><div class="bar" style="width: 88%; margin-top: 7px;"></div><div class="bar" style="width: 61%; margin-top: 7px;"></div><div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;"><div class="zd" style="padding: 5px 9px;"><span class="lbl">sitasi 1</span></div><div class="zd" style="padding: 5px 9px;"><span class="lbl">sitasi 2</span></div></div></div><div style="display: flex; justify-content: flex-end;"><div style="max-width: 58%; background: #59616B; border-radius: 9px; padding: 13px 15px;"><div style="height: 9px; background: #939AA2; border-radius: 2px; width: 210px;"></div><div style="height: 9px; background: #939AA2; border-radius: 2px; width: 140px; margin-top: 6px;"></div></div></div>
+
+    <div style="border: 1px solid #A86A0B; background: #FDF8EF; border-radius: 9px; padding: 15px 17px;">
+      <div style="display: flex; align-items: flex-start; gap: 10px;">
+        <div class="cal">3</div>
+        <div style="flex: 1;">
+          <div class="lbl" style="color: #A86A0B;">agen menolak menjawab</div>
+          <div class="txt" style="margin-top: 8px; line-height: 1.5;">
+            &#8220;Berapa harga 2330 bulan depan?&#8221; &#8212; di luar kemampuan sistem.
+            Kami menghitung nilai wajar dari dokumen, bukan meramalkan harga.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="z" style="margin-top: auto; border-radius: 9px; padding: 14px 16px; display: flex; align-items: center; gap: 12px;">
+      <div class="cal">1</div>
+      <div class="bar" style="flex: 1;"></div>
+      <div style="width: 36px; height: 30px; border-radius: 6px; background: #59616B;"></div>
+    </div>
+  </div>
+
+  <div style="width: 336px; flex: none; border-left: 1px solid #C9CDD2; background: #FFFFFF; padding: 20px 18px; display: flex; flex-direction: column; gap: 14px;">
+    <div style="display: flex; align-items: center; gap: 9px;"><div class="cal">4</div><span class="lbl">pertanyaan contoh</span></div>
+    <div class="zd" style="border-radius: 7px; padding: 12px 13px;"><div class="bar" style="width: 86%; margin-top: 0px;"></div><div class="bar" style="width: 58%; margin-top: 6px;"></div></div><div class="zd" style="border-radius: 7px; padding: 12px 13px;"><div class="bar" style="width: 86%; margin-top: 0px;"></div><div class="bar" style="width: 58%; margin-top: 6px;"></div></div><div class="zd" style="border-radius: 7px; padding: 12px 13px;"><div class="bar" style="width: 86%; margin-top: 0px;"></div><div class="bar" style="width: 58%; margin-top: 6px;"></div></div><div class="zd" style="border-radius: 7px; padding: 12px 13px;"><div class="bar" style="width: 86%; margin-top: 0px;"></div><div class="bar" style="width: 58%; margin-top: 6px;"></div></div>
+    <div class="zf" style="margin-top: auto; border-radius: 7px; padding: 13px 14px;">
+      <div class="lbl">yang tidak bisa dijawab</div>
+      <div style="margin-top: 10px;"><div class="bar" style="width: 90%; margin-top: 0px;"></div><div class="bar" style="width: 70%; margin-top: 6px;"></div></div>
+    </div>
+  </div>
+</div>
+<div style="border-top: 1px solid #C9CDD2; background: #FAFBFB; padding: 16px 26px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 30px;"><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">1</span><span class="leg">Kotak input di bawah adalah alasan layar ini ada: juri mengetik test case mereka sendiri. Tim lain sering lupa menyediakannya dan hanya menyiapkan demo terpandu.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">2</span><span class="leg">Tiap jawaban membawa sitasi ke dokumen. Jawaban tanpa sitasi tidak boleh keluar, meskipun benar.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">3</span><span class="leg">Contoh pertanyaan yang agen MENOLAK jawab ditampilkan, tidak disembunyikan. Menunjukkan batas kemampuan lebih meyakinkan daripada berpura-pura bisa segalanya.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">4</span><span class="leg">Pertanyaan contoh ada untuk memulai, bukan untuk mengarahkan. Juri tetap harus bisa mengetik apa pun.</span></div></div></div>
+</x-dc>
+</body>
+</html>

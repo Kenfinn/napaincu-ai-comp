@@ -1,7 +1,8 @@
 """
 Bikin satu berkas SVG berisi seluruh artboard, tersusun sesuai design/canvas.json.
 
-    python3 scripts/build_figma_svg.py
+    python3 scripts/build_figma_svg.py            # folder design/
+    python3 scripts/build_figma_svg.py wireframe  # folder wireframe/
 
 Hasilnya design/export/Sentinel-Saham-figma.svg — sekali seret ke Figma, seluruh
 papan langsung terbentuk beserta judul tiap layar.
@@ -17,12 +18,15 @@ import io
 import json
 import os
 import re
+import sys
 from xml.sax.saxutils import escape
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DESIGN = os.path.join(ROOT, "design")
+# Argumen pertama memilih folder: "design" (hi-fi) atau "wireframe" (lo-fi).
+DIRNAME = sys.argv[1] if len(sys.argv) > 1 else "design"
+DESIGN = os.path.join(ROOT, DIRNAME)
 EXPORT = os.path.join(DESIGN, "export")
-OUT = os.path.join(EXPORT, "Sentinel-Saham-figma.svg")
+OUT = os.path.join(EXPORT, f"Sentinel-Saham-{'wireframe' if DIRNAME == 'wireframe' else 'figma'}.svg")
 
 PAD = 120       # margin sekeliling papan
 TITLE_H = 46    # ruang untuk judul di atas tiap artboard
@@ -50,7 +54,7 @@ def main():
     for b in boards:
         png = os.path.join(EXPORT, b["file"].replace(".dc.html", ".png"))
         if not os.path.exists(png):
-            raise SystemExit(f"{png} belum ada — jalankan scripts/render_design.js dulu")
+            raise SystemExit(f"{png} belum ada — jalankan `node scripts/render_design.js {DIRNAME}` dulu")
         with io.open(png, "rb") as fh:
             b64 = base64.b64encode(fh.read()).decode("ascii")
 

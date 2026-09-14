@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Instrument Sans", system-ui, sans-serif; }
+    a { color: #A86A0B; } a:hover { color: #8A560A; }
+    * { box-sizing: border-box; }
+    .z  { border: 1px solid #C9CDD2; background: #FFFFFF; }
+    .zf { border: 1px solid #C9CDD2; background: #F3F4F6; }
+    .zd { border: 1px dashed #C9CDD2; background: #FAFBFB; }
+    .bar { background: #D7DBDF; border-radius: 2px; height: 9px; }
+    .bard { background: #AEB4BB; border-radius: 2px; height: 11px; }
+    .lbl { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; color: #7A828C; }
+    .mono { font-family: "IBM Plex Mono", monospace; }
+    .txt { font-size: 12.5px; color: #4A515A; }
+    .hd  { font-size: 15px; font-weight: 600; color: #2B313A; }
+    .cal { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; color: #FFFFFF; background: #A86A0B; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; }
+    .legn { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; color: #A86A0B; flex: none; width: 15px; }
+    .leg { font-size: 11.5px; color: #4A515A; line-height: 1.5; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 900px; display: flex; flex-direction: column; background: #FFFFFF; color: #2B313A;">
+  <div style="border-bottom: 1px solid #C9CDD2; padding: 15px 24px; display: flex; align-items: center; gap: 12px;">
+    <div class="z" style="width: 26px; height: 26px; border-radius: 5px;"></div>
+    <span class="mono" style="font-size: 13px; font-weight: 600;">2330</span>
+    <div class="bard" style="width: 104px;"></div>
+    <div style="margin-left: auto; display: flex; gap: 7px;">
+      <div class="z" style="width: 96px; height: 26px; border-radius: 5px;"></div>
+      <div style="width: 118px; height: 26px; border-radius: 5px; background: #59616B;"></div>
+    </div>
+  </div>
+<div style="flex: 1; display: flex; min-height: 0; background: #F6F7F8;">
+  <div style="flex: 1; min-width: 0; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px;">
+    <div class="z" style="flex: 1; border-radius: 7px; padding: 19px 21px; display: flex; flex-direction: column; min-height: 0;">
+      <div style="display: flex; align-items: center; gap: 9px;">
+        <div class="cal">1</div><span class="lbl">nilai wajar terhadap harga pasar</span>
+      </div>
+      <div style="flex: 1; margin-top: 16px; position: relative; min-height: 0;">
+        <svg viewBox="0 0 900 330" style="width: 100%; height: 100%;">
+          <line x1="40" y1="290" x2="880" y2="290" stroke="#C9CDD2" stroke-width="1"/>
+          <line x1="40" y1="20" x2="40" y2="290" stroke="#C9CDD2" stroke-width="1"/>
+          <path d="M40 250 L180 190 L320 215 L460 150 L600 110 L740 75 L880 55" fill="none" stroke="#8A929C" stroke-width="2.5"/>
+          <path d="M40 235 L250 235 L250 175 L620 175 L620 130 L880 130" fill="none" stroke="#A86A0B" stroke-width="2.5"/>
+          <circle cx="250" cy="175" r="6" fill="#A86A0B"/>
+          <circle cx="620" cy="130" r="6" fill="#A86A0B"/>
+          <circle cx="880" cy="130" r="6" fill="#A86A0B"/>
+          <line x1="530" y1="20" x2="530" y2="290" stroke="#AEB4BB" stroke-width="1" stroke-dasharray="4 4"/>
+          <circle cx="530" cy="139" r="7" fill="#FFFFFF" stroke="#59616B" stroke-width="2"/>
+        </svg>
+        <div style="position: absolute; left: 28%; top: 62%; display: flex; gap: 7px; align-items: center;"><div class="cal">2</div></div>
+        <div style="position: absolute; left: 56%; top: 8%; display: flex; gap: 7px; align-items: center;"><div class="cal">3</div>
+          <span class="lbl">harga menyalip nilai wajar</span></div>
+      </div>
+      <div class="zd" style="margin-top: 14px; padding: 11px 14px;">
+        <span class="txt">Tidak ada candlestick, tidak ada indikator teknikal &#8212; keduanya tidak bisa disitasi ke dokumen mana pun.</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="width: 352px; flex: none; border-left: 1px solid #C9CDD2; background: #FFFFFF; padding: 20px 18px; display: flex; flex-direction: column; gap: 15px;">
+    <div style="display: flex; align-items: center; gap: 9px;"><div class="cal">4</div><span class="lbl">peristiwa perhitungan ulang</span></div>
+    <div class="z" style="border-radius: 7px; padding: 13px 14px;"><div style="display: flex; align-items: center; gap: 9px;"><span class="mono" style="font-size: 11px; color: #A86A0B; font-weight: 600;">1</span><div class="bard" style="width: 68px;"></div><div style="margin-left: auto;"><div class="bar" style="width: 44px;"></div></div></div><div style="margin-top: 10px;"><div class="bar" style="width: 88%; margin-top: 0px;"></div><div class="bar" style="width: 56%; margin-top: 6px;"></div></div><div class="zd" style="margin-top: 10px; padding: 5px 9px; display: inline-block;"><span class="lbl">dokumen MOPS</span></div></div><div class="z" style="border-radius: 7px; padding: 13px 14px;"><div style="display: flex; align-items: center; gap: 9px;"><span class="mono" style="font-size: 11px; color: #A86A0B; font-weight: 600;">2</span><div class="bard" style="width: 68px;"></div><div style="margin-left: auto;"><div class="bar" style="width: 44px;"></div></div></div><div style="margin-top: 10px;"><div class="bar" style="width: 88%; margin-top: 0px;"></div><div class="bar" style="width: 56%; margin-top: 6px;"></div></div><div class="zd" style="margin-top: 10px; padding: 5px 9px; display: inline-block;"><span class="lbl">dokumen MOPS</span></div></div><div class="z" style="border-radius: 7px; padding: 13px 14px;"><div style="display: flex; align-items: center; gap: 9px;"><span class="mono" style="font-size: 11px; color: #A86A0B; font-weight: 600;">3</span><div class="bard" style="width: 68px;"></div><div style="margin-left: auto;"><div class="bar" style="width: 44px;"></div></div></div><div style="margin-top: 10px;"><div class="bar" style="width: 88%; margin-top: 0px;"></div><div class="bar" style="width: 56%; margin-top: 6px;"></div></div><div class="zd" style="margin-top: 10px; padding: 5px 9px; display: inline-block;"><span class="lbl">dokumen MOPS</span></div></div>
+    <div class="zf" style="margin-top: auto; border-radius: 7px; padding: 14px 15px;">
+      <div class="lbl">selisih terhadap harga</div>
+      <div class="mono" style="font-size: 22px; font-weight: 600; margin-top: 7px;">+3,7%</div>
+    </div>
+  </div>
+</div>
+<div style="border-top: 1px solid #C9CDD2; background: #FAFBFB; padding: 16px 26px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 30px;"><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">1</span><span class="leg">Dua garis saja. Menambah garis ketiga berarti ada yang tidak bisa dijelaskan dalam satu kalimat.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">2</span><span class="leg">Garis nilai wajar berbentuk anak tangga karena memang hanya dihitung ulang saat ada dokumen baru — bukan karena gayanya begitu. Kurva mulus akan berbohong soal cara kerjanya.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">3</span><span class="leg">Titik perpotongan diberi tanggal. Ini satu-satunya momen di grafik yang punya arti keputusan: harga menyalip nilai wajar.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">4</span><span class="leg">Tiap anak tangga menunjuk ke dokumen yang memicunya. Grafik yang titik-titiknya bisa diklik ke sumber adalah hal yang tidak dimiliki aplikasi sekuritas mana pun.</span></div></div></div>
+</x-dc>
+</body>
+</html>
