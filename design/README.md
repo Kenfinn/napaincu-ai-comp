@@ -1,6 +1,12 @@
 # Desain UI — Sentinel Saham
 
-Delapan layar hi-fi untuk agen pemantau saham Taiwan.
+Delapan layar hi-fi untuk agen pemantau saham Taiwan, plus dua diagram yang
+diwajibkan Appendix 1 sebagai halaman deck 5 dan 6.
+
+Kedua diagram sengaja digambar **sebelum** kode pipeline ditulis: diagram state
+adalah spesifikasinya, bukan ilustrasi hasil jadi. Menggambarnya memaksa menjawab
+apa yang terjadi saat API gagal, kapan agent berhenti sendiri, dan kapan manusia
+dipanggil — pertanyaan yang kalau tidak dijawab di sini baru ketahuan saat demo.
 
 Canvas hidup: https://claude.ai/code/artifact/9b0d25dd-2159-4ecc-89a2-82c0856b690d
 
@@ -16,6 +22,8 @@ Canvas hidup: https://claude.ai/code/artifact/9b0d25dd-2159-4ecc-89a2-82c0856b69
 | `Watchlist.dc.html` | Watchlist & profil risiko | 1440×900 |
 | `JejakAudit.dc.html` | Jejak audit agent | 1440×1000 |
 | `NotifPonsel.dc.html` | Notifikasi ponsel | 390×844 |
+| `AlurState.dc.html` | **Alur tugas & state agent — deck hal 5** | 1440×710 |
+| `Arsitektur.dc.html` | **Arsitektur sistem, model, tool — deck hal 6** | 1440×820 |
 | `canvas.json` | Tata letak canvas + catatan tempel | — |
 
 ## Keputusan desain yang mengikat
@@ -69,14 +77,14 @@ ulang, lalu publikasikan ke URL yang sama.
 
 ## Status Figma
 
-File `Sentinel Saham — AAIC 2026` sudah dibuat di Figma (key `ZTux17Ef8AZGb4yHUumizI`)
-tapi **masih kosong** — koneksi Figma terputus sebelum sempat menggambar dan sampai
-sekarang belum pulih, jadi export otomatis dari sesi ini tidak bisa dilakukan.
+Koneksi Figma sudah pulih. File `Sentinel Saham — AAIC 2026` (key `ZTux17Ef8AZGb4yHUumizI`)
+masih kosong dan menunggu diisi sebagai layer asli.
 
-Jalur praktis untuk sekarang: export PNG/PDF dari canvas hidup di atas dan pakai itu
-sebagai acuan tim. Kalau koneksi Figma pulih, layar-layar ini bisa dibangun ulang di sana
-sebagai layer asli — bentuk akhirnya sudah terkunci di berkas `.dc.html` ini, jadi tidak
-ada keputusan desain yang perlu diulang.
+Catatan penting soal bentuk impor: berkas SVG gabungan di bawah menanam PNG sebagai
+data URI, jadi **semua artboard masuk Figma sebagai gambar rata**, termasuk kedua
+diagram. Untuk diagram, layer yang bisa diedit jauh lebih berguna — Ferry dan PDK perlu
+mengoreksi label dan panah tanpa lewat build ulang. Itu dikerjakan lewat Figma MCP,
+bukan lewat berkas SVG ini.
 
 ## Export untuk Figma / deck
 
