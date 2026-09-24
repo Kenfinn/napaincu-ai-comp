@@ -22,6 +22,24 @@ function loadPlaywright() {
     '(jangan jalankan "playwright install" — browsernya sudah ada).');
 }
 const { chromium } = loadPlaywright();
+
+// Playwright menuntut nomor build Chromium yang persis cocok dengan versinya, dan
+// yang terpasang di lingkungan ini sering berbeda nomor. Jadi jangan biarkan ia
+// mencari sendiri — tunjuk binary yang benar-benar ada. Tanpa ini, render gagal
+// dengan saran "npx playwright install" yang justru TIDAK boleh dijalankan.
+function cariChromium() {
+  const fs_ = require('fs');
+  const base = process.env.PLAYWRIGHT_BROWSERS_PATH || '/opt/pw-browsers';
+  if (!fs_.existsSync(base)) return undefined;
+  const kandidat = fs_.readdirSync(base)
+    .filter((d) => d.startsWith('chromium'))
+    .map((d) => `${base}/${d}/chrome-linux/chrome`)
+    .concat(fs_.readdirSync(base)
+      .filter((d) => d.startsWith('chromium'))
+      .map((d) => `${base}/${d}/chrome-linux/headless_shell`));
+  return kandidat.find((p) => fs_.existsSync(p));
+}
+const EXEC = cariChromium();
 const fs = require('fs');
 const path = require('path');
 
@@ -32,7 +50,7 @@ const OUT = path.join(SRC, 'export');
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(EXEC ? { executablePath: EXEC } : {});
   const files = fs.readdirSync(SRC).filter((f) => f.endsWith('.dc.html')).sort();
 
   for (const f of files) {

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block judul %}Valuasi {{ r.code }} · Sentinel Saham{% endblock %}
+{% block isi %}
+
+<div class="kepala">
+  <div>
+    <div class="kicker">{{ r.code }} · per {{ r.as_of }} · {{ r.unit }}</div>
+    <h1>{{ r.name }}</h1>
+  </div>
+  <div style="text-align:right;">
+    <div class="kicker">Harga pasar</div>
+    <b class="mono" style="font-size:19px;">{{ r.price_per_share | rb }} NTD</b>
+  </div>
+</div>
+
+{% if r.incomplete_sources %}
+<div class="pita bahaya">
+  <div><b>{{ r.incomplete_sources | length }} sumber belum lengkap:</b>
+  <span class="mono">{{ r.incomplete_sources | join(', ') }}</span>.
+  Angka boleh dihitung, tapi belum boleh masuk deck sebelum tiap input punya URL yang bisa dibuka juri.</div>
+</div>
+{% endif %}
+
+<div style="display:flex; gap:12px; align-items:flex-start;">
+  <div style="flex:1;">
+    <h2>Jembatan nilai perusahaan</h2>
+    <div class="kartu">
+      <div class="kv"><span class="k">Kapitalisasi pasar</span><span class="v">{{ (r.market_cap/1000000) | rb(3) }} T</span></div>
+      <div class="kv"><span class="k">+ Utang berbunga</span><span class="v">{{ (r.debt/1000000) | rb(3) }} T</span></div>
+      <div class="kv"><span class="k">− Kas &amp; investasi jangka pendek</span><span class="v">{{ (r.cash/1000000) | rb(3) }} T</span></div>
+      <div class="kv"><span class="k"><b>= Nilai perusahaan</b></span><span class="v">{{ (r.ev/1000000) | rb(3) }} T</span></div>
+    </div>
+
+    <h2>Biaya modal</h2>
+    <div class="kartu">
+      <div class="kv"><span class="k">Biaya ekuitas</span><span class="v">{{ r.cost_of_equity | pct }}</span></div>
+      <div class="kv"><span class="k">Biaya utang</span><span class="v">{{ r.cost_of_debt | pct }}</span></div>
+      <div class="kv"><span class="k">Bobot ekuitas</span><span class="v">{{ r.equity_weight | pct }}</span></div>
+      <div class="kv"><span class="k"><b>WACC</b></span><span class="v">{{ r.wacc | pct }}</span></div>
+      <div class="kv"><span class="k">Tarif pajak efektif</span><span class="v">{{ r.tax_rate | pct }}</span></div>
+    </div>
+  </div>
+
+  <div style="flex:1;">
+    <h2>Arus kas bebas</h2>
+    <div class="kartu">
+      {% for th, v in r.fcff_series.items() %}
+      <div class="kv"><span class="k">FCFF {{ th }}{{ ' ← dipakai' if r.basis == 'latest' and th == r.latest_year }}</span>
+        <span class="v">{{ (v/1000) | rb(1) }} bio</span></div>
+      {% endfor %}
+      <div class="kv"><span class="k">Rata-rata{{ ' ← dipakai' if r.basis == 'average' }}</span>
+        <span class="v">{{ (r.fcff_average/1000) | rb(1) }} bio</span></div>
+    </div>
+
+    <h2>Reverse DCF</h2>
+    <div class="kartu">
+      <div class="kv"><span class="k">Pertumbuhan abadi yang diasumsikan pasar</span>
+        <span class="v" style="font-size:15px;">{{ r.implied_growth | pct }}</span></div>
+      <div class="kv"><span class="k">Batas pertumbuhan abadi (PDB nominal)</span>
+        <span class="v">{{ r.terminal_growth_ceiling | pct }}</span></div>
+      <div class="kv"><span class="k">Pemeriksaan sirkularitas</span>
+        <span class="v">selisih {{ '%.2e' | format(r.circularity.drift_pct) }}%</span></div>
+      <p style="font-size:12px; color:var(--abu-2); line-height:1.55; margin:10px 0 0;">
+        Reverse DCF <b>tidak</b> menghasilkan nilai intrinsik. Memasukkan g hasilnya kembali ke rumus
+        yang sama selalu mengembalikan harga pasar — itu identitas matematis, bukan valuasi.
+        Penilaiannya datang dari langkah berikutnya: masuk akal tidak angka itu?
+      </p>
+      {% if r.exceeds_ceiling %}
+      <div class="pita fixture" style="margin:12px 0 0;">
+        <div>g tersirat melampaui batas. Pasar memberi harga untuk pertumbuhan yang tidak bisa
+        dipertahankan selamanya → indikasi kemahalan.</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<h2>Sensitivitas — nilai wajar per lembar (NTD)</h2>
+<div class="kartu">
+  <table>
+    <tr><th>WACC</th>{% for g in r.sensitivity.g_axis %}<th>g = {{ g | pct }}</th>{% endfor %}</tr>
+    {% for w in r.sensitivity.wacc_axis %}
+    <tr class="{{ 'sorot' if loop.index0 == 2 }}">
+      <td class="num">{{ w | pct }}</td>
+      {% for sel in r.sensitivity.grid[loop.index0] %}
+      <td class="num">{{ sel | rb if sel is not none else '—' }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+  <p style="font-size:12px; color:var(--abu-2); line-height:1.5; margin:12px 0 0;">
+    Baris tengah adalah WACC yang dihitung dari berkas input; kolom tengah adalah g tersirat.
+    Seluruh angka di halaman ini keluaran langsung <span class="mono">scripts/dcf.py</span> —
+    fungsi yang sama yang dipakai kertas kerja CLI, jadi keduanya tidak bisa berbeda diam-diam.
+  </p>
+</div>
+
+<h2>Sumber tiap input</h2>
+<div class="kartu">
+  {% for k, v in r.sources.items() %}
+  <div class="cek {{ 'x' if k in r.incomplete_sources else 'ok' }}">
+    <span class="tanda">{{ '✕' if k in r.incomplete_sources else '✓' }}</span>
+    <span class="nama mono" style="font-size:11.5px;">{{ k }}</span>
+    <span class="why">{{ v }}</span>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

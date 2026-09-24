@@ -148,8 +148,11 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
             ditolak.append({"temuan": t, "sebab": v_akhir["sebab"]})
 
     if not diterima:
-        sebab = "; ".join(s for d in ditolak for s in d["sebab"])
-        return _selesai(j, "ditolak", detail, {"ditolak": ditolak}, sebab)
+        # Dua temuan sering gagal dengan sebab yang sama persis (mis. satu mata uang
+        # asing menyentuh dua input). Diulang apa adanya, ringkasannya jadi dinding
+        # teks yang tidak terbaca, jadi disaring unik dengan urutan tetap dijaga.
+        unik = list(dict.fromkeys(s for d in ditolak for s in d["sebab"]))
+        return _selesai(j, "ditolak", detail, {"ditolak": ditolak}, "; ".join(unik))
 
     return _selesai(j, "terbit", detail,
                     {"diterima": diterima, "ditolak": ditolak},

@@ -31,6 +31,16 @@ def _angka_saja(s: str) -> str:
     return re.sub(r"[^\d]", "", s or "")
 
 
+def _rb(x: float, desimal: int = 0) -> str:
+    """Format angka gaya Indonesia: titik ribuan, koma desimal.
+
+    Dipakai untuk angka HASIL HITUNGAN kita. Angka yang dikutip dari dokumen
+    sengaja tidak diformat ulang — itu sitasi, dan sitasi harus apa adanya supaya
+    juri bisa mencocokkannya huruf per huruf dengan halaman MOPS.
+    """
+    return f"{x:,.{desimal}f}".replace(",", "\u0000").replace(".", ",").replace("\u0000", ".")
+
+
 def _cek(nama: str, lolos: bool, alasan: str) -> dict:
     return {"nama": nama, "lolos": lolos, "alasan": alasan}
 
@@ -96,7 +106,7 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
     cek.append(_cek(
         "Nilai terkonversi tersedia",
         nilai is not None,
-        f"{nilai:,.0f} juta NTD" if nilai is not None
+        f"{_rb(nilai)} juta NTD" if nilai is not None
         else "Konversi tidak dilakukan — gagal-tertutup karena satuan atau mata uang"))
 
     # 7 — besaran harus masuk akal dibanding nilai yang berlaku sekarang.
@@ -110,8 +120,8 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
         cek.append(_cek(
             "Besaran masuk akal",
             wajar,
-            f"{nilai:,.0f} berbanding {lama:,.0f} juta NTD = {rasio:.2f}× "
-            f"({'dalam' if wajar else 'DI LUAR'} pita {PITA_BAWAH}–{PITA_ATAS}×)"
+            f"{_rb(nilai)} berbanding {_rb(lama)} juta NTD = {_rb(rasio, 2)}× "
+            f"({'dalam' if wajar else 'DI LUAR'} pita {_rb(PITA_BAWAH, 1)}–{_rb(PITA_ATAS, 1)}×)"
             + ("" if wajar else ". Satu pengumuman yang menggeser input sebesar ini "
                                 "hampir pasti salah satuan atau salah butir.")))
 
