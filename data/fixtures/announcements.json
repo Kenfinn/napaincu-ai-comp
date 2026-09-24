@@ -1,0 +1,46 @@
+[
+  {
+    "code": "2330",
+    "name": "台積電",
+    "date": "2026-09-18",
+    "date_roc": "115/09/18",
+    "time": "17:32:05",
+    "subject": "公告本公司董事會通過資本支出預算案",
+    "detail_url": "https://mops.twse.com.tw/mops/web/t05st01?TYPEK=sii&co_id=2330&seq_no=1&spoke_time=173205&spoke_date=1150918",
+    "fetched_at": "2026-09-18T09:35:11+00:00",
+    "raw_file": "data/fixtures/details.json"
+  },
+  {
+    "code": "2330",
+    "name": "台積電",
+    "date": "2026-09-22",
+    "date_roc": "115/09/22",
+    "time": "16:04:18",
+    "subject": "公告本公司董事會通過資本支出預算案",
+    "detail_url": "https://mops.twse.com.tw/mops/web/t05st01?TYPEK=sii&co_id=2330&seq_no=3&spoke_time=160418&spoke_date=1150922",
+    "fetched_at": "2026-09-22T08:06:40+00:00",
+    "raw_file": "data/fixtures/details.json"
+  },
+  {
+    "code": "2454",
+    "name": "聯發科",
+    "date": "2026-09-21",
+    "date_roc": "115/09/21",
+    "time": "09:12:44",
+    "subject": "公告本公司受邀參加法人說明會",
+    "detail_url": "https://mops.twse.com.tw/mops/web/t05st01?TYPEK=sii&co_id=2454&seq_no=7&spoke_time=091244&spoke_date=1150921",
+    "fetched_at": "2026-09-21T01:14:02+00:00",
+    "raw_file": "data/fixtures/details.json"
+  },
+  {
+    "code": "2330",
+    "name": "台積電",
+    "date": "2026-09-19",
+    "date_roc": "115/09/19",
+    "time": "18:21:09",
+    "subject": "公告本公司取得固定資產",
+    "detail_url": "https://mops.twse.com.tw/mops/web/t05st01?TYPEK=sii&co_id=2330&seq_no=4&spoke_time=182109&spoke_date=1150919",
+    "fetched_at": "2026-09-19T10:23:30+00:00",
+    "raw_file": "data/fixtures/details.json"
+  }
+]
