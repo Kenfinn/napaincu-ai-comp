@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block judul %}Sentinel Saham{% endblock %}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+
+<nav class="rail">
+  <div class="merek">
+    <b>Sentinel</b>
+    <span>Saham TW</span>
+  </div>
+
+  <div class="nav">
+    <a href="/" class="{{ 'on' if halaman == 'feed' }}">Peringatan
+      {% if jml_terbit %}<span class="hit">{{ jml_terbit }}</span>{% endif %}</a>
+    {% for k in emiten %}
+    <a href="/valuasi/{{ k }}" class="{{ 'on' if halaman == 'valuasi' and kode == k }}">Valuasi {{ k }}</a>
+    {% endfor %}
+    <a href="/docs">API</a>
+  </div>
+
+  <div class="status-kotak">
+    <span class="lbl">Mesin penalar</span>
+    <div class="mesin">
+      <span class="titik {{ '' if pakai_model else 'kuning' }}"></span>
+      <span>{{ model }}</span>
+    </div>
+    <small>
+      {% if pakai_model %}Model aktif.{% else %}Tanpa kunci API — penalar berbasis aturan.{% endif %}
+      Sumber data: <b>{{ sumber_data }}</b>.
+    </small>
+  </div>
+</nav>
+
+<main class="isi">
+  {% if sumber_data == 'fixture' %}
+  <div class="pita fixture">
+    <div><b>Data contoh.</b> Pengumuman MOPS asli hanya bisa ditarik dari jaringan Taiwan, jadi layar
+    ini memakai empat kasus uji di <span class="mono">data/fixtures/</span>. Begitu penarikan
+    dijalankan, isi <span class="mono">data/parsed/</span> otomatis dipakai — lewat kode baca yang
+    sama persis.</div>
+  </div>
+  {% endif %}
+  {% block isi %}{% endblock %}
+</main>
+
+</body>
+</html>

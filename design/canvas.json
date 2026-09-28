@@ -1,0 +1,138 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "title": "1 · Feed Peringatan",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 960
+    },
+    {
+      "file": "DetailPeringatan.dc.html",
+      "title": "2 · Detail + Sitasi MOPS",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 960
+    },
+    {
+      "file": "Valuasi.dc.html",
+      "title": "3 · Valuasi DCF",
+      "x": 3120,
+      "y": 0,
+      "w": 1440,
+      "h": 1080
+    },
+    {
+      "file": "RiwayatNilaiWajar.dc.html",
+      "title": "3b · Riwayat Nilai Wajar",
+      "x": 4680,
+      "y": 0,
+      "w": 1440,
+      "h": 980
+    },
+    {
+      "file": "TanyaJawab.dc.html",
+      "title": "4 · Tanya Jawab (uji juri)",
+      "x": 0,
+      "y": 1300,
+      "w": 1440,
+      "h": 960
+    },
+    {
+      "file": "Watchlist.dc.html",
+      "title": "5 · Watchlist & Profil Risiko",
+      "x": 1560,
+      "y": 1300,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "JejakAudit.dc.html",
+      "title": "6 · Jejak Audit Agent",
+      "x": 3120,
+      "y": 1300,
+      "w": 1440,
+      "h": 1000
+    },
+    {
+      "file": "NotifPonsel.dc.html",
+      "title": "7 · Notifikasi Ponsel",
+      "x": 0,
+      "y": 2520,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "AlurState.dc.html",
+      "title": "8 · Alur & State Agent (deck hal 5)",
+      "x": 560,
+      "y": 2520,
+      "w": 1440,
+      "h": 710
+    },
+    {
+      "file": "Arsitektur.dc.html",
+      "title": "9 · Arsitektur Sistem (deck hal 6)",
+      "x": 2120,
+      "y": 2520,
+      "w": 1440,
+      "h": 820
+    }
+  ],
+  "annotations": [
+    {
+      "id": "alur-utama",
+      "x": 0,
+      "y": -150,
+      "w": 720,
+      "text": "ALUR UTAMA — inilah yang didemokan ke juri.\nPeringatan masuk → dibuka, sitasi diperiksa → valuasi dihitung ulang.\nAngka TSMC di layar 3 adalah hasil asli kalkulator kita: EV 59,684 T, WACC 8,09%, g tersirat 6,29%."
+    },
+    {
+      "id": "momen-demo",
+      "x": 3120,
+      "y": -150,
+      "w": 620,
+      "text": "MOMEN DEMO.\nJuri menggeser WACC atau g di panel kanan, tabel sensitivitas bergerak di depan mata mereka.\nSatu gerakan ini menjawab \"apakah angkanya bisa diverifikasi\" lebih baik daripada penjelasan apa pun."
+    },
+    {
+      "id": "permukaan-pendukung",
+      "x": 0,
+      "y": 1150,
+      "w": 720,
+      "text": "PERMUKAAN PENDUKUNG.\nLayar 4 adalah tempat juri mengetik test case mereka sendiri — wajib ada, sering dilupakan tim lain.\nLayar 6 adalah operation trace yang diwajibkan Appendix 2, ditampilkan sebagai bagian produk, bukan dokumen terpisah."
+    },
+    {
+      "id": "pengiriman-proaktif",
+      "x": 0,
+      "y": 2370,
+      "w": 720,
+      "text": "PENGIRIMAN PROAKTIF.\nTahap kedua dari empat tahap yang diminta panitia. Dashboard yang harus dikunjungi tidak memenuhinya — notifikasi yang memenuhinya.\nTombol Ya/Tidak di bawah adalah behavioral feedback, tahap ketiga."
+    },
+    {
+      "id": "catatan-warna",
+      "x": 6360,
+      "y": 0,
+      "w": 540,
+      "text": "KONVENSI WARNA\nMerah = naik, hijau = turun — mengikuti konvensi bursa Taiwan, kebalikan dari bursa Barat. Detail kecil yang menunjukkan kita paham pasarnya.\n\nWarna merah/hijau HANYA dipakai untuk pergerakan harga. Label valuasi (overvalued/wajar/undervalued) sengaja memakai warna netral supaya tidak tertukar.\n\nNavy #16324F — struktur dan aksi utama.\nAmber #A86A0B — perhatian, bukan bahaya."
+    },
+    {
+      "id": "grafik-yang-layak",
+      "x": 4680,
+      "y": -150,
+      "w": 700,
+      "text": "SATU-SATUNYA GRAFIK YANG LAYAK DIBANGUN.\nBukan candlestick — itu ada di setiap aplikasi sekuritas dan tidak bisa disitasi.\nGaris nilai wajar sengaja berbentuk anak tangga: dihitung ulang hanya saat ada dokumen baru. Tiap titik bisa diklik ke dokumen MOPS-nya.\nWarna seri #2F74C0 dan #B5730C — lolos uji buta warna, bukan navy UI yang terbaca abu sebagai mark data."
+    },
+    {
+      "id": "dua-diagram",
+      "x": 560,
+      "y": 2370,
+      "w": 760,
+      "text": "DUA DIAGRAM WAJIB — Appendix 1 memintanya sebagai halaman deck 5 dan 6, bukan pelengkap.\nDigambar SEBELUM kode pipeline ditulis: diagram state adalah spesifikasinya, bukan ilustrasi hasil jadi.\nMenggambarnya memaksa menjawab apa yang terjadi saat API gagal, kapan agent berhenti sendiri, dan kapan manusia dipanggil."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

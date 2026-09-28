@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Instrument Sans", system-ui, sans-serif; }
+    a { color: #A86A0B; } a:hover { color: #8A560A; }
+    * { box-sizing: border-box; }
+    .z  { border: 1px solid #C9CDD2; background: #FFFFFF; }
+    .zf { border: 1px solid #C9CDD2; background: #F3F4F6; }
+    .zd { border: 1px dashed #C9CDD2; background: #FAFBFB; }
+    .bar { background: #D7DBDF; border-radius: 2px; height: 9px; }
+    .bard { background: #AEB4BB; border-radius: 2px; height: 11px; }
+    .lbl { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; color: #7A828C; }
+    .mono { font-family: "IBM Plex Mono", monospace; }
+    .txt { font-size: 12.5px; color: #4A515A; }
+    .hd  { font-size: 15px; font-weight: 600; color: #2B313A; }
+    .cal { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; color: #FFFFFF; background: #A86A0B; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; }
+    .legn { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; color: #A86A0B; flex: none; width: 15px; }
+    .leg { font-size: 11.5px; color: #4A515A; line-height: 1.5; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 780px; display: flex; flex-direction: column; background: #FFFFFF; color: #2B313A;">
+  <div style="border-bottom: 1px solid #C9CDD2; padding: 15px 24px; display: flex; align-items: center; gap: 12px;">
+    <div class="z" style="width: 26px; height: 26px; border-radius: 5px;"></div>
+    <span class="hd" style="font-size: 14px;">Watchlist &amp; Profil Risiko</span>
+    <div style="margin-left: auto; display: flex; gap: 7px;">
+      <div class="z" style="width: 96px; height: 26px; border-radius: 5px;"></div>
+      <div style="width: 118px; height: 26px; border-radius: 5px; background: #59616B;"></div>
+    </div>
+  </div>
+<div style="flex: 1; display: flex; min-height: 0; background: #F6F7F8;">
+  <div style="flex: 1; min-width: 0; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px;">
+    <div style="display: flex; align-items: center; gap: 9px;"><div class="cal">1</div><span class="lbl">emiten yang dipantau</span></div>
+    <div class="z" style="border-radius: 7px; padding: 13px 16px; display: flex; align-items: center; gap: 13px;"><span class="mono" style="font-size: 13px; font-weight: 600;">2330</span><div class="bard" style="width: 96px;"></div><div class="bar" style="flex: 1;"></div><div class="bard" style="width: 52px;"></div><div class="bar" style="width: 44px;"></div></div><div class="z" style="border-radius: 7px; padding: 13px 16px; display: flex; align-items: center; gap: 13px;"><span class="mono" style="font-size: 13px; font-weight: 600;">2317</span><div class="bard" style="width: 96px;"></div><div class="bar" style="flex: 1;"></div><div class="bard" style="width: 52px;"></div><div class="bar" style="width: 44px;"></div></div><div class="z" style="border-radius: 7px; padding: 13px 16px; display: flex; align-items: center; gap: 13px;"><span class="mono" style="font-size: 13px; font-weight: 600;">2881</span><div class="bard" style="width: 96px;"></div><div class="bar" style="flex: 1;"></div><div class="bard" style="width: 52px;"></div><div class="bar" style="width: 44px;"></div></div><div class="z" style="border-radius: 7px; padding: 13px 16px; display: flex; align-items: center; gap: 13px;"><span class="mono" style="font-size: 13px; font-weight: 600;">1301</span><div class="bard" style="width: 96px;"></div><div class="bar" style="flex: 1;"></div><div class="bard" style="width: 52px;"></div><div class="bar" style="width: 44px;"></div></div>
+    <div class="zd" style="border-radius: 7px; padding: 13px 16px; display: flex; align-items: center; justify-content: center;">
+      <span class="txt">+ tambah emiten</span>
+    </div>
+  </div>
+
+  <div style="width: 392px; flex: none; border-left: 1px solid #C9CDD2; background: #FFFFFF; padding: 20px 18px; display: flex; flex-direction: column; gap: 16px;">
+    <div class="zf" style="border-radius: 7px; padding: 15px 16px;">
+      <div style="display: flex; align-items: center; gap: 9px;"><div class="cal">2</div><span class="lbl">profil risiko</span></div>
+      <div style="margin-top: 13px; display: flex; flex-direction: column; gap: 11px;">
+        <div class="z" style="border-radius: 6px; padding: 11px 12px; display: flex; align-items: center; gap: 10px;"><div style="width: 13px; height: 13px; border-radius: 50%; border: 1px solid #AEB4BB; flex: none;"></div><div class="bar" style="width: 70%; margin-top: 0px;"></div></div><div class="z" style="border-radius: 6px; padding: 11px 12px; display: flex; align-items: center; gap: 10px;"><div style="width: 13px; height: 13px; border-radius: 50%; border: 1px solid #AEB4BB; flex: none;"></div><div class="bar" style="width: 70%; margin-top: 0px;"></div></div><div class="z" style="border-radius: 6px; padding: 11px 12px; display: flex; align-items: center; gap: 10px;"><div style="width: 13px; height: 13px; border-radius: 50%; border: 1px solid #AEB4BB; flex: none;"></div><div class="bar" style="width: 70%; margin-top: 0px;"></div></div>
+      </div>
+      <div class="txt" style="margin-top: 13px; line-height: 1.5;">Profil ini yang menentukan ambang relevansi &#8212; bukan preferensi tampilan.</div>
+    </div>
+
+    <div class="z" style="border-radius: 7px; padding: 15px 16px;">
+      <div style="display: flex; align-items: center; gap: 9px;"><div class="cal">3</div><span class="lbl">saluran pengiriman</span></div>
+      <div style="margin-top: 13px; display: flex; flex-direction: column; gap: 12px;"><div style="display: flex; align-items: center; gap: 11px;"><div class="bar" style="flex: 1;"></div><div style="width: 34px; height: 19px; border-radius: 10px; background: #59616B; flex: none;"></div></div><div style="display: flex; align-items: center; gap: 11px;"><div class="bar" style="flex: 1;"></div><div style="width: 34px; height: 19px; border-radius: 10px; background: #59616B; flex: none;"></div></div><div style="display: flex; align-items: center; gap: 11px;"><div class="bar" style="flex: 1;"></div><div style="width: 34px; height: 19px; border-radius: 10px; background: #D7DBDF; flex: none;"></div></div></div>
+    </div>
+
+    <div style="border: 1px solid #A86A0B; background: #FDF8EF; border-radius: 7px; padding: 15px 16px;">
+      <div style="display: flex; align-items: flex-start; gap: 10px;">
+        <div class="cal">4</div>
+        <div class="txt" style="line-height: 1.5;">Ambang naik otomatis setelah tiga peringatan berturut-turut diabaikan. Sistem belajar dari perilaku, tanpa perlu diatur manual.</div>
+      </div>
+    </div>
+    <div class="zd" style="margin-top: auto; border-radius: 7px; padding: 13px 14px;"><div class="bar" style="width: 88%; margin-top: 0px;"></div><div class="bar" style="width: 62%; margin-top: 6px;"></div></div>
+  </div>
+</div>
+<div style="border-top: 1px solid #C9CDD2; background: #FAFBFB; padding: 16px 26px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 30px;"><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">1</span><span class="leg">Daftar emiten sengaja pendek. Agen yang memantau 20 emiten dengan alasan jelas lebih meyakinkan daripada yang mengklaim memantau seluruh bursa.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">2</span><span class="leg">Profil risiko bukan pengaturan tampilan — ini yang menentukan pengumuman mana yang lolos jadi peringatan. Karena itu letaknya di layar utama, bukan di halaman Pengaturan.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">3</span><span class="leg">Saluran pengiriman menentukan apakah sistem ini proaktif atau cuma dashboard. Panitia meminta pengiriman proaktif sebagai tahap kedua dari empat.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">4</span><span class="leg">Ambang berubah sendiri dari perilaku pengguna. Ini tahap ketiga: sistem yang belajar, bukan sekadar menjalankan aturan tetap.</span></div></div></div>
+</x-dc>
+</body>
+</html>

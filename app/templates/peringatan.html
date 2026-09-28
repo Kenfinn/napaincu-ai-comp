@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block judul %}{{ h.emiten.kode }} · {{ h.status }} · Sentinel Saham{% endblock %}
+{% block isi %}
+
+<div class="kepala">
+  <div>
+    <div class="kicker">{{ h.emiten.kode }} {{ h.emiten.nama }} · {{ h.tanggal }}</div>
+    <h1>{{ h.judul }}</h1>
+  </div>
+  <span class="lencana l-{{ h.status }}">{{ h.status }}</span>
+</div>
+
+{% if h.status == 'ditolak' %}
+<div class="pita bahaya">
+  <div><b>Peringatan tidak diterbitkan.</b> Pemeriksa menggagalkan klaim sebelum angkanya
+  menyentuh valuasi. Alasannya tercatat di bawah dan di jejak audit.</div>
+</div>
+{% endif %}
+
+{% if injeksi %}
+<div class="pita fixture">
+  <div><b>Dokumen ini memuat teks yang menyerupai perintah.</b>
+  Penanda: <span class="mono">{{ injeksi.masukan.penanda | join(' · ') }}</span>.
+  Tidak mengubah perilaku agent — isi dokumen adalah data, bukan instruksi. Dicatat untuk ditinjau manusia.</div>
+</div>
+{% endif %}
+
+<div class="kartu">
+  <div class="kv"><span class="k">Sumber</span>
+    <span class="v"><a class="sitasi" href="{{ h.sumber_url }}" target="_blank" rel="noopener">Halaman MOPS asli ↗</a></span></div>
+  <div class="kv"><span class="k">Data pribadi dibuang di hulu</span>
+    <span class="v">{{ h.pii_dibuang | join(' · ') if h.pii_dibuang else '—' }}</span></div>
+  <div class="kv"><span class="k">Jejak audit</span>
+    <span class="v"><a href="/jejak/{{ h.id }}">Lihat {{ h.ringkasan.langkah }} langkah →</a></span></div>
+</div>
+
+{% for d in (h.muatan.diterima if h.muatan and h.muatan.diterima else []) %}
+  {% set r = d.hasil %}
+  <h2>Perhitungan ulang — {{ r.input }}</h2>
+  <div class="kartu">
+    <div class="kutip" style="margin-bottom:14px;">{{ d.temuan.kutipan }}
+      <div style="margin-top:6px; color:var(--abu); font-size:11.5px;">
+        Butir {{ d.temuan.butir_no }} · {{ d.temuan.nilai_mentah }} {{ d.temuan.satuan }}
+        {{ d.temuan.mata_uang or 'TWD (konvensi MOPS)' }}
+        → {{ d.temuan.nilai_juta_ntd | rb }} juta NTD</div>
+    </div>
+
+    <div class="kv"><span class="k">{{ r.arti }}</span>
+      <span class="v">{{ r.nilai_lama | rb }} → {{ r.nilai_baru | rb }}</span></div>
+    <div class="kv"><span class="k">FCFF tahun dasar (juta NTD)</span>
+      <span class="v">{{ r.sebelum.fcff0 | rb }} → {{ r.sesudah.fcff0 | rb }}</span></div>
+    <div class="kv"><span class="k">Pertumbuhan abadi yang diasumsikan pasar</span>
+      <span class="v delta {{ 'naik' if r.delta.g_tersirat > 0 else 'turun' }}">
+        {{ r.sebelum.implied_growth | pct }} → {{ r.sesudah.implied_growth | pct }}</span></div>
+    <div class="kv"><span class="k">Nilai wajar pada g = {{ r.g_skenario | pct(1) }} (skenario, bukan ramalan)</span>
+      <span class="v">{{ r.sebelum.forward.fair_value | rb }} → {{ r.sesudah.forward.fair_value | rb }} NTD</span></div>
+    <div class="kv"><span class="k">Harga pasar</span>
+      <span class="v">{{ r.sebelum.price_per_share | rb }} NTD</span></div>
+
+    {% if r.melampaui_batas.sesudah %}
+    <div class="pita fixture" style="margin:14px 0 0;">
+      <div>g tersirat <b>{{ r.sesudah.implied_growth | pct }}</b> melampaui batas pertumbuhan abadi
+      {{ r.sesudah.terminal_growth_ceiling | pct }}. Pasar memberi harga untuk pertumbuhan yang tidak bisa
+      dipertahankan selamanya — indikasi kemahalan, bukan sinyal jual.</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <h2>Pemeriksaan — {{ d.cek | selectattr('lolos') | list | length }}/{{ d.cek | length }} lolos</h2>
+  <div class="kartu">
+    {% for c in d.cek %}
+    <div class="cek {{ 'ok' if c.lolos else 'x' }}">
+      <span class="tanda">{{ '✓' if c.lolos else '✕' }}</span>
+      <span class="nama">{{ c.nama }}</span>
+      <span class="why">{{ c.alasan }}</span>
+    </div>
+    {% endfor %}
+  </div>
+{% endfor %}
+
+{% for d in (h.muatan.ditolak if h.muatan and h.muatan.ditolak else []) %}
+  <h2>Ditolak — {{ d.temuan.input }}</h2>
+  <div class="kartu">
+    <div class="kutip" style="margin-bottom:12px;">{{ d.temuan.kutipan }}</div>
+    {% for s in d.sebab %}
+    <div class="cek x"><span class="tanda">✕</span><span class="why">{{ s }}</span></div>
+    {% endfor %}
+  </div>
+{% endfor %}
+
+{% if h.status in ('dilewati', 'ditahan') %}
+<div class="kartu">
+  <div class="cek"><span class="tanda">—</span><span class="why">{{ h.alasan }}</span></div>
+</div>
+{% endif %}
+
+{% endblock %}
