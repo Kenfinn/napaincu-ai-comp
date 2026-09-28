@@ -1,5 +1,8 @@
 # Rencana Kerja AAIC 2026 — Tim 3 Orang
 
+> Ini rencana awal 14 September. Status terbaru dan langkah berikutnya ada di
+> [`rekap.md`](./rekap.md).
+
 Halaman kerja versi interaktif (checklist bisa dicentang bersama):
 https://claude.ai/code/artifact/a37a4aa0-91e5-44b2-9830-946977a5d26d
 
