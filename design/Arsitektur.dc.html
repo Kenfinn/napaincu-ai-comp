@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    .mono { font-family: 'IBM Plex Mono', monospace; }
+    .lay { background: #FFFFFF; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; }
+    .layh { font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #6B7683; margin-bottom: 10px; font-family: 'IBM Plex Mono', monospace; }
+    .node { border: 1.3px solid #D3D8DE; border-radius: 5px; padding: 8px 10px; margin-bottom: 7px; }
+    .nt { font-size: 12px; font-weight: 600; color: #101418; }
+    .ns { font-size: 10.5px; line-height: 1.4; color: #6B7683; margin-top: 2px; }
+    .arr { width: 26px; flex: none; display: flex; align-items: center; justify-content: center; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 820px; background: #EEF0F2; color: #101418; padding: 34px 40px 0; display: flex; flex-direction: column;">
+
+  <!-- JUDUL -->
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 4px;">
+    <div>
+      <div class="mono" style="font-size: 10px; letter-spacing: 0.1em; color: #6B7683; text-transform: uppercase; margin-bottom: 5px;">Deck halaman 6 · Arsitektur sistem, model, tool, aliran data</div>
+      <div style="font-size: 25px; font-weight: 700; letter-spacing: -0.015em;">Model hanya menyentuh dua kotak dari sebelas</div>
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #FFFFFF; background: #16324F; padding: 4px 9px; border-radius: 3px;">DETERMINISTIK</span>
+      <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #FFFFFF; background: #A86A0B; padding: 4px 9px; border-radius: 3px;">MODEL</span>
+    </div>
+  </div>
+
+  <div style="height: 1px; background: #D3D8DE; margin-bottom: 20px;"></div>
+
+  <!-- EMPAT LAPISAN -->
+  <div style="display: flex; align-items: stretch;">
+
+    <!-- SUMBER -->
+    <div class="lay" style="flex: 1;">
+      <div class="layh">1 · Sumber eksternal</div>
+      <div class="node" style="border-color: #B8C0CA;">
+        <div class="nt">MOPS 公開資訊觀測站</div>
+        <div class="ns">重大訊息 · form-POST · kalender ROC (2026 = th 115)</div>
+      </div>
+      <div class="node" style="border-color: #B8C0CA;">
+        <div class="nt">TWSE / TPEx OpenAPI</div>
+        <div class="ns">Harga penutupan, lembar saham beredar</div>
+      </div>
+      <div style="margin-top: auto; background: #F9EAE8; border-left: 3px solid #8A2F27; border-radius: 0 5px 5px 0; padding: 9px 10px;">
+        <div style="font-size: 10.5px; line-height: 1.45; color: #6B2620;"><strong>Geo-blocked dari luar Taiwan.</strong> Balasannya HTTP&nbsp;200 berisi halaman blokir — gagal tanpa bersuara. Kita memvalidasi <strong>bentuk</strong> balasan, bukan kode statusnya.</div>
+      </div>
+    </div>
+
+    <div class="arr"><svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg></div>
+
+    <!-- PENGAMBILAN -->
+    <div class="lay" style="flex: 1.05;">
+      <div class="layh">2 · Pengambilan &amp; pembersihan</div>
+      <div class="node"><div class="nt">probe_sources.py</div><div class="ns">Cek keterjangkauan tiap sumber</div></div>
+      <div class="node"><div class="nt">spike_mops.py</div><div class="ns">Penarikan massal · <span class="mono">POLITE_DELAY 2,5&nbsp;dtk</span></div></div>
+      <div class="node"><div class="nt">parse_mops.py</div><div class="ns">711 baris → record + URL sitasi</div></div>
+      <div class="node" style="border-color: #17795E; border-width: 2px; background: #EFF7F3;">
+        <div class="nt">fetch_details.py</div>
+        <div class="ns" style="color: #12604A;"><strong>Data pribadi dibuang di sini.</strong> 發言人 · 職稱 · 電話 — yang dicatat hanya <em>bahwa</em> field itu dibuang, tidak pernah isinya.</div>
+      </div>
+      <div style="margin-top: auto; font-size: 10.5px; line-height: 1.45; color: #6B7683;">Pasal 14.1 — minimisasi data. Hulu, bukan hilir: tidak ada data pribadi yang bisa sampai ke model karena memang tidak pernah disimpan.</div>
+    </div>
+
+    <div class="arr"><svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg></div>
+
+    <!-- AGENT -->
+    <div class="lay" style="flex: 1.35; background: #16324F;">
+      <div class="layh" style="color: #7E9BB8;">3 · Agent — app/agent/</div>
+      <div style="border: 1.3px solid #2F5375; border-radius: 5px; padding: 7px 9px; margin-bottom: 6px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #FFFFFF;">0 · screen.py</span><span class="mono" style="font-size: 8px; color: #BFD6E8; background: rgba(255,255,255,0.13); padding: 2px 5px; border-radius: 2px;">DET</span></div>
+        <div style="font-size: 10.5px; color: #A9C0D6; margin-top: 2px;">Saringan 符合條款 · 711 → ~30</div>
+      </div>
+      <div style="border: 1.6px solid #A86A0B; border-radius: 5px; padding: 7px 9px; margin-bottom: 6px; background: rgba(168,106,11,0.12);">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #FFFFFF;">1 · triage.py</span><span class="mono" style="font-size: 8px; color: #FFFFFF; background: #A86A0B; padding: 2px 5px; border-radius: 2px;">MODEL</span></div>
+        <div style="font-size: 10.5px; color: #E0C79B; margin-top: 2px;">Menyentuh input valuasi yang mana?</div>
+      </div>
+      <div style="border: 1.6px solid #A86A0B; border-radius: 5px; padding: 7px 9px; margin-bottom: 6px; background: rgba(168,106,11,0.12);">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #FFFFFF;">2 · extract.py</span><span class="mono" style="font-size: 8px; color: #FFFFFF; background: #A86A0B; padding: 2px 5px; border-radius: 2px;">MODEL</span></div>
+        <div style="font-size: 10.5px; color: #E0C79B; margin-top: 2px;">Angka + kalimat sumbernya</div>
+      </div>
+      <div style="border: 1.3px solid #2F5375; border-radius: 5px; padding: 7px 9px; margin-bottom: 6px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #FFFFFF;">3 · recompute.py</span><span class="mono" style="font-size: 8px; color: #BFD6E8; background: rgba(255,255,255,0.13); padding: 2px 5px; border-radius: 2px;">DET</span></div>
+        <div style="font-size: 10.5px; color: #A9C0D6; margin-top: 2px;">memanggil <span class="mono">scripts/dcf.py → compute()</span></div>
+      </div>
+      <div style="border: 2px solid #7FD3B4; border-radius: 5px; padding: 7px 9px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #FFFFFF;">4 · verify.py</span><span class="mono" style="font-size: 8px; color: #BFD6E8; background: rgba(255,255,255,0.13); padding: 2px 5px; border-radius: 2px;">DET</span></div>
+        <div style="font-size: 10.5px; color: #A9C0D6; margin-top: 2px;">Angka ada di dokumen? Kalau tidak → tolak</div>
+      </div>
+      <div style="margin-top: auto; padding-top: 9px; font-size: 10.5px; line-height: 1.45; color: #7E9BB8;"><span class="mono">pipeline.py</span> mengorkestrasi kelimanya dan menulis jejak tiap langkah.</div>
+    </div>
+
+    <div class="arr"><svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg></div>
+
+    <!-- PENYAJIAN -->
+    <div class="lay" style="flex: 1;">
+      <div class="layh">4 · Penyajian — FastAPI</div>
+      <div class="node"><div class="nt mono" style="font-size: 11.5px;">/</div><div class="ns">Feed peringatan</div></div>
+      <div class="node"><div class="nt mono" style="font-size: 11.5px;">/peringatan/{id}</div><div class="ns">Detail + sitasi MOPS + vonis pemeriksa</div></div>
+      <div class="node"><div class="nt mono" style="font-size: 11.5px;">/valuasi/{kode}</div><div class="ns">DCF, asumsi geser, sensitivitas</div></div>
+      <div class="node"><div class="nt mono" style="font-size: 11.5px;">/jejak/{id}</div><div class="ns">Operation trace — Appendix 2</div></div>
+      <div class="node"><div class="nt mono" style="font-size: 11.5px;">/docs</div><div class="ns">OpenAPI otomatis</div></div>
+      <div style="margin-top: auto; background: #EFF7F3; border-left: 3px solid #17795E; border-radius: 0 5px 5px 0; padding: 9px 10px;">
+        <div style="font-size: 10.5px; line-height: 1.45; color: #12604A;"><strong>Tanpa login.</strong> Tidak ada kata sandi disimpan, tidak ada akun evaluator yang perlu dibuat, tidak ada permukaan serangan tambahan.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PENYEDIA MODEL + PENYIMPANAN -->
+  <div style="margin-top: 16px; display: flex; gap: 14px;">
+
+    <div style="flex: 1.5; background: #FFFFFF; border-radius: 8px; padding: 14px 16px; border-top: 3px solid #A86A0B;">
+      <div class="mono" style="font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #6B7683; margin-bottom: 9px;">Penyedia model — dapat ditukar</div>
+      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div style="flex: 1; border: 1.6px solid #A86A0B; border-radius: 5px; padding: 8px 10px; background: #FBF2E3;">
+          <div style="font-size: 12px; font-weight: 700;">Gemini free tier</div>
+          <div style="font-size: 10.5px; color: #6B7683; margin-top: 2px;">Utama · konteks besar memuat pengumuman Mandarin panjang utuh</div>
+        </div>
+        <div style="flex: 1; border: 1.3px solid #D3D8DE; border-radius: 5px; padding: 8px 10px;">
+          <div style="font-size: 12px; font-weight: 600;">Groq · OpenRouter · Anthropic</div>
+          <div style="font-size: 10.5px; color: #6B7683; margin-top: 2px;">Tukar satu <span class="mono">environment variable</span>, tanpa ubah kode</div>
+        </div>
+        <div style="flex: 1; border: 1.3px dashed #A8B0BA; border-radius: 5px; padding: 8px 10px;">
+          <div style="font-size: 12px; font-weight: 600;">Penalar berbasis aturan</div>
+          <div style="font-size: 10.5px; color: #6B7683; margin-top: 2px;">Cadangan saat API gagal — keluarannya ditandai mode cadangan</div>
+        </div>
+      </div>
+      <div style="background: #FBF7EF; border-left: 3px solid #A86A0B; border-radius: 0 5px 5px 0; padding: 9px 11px;">
+        <div style="font-size: 10.5px; line-height: 1.5; color: #4A535E;"><strong style="color:#101418;">Pengungkapan:</strong> konten free tier dipakai Google untuk meningkatkan produknya. Dapat diterima di sini karena pengumuman MOPS adalah dokumen publik <em>dan</em> data pribadi sudah dibuang di lapisan 2. Kalau nanti perlu menganalisis apa pun yang tidak publik, free tier otomatis tidak boleh dipakai lagi.</div>
+      </div>
+    </div>
+
+    <div style="flex: 1; background: #FFFFFF; border-radius: 8px; padding: 14px 16px; border-top: 3px solid #16324F;">
+      <div class="mono" style="font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #6B7683; margin-bottom: 9px;">Penyimpanan — berkas biasa, tanpa basis data</div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="display: flex; align-items: baseline; gap: 9px;"><span class="mono" style="font-size: 11px; font-weight: 600; color: #16324F; width: 150px; flex: none;">data/parsed/</span><span style="font-size: 10.5px; color: #6B7683;">Pengumuman + detail, sudah bersih PII</span></div>
+        <div style="display: flex; align-items: baseline; gap: 9px;"><span class="mono" style="font-size: 11px; font-weight: 600; color: #16324F; width: 150px; flex: none;">data/fixtures/</span><span style="font-size: 10.5px; color: #6B7683;">Tiga kasus uji — aplikasi jalan di mana saja</span></div>
+        <div style="display: flex; align-items: baseline; gap: 9px;"><span class="mono" style="font-size: 11px; font-weight: 600; color: #16324F; width: 150px; flex: none;">valuation/inputs/</span><span style="font-size: 10.5px; color: #6B7683;">Input DCF per emiten + URL sumber tiap angka</span></div>
+        <div style="display: flex; align-items: baseline; gap: 9px;"><span class="mono" style="font-size: 11px; font-weight: 600; color: #16324F; width: 150px; flex: none;">data/traces/</span><span style="font-size: 10.5px; color: #6B7683;">Jejak audit: latensi, token, biaya, retry per tahap</span></div>
+      </div>
+      <div style="margin-top: 11px; font-size: 10.5px; line-height: 1.45; color: #6B7683;">Tanpa basis data karena tidak ada yang membutuhkannya. Juri bisa membuka tiap berkas dengan editor teks dan mencocokkannya sendiri.</div>
+    </div>
+
+  </div>
+
+  <!-- BATAS KEPERCAYAAN -->
+  <div style="margin-top: 14px; background: #16324F; border-radius: 8px; padding: 13px 18px; display: flex; gap: 22px; align-items: center;">
+    <div class="mono" style="font-size: 9.5px; letter-spacing: 0.08em; color: #7E9BB8; text-transform: uppercase; flex: none; line-height: 1.5;">Batas<br>kepercayaan</div>
+    <div style="flex: 1; display: flex; gap: 20px;">
+      <div style="flex: 1;">
+        <div style="font-size: 11.5px; font-weight: 700; color: #7FD3B4; margin-bottom: 3px;">Teks pengumuman = data, bukan perintah</div>
+        <div style="font-size: 10.5px; line-height: 1.45; color: #A9C0D6;">Isinya dikendalikan penerbit, jadi ia masuk prompt di dalam pembatas jelas dan tidak pernah boleh mengarahkan tahap mana pun. Inilah bahan uji prompt injection yang diminta Appendix 2.</div>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 11.5px; font-weight: 700; color: #7FD3B4; margin-bottom: 3px;">Tidak ada kunci di repo</div>
+        <div style="font-size: 10.5px; line-height: 1.45; color: #A9C0D6;">Kunci API hanya dibaca dari <span class="mono">environment variable</span> dan tidak pernah ikut tercetak di layar atau jejak mana pun — syarat eksplisit Pasal 6.</div>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 11.5px; font-weight: 700; color: #7FD3B4; margin-bottom: 3px;">Agent tidak memegang uang</div>
+        <div style="font-size: 10.5px; line-height: 1.45; color: #A9C0D6;">Tidak ada jalur ke broker, tidak ada eksekusi order, tidak ada aksi berdampak substantif. Pasal 14.2 — dan juri menghitungnya sebagai desain yang baik, bukan keterbatasan.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

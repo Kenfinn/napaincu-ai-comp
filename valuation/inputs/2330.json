@@ -1,0 +1,62 @@
+{
+  "code": "2330",
+  "name": "TSMC 台積電",
+  "currency": "TWD",
+  "unit": "juta NTD kecuali disebut lain",
+  "as_of": "2026-09-14",
+  "fiscal_year": 2025,
+  "market": {
+    "price_per_share": 2380,
+    "shares_issued_thousands": 25932524
+  },
+  "balance_sheet": {
+    "cash_and_equivalents": 2767856.4,
+    "short_term_investments": 300638.2,
+    "current_portion_lt_debt": 136926.5,
+    "current_portion_leases": 3833.0,
+    "long_term_debt": 896062.0
+  },
+  "cash_flow": {
+    "cfo_by_year": {
+      "2023": 1600000.0,
+      "2024": 2000000.0,
+      "2025": 2274980.0
+    },
+    "capex_by_year": {
+      "2023": 1313000.0,
+      "2024": 1140000.0,
+      "2025": 1272400.0
+    },
+    "interest_expense_by_year": {
+      "2023": 12000.0,
+      "2024": 12000.0,
+      "2025": 12300.0
+    }
+  },
+  "tax": {
+    "income_tax_expense": 346500.0,
+    "pretax_income": 2041600.0
+  },
+  "wacc_inputs": {
+    "risk_free_rate": 0.0194,
+    "beta": 1.25,
+    "equity_risk_premium": 0.0501,
+    "total_interest_expense": 19980.0
+  },
+  "assumptions": {
+    "include_leases_in_debt": false,
+    "fcff_basis": "latest",
+    "terminal_growth_ceiling": 0.035
+  },
+  "sources": {
+    "price_per_share": "Harga penutupan TWSE 2026-09-14 — GANTI dengan URL TWSE",
+    "shares_issued_thousands": "Laporan keuangan 2025, Issued and paid shares — GANTI dengan URL MOPS",
+    "balance_sheet": "Neraca konsolidasi 2025 — GANTI dengan URL MOPS",
+    "cash_flow": "Laporan arus kas 2023-2025 — GANTI dengan URL MOPS. Angka 2023-2024 disetel agar FCFF cocok dengan hitungan tangan PDK (297 dan 870 bio) — PERKIRAAN, wajib diganti angka asli",
+    "tax": "Laporan laba rugi 2025 — GANTI dengan URL MOPS",
+    "risk_free_rate": "Imbal hasil obligasi Taiwan 10 tahun — https://ca.investing.com/rates-bonds/taiwan-10-year-bond-yield-historical-data",
+    "beta": "Beta 5Y bulanan — https://finance.yahoo.com/quote/2330.TW/",
+    "equity_risk_premium": "Damodaran country premium, Taiwan — https://pages.stern.nyu.edu/adamodar/New_Home_Page/datafile/ctryprem.html",
+    "terminal_growth_ceiling": "BELUM ADA SUMBER — isi dengan proyeksi pertumbuhan PDB nominal Taiwan jangka panjang"
+  }
+}

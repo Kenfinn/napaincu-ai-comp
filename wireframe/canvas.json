@@ -1,0 +1,40 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html",              "title": "1 · Feed Peringatan",        "x": 0,    "y": 0,    "w": 1440, "h": 1040 },
+    { "file": "DetailPeringatan.dc.html",  "title": "2 · Detail + Sitasi",        "x": 1560, "y": 0,    "w": 1440, "h": 840 },
+    { "file": "Valuasi.dc.html",           "title": "3 · Valuasi DCF",            "x": 3120, "y": 0,    "w": 1440, "h": 820 },
+    { "file": "RiwayatNilaiWajar.dc.html", "title": "3b · Riwayat Nilai Wajar",   "x": 0,    "y": 1200, "w": 1440, "h": 900 },
+    { "file": "TanyaJawab.dc.html",        "title": "4 · Tanya Jawab",            "x": 1560, "y": 1200, "w": 1440, "h": 860 },
+    { "file": "Watchlist.dc.html",         "title": "5 · Watchlist & Risiko",     "x": 3120, "y": 1200, "w": 1440, "h": 780 },
+    { "file": "JejakAudit.dc.html",        "title": "6 · Jejak Audit",            "x": 0,    "y": 2260, "w": 1440, "h": 900 },
+    { "file": "NotifPonsel.dc.html",       "title": "7 · Notifikasi Ponsel",      "x": 1560, "y": 2260, "w": 390,  "h": 1080 }
+  ],
+  "annotations": [
+    {
+      "id": "untuk-apa",
+      "x": 0, "y": -230, "w": 900,
+      "text": "UNTUK APA WIREFRAME INI.\nBukan versi pucat dari desain hi-fi. Tiap layar di sini membawa catatan bernomor di bawahnya yang menjelaskan KENAPA sebuah bagian ada — dan itu yang tidak bisa dibaca dari mockup jadi.\n\nDipakai untuk dua hal: bahan rapat dengan Ferry dan PDK (orang berdebat soal struktur, bukan warna), dan bahan dokumen 16 Oktober (juri melihat alasan, bukan cuma tampilan)."
+    },
+    {
+      "id": "alur-demo",
+      "x": 1560, "y": -230, "w": 900,
+      "text": "BARIS ATAS ADALAH ALUR DEMO.\nPeringatan masuk → dibuka dan sitasinya diperiksa → valuasi dihitung ulang. Tiga layar, satu tarikan napas.\n\nKalau demo harus berhenti untuk menjelaskan sesuatu di antara ketiganya, berarti ada yang salah di wireframe ini, bukan di penjelasannya."
+    },
+    {
+      "id": "baris-dua",
+      "x": 0, "y": 2075, "w": 860,
+      "text": "BARIS BAWAH: LAYAR YANG SERING DILUPAKAN.\nJejak Audit adalah layar produk, bukan lampiran — dan satu langkah di dalamnya menunjukkan verifier MENOLAK draf. Itu elemen terpenting di seluruh wireframe ini.\n\nNotifikasi ponsel memenuhi syarat 'pengiriman proaktif'. Dashboard yang harus dikunjungi tidak memenuhinya."
+    },
+    {
+      "id": "aturan-warna",
+      "x": 4680, "y": 0, "w": 560,
+      "text": "KENAPA ABU-ABU SEMUA.\nWireframe sengaja tanpa warna supaya diskusi tidak melenceng ke palet. Satu-satunya warna adalah oranye penanda catatan.\n\nKotak abu-abu = teks atau data yang isinya belum diputuskan. Teks yang sudah ditulis penuh = kalimat yang memang harus persis seperti itu."
+    },
+    {
+      "id": "yang-belum",
+      "x": 4680, "y": 340, "w": 560,
+      "text": "YANG BELUM DIPUTUSKAN DI SINI:\n\n· Keadaan kosong — layar apa yang muncul di hari tanpa satu pun peringatan?\n· Keadaan error — MOPS tidak bisa dijangkau saat agen berjalan.\n· Berapa lama riwayat peringatan disimpan.\n\nTiga ini perlu dijawab sebelum layar dibangun, bukan sesudah."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Instrument Sans", system-ui, sans-serif; }
+    a { color: #A86A0B; } a:hover { color: #8A560A; }
+    * { box-sizing: border-box; }
+    .z  { border: 1px solid #C9CDD2; background: #FFFFFF; }
+    .zf { border: 1px solid #C9CDD2; background: #F3F4F6; }
+    .zd { border: 1px dashed #C9CDD2; background: #FAFBFB; }
+    .bar { background: #D7DBDF; border-radius: 2px; height: 9px; }
+    .bard { background: #AEB4BB; border-radius: 2px; height: 11px; }
+    .lbl { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; color: #7A828C; }
+    .mono { font-family: "IBM Plex Mono", monospace; }
+    .txt { font-size: 12.5px; color: #4A515A; }
+    .hd  { font-size: 15px; font-weight: 600; color: #2B313A; }
+    .cal { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; color: #FFFFFF; background: #A86A0B; width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; }
+    .legn { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; color: #A86A0B; flex: none; width: 15px; }
+    .leg { font-size: 11.5px; color: #4A515A; line-height: 1.5; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 900px; display: flex; flex-direction: column; background: #FFFFFF; color: #2B313A;">
+<div style="border-bottom: 1px solid #C9CDD2; padding: 15px 24px; display: flex; align-items: center; gap: 12px;">
+  <div class="z" style="width: 26px; height: 26px; border-radius: 5px;"></div>
+  <span class="hd" style="font-size: 14px;">Jejak Audit Agent</span>
+  <div style="margin-left: auto; display: flex; gap: 7px;">
+    <div class="z" style="width: 96px; height: 26px; border-radius: 5px;"></div>
+    <div style="width: 118px; height: 26px; border-radius: 5px; background: #59616B;"></div>
+  </div>
+</div>
+<div style="flex: 1; display: flex; min-height: 0; background: #F6F7F8;">
+  <div style="flex: 1; min-width: 0; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 11px;">
+        <div class="cal">1</div><span class="lbl">ringkasan satu kali jalan</span></div>
+      <div style="display: flex; gap: 13px;">
+        <div class="z" style="flex: 1; border-radius: 7px; padding: 14px 15px;"><div class="lbl">durasi</div><div class="mono" style="font-size: 21px; font-weight: 600; margin-top: 6px;">11,4 dtk</div></div><div class="z" style="flex: 1; border-radius: 7px; padding: 14px 15px;"><div class="lbl">langkah</div><div class="mono" style="font-size: 21px; font-weight: 600; margin-top: 6px;">7</div></div><div class="zf" style="flex: 1; border-radius: 7px; padding: 14px 15px; border-color: #A86A0B;"><div class="lbl">ditolak</div><div class="mono" style="font-size: 21px; font-weight: 600; margin-top: 6px; color: #A86A0B;">1</div></div><div class="z" style="flex: 1; border-radius: 7px; padding: 14px 15px;"><div class="lbl">dokumen</div><div class="mono" style="font-size: 21px; font-weight: 600; margin-top: 6px;">184</div></div>
+      </div>
+    </div>
+    <div class="z" style="border-radius: 7px; padding: 18px 20px;">
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 15px;">
+        <div class="cal">2</div><span class="lbl">urutan langkah</span></div>
+      <div style="display: flex; gap: 13px; align-items: flex-start;"><div style="display: flex; flex-direction: column; align-items: center; flex: none; align-self: stretch;"><div style="width: 11px; height: 11px; border-radius: 50%; border: 2px solid #AEB4BB; background: #FFFFFF; flex: none;"></div><div style="width: 2px; flex: 1; background: #D7DBDF; min-height: 26px;"></div></div><div style="flex: 1; padding-bottom: 15px;"><div style="display: flex; align-items: center; gap: 10px;"><div class="bard" style="width: 168px;"></div><div style="margin-left: auto;"><div class="bar" style="width: 46px;"></div></div></div><div style="margin-top: 7px;"><div class="bar" style="width: 64%; margin-top: 0px;"></div></div></div></div><div style="display: flex; gap: 13px; align-items: flex-start;"><div style="display: flex; flex-direction: column; align-items: center; flex: none; align-self: stretch;"><div style="width: 11px; height: 11px; border-radius: 50%; border: 2px solid #AEB4BB; background: #FFFFFF; flex: none;"></div><div style="width: 2px; flex: 1; background: #D7DBDF; min-height: 26px;"></div></div><div style="flex: 1; padding-bottom: 15px;"><div style="display: flex; align-items: center; gap: 10px;"><div class="bard" style="width: 204px;"></div><div style="margin-left: auto;"><div class="bar" style="width: 46px;"></div></div></div><div style="margin-top: 7px;"><div class="bar" style="width: 64%; margin-top: 0px;"></div></div></div></div><div style="display: flex; gap: 13px; align-items: flex-start;"><div style="display: flex; flex-direction: column; align-items: center; flex: none; align-self: stretch;"><div style="width: 11px; height: 11px; border-radius: 50%; border: 2px solid #AEB4BB; background: #FFFFFF; flex: none;"></div><div style="width: 2px; flex: 1; background: #D7DBDF; min-height: 26px;"></div></div><div style="flex: 1; padding-bottom: 15px;"><div style="display: flex; align-items: center; gap: 10px;"><div class="bard" style="width: 146px;"></div><div style="margin-left: auto;"><div class="bar" style="width: 46px;"></div></div></div><div style="margin-top: 7px;"><div class="bar" style="width: 64%; margin-top: 0px;"></div></div></div></div><div style="display: flex; gap: 13px; align-items: flex-start;"><div style="display: flex; flex-direction: column; align-items: center; flex: none; align-self: stretch;"><div style="width: 11px; height: 11px; border-radius: 50%; border: 2px solid #AEB4BB; background: #FFFFFF; flex: none;"></div><div style="width: 2px; flex: 1; background: #D7DBDF; min-height: 26px;"></div></div><div style="flex: 1; padding-bottom: 15px;"><div style="display: flex; align-items: center; gap: 10px;"><div class="bard" style="width: 188px;"></div><div style="margin-left: auto;"><div class="bar" style="width: 46px;"></div></div></div><div style="margin-top: 7px;"><div class="bar" style="width: 64%; margin-top: 0px;"></div></div></div></div><div style="display: flex; gap: 13px; align-items: flex-start;"><div style="display: flex; flex-direction: column; align-items: center; flex: none; align-self: stretch;"><div style="width: 11px; height: 11px; border-radius: 50%; border: 2px solid #A86A0B; background: #A86A0B; flex: none;"></div><div style="width: 2px; flex: 1; background: #D7DBDF; min-height: 26px;"></div></div><div style="flex: 1; padding-bottom: 15px;"><div style="border: 1px solid #A86A0B; background: #FDF8EF; border-radius: 7px; padding: 14px 16px;"><div style="display: flex; align-items: center; gap: 9px;"><span class="lbl" style="color: #A86A0B;">verifier menolak draf</span><div style="margin-left: auto;"><div class="bar" style="width: 46px;"></div></div></div><div class="txt" style="margin-top: 9px; line-height: 1.5;">Angka yang dikutip draf tidak ditemukan di dokumen sumber. Peringatan dibatalkan, bukan diperbaiki diam-diam.</div></div></div></div>
+    </div>
+  </div>
+
+  <div style="width: 356px; flex: none; border-left: 1px solid #C9CDD2; background: #FFFFFF; padding: 20px 18px; display: flex; flex-direction: column; gap: 15px;">
+    <div style="border: 1px solid #A86A0B; background: #FDF8EF; border-radius: 7px; padding: 15px 16px;">
+      <div style="display: flex; align-items: flex-start; gap: 10px;">
+        <div class="cal">3</div>
+        <div class="txt" style="line-height: 1.5;">Langkah penolakan ini adalah bukti paling langsung untuk kriteria <strong>Safety, Controllability &amp; Governance</strong>. Sistem yang tidak pernah menolak apa pun tidak punya bukti untuk ditunjukkan.</div>
+      </div>
+    </div>
+    <div class="z" style="border-radius: 7px; padding: 15px 16px;">
+      <div style="display: flex; align-items: center; gap: 9px;"><div class="cal">4</div><span class="lbl">ekspor</span></div>
+      <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+        <div class="zd" style="padding: 10px 12px;"><span class="txt">Unduh jejak sebagai berkas</span></div>
+        <div class="zd" style="padding: 10px 12px;"><span class="txt">Salin tautan ke run ini</span></div>
+      </div>
+    </div>
+    <div class="zd" style="margin-top: auto; border-radius: 7px; padding: 13px 14px;"><div class="bar" style="width: 90%; margin-top: 0px;"></div><div class="bar" style="width: 64%; margin-top: 6px;"></div></div>
+  </div>
+</div>
+<div style="border-top: 1px solid #C9CDD2; background: #FAFBFB; padding: 16px 26px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 30px;"><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">1</span><span class="leg">Ringkasan run ditampilkan sebagai angka, termasuk jumlah penolakan. Angka nol di sana justru mencurigakan.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">2</span><span class="leg">Urutan langkah dengan timestamp. Appendix 2 mewajibkan operation trace — kita menampilkannya sebagai layar produk, bukan lampiran dokumen terpisah.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">3</span><span class="leg">Satu langkah di mana verifier MENOLAK draf peringatan karena angkanya tidak ada di dokumen sumber. Ini elemen terpenting di seluruh wireframe.</span></div><div style="display: flex; gap: 8px; align-items: baseline;"><span class="legn">4</span><span class="leg">Jejak bisa diekspor dan ditautkan. Juri harus bisa memeriksanya setelah demo selesai, bukan hanya saat kita menunjukkannya.</span></div></div></div>
+</x-dc>
+</body>
+</html>

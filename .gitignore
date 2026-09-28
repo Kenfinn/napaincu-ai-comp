@@ -1,0 +1,15 @@
+# Data tarikan MOPS tidak di-commit: besar, dan hanya bisa diambil dari
+# jaringan Taiwan. Fixture dikecualikan — tanpa itu aplikasi tidak bisa
+# dijalankan di mesin lain, termasuk milik juri.
+data/*
+!data/fixtures/
+__pycache__/
+
+# Lingkungan lokal. .env bisa memuat GEMINI_API_KEY — aturan lomba melarang
+# API key ada di source code yang diserahkan.
+.venv/
+.env
+
+# hasil seed canvas — 2,5 MB kode editor, dibuat ulang dari *.dc.html
+design/sentinel-saham-aaic-2026.html
+wireframe/sentinel-saham-wireframe.html
