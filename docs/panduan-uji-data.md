@@ -30,11 +30,11 @@ Tidak perlu `pip install` apa pun. Kedua skrip hanya memakai pustaka bawaan Pyth
 ## Langkah 1 — Ambil kodenya
 
 ```bash
-git clone -b claude/aaic-2026-rules-6yy7gu https://github.com/Kenfinn/napaincu-ai-comp.git
+git clone https://github.com/Kenfinn/napaincu-ai-comp.git
 cd napaincu-ai-comp
 ```
 
-Kalau belum punya git: buka repo di browser, pilih branch `claude/aaic-2026-rules-6yy7gu`,
+Kalau belum punya git: buka repo di browser, pastikan branch `main`,
 lalu **Code → Download ZIP**, dan ekstrak.
 
 ## Langkah 2 — Uji akses dasar

@@ -104,7 +104,7 @@ nanti perlu menganalisis data yang tidak publik, free tier tidak boleh dipakai.
 
 ## 4. Yang sudah jadi
 
-Semua ada di branch `claude/aaic-2026-rules-6yy7gu`.
+Semua sudah digabung ke `main`.
 
 | Bidang | Hasil | Letak |
 |---|---|---|
@@ -201,7 +201,7 @@ Kerjakan berurutan. Tiap tahap punya tanda berhasil. Jangan lanjut sebelum tanda
 Tanpa kunci, memakai data contoh. Bisa dari jaringan mana saja.
 
 ```bash
-git clone -b claude/aaic-2026-rules-6yy7gu https://github.com/Kenfinn/napaincu-ai-comp.git
+git clone https://github.com/Kenfinn/napaincu-ai-comp.git
 cd napaincu-ai-comp
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
@@ -287,6 +287,8 @@ Yang perlu diketahui:
 1. Tahap 2 di atas: kunci Gemini, dengan target jejak pertama yang `panggilan_model > 0`.
 2. Tahap 3 di atas, dari jaringan kampus. Rekam layarnya sekalian untuk bahan video.
 
+Rincian per tanggal sampai 8 Oktober ada di [`tugas-A.md`](./tugas-A.md).
+
 ### Claude
 
 1. Revisi halaman Notion "Panduan Wawancara Level 1": tambah pertanyaan pengukuran
@@ -365,7 +367,7 @@ tests/                  14 tes
 ## 11. Catatan untuk sesi Claude berikutnya
 
 - Baca berkas ini dulu, lalu `docs/aaic-2026-ringkasan.md` kalau butuh detail aturan.
-- Kerja di branch `claude/aaic-2026-rules-6yy7gu`. Belum ada PR.
+- Kerja di `main` (branch lama `claude/aaic-2026-rules-6yy7gu` dan `claude/vigilant-feynman-cijkv5` sudah digabung). Daftar tugas jalur A ada di `docs/tugas-A.md`.
 - **Figma:** percobaan membangun diagram sebagai layer asli gagal di tengah jalan, karena
   parser vector Figma tidak menerima perintah arc SVG (`A`). Kemungkinan ada frame
   setengah jadi di sekitar koordinat (−3253, 1900). Bersihkan dulu sebelum membangun
