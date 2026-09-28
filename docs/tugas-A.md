@@ -6,94 +6,71 @@ ada di [`akses-data.md`](./akses-data.md).
 **Definisi selesai 8 Okt:** 1 emiten → 1 jenis kejadian → 1 alert bersitasi, jalan ujung ke ujung,
 bisa dijalankan ulang di depan orang lain dan direkam untuk video.
 
-**Status per 28 Sep:** status mahasiswa ✅ · pendaftaran tim ✅ · briefing ditinjau ✅ (tidak ada
-perubahan) · **uji 72 jam belum** → itu tugas pertama.
+**Status per 28 Sep:** status mahasiswa ✅ · pendaftaran tim ✅ · briefing ditinjau ✅ · **uji 72 jam belum**.
+
+## Cara bagi kerja
+
+- **Kamu** = yang butuh jaringan kampus Taiwan, keputusan, penilaian manusia, kunci API, dan
+  rekaman. Claude tidak bisa mengakses MOPS/TWSE dari cloud (terblokir di luar Taiwan).
+- **Claude** = menulis kode, skema data, tes, dan dokumentasi. Claude bekerja memakai
+  **data mentah yang kamu tarik dari kampus lalu commit ke repo** — itu jembatannya.
 
 ---
 
-## 0. Uji 72 jam — go / no-go (28 – 30 Sep) ⛔ pemblokir
+## ▶️ Mulai sekarang (28 – 29 Sep)
 
-Semua tugas di bawahnya menunggu keputusan ini.
+| # | Siapa | Tugas | Selesai kalau |
+|---|---|---|---|
+| 1 | Claude | Tulis skrip uji 72 jam: tarik 20 pengumuman 重大訊息 untuk 5 emiten, simpan HTML mentah + hasil parse | Skrip ada di `scripts/`, bisa dijalankan satu perintah |
+| 2 | Kamu | Siapkan API key LLM (disimpan di `.env` lokal, **jangan di-commit**) | Key jalan di laptopmu |
+| 3 | Kamu | Konfirmasi 5 emiten uji (usulan: 2330, 2317, 2454, 2412, 2881) | Balas "ok" atau ganti |
+| 4 | Kamu | Jadwalkan waktu di jaringan kampus besok | — |
 
-- [ ] Jalankan `python3 scripts/probe_sources.py --json > probe-hasil.json` **dari jaringan kampus
-      di Taiwan** (dari cloud/luar Taiwan pasti terblokir, jadi hasilnya tidak berarti)
-- [ ] Pilih 5 emiten uji, mis. 2330, 2317, 2454, 2412, 2881
-- [ ] Tarik 20 pengumuman 重大訊息 (MOPS `ajax_t51sb10`) untuk 5 emiten itu
-- [ ] Parse jadi baris: kode saham, tanggal, judul, isi, URL sumber
-- [ ] Uji terjemahan zh-TW → ID/EN pada 5 pengumuman yang memuat angka; cek manual apakah angka
-      dan istilah akuntansinya tetap benar
-- [ ] Tulis keputusan (1 paragraf) di akhir dokumen ini
+## Uji 72 jam (29 – 30 Sep) ⛔ pemblokir
+
+| # | Siapa | Tugas |
+|---|---|---|
+| 5 | Kamu | Di jaringan kampus: jalankan `probe_sources.py --json` dan skrip uji 72 jam |
+| 6 | Kamu | Commit & push hasil mentahnya ke `data/raw/` (bahan kerja Claude) |
+| 7 | Claude | Parser dari data mentah + skrip uji terjemahan zh-TW → ID/EN pada 5 pengumuman berangka |
+| 8 | Kamu | Cek manual hasil terjemahan: angka & istilah akuntansi benar? |
+| 9 | Kamu | **Putuskan go / no-go**, kabari tim (30 Sep) |
 
 | Hasil | Keputusan |
 |---|---|
-| MOPS bisa ditarik & diparse, terjemahan angka aman | **Go** — lanjut ke langkah 1 |
-| MOPS terblokir tapi FinMind/OpenAPI jalan | Go dengan FinMind sebagai jalur ambil, **sitasi tetap ke URL MOPS** |
-| Tidak ada yang jalan dalam 3 hari | **No-go** — bahas pindah ke Ai3 (GovAid Copilot) dengan tim |
+| MOPS bisa ditarik & diparse, terjemahan angka aman | **Go** |
+| MOPS terblokir tapi FinMind/OpenAPI jalan | Go, FinMind untuk ambil data, **sitasi tetap ke URL MOPS** |
+| Tidak ada yang jalan | **No-go** → bahas pindah ke Ai3 (GovAid Copilot) |
 
-## 1. Evidence layer minimal (30 Sep – 1 Okt)
+## Setelah Go — alur tipis (30 Sep – 8 Okt)
 
-- [ ] Kunci jalur demo: **1 emiten + 1 jenis kejadian** (mis. 2330 + pengumuman laba/pendapatan)
-- [ ] Fetcher MOPS yang **memvalidasi bentuk respons**, bukan status code (halaman blokir = HTTP 200)
-- [ ] Retry dengan backoff + jeda 1–3 detik antar-request
-- [ ] Simpan dokumen: `stock_id`, `tanggal`, `judul`, `isi_asli`, `url_sumber`, `fetched_at`, `hash`
-- [ ] Penyimpanan angka terstruktur terpisah (SQLite cukup) dari TWSE OpenAPI / FinMind —
-      konversi tanggal ROC (115 = 2026)
-- [ ] Setiap kegagalan fetch dicatat sebagai event, jangan dibuang
+| Tanggal | Claude kerjakan | Kamu kerjakan |
+|---|---|---|
+| 30 Sep | — | Kunci jalur demo: 1 emiten + 1 jenis kejadian |
+| 30 Sep – 1 Okt | Evidence layer: fetcher dengan validasi bentuk respons + retry, skema SQLite (dokumen + angka terstruktur), konversi tanggal ROC | Jalankan fetcher di kampus, push hasilnya |
+| 1 – 2 Okt | Deteksi kejadian baru (snapshot + hash + diff) | — |
+| 2 – 3 Okt | `watchlist.json`, `profil_risiko.json`, skor relevansi dengan ambang sebagai parameter | Review: profil investor contohnya masuk akal? (cocokkan dengan temuan wawancara B) |
+| 3 – 5 Okt | Penyusun alert bersitasi via LLM | Review 3–5 contoh alert: jelas, tidak berbau saran beli/jual? |
+| 5 – 6 Okt | Verifier angka + satu kasus gagal sengaja untuk demo safety | Coba "rusak" sendiri: apakah verifier menangkapnya? |
+| 6 – 7 Okt | Operation trace (JSONL + tampilan ringkas: langkah, tool, retry, latensi, biaya) | — |
+| 7 – 8 Okt | Runner satu perintah + README singkat cara menjalankan | Jalankan ujung ke ujung ≥3 kali, **rekam**, serahkan ke C |
+| opsional | Reaksi 👍/👎 menyetel ambang relevansi | Putuskan apakah masuk video |
 
-## 2. Deteksi kejadian (1 – 2 Okt)
-
-- [ ] Snapshot daftar 重大訊息 → hash tiap entri → diff dengan snapshot sebelumnya
-- [ ] Entri baru = pemicu agent
-
-## 3. Profil & relevansi (2 – 3 Okt)
-
-- [ ] `watchlist.json` + `profil_risiko.json` untuk satu investor contoh
-- [ ] Penilaian relevansi kejadian terhadap profil → skor + alasan singkat
-- [ ] Ambang relevansi sebagai parameter, **bukan hard-code** (dipakai lagi di langkah 7)
-
-## 4. Susun alert bersitasi (3 – 5 Okt)
-
-- [ ] LLM menyusun alert singkat dari dokumen sumber (termasuk terjemahan)
-- [ ] Tiap klaim menunjuk ke URL MOPS/TWSE asli, bukan endpoint agregator
-- [ ] Tidak ada rekomendasi beli/jual, prediksi harga, atau eksekusi order
-
-## 5. Verifier (5 – 6 Okt)
-
-- [ ] Ekstrak semua angka dari alert hasil generasi
-- [ ] Cocokkan tiap angka ke penyimpanan terstruktur
-- [ ] Tidak cocok → alert **ditolak** dan masuk antrean eskalasi manusia
-- [ ] Siapkan satu kasus gagal yang sengaja dibuat (angka salah) untuk demo safety
-
-## 6. Operation trace (6 – 7 Okt)
-
-- [ ] Log tiap langkah: rencana, tool yang dipanggil, input/output ringkas, retry, hasil verifier,
-      latensi, biaya token
-- [ ] Format yang bisa dibaca manusia (JSONL + satu tampilan ringkas) — ini wajib di final
-
-## 7. Ujung ke ujung + rekaman (7 – 8 Okt)
-
-- [ ] Satu perintah menjalankan seluruh alur dari data sampai alert terkirim
-- [ ] Jalankan ulang ≥3 kali tanpa intervensi
-- [ ] Serahkan rekaman kasar ke C
-- [ ] *(Opsional)* reaksi 👍/👎 menyetel ambang relevansi — versi paling sederhana, untuk cerita
-      *behavioral feedback → continuous optimization* di deck
-
-## Jangan dikerjakan sekarang
-
-UI rapi · banyak emiten · akurasi tinggi · antarmuka tanya-jawab (itu Fase 5). Belum dinilai di
-penyisihan.
-
-## Serahan ke tim
+## Serahan ke tim (tanggung jawabmu)
 
 | Kapan | Ke | Apa |
 |---|---|---|
 | 30 Sep | Semua | Keputusan go / no-go |
-| 6 Okt | C | Diagram arsitektur final + contoh alert untuk deck |
+| 6 Okt | C | Diagram arsitektur + contoh alert untuk deck (Claude bisa bantu siapkan) |
 | 8 Okt | C | Rekaman demo kasar |
 | 8 Okt | B | Format gold set yang bisa langsung dijalankan di Fase 3 |
+
+## Jangan dikerjakan sekarang
+
+UI rapi · banyak emiten · akurasi tinggi · antarmuka tanya-jawab (Fase 5). Belum dinilai di penyisihan.
 
 ---
 
 ## Keputusan uji 72 jam
 
-_(isi setelah langkah 0 selesai)_
+_(isi setelah langkah 9)_
