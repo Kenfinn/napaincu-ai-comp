@@ -1,5 +1,8 @@
 # Proposal Brief — isi deck penyisihan (draf 15 Okt)
 
+> **Sudah dilanjutkan.** Isi berkas ini dipakai untuk halaman tambahan deck FEAF (12 halaman).
+> Panduan pengiriman final ada di [`kirim-16-okt.md`](./kirim-16-okt.md).
+
 > **Catatan internal — hapus seluruh blok ini sebelum dikirim.**
 >
 > Situs lomba meminta proposal brief mencakup tujuh hal: *real problem and evidence of need ·
