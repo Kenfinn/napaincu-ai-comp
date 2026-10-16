@@ -58,6 +58,12 @@ Google Fonts) harus terpasang, kalau tidak PowerPoint menggantinya dan teks bisa
 
 ## 2 · Video ≤ 4 menit (harus direkam hari ini)
 
+**Deck video sudah ada:** `FEAF_Concept_Demo_Video.pptx` (12 slide 16:9: non-teknis → teknis →
+prototipe) dengan naskah per slide di speaker notes, plus `FEAF_Naskah_Video.pdf` untuk dibaca saat
+merekam. Slide 9–10 memakai screenshot asli prototipe, jadi aplikasi tidak wajib dijalankan saat
+merekam. Skripnya: `slides/build_video_deck.py`. Naskah di bawah ini versi awal; ikuti versi
+di deck.
+
 Aturan: anggota tim **tampil** menjelaskan dan mendemokan. Unggah ke YouTube (*unlisted*) atau
 Google Drive (*anyone with the link*), lalu buka tautannya di jendela incognito untuk
 memastikan bisa diputar.
