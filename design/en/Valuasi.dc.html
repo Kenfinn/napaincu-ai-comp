@@ -1,0 +1,299 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #16324F; } a:hover { color: #0C2138; }
+    * { box-sizing: border-box; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 1080px; display: flex; flex-direction: column; background: #EEF0F2; color: #101418; font-size: 14px;">
+
+  <!-- HEADER -->
+  <div style="background: #FFFFFF; border-bottom: 1px solid #DDE1E6; padding: 18px 32px; display: flex; align-items: center; gap: 20px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#596270" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 600;">2330</span>
+      <span style="font-size: 18px; font-weight: 600; letter-spacing: -0.015em;">TSMC 台積電</span>
+    </div>
+    <div style="display: flex; align-items: baseline; gap: 7px; padding-left: 18px; border-left: 1px solid #DDE1E6;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 600;">2,380</span>
+      <span style="font-size: 12.5px; color: #596270;">NTD</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; color: #C6362C;">+1.28%</span>
+    </div>
+    <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #8A929C;">Data as of 14 Sep 2026 · FY2025</span>
+    <div style="display: flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid #C6CCD3; border-radius: 5px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#596270" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>
+      <span style="font-size: 12.5px; color: #596270;">Export worksheet</span>
+    </div>
+  </div>
+
+  <div style="flex: 1; display: flex; gap: 20px; padding: 20px 32px; min-height: 0;">
+
+    <!-- LEFT -->
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+
+      <!-- VERDICT -->
+      <div style="background: #FFFFFF; border: 1px solid #DDE1E6; border-left: 4px solid #A86A0B; border-radius: 7px; padding: 20px 22px; display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.09em; color: #A86A0B; text-transform: uppercase;">Conclusion</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #596270; background: #EEF0F2; padding: 2px 7px; border-radius: 3px;">Unlevered DCF · single-stage perpetuity</span>
+        </div>
+
+        <div style="font-size: 24px; font-weight: 700; line-height: 1.28; letter-spacing: -0.022em; max-width: 640px;">The market assumes perpetual growth of <span style="color: #A86A0B;">6.29%</span> — above the 3.5% reasonable cap</div>
+
+        <div style="display: flex; gap: 10px;">
+          <div style="flex: 1; background: #F6F7F9; border-radius: 6px; padding: 13px 15px; display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #8A929C; text-transform: uppercase;">Market-implied g</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 25px; font-weight: 600; color: #A86A0B; letter-spacing: -0.02em;">6.29%</span>
+            <span style="font-size: 11.5px; color: #596270; line-height: 1.4;">reversed from today's price</span>
+          </div>
+          <div style="flex: 1; background: #F6F7F9; border-radius: 6px; padding: 13px 15px; display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #8A929C; text-transform: uppercase;">Perpetuity cap</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 25px; font-weight: 600; letter-spacing: -0.02em;">3.50%</span>
+            <span style="font-size: 11.5px; color: #596270; line-height: 1.4;">Long-run nominal GDP</span>
+          </div>
+          <div style="flex: 1; background: #F6F7F9; border-radius: 6px; padding: 13px 15px; display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #8A929C; text-transform: uppercase;">Fair value if g = 3.5%</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 25px; font-weight: 600; letter-spacing: -0.02em;">1,086</span>
+            <span style="font-size: 11.5px; color: #596270; line-height: 1.4;">vs market price 2,380</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 9px; padding: 12px 14px; background: #FAF0DC; border-radius: 5px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A86A0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px;"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+          <span style="font-size: 12.5px; line-height: 1.5; color: #101418;">This is <strong style="font-weight: 600;">not a price target</strong>. The figures above show what someone must believe for today's price to make sense — not where the price will go.</span>
+        </div>
+      </div>
+
+      <!-- SENSITIVITY -->
+      <div style="flex: 1; background: #FFFFFF; border: 1px solid #DDE1E6; border-radius: 7px; padding: 18px 20px; display: flex; flex-direction: column; gap: 13px; min-height: 0;">
+        <div style="display: flex; align-items: baseline; gap: 10px;">
+          <span style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em;">Fair value per share: sensitivity</span>
+          <span style="font-size: 12px; color: #8A929C;">move the assumptions on the right — this table updates</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="display: flex; gap: 3px;">
+            <div style="width: 92px; flex: none;"></div>
+            <div style="flex: 1; display: flex; gap: 3px;">
+              <div style="flex: 1; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8A929C; padding-bottom: 3px;">g 5.29%</div>
+              <div style="flex: 1; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8A929C; padding-bottom: 3px;">g 5.79%</div>
+              <div style="flex: 1; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; color: #101418; padding-bottom: 3px;">g 6.29%</div>
+              <div style="flex: 1; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8A929C; padding-bottom: 3px;">g 6.79%</div>
+              <div style="flex: 1; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8A929C; padding-bottom: 3px;">g 7.29%</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 3px;">
+            <div style="width: 92px; flex: none; display: flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #596270;">WACC 7.09%</div>
+            <div style="flex: 1; display: flex; gap: 3px;">
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #F6F7F9; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">2,358</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #EDF4F1; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">3,248</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #DFEDE7; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">5,244</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #CDE5DA; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">13,813</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #F6F7F9; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8A929C;">—</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 3px;">
+            <div style="width: 92px; flex: none; display: flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #596270;">WACC 7.59%</div>
+            <div style="flex: 1; display: flex; gap: 3px;">
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #FBF1F0; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">1,864</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #F6F7F9; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">2,369</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #EDF4F1; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">3,263</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #DFEDE7; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">5,268</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #CDE5DA; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">13,877</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 3px;">
+            <div style="width: 92px; flex: none; display: flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; font-weight: 600; color: #101418;">WACC 8.09%</div>
+            <div style="flex: 1; display: flex; gap: 3px;">
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #F7E4E2; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">1,545</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #FBF1F0; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">1,872</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #16324F; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: #FFFFFF;">2,380</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #EDF4F1; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">3,278</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #DFEDE7; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">5,292</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 3px;">
+            <div style="width: 92px; flex: none; display: flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #596270;">WACC 8.59%</div>
+            <div style="flex: 1; display: flex; gap: 3px;">
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #F2D5D2; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">1,323</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #F7E4E2; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">1,552</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #FBF1F0; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">1,880</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #F6F7F9; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">2,391</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #EDF4F1; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">3,293</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 3px;">
+            <div style="width: 92px; flex: none; display: flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #596270;">WACC 9.09%</div>
+            <div style="flex: 1; display: flex; gap: 3px;">
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #EEC7C3; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">1,160</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #F2D5D2; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">1,329</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #F7E4E2; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">1,559</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #FBF1F0; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">1,889</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; background: #F6F7F9; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">2,402</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px; margin-top: auto; padding-top: 11px; border-top: 1px solid #DDE1E6;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="width: 20px; height: 9px; background: #EEC7C3; border-radius: 2px;"></span>
+            <span style="font-size: 11.5px; color: #596270;">below market price</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="width: 20px; height: 9px; background: #16324F; border-radius: 2px;"></span>
+            <span style="font-size: 11.5px; color: #596270;">active assumption</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="width: 20px; height: 9px; background: #CDE5DA; border-radius: 2px;"></span>
+            <span style="font-size: 11.5px; color: #596270;">above market price</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: ASSUMPTIONS -->
+    <div style="width: 340px; flex: none; display: flex; flex-direction: column; gap: 14px;">
+
+      <div style="background: #FFFFFF; border: 1px solid #DDE1E6; border-radius: 7px; padding: 17px 18px; display: flex; flex-direction: column; gap: 17px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.09em; color: #8A929C; text-transform: uppercase;">Assumptions — editable</span>
+          <span style="margin-left: auto; font-size: 11.5px; color: #16324F; text-decoration: underline; text-underline-offset: 2px;">Reset</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 7px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between;">
+            <span style="font-size: 13px; font-weight: 500;">WACC</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600;">8.09%</span>
+          </div>
+          <div style="position: relative; height: 5px; background: #E4E7EA; border-radius: 3px;">
+            <div style="position: absolute; left: 0; top: 0; height: 5px; width: 50%; background: #16324F; border-radius: 3px;"></div>
+            <div style="position: absolute; left: 50%; top: -5px; width: 15px; height: 15px; background: #FFFFFF; border: 2px solid #16324F; border-radius: 50%; margin-left: -7px;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #8A929C;">7.09%</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #8A929C;">9.09%</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 7px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between;">
+            <span style="font-size: 13px; font-weight: 500;">Perpetual growth (g)</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; color: #A86A0B;">6.29%</span>
+          </div>
+          <div style="position: relative; height: 5px; background: #E4E7EA; border-radius: 3px;">
+            <div style="position: absolute; left: 0; top: 0; height: 5px; width: 50%; background: #A86A0B; border-radius: 3px;"></div>
+            <div style="position: absolute; left: 35%; top: -3px; width: 2px; height: 11px; background: #17795E;"></div>
+            <div style="position: absolute; left: 50%; top: -5px; width: 15px; height: 15px; background: #FFFFFF; border: 2px solid #A86A0B; border-radius: 50%; margin-left: -7px;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #8A929C;">5.29%</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #17795E;">cap 3.5%</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #8A929C;">7.29%</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 7px;">
+          <span style="font-size: 13px; font-weight: 500;">FCFF base</span>
+          <div style="display: flex; gap: 0; border: 1px solid #C6CCD3; border-radius: 5px; overflow: hidden;">
+            <div style="flex: 1; text-align: center; padding: 7px 0; background: #16324F; font-size: 12.5px; font-weight: 600; color: #FFFFFF;">Latest year</div>
+            <div style="flex: 1; text-align: center; padding: 7px 0; font-size: 12.5px; color: #596270;">3-yr average</div>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #596270;">1,012.8 bn</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8A929C;">726.6 bn</span>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 13px; border-top: 1px solid #DDE1E6;">
+          <span style="font-size: 13px; font-weight: 500;">Leases as debt</span>
+          <div style="width: 38px; height: 21px; background: #C6CCD3; border-radius: 11px; position: relative;">
+            <div style="position: absolute; left: 2px; top: 2px; width: 17px; height: 17px; background: #FFFFFF; border-radius: 50%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EV BRIDGE -->
+      <div style="background: #FFFFFF; border: 1px solid #DDE1E6; border-radius: 7px; padding: 17px 18px; display: flex; flex-direction: column; gap: 12px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.09em; color: #8A929C; text-transform: uppercase;">Enterprise value bridge</span>
+        <div style="display: flex; flex-direction: column; gap: 9px;">
+          <div style="display: flex; align-items: baseline; gap: 8px;">
+            <span style="font-size: 12.5px; color: #596270;">Market cap</span>
+            <span style="flex: 1; border-bottom: 1px dotted #C6CCD3; margin-bottom: 3px;"></span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 500;">61.719 T</span>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 8px;">
+            <span style="font-size: 12.5px; color: #596270;">+ Interest-bearing debt</span>
+            <span style="flex: 1; border-bottom: 1px dotted #C6CCD3; margin-bottom: 3px;"></span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 500;">1.033 T</span>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 8px;">
+            <span style="font-size: 12.5px; color: #596270;">− Cash &amp; short-term investments</span>
+            <span style="flex: 1; border-bottom: 1px dotted #C6CCD3; margin-bottom: 3px;"></span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 500;">3.068 T</span>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 8px; padding-top: 8px; border-top: 1px solid #DDE1E6;">
+            <span style="font-size: 13px; font-weight: 600;">Enterprise value</span>
+            <span style="flex: 1;"></span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 14.5px; font-weight: 600;">59.684 T</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOURCES -->
+      <div style="flex: 1; background: #FFFFFF; border: 1px solid #DDE1E6; border-radius: 7px; padding: 17px 18px; display: flex; flex-direction: column; gap: 11px; min-height: 0;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.09em; color: #8A929C; text-transform: uppercase;">Source of every number</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: #17795E; background: #E3F1EB; padding: 2px 6px; border-radius: 3px; margin-left: auto;">9/9 CITED</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16324F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><path d="M20 6L9 17l-5-5"/></svg>
+            <span style="font-size: 12px; color: #101418;">Consolidated balance sheet 2025</span>
+            <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #16324F;">MOPS ↗</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16324F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><path d="M20 6L9 17l-5-5"/></svg>
+            <span style="font-size: 12px; color: #101418;">Cash flows 2023–2025</span>
+            <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #16324F;">MOPS ↗</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16324F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><path d="M20 6L9 17l-5-5"/></svg>
+            <span style="font-size: 12px; color: #101418;">Shares outstanding</span>
+            <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #16324F;">MOPS ↗</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16324F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><path d="M20 6L9 17l-5-5"/></svg>
+            <span style="font-size: 12px; color: #101418;">10-yr bond yield</span>
+            <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #16324F;">Investing ↗</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16324F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><path d="M20 6L9 17l-5-5"/></svg>
+            <span style="font-size: 12px; color: #101418;">Taiwan equity risk premium</span>
+            <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #16324F;">Damodaran ↗</span>
+          </div>
+        </div>
+        <div style="margin-top: auto; padding: 10px 11px; background: #F6F7F9; border-radius: 5px;">
+          <span style="font-size: 11.5px; color: #596270; line-height: 1.45;">Every number links to its original document. A number without a source is never shown.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

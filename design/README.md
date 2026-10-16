@@ -108,3 +108,16 @@ terbentuk lengkap dengan judul tiap layar.
 sendiri. Ini satu-satunya berkas yang masuk ke Figma sebagai **layer asli** — garis jadi
 vector path, angka sumbu jadi text layer yang bisa diedit. PNG yang lain masuk sebagai
 gambar rata, bukan layer.
+
+## Versi bahasa Inggris
+
+`design/en/` berisi versi bahasa Inggris dari kesepuluh berkas di atas, dan PNG-nya ada di
+`design/en/export/`. Versi inilah yang dipakai di Figma dan materi lomba. Buat ulang setelah
+mengubah layar berbahasa Indonesia:
+
+```bash
+python3 scripts/design_en.py          # terjemahkan → design/en/*.dc.html
+node scripts/render_design.js design/en
+```
+
+Teks baru yang belum ada di kamus `EN` di `scripts/design_en.py` dilaporkan saat skrip jalan.

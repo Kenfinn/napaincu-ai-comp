@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    .mono { font-family: 'IBM Plex Mono', monospace; }
+    .lay { background: #FFFFFF; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; }
+    .layh { font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #6B7683; margin-bottom: 10px; font-family: 'IBM Plex Mono', monospace; }
+    .node { border: 1.3px solid #D3D8DE; border-radius: 5px; padding: 8px 10px; margin-bottom: 7px; }
+    .nt { font-size: 12px; font-weight: 600; color: #101418; }
+    .ns { font-size: 10.5px; line-height: 1.4; color: #6B7683; margin-top: 2px; }
+    .arr { width: 26px; flex: none; display: flex; align-items: center; justify-content: center; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 820px; background: #EEF0F2; color: #101418; padding: 34px 40px 0; display: flex; flex-direction: column;">
+
+  <!-- JUDUL -->
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 4px;">
+    <div>
+      <div class="mono" style="font-size: 10px; letter-spacing: 0.1em; color: #6B7683; text-transform: uppercase; margin-bottom: 5px;">System architecture, models, tools and data flow</div>
+      <div style="font-size: 25px; font-weight: 700; letter-spacing: -0.015em;">The model touches only two boxes out of eleven</div>
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #FFFFFF; background: #16324F; padding: 4px 9px; border-radius: 3px;">DETERMINISTIC</span>
+      <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #FFFFFF; background: #A86A0B; padding: 4px 9px; border-radius: 3px;">MODEL</span>
+    </div>
+  </div>
+
+  <div style="height: 1px; background: #D3D8DE; margin-bottom: 20px;"></div>
+
+  <!-- EMPAT LAPISAN -->
+  <div style="display: flex; align-items: stretch;">
+
+    <!-- SUMBER -->
+    <div class="lay" style="flex: 1;">
+      <div class="layh">1 · External sources</div>
+      <div class="node" style="border-color: #B8C0CA;">
+        <div class="nt">MOPS 公開資訊觀測站</div>
+        <div class="ns">重大訊息 · form-POST · ROC calendar (2026 = year 115)</div>
+      </div>
+      <div class="node" style="border-color: #B8C0CA;">
+        <div class="nt">TWSE / TPEx OpenAPI</div>
+        <div class="ns">Closing price, shares outstanding</div>
+      </div>
+      <div style="margin-top: auto; background: #F9EAE8; border-left: 3px solid #8A2F27; border-radius: 0 5px 5px 0; padding: 9px 10px;">
+        <div style="font-size: 10.5px; line-height: 1.45; color: #6B2620;"><strong>Geo-blocked outside Taiwan.</strong> It answers HTTP 200 with a block page — a silent failure. We validate the <strong>shape</strong> of the response, not its status code.</div>
+      </div>
+    </div>
+
+    <div class="arr"><svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg></div>
+
+    <!-- PENGAMBILAN -->
+    <div class="lay" style="flex: 1.05;">
+      <div class="layh">2 · Ingestion &amp; cleaning</div>
+      <div class="node"><div class="nt">probe_sources.py</div><div class="ns">Checks that each source is reachable</div></div>
+      <div class="node"><div class="nt">spike_mops.py</div><div class="ns">Bulk pull · <span class="mono">POLITE_DELAY 2.5 s</span></div></div>
+      <div class="node"><div class="nt">parse_mops.py</div><div class="ns">711 rows → records + citation URLs</div></div>
+      <div class="node" style="border-color: #17795E; border-width: 2px; background: #EFF7F3;">
+        <div class="nt">fetch_details.py</div>
+        <div class="ns" style="color: #12604A;"><strong>Personal data is dropped here.</strong> 發言人 · 職稱 · 電話 — we log only <em>that</em> the field was dropped, never its content.</div>
+      </div>
+      <div style="margin-top: auto; font-size: 10.5px; line-height: 1.45; color: #6B7683;">Art. 14.1 — data minimisation. Upstream, not downstream: no personal data can reach the model because it is never stored.</div>
+    </div>
+
+    <div class="arr"><svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg></div>
+
+    <!-- AGENT -->
+    <div class="lay" style="flex: 1.35; background: #16324F;">
+      <div class="layh" style="color: #7E9BB8;">3 · Agent — app/agent/</div>
+      <div style="border: 1.3px solid #2F5375; border-radius: 5px; padding: 7px 9px; margin-bottom: 6px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #FFFFFF;">0 · screen.py</span><span class="mono" style="font-size: 8px; color: #BFD6E8; background: rgba(255,255,255,0.13); padding: 2px 5px; border-radius: 2px;">DET</span></div>
+        <div style="font-size: 10.5px; color: #A9C0D6; margin-top: 2px;">符合條款 screen · 711 → ~30</div>
+      </div>
+      <div style="border: 1.6px solid #A86A0B; border-radius: 5px; padding: 7px 9px; margin-bottom: 6px; background: rgba(168,106,11,0.12);">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #FFFFFF;">1 · extract.py · triage</span><span class="mono" style="font-size: 8px; color: #FFFFFF; background: #A86A0B; padding: 2px 5px; border-radius: 2px;">MODEL</span></div>
+        <div style="font-size: 10.5px; color: #E0C79B; margin-top: 2px;">Which valuation input is touched?</div>
+      </div>
+      <div style="border: 1.6px solid #A86A0B; border-radius: 5px; padding: 7px 9px; margin-bottom: 6px; background: rgba(168,106,11,0.12);">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #FFFFFF;">2 · extract.py · extraction</span><span class="mono" style="font-size: 8px; color: #FFFFFF; background: #A86A0B; padding: 2px 5px; border-radius: 2px;">MODEL</span></div>
+        <div style="font-size: 10.5px; color: #E0C79B; margin-top: 2px;">Number + its source sentence</div>
+      </div>
+      <div style="border: 1.3px solid #2F5375; border-radius: 5px; padding: 7px 9px; margin-bottom: 6px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #FFFFFF;">3 · recompute.py</span><span class="mono" style="font-size: 8px; color: #BFD6E8; background: rgba(255,255,255,0.13); padding: 2px 5px; border-radius: 2px;">DET</span></div>
+        <div style="font-size: 10.5px; color: #A9C0D6; margin-top: 2px;">calls <span class="mono">scripts/dcf.py → compute()</span></div>
+      </div>
+      <div style="border: 2px solid #7FD3B4; border-radius: 5px; padding: 7px 9px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 600; color: #FFFFFF;">4 · verify.py</span><span class="mono" style="font-size: 8px; color: #BFD6E8; background: rgba(255,255,255,0.13); padding: 2px 5px; border-radius: 2px;">DET</span></div>
+        <div style="font-size: 10.5px; color: #A9C0D6; margin-top: 2px;">Is the number in the document? If not → reject</div>
+      </div>
+      <div style="margin-top: auto; padding-top: 9px; font-size: 10.5px; line-height: 1.45; color: #7E9BB8;"><span class="mono">pipeline.py</span> orchestrates all five and writes a trace for every step.</div>
+    </div>
+
+    <div class="arr"><svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg></div>
+
+    <!-- PENYAJIAN -->
+    <div class="lay" style="flex: 1;">
+      <div class="layh">4 · Presentation — FastAPI</div>
+      <div class="node"><div class="nt mono" style="font-size: 11.5px;">/</div><div class="ns">Alert feed</div></div>
+      <div class="node"><div class="nt mono" style="font-size: 11.5px;">/peringatan/{id}</div><div class="ns">Detail + MOPS citation + verifier verdict</div></div>
+      <div class="node"><div class="nt mono" style="font-size: 11.5px;">/valuasi/{kode}</div><div class="ns">DCF, adjustable assumptions, sensitivity</div></div>
+      <div class="node"><div class="nt mono" style="font-size: 11.5px;">/jejak/{id}</div><div class="ns">Operation trace — Appendix 2</div></div>
+      <div class="node"><div class="nt mono" style="font-size: 11.5px;">/docs</div><div class="ns">Auto-generated OpenAPI</div></div>
+      <div style="margin-top: auto; background: #EFF7F3; border-left: 3px solid #17795E; border-radius: 0 5px 5px 0; padding: 9px 10px;">
+        <div style="font-size: 10.5px; line-height: 1.45; color: #12604A;"><strong>No login.</strong> No stored passwords, no evaluator account to create, no extra attack surface.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PENYEDIA MODEL + PENYIMPANAN -->
+  <div style="margin-top: 16px; display: flex; gap: 14px;">
+
+    <div style="flex: 1.5; background: #FFFFFF; border-radius: 8px; padding: 14px 16px; border-top: 3px solid #A86A0B;">
+      <div class="mono" style="font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #6B7683; margin-bottom: 9px;">Model provider — swappable</div>
+      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div style="flex: 1; border: 1.6px solid #A86A0B; border-radius: 5px; padding: 8px 10px; background: #FBF2E3;">
+          <div style="font-size: 12px; font-weight: 700;">Gemini free tier</div>
+          <div style="font-size: 10.5px; color: #6B7683; margin-top: 2px;">Primary · large context fits long Chinese filings whole</div>
+        </div>
+        <div style="flex: 1; border: 1.3px solid #D3D8DE; border-radius: 5px; padding: 8px 10px;">
+          <div style="font-size: 12px; font-weight: 600;">Groq · OpenRouter · Anthropic</div>
+          <div style="font-size: 10.5px; color: #6B7683; margin-top: 2px;">Swap one <span class="mono">environment variable</span>, no code change</div>
+        </div>
+        <div style="flex: 1; border: 1.3px dashed #A8B0BA; border-radius: 5px; padding: 8px 10px;">
+          <div style="font-size: 12px; font-weight: 600;">Rule-based reasoner</div>
+          <div style="font-size: 10.5px; color: #6B7683; margin-top: 2px;">Fallback when the API fails — output labelled as fallback</div>
+        </div>
+      </div>
+      <div style="background: #FBF7EF; border-left: 3px solid #A86A0B; border-radius: 0 5px 5px 0; padding: 9px 11px;">
+        <div style="font-size: 10.5px; line-height: 1.5; color: #4A535E;"><strong style="color:#101418;">Disclosure:</strong> free-tier content is used by Google to improve its products. Acceptable here because MOPS filings are public documents <em>and</em> personal data is already dropped in layer 2. Anything non-public would rule out the free tier.</div>
+      </div>
+    </div>
+
+    <div style="flex: 1; background: #FFFFFF; border-radius: 8px; padding: 14px 16px; border-top: 3px solid #16324F;">
+      <div class="mono" style="font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #6B7683; margin-bottom: 9px;">Storage — plain files, no database</div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="display: flex; align-items: baseline; gap: 9px;"><span class="mono" style="font-size: 11px; font-weight: 600; color: #16324F; width: 150px; flex: none;">data/parsed/</span><span style="font-size: 10.5px; color: #6B7683;">Filings + details, PII removed</span></div>
+        <div style="display: flex; align-items: baseline; gap: 9px;"><span class="mono" style="font-size: 11px; font-weight: 600; color: #16324F; width: 150px; flex: none;">data/fixtures/</span><span style="font-size: 10.5px; color: #6B7683;">Four test cases — the app runs anywhere</span></div>
+        <div style="display: flex; align-items: baseline; gap: 9px;"><span class="mono" style="font-size: 11px; font-weight: 600; color: #16324F; width: 150px; flex: none;">valuation/inputs/</span><span style="font-size: 10.5px; color: #6B7683;">DCF inputs per issuer + a source URL for every number</span></div>
+        <div style="display: flex; align-items: baseline; gap: 9px;"><span class="mono" style="font-size: 11px; font-weight: 600; color: #16324F; width: 150px; flex: none;">data/traces/</span><span style="font-size: 10.5px; color: #6B7683;">Audit trail: latency, tokens, cost, retries per stage</span></div>
+      </div>
+      <div style="margin-top: 11px; font-size: 10.5px; line-height: 1.45; color: #6B7683;">No database because nothing needs one. Judges can open every file in a text editor and check it themselves.</div>
+    </div>
+
+  </div>
+
+  <!-- BATAS KEPERCAYAAN -->
+  <div style="margin-top: 14px; background: #16324F; border-radius: 8px; padding: 13px 18px; display: flex; gap: 22px; align-items: center;">
+    <div class="mono" style="font-size: 9.5px; letter-spacing: 0.08em; color: #7E9BB8; text-transform: uppercase; flex: none; line-height: 1.5;">Trust<br>boundary</div>
+    <div style="flex: 1; display: flex; gap: 20px;">
+      <div style="flex: 1;">
+        <div style="font-size: 11.5px; font-weight: 700; color: #7FD3B4; margin-bottom: 3px;">Filing text = data, not commands</div>
+        <div style="font-size: 10.5px; line-height: 1.45; color: #A9C0D6;">Its content is controlled by the issuer, so it enters the prompt inside clear delimiters and may never steer any stage. This is the prompt-injection test Appendix 2 asks for.</div>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 11.5px; font-weight: 700; color: #7FD3B4; margin-bottom: 3px;">No keys in the repo</div>
+        <div style="font-size: 10.5px; line-height: 1.45; color: #A9C0D6;">API keys are read only from the <span class="mono">environment variable</span> and never printed on any screen or trace — an explicit competition rule.</div>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 11.5px; font-weight: 700; color: #7FD3B4; margin-bottom: 3px;">The agent never touches money</div>
+        <div style="font-size: 10.5px; line-height: 1.45; color: #A9C0D6;">No path to a broker, no order execution, no substantive action. Art. 14.2 — and judges count this as good design, not a limitation.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #16324F; } a:hover { color: #0C2138; }
+    * { box-sizing: border-box; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 960px; display: flex; background: #EEF0F2; color: #101418; font-size: 14px;">
+
+  <!-- RAIL -->
+  <div style="width: 224px; flex: none; background: #16324F; display: flex; flex-direction: column; gap: 28px; padding: 24px 16px;">
+    <div style="display: flex; flex-direction: column; gap: 3px; padding-left: 8px;">
+      <div style="display: flex; align-items: center; gap: 9px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7FD3B4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 4 6-9"/><circle cx="18" cy="6" r="2.5"/></svg>
+        <span style="font-size: 15px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.01em;">Sentinel</span>
+      </div>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.09em; color: #7E9BB8; text-transform: uppercase;">TW Stocks</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 10px 10px; border-radius: 5px; background: #23486C;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span style="font-size: 13.5px; font-weight: 600; color: #FFFFFF;">Alerts</span>
+        <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; background: #C6362C; color: #FFFFFF; padding: 1px 6px; border-radius: 9px;">4</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 10px 10px; border-radius: 5px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A9C0D6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h12"/></svg>
+        <span style="font-size: 13.5px; color: #A9C0D6;">Watchlist</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 10px 10px; border-radius: 5px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A9C0D6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/><path d="M9.5 9a2.5 2.5 0 115 .5c0 1.5-2.5 2-2.5 3.5"/><path d="M12 17h.01"/></svg>
+        <span style="font-size: 13.5px; color: #A9C0D6;">Q&amp;A</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 10px 10px; border-radius: 5px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A9C0D6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg>
+        <span style="font-size: 13.5px; color: #A9C0D6;">Audit Trail</span>
+      </div>
+    </div>
+
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 7px; padding: 12px; background: #1D3E60; border-radius: 6px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.09em; color: #7E9BB8; text-transform: uppercase;">Monitoring</span>
+      <div style="display: flex; align-items: baseline; gap: 6px;">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: #45C08D;"></span>
+        <span style="font-size: 12.5px; color: #DCE7F0;">Active — checked 15 min ago</span>
+      </div>
+      <span style="font-size: 11.5px; color: #7E9BB8; line-height: 1.45;">20 issuers · 711 filings indexed</span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
+
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: 22px 28px 16px; background: #FFFFFF; border-bottom: 1px solid #DDE1E6;">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.02em;">Today's alerts</h1>
+        <span style="font-size: 13px; color: #596270;">Of 26 new filings, 4 change your valuation conclusion</span>
+      </div>
+      <div style="display: flex; gap: 7px;">
+        <div style="display: flex; align-items: center; gap: 6px; padding: 7px 11px; border: 1px solid #16324F; background: #16324F; border-radius: 5px;">
+          <span style="font-size: 12.5px; font-weight: 600; color: #FFFFFF;">All</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9FC0DD;">4</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; padding: 7px 11px; border: 1px solid #C6CCD3; background: #FFFFFF; border-radius: 5px;">
+          <span style="font-size: 12.5px; color: #596270;">Unread</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8A929C;">3</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; padding: 7px 11px; border: 1px solid #C6CCD3; background: #FFFFFF; border-radius: 5px;">
+          <span style="font-size: 12.5px; color: #596270;">Flagged</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8A929C;">1</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex: 1; display: flex; gap: 20px; padding: 20px 28px; min-height: 0;">
+
+      <!-- FEED -->
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+
+        <!-- ALERT 1 -->
+        <div style="background: #FFFFFF; border: 1px solid #DDE1E6; border-radius: 7px; padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; box-shadow: 0 1px 2px rgba(16,20,24,0.04);">
+          <div style="display: flex; align-items: center; gap: 9px; flex-wrap: wrap;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;">2330</span>
+            <span style="font-size: 13.5px; font-weight: 600;">TSMC 台積電</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: #A86A0B; background: #FAF0DC; padding: 2px 7px; border-radius: 3px;">第 24 款 · ASSET ACQUISITION</span>
+            <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #8A929C;">11 Sep · 16:41</span>
+          </div>
+
+          <div style="font-size: 15px; font-weight: 600; line-height: 1.4; letter-spacing: -0.008em;">Subsidiary acquires fixed assets worth US$75 million</div>
+
+          <div style="display: flex; gap: 14px; padding: 11px 13px; background: #F6F7F9; border-radius: 5px;">
+            <div style="display: flex; flex-direction: column; gap: 2px; min-width: 128px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #8A929C; text-transform: uppercase;">Fair value</span>
+              <div style="display: flex; align-items: baseline; gap: 6px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600;">2,302</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A929C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600;">2,294</span>
+              </div>
+            </div>
+            <div style="width: 1px; background: #DDE1E6;"></div>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #8A929C; text-transform: uppercase;">Impact</span>
+              <span style="font-size: 13px; line-height: 1.4; color: #101418;">Down 0.35% — conclusion <strong style="font-weight: 600;">unchanged</strong>, still overvalued vs the 2,380 price</span>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16324F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.7-1.7"/></svg>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #16324F; text-decoration: underline; text-underline-offset: 2px;">mopsov.twse.com.tw/…/ajax_t05st01?co_id=2330</span>
+            </div>
+            <div style="margin-left: auto; display: flex; gap: 7px;">
+              <div style="padding: 6px 12px; border: 1px solid #C6CCD3; border-radius: 5px; font-size: 12.5px; color: #596270;">Dismiss</div>
+              <div style="padding: 6px 12px; border: 1px solid #C6CCD3; border-radius: 5px; font-size: 12.5px; color: #596270;">Flag</div>
+              <div style="padding: 6px 12px; background: #16324F; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #FFFFFF;">Open valuation</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ALERT 2 -->
+        <div style="background: #FFFFFF; border: 1px solid #DDE1E6; border-radius: 7px; padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; box-shadow: 0 1px 2px rgba(16,20,24,0.04);">
+          <div style="display: flex; align-items: center; gap: 9px; flex-wrap: wrap;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;">2881</span>
+            <span style="font-size: 13.5px; font-weight: 600;">Fubon 富邦金</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; color: #A86A0B; background: #FAF0DC; padding: 2px 7px; border-radius: 3px;">第 24 款 · ASSET ACQUISITION</span>
+            <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #8A929C;">11 Sep · 16:41</span>
+          </div>
+
+          <div style="font-size: 15px; font-weight: 600; line-height: 1.4; letter-spacing: -0.008em;">Subsidiary Fubon Life acquires the KKR Helix B SCSp infrastructure fund</div>
+
+          <div style="display: flex; gap: 14px; padding: 11px 13px; background: #FDF3F2; border-radius: 5px;">
+            <div style="display: flex; flex-direction: column; gap: 2px; min-width: 128px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #8A929C; text-transform: uppercase;">Fair value</span>
+              <div style="display: flex; align-items: baseline; gap: 6px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600;">92.4</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C6362C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: #C6362C;">88.1</span>
+              </div>
+            </div>
+            <div style="width: 1px; background: #EED9D6;"></div>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: #C6362C; text-transform: uppercase;">Impact — conclusion changed</span>
+              <span style="font-size: 13px; line-height: 1.4;">Down 4.7%. From <strong style="font-weight: 600;">undervalued</strong> to <strong style="font-weight: 600;">fair</strong> vs the 89.3 price</span>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16324F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.7-1.7"/></svg>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #16324F; text-decoration: underline; text-underline-offset: 2px;">mopsov.twse.com.tw/…/ajax_t05st01?co_id=2881&amp;seq_no=1</span>
+            </div>
+            <div style="margin-left: auto; display: flex; gap: 7px;">
+              <div style="padding: 6px 12px; border: 1px solid #C6CCD3; border-radius: 5px; font-size: 12.5px; color: #596270;">Dismiss</div>
+              <div style="padding: 6px 12px; border: 1px solid #C6CCD3; border-radius: 5px; font-size: 12.5px; color: #596270;">Flag</div>
+              <div style="padding: 6px 12px; background: #16324F; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #FFFFFF;">Open valuation</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ALERT 3 (compact) -->
+        <div style="background: #FFFFFF; border: 1px solid #DDE1E6; border-radius: 7px; padding: 14px 18px; display: flex; align-items: center; gap: 12px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;">2317</span>
+          <span style="font-size: 13.5px; font-weight: 600;">Hon Hai 鴻海</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #596270; background: #EEF0F2; padding: 2px 7px; border-radius: 3px;">第 11 款 · CONTRACT</span>
+          <span style="font-size: 13px; color: #596270; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Long-term supply contract signed</span>
+          <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #8A929C; flex: none;">10 Sep</span>
+        </div>
+
+        <!-- ALERT 4 (compact) -->
+        <div style="background: #FFFFFF; border: 1px solid #DDE1E6; border-radius: 7px; padding: 14px 18px; display: flex; align-items: center; gap: 12px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;">1301</span>
+          <span style="font-size: 13.5px; font-weight: 600;">Formosa 台塑</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #596270; background: #EEF0F2; padding: 2px 7px; border-radius: 3px;">第 4 款 · REVENUE</span>
+          <span style="font-size: 13px; color: #596270; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Consolidated revenue for August 2026</span>
+          <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #8A929C; flex: none;">09 Sep</span>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px; border: 1px dashed #C6CCD3; border-radius: 7px;">
+          <span style="font-size: 12.5px; color: #8A929C;">22 other filings judged not relevant to your risk profile</span>
+          <span style="font-size: 12.5px; font-weight: 600; color: #16324F; text-decoration: underline; text-underline-offset: 2px;">See why</span>
+        </div>
+      </div>
+
+      <!-- SIDE -->
+      <div style="width: 288px; flex: none; display: flex; flex-direction: column; gap: 12px;">
+
+        <div style="background: #FFFFFF; border: 1px solid #DDE1E6; border-radius: 7px; padding: 15px 16px; display: flex; flex-direction: column; gap: 12px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.09em; color: #8A929C; text-transform: uppercase;">Watchlist summary</span>
+          <div style="display: flex; flex-direction: column; gap: 9px;">
+            <div style="display: flex; align-items: baseline; gap: 9px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; width: 38px;">2330</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; margin-left: auto;">2,380</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #C6362C; width: 52px; text-align: right;">+1.28%</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 9px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; width: 38px;">2317</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; margin-left: auto;">204.5</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #17795E; width: 52px; text-align: right;">−0.73%</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 9px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; width: 38px;">2881</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; margin-left: auto;">89.3</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #C6362C; width: 52px; text-align: right;">+0.45%</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 9px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; width: 38px;">1301</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; margin-left: auto;">41.2</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #17795E; width: 52px; text-align: right;">−1.10%</span>
+            </div>
+          </div>
+          <div style="padding-top: 9px; border-top: 1px solid #DDE1E6; display: flex; align-items: center; gap: 7px;">
+            <span style="width: 8px; height: 8px; background: #C6362C; border-radius: 2px;"></span>
+            <span style="font-size: 11.5px; color: #596270;">up</span>
+            <span style="width: 8px; height: 8px; background: #17795E; border-radius: 2px; margin-left: 8px;"></span>
+            <span style="font-size: 11.5px; color: #596270;">down</span>
+            <span style="margin-left: auto; font-size: 10.5px; color: #8A929C;">Taiwan market convention</span>
+          </div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #DDE1E6; border-radius: 7px; padding: 15px 16px; display: flex; flex-direction: column; gap: 11px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.09em; color: #8A929C; text-transform: uppercase;">Agent performance · 7 days</span>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <span style="font-size: 12.5px; color: #596270;">Filings processed</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;">184</span>
+            </div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <span style="font-size: 12.5px; color: #596270;">Sent as alerts</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;">11</span>
+            </div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <span style="font-size: 12.5px; color: #596270;">Opened by you</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;">9</span>
+            </div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <span style="font-size: 12.5px; color: #596270;">Rejected by number verifier</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: #A86A0B;">2</span>
+            </div>
+          </div>
+          <div style="padding: 9px 10px; background: #F6F7F9; border-radius: 5px;">
+            <span style="font-size: 11.5px; color: #596270; line-height: 1.45;">Relevance threshold raised automatically after you dismissed 3 clause-4 alerts in a row.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

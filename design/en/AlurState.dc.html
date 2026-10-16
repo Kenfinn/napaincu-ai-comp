@@ -1,0 +1,223 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    .mono { font-family: 'IBM Plex Mono', monospace; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; height: 710px; background: #EEF0F2; color: #101418; padding: 34px 40px 0; display: flex; flex-direction: column;">
+
+  <!-- JUDUL -->
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 4px;">
+    <div>
+      <div class="mono" style="font-size: 10px; letter-spacing: 0.1em; color: #6B7683; text-transform: uppercase; margin-bottom: 5px;">Agent task flow &amp; state diagram</div>
+      <div style="font-size: 25px; font-weight: 700; letter-spacing: -0.015em;">One filing, six states, three ways out</div>
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #FFFFFF; background: #16324F; padding: 4px 9px; border-radius: 3px;">DETERMINISTIC</span>
+      <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #FFFFFF; background: #A86A0B; padding: 4px 9px; border-radius: 3px;">MODEL</span>
+    </div>
+  </div>
+
+  <div style="height: 1px; background: #D3D8DE; margin-bottom: 22px;"></div>
+
+  <!-- ALUR -->
+  <div style="display: flex; align-items: flex-start; gap: 0;">
+
+    <!-- 0 -->
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: stretch;">
+      <div style="background: #16324F; border-radius: 7px; padding: 13px 13px 12px; min-height: 163px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px;">
+          <span class="mono" style="font-size: 17px; font-weight: 600; color: #7FD3B4;">0</span>
+          <span class="mono" style="font-size: 8px; letter-spacing: 0.07em; color: #BFD6E8; background: rgba(255,255,255,0.13); padding: 3px 6px; border-radius: 2px;">DET</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px;">Clause screen</div>
+        <div style="font-size: 11.5px; line-height: 1.45; color: #A9C0D6;">The 符合條款 clause number already classifies the event — by the regulator, not by us.</div>
+        <div class="mono" style="margin-top: auto; font-size: 12px; font-weight: 600; color: #7FD3B4; padding-top: 8px;">711 → ~30</div>
+      </div>
+      <div style="display: flex; justify-content: center; padding: 7px 0;">
+        <svg width="12" height="24" viewBox="0 0 12 24" fill="none" stroke="#9BA4AF" stroke-width="1.6"><path d="M6 0v17"/><path d="M1.5 13L6 18l4.5-5"/></svg>
+      </div>
+      <div style="border: 1.4px solid #A8B0BA; border-radius: 6px; padding: 10px 11px; background: #E3E6EA;">
+        <div class="mono" style="font-size: 9px; letter-spacing: 0.08em; color: #5C6773; margin-bottom: 4px;">SKIPPED</div>
+        <div style="font-size: 10.5px; line-height: 1.4; color: #4A535E;">Clause doesn't touch a valuation input. Never reaches the model.</div>
+      </div>
+    </div>
+
+    <div style="width: 30px; flex: none; display: flex; justify-content: center; padding-top: 74px;">
+      <svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg>
+    </div>
+
+    <!-- 1 -->
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: stretch;">
+      <div style="background: #16324F; border-radius: 7px; padding: 13px 13px 12px; min-height: 163px; display: flex; flex-direction: column; box-shadow: inset 0 0 0 2px #A86A0B;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px;">
+          <span class="mono" style="font-size: 17px; font-weight: 600; color: #E8B872;">1</span>
+          <span class="mono" style="font-size: 8px; letter-spacing: 0.07em; color: #FFFFFF; background: #A86A0B; padding: 3px 6px; border-radius: 2px;">MODEL</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px;">Triage</div>
+        <div style="font-size: 11.5px; line-height: 1.45; color: #A9C0D6;">Which valuation input does it touch? How sure?</div>
+        <div class="mono" style="margin-top: auto; font-size: 12px; font-weight: 600; color: #E8B872; padding-top: 8px;">threshold 0.55</div>
+      </div>
+      <div style="display: flex; justify-content: center; padding: 7px 0;">
+        <svg width="12" height="24" viewBox="0 0 12 24" fill="none" stroke="#A86A0B" stroke-width="1.6"><path d="M6 0v17"/><path d="M1.5 13L6 18l4.5-5"/></svg>
+      </div>
+      <div style="border: 1.4px solid #A86A0B; border-radius: 6px; padding: 10px 11px; background: #FBF2E3;">
+        <div class="mono" style="font-size: 9px; letter-spacing: 0.08em; color: #8A560A; margin-bottom: 4px;">HELD</div>
+        <div style="font-size: 10.5px; line-height: 1.4; color: #5F4409;">Confidence below threshold → human review queue, not discarded.</div>
+      </div>
+    </div>
+
+    <div style="width: 30px; flex: none; display: flex; justify-content: center; padding-top: 74px;">
+      <svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg>
+    </div>
+
+    <!-- 2 -->
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: stretch;">
+      <div style="background: #16324F; border-radius: 7px; padding: 13px 13px 12px; min-height: 163px; display: flex; flex-direction: column; box-shadow: inset 0 0 0 2px #A86A0B;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px;">
+          <span class="mono" style="font-size: 17px; font-weight: 600; color: #E8B872;">2</span>
+          <span class="mono" style="font-size: 8px; letter-spacing: 0.07em; color: #FFFFFF; background: #A86A0B; padding: 3px 6px; border-radius: 2px;">MODEL</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px;">Extract</div>
+        <div style="font-size: 11.5px; line-height: 1.45; color: #A9C0D6;">Which number, for which input, from exactly which sentence.</div>
+        <div class="mono" style="margin-top: auto; font-size: 12px; font-weight: 600; color: #E8B872; padding-top: 8px;">required + quote</div>
+      </div>
+      <div style="display: flex; justify-content: center; padding: 7px 0;">
+        <svg width="12" height="24" viewBox="0 0 12 24" fill="none" stroke="#A86A0B" stroke-width="1.6"><path d="M6 0v17"/><path d="M1.5 13L6 18l4.5-5"/></svg>
+      </div>
+      <div style="border: 1.4px solid #A86A0B; border-radius: 6px; padding: 10px 11px; background: #FBF2E3;">
+        <div class="mono" style="font-size: 9px; letter-spacing: 0.08em; color: #8A560A; margin-bottom: 4px;">HELD</div>
+        <div style="font-size: 10.5px; line-height: 1.4; color: #5F4409;">No number can be extracted together with its source sentence.</div>
+      </div>
+    </div>
+
+    <div style="width: 30px; flex: none; display: flex; justify-content: center; padding-top: 74px;">
+      <svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg>
+    </div>
+
+    <!-- 3 -->
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: stretch;">
+      <div style="background: #16324F; border-radius: 7px; padding: 13px 13px 12px; min-height: 163px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px;">
+          <span class="mono" style="font-size: 17px; font-weight: 600; color: #7FD3B4;">3</span>
+          <span class="mono" style="font-size: 8px; letter-spacing: 0.07em; color: #BFD6E8; background: rgba(255,255,255,0.13); padding: 3px 6px; border-radius: 2px;">DET</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px;">Recompute</div>
+        <div style="font-size: 11.5px; line-height: 1.45; color: #A9C0D6;">The DCF calculator runs twice — before and after the new number.</div>
+        <div class="mono" style="margin-top: auto; font-size: 12px; font-weight: 600; color: #7FD3B4; padding-top: 8px;">dcf.compute() ×2</div>
+      </div>
+      <div style="padding-top: 7px; height: 24px;"></div>
+      <div style="border: 1.4px dashed #C3C9D1; border-radius: 6px; padding: 10px 11px;">
+        <div style="font-size: 10.5px; line-height: 1.4; color: #6B7683;">No exit — arithmetic cannot “hesitate”.</div>
+      </div>
+    </div>
+
+    <div style="width: 30px; flex: none; display: flex; justify-content: center; padding-top: 74px;">
+      <svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg>
+    </div>
+
+    <!-- 4 -->
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: stretch;">
+      <div style="background: #16324F; border-radius: 7px; padding: 13px 13px 12px; min-height: 163px; display: flex; flex-direction: column; box-shadow: inset 0 0 0 2px #7FD3B4;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px;">
+          <span class="mono" style="font-size: 17px; font-weight: 600; color: #7FD3B4;">4</span>
+          <span class="mono" style="font-size: 8px; letter-spacing: 0.07em; color: #BFD6E8; background: rgba(255,255,255,0.13); padding: 3px 6px; border-radius: 2px;">DET</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px;">Verify</div>
+        <div style="font-size: 11.5px; line-height: 1.45; color: #A9C0D6;">Every quoted number must be found in its source document.</div>
+        <div class="mono" style="margin-top: auto; font-size: 11px; font-weight: 600; color: #7FD3B4; padding-top: 8px;">unit · magnitude · circularity</div>
+      </div>
+      <div style="display: flex; justify-content: center; padding: 7px 0;">
+        <svg width="12" height="24" viewBox="0 0 12 24" fill="none" stroke="#8A2F27" stroke-width="1.6"><path d="M6 0v17"/><path d="M1.5 13L6 18l4.5-5"/></svg>
+      </div>
+      <div style="border: 1.4px solid #8A2F27; border-radius: 6px; padding: 10px 11px; background: #F9EAE8;">
+        <div class="mono" style="font-size: 9px; letter-spacing: 0.08em; color: #8A2F27; margin-bottom: 4px;">REJECTED</div>
+        <div style="font-size: 10.5px; line-height: 1.4; color: #6B2620;">Number not in the document. Alert not published, reason logged.</div>
+      </div>
+    </div>
+
+    <div style="width: 30px; flex: none; display: flex; justify-content: center; padding-top: 74px;">
+      <svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="#16324F" stroke-width="1.8"><path d="M0 6h16"/><path d="M12 1.5L17 6l-5 4.5"/></svg>
+    </div>
+
+    <!-- 5 -->
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: stretch;">
+      <div style="background: #1D3E60; border: 2px solid #7FD3B4; border-radius: 7px; padding: 12px 12px 11px; min-height: 163px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px;">
+          <span class="mono" style="font-size: 17px; font-weight: 600; color: #7FD3B4;">5</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7FD3B4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px;">Alert published</div>
+        <div style="font-size: 11.5px; line-height: 1.45; color: #A9C0D6;">The agent filters, explains and cites. <strong style="color: #DCE7F0;">The human decides.</strong></div>
+        <div class="mono" style="margin-top: auto; font-size: 11px; font-weight: 600; color: #7FD3B4; padding-top: 8px;">no order execution</div>
+      </div>
+      <div style="padding-top: 7px; height: 24px;"></div>
+      <div style="border: 1.4px solid #C3C9D1; border-radius: 6px; padding: 10px 11px; background: #FFFFFF;">
+        <div style="font-size: 10.5px; line-height: 1.4; color: #4A535E;">Art. 14.2 forbids substantive actions without human confirmation.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PENYESUAIAN DINAMIS -->
+  <div style="margin-top: 20px; border: 1.4px dashed #A86A0B; border-radius: 7px; background: #FBF7EF; padding: 12px 16px; display: flex; align-items: center; gap: 15px;">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A86A0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 3v6h-6"/></svg>
+    <div style="font-size: 12px; line-height: 1.5; color: #4A535E;">
+      <strong style="color: #101418;">Dynamic adjustment in the two model stages.</strong>
+      API fails → <span class="mono" style="font-size: 11.5px;">retry ×2</span> → if it still fails, fall back to the rule-based reasoner and label the output as fallback. Tasks never stop silently and never pretend to succeed.
+    </div>
+  </div>
+
+  <!-- TIGA CATATAN -->
+  <div style="margin-top: 15px; display: flex; gap: 13px;">
+    <div style="flex: 1; background: #FFFFFF; border-radius: 7px; padding: 13px 15px; border-left: 3px solid #16324F;">
+      <div style="font-size: 12.5px; font-weight: 700; margin-bottom: 5px;">Stages 3 and 4 are deliberately not the model</div>
+      <div style="font-size: 11.5px; line-height: 1.5; color: #4A535E;">That is the defence: numbers come from arithmetic, and the model's claims are tested against the document. The model never calculates and never grades itself.</div>
+    </div>
+    <div style="flex: 1; background: #FFFFFF; border-radius: 7px; padding: 13px 15px; border-left: 3px solid #A86A0B;">
+      <div style="font-size: 12.5px; font-weight: 700; margin-bottom: 5px;">Three ways out before publishing</div>
+      <div style="font-size: 11.5px; line-height: 1.5; color: #4A535E;">Skipped, held, rejected. A system that cannot stop is not an agent — it is a pipeline. Being able to stop is criterion 3 of the eligibility gate.</div>
+    </div>
+    <div style="flex: 1; background: #FFFFFF; border-radius: 7px; padding: 13px 15px; border-left: 3px solid #7FD3B4;">
+      <div style="font-size: 12.5px; font-weight: 700; margin-bottom: 5px;">Every state writes a trace</div>
+      <div style="font-size: 11.5px; line-height: 1.5; color: #4A535E;">Input, output, latency, tokens, cost, retries. The operation trace required by Appendix 2 comes from normal use, not written afterwards.</div>
+    </div>
+  </div>
+
+  <!-- PETA KE GERBANG KELAYAKAN -->
+  <div style="margin-top: 15px; background: #16324F; border-radius: 7px; padding: 12px 18px; display: flex; align-items: center; gap: 20px;">
+    <div class="mono" style="font-size: 9.5px; letter-spacing: 0.08em; color: #7E9BB8; text-transform: uppercase; flex: none; line-height: 1.5;">Gate<br>Art. 4</div>
+    <div style="display: flex; gap: 17px; flex: 1;">
+      <div style="flex: 1;">
+        <div style="font-size: 11px; font-weight: 700; color: #7FD3B4; margin-bottom: 3px;">① Task decomposition <span style="color:#E8B872;">[required]</span></div>
+        <div style="font-size: 10.5px; line-height: 1.4; color: #A9C0D6;">Six ordered states; each step advances on the previous step's status.</div>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 11px; font-weight: 700; color: #7FD3B4; margin-bottom: 3px;">② Tool calls</div>
+        <div style="font-size: 10.5px; line-height: 1.4; color: #A9C0D6;">MOPS, the DCF calculator, the model API — three external systems.</div>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 11px; font-weight: 700; color: #7FD3B4; margin-bottom: 3px;">③ State management</div>
+        <div style="font-size: 10.5px; line-height: 1.4; color: #A9C0D6;">Three exits, retries, and a fallback reasoner when the main tool fails.</div>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 11px; font-weight: 700; color: #7FD3B4; margin-bottom: 3px;">④ Risk control</div>
+        <div style="font-size: 10.5px; line-height: 1.4; color: #A9C0D6;">Output verification, full audit trail, no order execution.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
