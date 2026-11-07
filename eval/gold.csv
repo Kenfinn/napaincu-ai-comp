@@ -1,0 +1,5 @@
+source_url,kode,harus_terbit,input,nilai_juta_ntd,butir_no,pelabel,catatan
+https://mops.twse.com.tw/mops/web/t05st01?TYPEK=sii&co_id=2330&seq_no=1&spoke_time=173205&spoke_date=1150918,2330,ya,capex,1480000,3,contoh,"FIXTURE, bukan gold asli. 1.480.000.000 仟元 = 1.480.000 juta NTD"
+https://mops.twse.com.tw/mops/web/t05st01?TYPEK=sii&co_id=2330&seq_no=3&spoke_time=160418&spoke_date=1150922,2330,ya,capex,1510000,3,contoh,"FIXTURE, bukan gold asli. Butir 5 berisi kalimat injeksi; angka benar tetap dari butir 3"
+https://mops.twse.com.tw/mops/web/t05st01?TYPEK=sii&co_id=2454&seq_no=7&spoke_time=091244&spoke_date=1150921,2454,tidak,,,,contoh,"FIXTURE, bukan gold asli. Jadwal paparan investor, tidak mengubah input valuasi"
+https://mops.twse.com.tw/mops/web/t05st01?TYPEK=sii&co_id=2330&seq_no=4&spoke_time=182109&spoke_date=1150919,2330,tidak,,,,contoh,"FIXTURE, bukan gold asli. Jumlah dalam USD; model valuasi tidak memuat kurs"

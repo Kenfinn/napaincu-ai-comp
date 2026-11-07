@@ -33,6 +33,18 @@ dipakai.
 python3 -m unittest discover -s tests -v
 ```
 
+### Menjalankan evaluasi (Appendix 2)
+
+```bash
+python3 scripts/evaluasi.py --menit-manual 6
+```
+
+Membandingkan pipeline lengkap dengan "LLM tanpa pemeriksa" pada gold set di
+`eval/gold.csv`, lalu mencetak angka salah yang terbit, ketepatan keputusan, tingkat
+intervensi manusia, panggilan model, token, retry, dan latensi. Mode `model` ikut
+dijalankan kalau `GEMINI_API_KEY` terpasang. Cara mengisi gold set ada di
+[`docs/panduan-gold-set.md`](docs/panduan-gold-set.md).
+
 ---
 
 ## Arsitektur
@@ -217,4 +229,5 @@ bisa berbeda diam-diam dari kertas kerja.
 | `wireframe/` | Delapan wireframe beserta alasan tiap wilayah layar |
 | `docs/` | Ringkasan aturan lomba, rencana kerja, catatan akses data |
 | `tests/` | Test case agent — bahan deck halaman 9 dan Appendix 2 |
+| `eval/` | Gold set berlabel dan hasil evaluasi |
 | `data/fixtures/` | Empat kasus uji supaya aplikasi jalan di mana saja |

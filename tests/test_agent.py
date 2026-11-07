@@ -196,5 +196,44 @@ class TestKeamananDanPrivasi(unittest.TestCase):
                 self.assertIn(kunci, r)
 
 
+
+class TestEvaluasiAppendix2(unittest.TestCase):
+    """Skrip evaluasi harus membedakan pipeline lengkap dari 'LLM tanpa verifier'."""
+
+    def setUp(self):
+        import tempfile
+        sys.path.insert(0, os.path.join(ROOT, "scripts"))
+        import evaluasi
+        from app import config
+        self.ev, self.config = evaluasi, config
+        self._tmp = tempfile.TemporaryDirectory()
+        self._trace = config.TRACE_DIR
+        config.TRACE_DIR = self._tmp.name
+        self.gold = evaluasi.muat_gold(evaluasi.GOLD_DEFAULT)
+        self.data = [d for d in _baca_json("data", "fixtures", "details.json")
+                     if d["source_url"] in self.gold]
+
+    def tearDown(self):
+        self.config.TRACE_DIR = self._trace
+        self._tmp.cleanup()
+
+    def test_semua_fixture_berlabel(self):
+        self.assertEqual(len(self.data), 4)
+
+    def test_pipeline_lengkap_tidak_menerbitkan_angka_salah(self):
+        m = self.ev.nilai(self.ev.jalankan_mode("aturan", self.data), self.gold)
+        self.assertEqual(m["dokumen_dengan_angka_salah_terbit"], 0)
+        self.assertEqual(m["keputusan_tepat"], 4)
+
+    def test_tanpa_pemeriksa_menerbitkan_jumlah_usd(self):
+        kunci = self.config.API_KEY
+        self.config.API_KEY = ""
+        try:
+            m = self.ev.nilai(self.ev.jalankan_mode("tanpa-pemeriksa", self.data), self.gold)
+        finally:
+            self.config.API_KEY = kunci
+        self.assertGreaterEqual(m["dokumen_dengan_angka_salah_terbit"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()

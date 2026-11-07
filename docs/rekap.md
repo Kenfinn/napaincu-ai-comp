@@ -7,6 +7,42 @@ aturan lomba lengkapnya di [`aaic-2026-ringkasan.md`](./aaic-2026-ringkasan.md).
 
 ---
 
+## 0. Status 7 November — LOLOS FINALIS
+
+Bagian 1–11 di bawah ditulis 28 Sep dan dibiarkan sebagai catatan. Yang berlaku sekarang
+adalah bagian ini.
+
+Berkas penyisihan 16 Okt sudah terkirim (lihat `docs/kirim-16-okt.md`; deck dan video
+dari branch proposal sudah digabung). Survei 10 responden (6–8 Okt) menjadi bukti
+Level 1.
+
+**Tenggat:** paket finalis **13 Nov 23:59** (prototipe jalan, repo, README, metrik
+Appendix 2, minimal satu operation trace). Final demo langsung **21 Nov**. Bobot
+terberat di final adalah *Task Completion & Stability* (25%), yang juga menjadi tie-break.
+
+**Masih belum pernah dilakukan:** Gemini belum pernah dipanggil, dan aplikasi belum
+pernah jalan di data MOPS asli.
+
+| # | Kapan | Siapa | Tugas | Selesai kalau |
+|---|---|---|---|---|
+| 1 | 8 Nov | Afinzaki | Rekap Bagian 6, Tahap 2: pasang kunci Gemini | Jejak audit `panggilan_model > 0` |
+| 2 | 8–9 Nov | Afinzaki | Rekap Bagian 6, Tahap 3 dari jaringan Taiwan: tarik data asli beberapa emiten | Panel "Sumber data: nyata." |
+| 3 | 8–11 Nov | Ferry & PDK | Gold set 30–50 pengumuman, ikuti [`panduan-gold-set.md`](./panduan-gold-set.md) | `eval/gold.csv` terisi |
+| 4 | 9–10 Nov | Claude | Perbaiki apa pun yang rusak di langkah 1–2; snapshot data asli yang sudah bersih dari PII di-commit agar demo tidak bergantung pada jaringan Taiwan | Aplikasi jalan di data asli dari mesin mana pun |
+| 5 | 10–11 Nov | Claude | 👍/👎 per peringatan yang menyetel ambang pemilah (janji deck untuk final) | Tes + tampil di jejak audit |
+| 6 | 12 Nov | Afinzaki | `python3 scripts/evaluasi.py --mode aturan model tanpa-pemeriksa --menit-manual N --simpan` | Tabel metrik masuk README |
+| 7 | 12–13 Nov | Claude + Afinzaki | README finalis, trace contoh, cara evaluator menjalankan | Paket terkirim 13 Nov |
+| 8 | 14–20 Nov | Semua | Latihan demo ≥5 kali, termasuk saat API mati dan saat internet mati | Rencana cadangan teruji |
+
+Tanya-jawab dan valuasi Fubon (2881) **tidak dibangun**. Keduanya disebut sebagai
+keterbatasan di demo.
+
+**Evaluasi sudah siap dipakai:** `scripts/evaluasi.py` membandingkan pipeline lengkap
+(penalar aturan / model) dengan "LLM tanpa pemeriksa" pada gold set. Pada 4 fixture,
+tanpa pemeriksa jumlah dalam USD ikut terbit, sedangkan pipeline lengkap 0 angka salah.
+
+---
+
 ## 1. Ringkasnya
 
 Kita ikut NAPAI Agentic AI Innovation Competition 2026, track SYSTEX *Investment
@@ -114,7 +150,7 @@ Semua sudah digabung ke `main`.
 | Desain | 8 layar hi-fi, 8 wireframe, 2 diagram wajib (state agent untuk deck hal. 5, arsitektur untuk hal. 6), semua sudah jadi PNG | `design/`, `design/export/`, `wireframe/` |
 | **Agent** | Pipeline 5 tahap: saring → pilah → sari → hitung ulang → periksa | `app/agent/` |
 | Web | Feed, detail peringatan, jejak audit, valuasi | `app/main.py`, `app/templates/` |
-| Tes | 14 tes lulus, termasuk uji prompt injection dan uji "API key tidak pernah bocor ke jejak" | `tests/test_agent.py` |
+| Tes | 17 tes lulus, termasuk uji prompt injection dan uji "API key tidak pernah bocor ke jejak" | `tests/test_agent.py` |
 | Dokumentasi | README teknis, memenuhi butir 3 syarat Pra-final | `README.md` |
 
 ### Cara kerja agent
@@ -205,7 +241,7 @@ git clone https://github.com/Kenfinn/napaincu-ai-comp.git
 cd napaincu-ai-comp
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python3 -m unittest discover -s tests      # harus: Ran 14 tests ... OK
+python3 -m unittest discover -s tests      # harus: Ran 17 tests ... OK
 uvicorn app.main:app --reload
 ```
 
@@ -347,7 +383,7 @@ valuation/inputs/       input valuasi per emiten (baru 2330)
 data/fixtures/          4 kasus contoh, di-commit
 design/, wireframe/     layar hi-fi, wireframe, diagram
 docs/                   ringkasan aturan, akses data, rencana, rekap ini
-tests/                  14 tes
+tests/                  17 tes
 ```
 
 ---
