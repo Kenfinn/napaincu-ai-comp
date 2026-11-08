@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block judul %}Watchlist · Sentinel Saham{% endblock %}
+{% block isi %}
+
+<div class="kepala">
+  <div>
+    <div class="kicker">Saham yang dipantau agent</div>
+    <h1>Watchlist</h1>
+  </div>
+  <form method="post" action="/periksa" style="margin:0;">
+    <input type="hidden" name="kembali" value="/watchlist">
+    <button class="tombol" type="submit">⟳ Periksa sekarang</button>
+  </form>
+</div>
+
+<div class="kartu">
+  <form method="post" action="/watchlist/tambah" style="display:flex; gap:10px; align-items:center; margin:0;">
+    <label for="kode" style="font-size:13px;">Kode saham</label>
+    <input class="isian" id="kode" name="kode" placeholder="mis. 2454" maxlength="6" autocomplete="off" required>
+    <button class="tombol" type="submit">+ Tambah</button>
+  </form>
+</div>
+
+<div class="kartu">
+  {% if baris %}
+  <table class="wl">
+    <tr><th>Kode</th><th>Nama</th><th>Valuasi</th><th>Pengumuman tersimpan</th><th>Terakhir</th><th></th></tr>
+    {% for b in baris %}
+    <tr>
+      <td class="mono" style="font-weight:600;">{{ b.kode }}</td>
+      <td>{{ b.nama or '—' }}</td>
+      <td>{% if b.valuasi %}<a href="/valuasi/{{ b.kode }}">✔ DCF tersedia</a>{% else %}<span style="color:var(--abu);">— angka saja</span>{% endif %}</td>
+      <td class="mono">{{ b.jumlah }}</td>
+      <td class="mono" style="font-size:12px;">{{ b.terakhir or 'belum ada' }}</td>
+      <td style="text-align:right;">
+        <form method="post" action="/watchlist/hapus/{{ b.kode }}" style="margin:0;">
+          <button class="tombol tipis" type="submit">Hapus</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="kosong">Watchlist kosong. Tambahkan kode saham di atas.</div>
+  {% endif %}
+</div>
+
+<div class="kartu rapat" style="font-size:12.5px; color:var(--abu-2); line-height:1.55;">
+  <b>Dari mana datanya.</b> Tombol <i>Periksa sekarang</i> menarik pengumuman material (重大訊息) terbaru dari
+  OpenAPI resmi TWSE (<span class="mono">t187ap04_L</span>) dan TPEx (<span class="mono">mopsfin_t187ap04_O</span>),
+  lalu menyimpan yang milik emiten di watchlist. Endpoint itu hanya memuat pengumuman hari berjalan, jadi
+  riwayat terkumpul dari setiap pemeriksaan. Pengumuman yang sudah tersimpan tidak ditarik dua kali.
+  {% if status_tarik %}
+  <br>Pemeriksaan terakhir: {{ status_tarik.waktu[:16] | replace('T',' ') }} UTC ·
+  {% for k, v in status_tarik.sumber.items() %}
+    {{ k | upper }} {% if v.ok %}OK ({{ v.jumlah }} pengumuman, {{ v.cocok_watchlist }} di watchlist){% else %}<span style="color:var(--tolak);">{{ v.jenis }}</span>{% endif %}{{ ' · ' if not loop.last }}
+  {% endfor %}
+  {% endif %}
+</div>
+{% endblock %}

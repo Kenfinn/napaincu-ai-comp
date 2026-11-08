@@ -27,6 +27,21 @@ Tanpa kunci API pun aplikasi tetap jalan penuh: tahap yang biasanya memakai mode
 turun ke penalar berbasis aturan, dan setiap layar menyatakan mode mana yang sedang
 dipakai.
 
+### Menarik pengumuman asli (dari jaringan mana pun)
+
+Buka halaman **Watchlist**, tambah kode saham, lalu tekan **Periksa sekarang**. Atau lewat terminal:
+
+```bash
+python3 scripts/tarik.py                 # tarik untuk watchlist di data/watchlist.json
+python3 scripts/tarik.py --ulang 600     # periksa tiap 10 menit sampai Ctrl+C
+```
+
+Sumbernya OpenAPI resmi TWSE (`t187ap04_L`) dan TPEx (`mopsfin_t187ap04_O`), yang memuat
+isi lengkap pengumuman material hari berjalan dan **tidak** diblokir di luar Taiwan.
+Endpoint itu tidak menyimpan riwayat, jadi setiap tarikan digabung ke
+`data/parsed/details.json` tanpa duplikat. Riwayat yang lebih lama hanya bisa ditarik
+dari MOPS lewat jaringan Taiwan (`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`).
+
 ### Menjalankan tes
 
 ```bash

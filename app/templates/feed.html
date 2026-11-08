@@ -7,7 +7,13 @@
     <div class="kicker">Pengumuman MOPS · diproses agent</div>
     <h1>Peringatan</h1>
   </div>
-  <a href="/?segarkan=1" class="mono" style="font-size:12px;">Proses ulang</a>
+  <div style="display:flex; gap:14px; align-items:center;">
+    <a href="/?segarkan=1" class="mono" style="font-size:12px;">Proses ulang</a>
+    <form method="post" action="/periksa" style="margin:0;">
+      <input type="hidden" name="kembali" value="/">
+      <button class="tombol" type="submit">⟳ Periksa sekarang</button>
+    </form>
+  </div>
 </div>
 
 {% set terbit = daftar | selectattr('status','equalto','terbit') | list %}

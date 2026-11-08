@@ -15,13 +15,14 @@ Jalankan:
 from __future__ import annotations
 
 import os
+import urllib.parse
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import config, store
+from . import config, store, tarik
 from .agent import llm, pipeline
 
 import sys
@@ -71,6 +72,9 @@ def hasil(segarkan: bool = False) -> list[dict]:
 def konteks(request: Request, halaman: str, **tambahan) -> dict:
     _, sumber = store.muat_detail()
     dasar = {
+        "status_tarik": tarik.baca_status(),
+        "jml_watchlist": len(tarik.baca_watchlist()),
+        "pesan": request.query_params.get("pesan"),
         "request": request,
         "halaman": halaman,
         "emiten": store.emiten_tervaluasi(),
@@ -86,9 +90,82 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
 
 @app.get("/", response_class=HTMLResponse)
 def feed(request: Request, segarkan: int = 0):
+    daftar = hasil(bool(segarkan))
+    _, sumber = store.muat_detail()
+    if sumber == "nyata":
+        # Saham yang dihapus dari watchlist berhenti tampil; riwayatnya tetap tersimpan.
+        wl = set(tarik.baca_watchlist())
+        daftar = [h for h in daftar if (h.get("emiten") or {}).get("kode") in wl]
     return tpl.TemplateResponse(
         request=request, name="feed.html",
-        context=konteks(request, "feed", daftar=hasil(bool(segarkan))))
+        context=konteks(request, "feed", daftar=daftar))
+
+
+# --- penarikan dinamis & watchlist ----------------------------------------
+async def _form(request: Request) -> dict[str, str]:
+    """Urai form tanpa dependensi tambahan (python-multipart tidak dibutuhkan)."""
+    badan = (await request.body()).decode("utf-8", "replace")
+    return {k: v[0] for k, v in urllib.parse.parse_qs(badan).items()}
+
+
+def _balik(ke: str, pesan: str) -> RedirectResponse:
+    pisah = "&" if "?" in ke else "?"
+    return RedirectResponse(f"{ke}{pisah}pesan={urllib.parse.quote(pesan)}", status_code=303)
+
+
+def _ringkas_status(st: dict) -> str:
+    if not st.get("ok"):
+        sebab = "; ".join(f"{k}: {v.get('jenis')}" for k, v in st["sumber"].items())
+        return f"Penarikan gagal ({sebab}). Data terakhir yang tersimpan tetap dipakai."
+    return (f"Diperiksa: {st['cocok_watchlist']} pengumuman emiten watchlist di tarikan ini, "
+            f"{st['baru']} baru.")
+
+
+@app.post("/periksa", summary="Tarik pengumuman terbaru untuk watchlist, lalu proses ulang")
+async def periksa(request: Request):
+    f = await _form(request)
+    st = tarik.periksa_sekarang()
+    hasil(segarkan=True)
+    ke = f.get("kembali") or "/"
+    return _balik(ke if ke.startswith("/") else "/", _ringkas_status(st))
+
+
+@app.get("/watchlist", response_class=HTMLResponse)
+def watchlist(request: Request):
+    detail, _ = store.muat_detail()
+    tervaluasi = set(store.emiten_tervaluasi())
+    baris = []
+    for k in tarik.baca_watchlist():
+        punya = [d for d in detail if d.get("code") == k]
+        baris.append({
+            "kode": k,
+            "nama": next((d.get("name") for d in punya if d.get("name")), None),
+            "valuasi": k in tervaluasi,
+            "jumlah": len(punya),
+            "terakhir": max((f"{d.get('date')} {d.get('time')}" for d in punya), default=None),
+        })
+    return tpl.TemplateResponse(
+        request=request, name="watchlist.html",
+        context=konteks(request, "watchlist", baris=baris))
+
+
+@app.post("/watchlist/tambah")
+async def watchlist_tambah(request: Request):
+    ok, pesan = tarik.tambah_ke_watchlist((await _form(request)).get("kode", ""))
+    if ok:
+        pesan += " Tekan “Periksa sekarang” untuk menarik pengumumannya."
+    return _balik("/watchlist", pesan)
+
+
+@app.post("/watchlist/hapus/{kode}")
+def watchlist_hapus(kode: str):
+    tarik.hapus_dari_watchlist(kode)
+    return _balik("/watchlist", f"{kode} dihapus dari watchlist.")
+
+
+@app.get("/api/watchlist", summary="Daftar kode saham yang dipantau")
+def api_watchlist():
+    return JSONResponse({"kode": tarik.baca_watchlist(), "status_tarik": tarik.baca_status()})
 
 
 @app.get("/peringatan/{pengenal}", response_class=HTMLResponse)

@@ -16,6 +16,8 @@
   </div>
 
   <div class="nav">
+    <a href="/watchlist" class="{{ 'on' if halaman == 'watchlist' }}">Watchlist
+      <span class="hit abu">{{ jml_watchlist }}</span></a>
     <a href="/" class="{{ 'on' if halaman == 'feed' }}">Peringatan
       {% if jml_terbit %}<span class="hit">{{ jml_terbit }}</span>{% endif %}</a>
     {% for k in emiten %}
@@ -34,17 +36,32 @@
       {% if pakai_model %}Model aktif.{% else %}Tanpa kunci API — penalar berbasis aturan.{% endif %}
       Sumber data: <b>{{ sumber_data }}</b>.
     </small>
+    <span class="lbl" style="margin-top:10px;">Penarikan terakhir</span>
+    <div class="mesin">
+      {% if status_tarik %}
+      <span class="titik {{ '' if status_tarik.ok else 'merah' }}"></span>
+      <span>{{ status_tarik.waktu[:16] | replace('T', ' ') }} UTC</span>
+      {% else %}
+      <span class="titik kuning"></span><span>belum pernah</span>
+      {% endif %}
+    </div>
+    {% if status_tarik and not status_tarik.ok %}
+    <small>Gagal menarik. Memakai data terakhir yang tersimpan.</small>
+    {% endif %}
   </div>
 </nav>
 
 <main class="isi">
   {% if sumber_data == 'fixture' %}
   <div class="pita fixture">
-    <div><b>Data contoh.</b> Pengumuman MOPS asli hanya bisa ditarik dari jaringan Taiwan, jadi layar
-    ini memakai empat kasus uji di <span class="mono">data/fixtures/</span>. Begitu penarikan
-    dijalankan, isi <span class="mono">data/parsed/</span> otomatis dipakai — lewat kode baca yang
-    sama persis.</div>
+    <div><b>Data contoh.</b> Layar ini memakai empat kasus uji di
+    <span class="mono">data/fixtures/</span>. Tekan <b>Periksa sekarang</b> untuk menarik pengumuman
+    asli emiten di watchlist dari OpenAPI resmi bursa. Setelah itu data asli yang dipakai, lewat
+    kode baca yang sama persis.</div>
   </div>
+  {% endif %}
+  {% if pesan %}
+  <div class="pita {{ 'bahaya' if 'gagal' in pesan.lower() or 'bukan' in pesan.lower() else 'nyata' }}"><div>{{ pesan }}</div></div>
   {% endif %}
   {% block isi %}{% endblock %}
 </main>

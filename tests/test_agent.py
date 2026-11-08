@@ -235,5 +235,70 @@ class TestEvaluasiAppendix2(unittest.TestCase):
         self.assertGreaterEqual(m["dokumen_dengan_angka_salah_terbit"], 1)
 
 
+class TestPenarikDinamis(unittest.TestCase):
+    """Penarik OpenAPI: urai respons asli, simpan tanpa duplikat, gagal dengan tenang."""
+
+    def setUp(self):
+        import tempfile
+        from app import tarik
+        self.tarik = tarik
+        self.sampel = _baca_json("tests", "data", "openapi_t187ap04_sampel.json")
+        self._tmp = tempfile.TemporaryDirectory()
+        self._asli = {}
+        for n in ("WATCHLIST_FILE", "STATUS_FILE", "RAW_DIR", "DETAIL_FILE", "LIST_FILE"):
+            self._asli[n] = getattr(tarik, n)
+            setattr(tarik, n, os.path.join(self._tmp.name, os.path.basename(getattr(tarik, n))))
+        self._ambil = tarik.ambil
+        tarik.ambil = lambda s: self.sampel[s]          # tanpa jaringan
+
+    def tearDown(self):
+        for n, v in self._asli.items():
+            setattr(self.tarik, n, v)
+        self.tarik.ambil = self._ambil
+        self._tmp.cleanup()
+
+    def test_normalkan_data_asli(self):
+        for sumber, rows in self.sampel.items():
+            for r in rows:
+                d = self.tarik.normalkan(r, sumber, "uji")
+                with self.subTest(kode=d["code"]):
+                    self.assertRegex(d["date"], r"^\d{4}-\d{2}-\d{2}$")
+                    self.assertRegex(d["time"], r"^\d{2}:\d{2}:\d{2}$")
+                    self.assertIsInstance(d["clause"], int)
+                    self.assertTrue(d["items"], "butir 說明 harus terurai")
+                    self.assertEqual([b["no"] for b in d["items"]],
+                                     list(range(1, len(d["items"]) + 1)))
+
+    def test_nomor_tidak_berurutan_tidak_memotong_butir(self):
+        teks = "1.交易金額:新台幣 100 仟元\n   12. 不是butir\n2.其他應敘明事項(若有):無"
+        b = self.tarik.urai_butir(teks)
+        self.assertEqual([x["no"] for x in b], [1, 2])
+        self.assertEqual(b[1]["label"], "其他應敘明事項")
+
+    def test_hanya_watchlist_dan_tanpa_duplikat(self):
+        kode = self.tarik.normalkan(self.sampel["twse"][0], "twse", "x")["code"]
+        st = self.tarik.periksa_sekarang([kode])
+        self.assertTrue(st["ok"])
+        self.assertGreaterEqual(st["baru"], 1)
+        tersimpan = _baca_json(self.tarik.DETAIL_FILE)
+        self.assertTrue(all(d["code"] == kode for d in tersimpan))
+        self.assertEqual(self.tarik.periksa_sekarang([kode])["baru"], 0)
+
+    def test_halaman_blokir_dicatat_bukan_meledak(self):
+        def blokir(_):
+            raise self.tarik.Diblokir("halaman blokir")
+        self.tarik.ambil = blokir
+        st = self.tarik.periksa_sekarang(["2330"])
+        self.assertFalse(st["ok"])
+        self.assertEqual(st["sumber"]["twse"]["jenis"], "diblokir")
+
+    def test_watchlist_menolak_kode_aneh(self):
+        ok, _ = self.tarik.tambah_ke_watchlist("23;30")
+        self.assertFalse(ok)
+        ok, _ = self.tarik.tambah_ke_watchlist("3008")
+        self.assertTrue(ok)
+        self.assertIn("3008", self.tarik.baca_watchlist())
+
+
 if __name__ == "__main__":
     unittest.main()

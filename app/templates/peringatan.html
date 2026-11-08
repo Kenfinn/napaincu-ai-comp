@@ -27,7 +27,15 @@
 
 <div class="kartu">
   <div class="kv"><span class="k">Sumber</span>
-    <span class="v"><a class="sitasi" href="{{ h.sumber_url }}" target="_blank" rel="noopener">Halaman MOPS asli ↗</a></span></div>
+    <span class="v">
+    {% if h.mops_url %}
+      {{ h.sumber_data }}<br>
+      <a class="sitasi" href="{{ h.mops_url }}" target="_blank" rel="noopener">Cocokkan di MOPS ↗</a>
+      <span style="font-weight:400;">kode {{ h.emiten.kode }} · {{ h.tanggal }} {{ h.jam }}</span>
+    {% else %}
+      <a class="sitasi" href="{{ h.sumber_url }}" target="_blank" rel="noopener">Halaman MOPS asli ↗</a>
+    {% endif %}
+    </span></div>
   <div class="kv"><span class="k">Data pribadi dibuang di hulu</span>
     <span class="v">{{ h.pii_dibuang | join(' · ') if h.pii_dibuang else '—' }}</span></div>
   <div class="kv"><span class="k">Jejak audit</span>
