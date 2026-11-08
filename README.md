@@ -1,4 +1,4 @@
-# Sentinel Saham
+# FEAF · Agentic AI Investment Assistant
 
 Agent pemantau pengumuman resmi bursa Taiwan (MOPS 重大訊息) yang menghitung ulang
 valuasi saat sebuah dokumen mengubah angka, dan **menolak menerbitkan peringatan**
@@ -45,8 +45,8 @@ dari MOPS lewat jaringan Taiwan (`scripts/spike_mops.py` → `parse_mops.py` →
 ### Deploy (Docker / Dokploy)
 
 ```bash
-docker build -t sentinel .
-docker run -p 8000:8000 -v sentinel-data:/data -e SENTINEL_TARIK_OTOMATIS_DETIK=600 sentinel
+docker build -t feaf .
+docker run -p 8000:8000 -v feaf-data:/data -e SENTINEL_TARIK_OTOMATIS_DETIK=600 feaf
 ```
 
 Langkah lengkap untuk Dokploy, termasuk kode akses dan daftar uji untuk tim, ada di

@@ -58,7 +58,7 @@ LIST_FILE = os.path.join(config.PARSED_DIR, "announcements.json")
 
 WATCHLIST_AWAL = ["2330", "2454", "2317", "2881", "1301"]
 
-UA = "SentinelSaham/0.2 (+riset kompetisi; read-only)"
+UA = "FEAF-InvestmentAssistant/0.2 (+riset kompetisi; read-only)"
 TIMEOUT = 30
 RETRY = 2
 BLOCK_MARKERS = ("FOR SECURITY REASONS", "因為安全性考量")

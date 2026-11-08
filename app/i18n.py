@@ -21,7 +21,7 @@ URUTAN = ("en", "zh", "id")
 # kunci: (English, 繁體中文, Bahasa Indonesia)
 _T: dict[str, tuple[str, str, str]] = {
     # --- umum / menu -----------------------------------------------------------
-    "merek.sub": ("Taiwan stocks", "台股", "Saham TW"),
+    "merek.sub": ("Investment Assistant", "投資助理", "Asisten Investasi"),
     "nav.watchlist": ("Watchlist", "自選股", "Watchlist"),
     "nav.feed": ("Alerts", "警示", "Peringatan"),
     "nav.valuasi": ("Valuation {kode}", "評價 {kode}", "Valuasi {kode}"),

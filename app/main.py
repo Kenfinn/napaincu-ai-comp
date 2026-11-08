@@ -1,4 +1,4 @@
-"""Aplikasi web Sentinel Saham.
+"""Aplikasi web FEAF — Agentic AI Investment Assistant.
 
 Server-rendered, tanpa build step, tanpa npm. Satu orang teknis harus bisa merawatnya,
 dan juri harus bisa menjalankannya dengan dua perintah.
@@ -55,7 +55,7 @@ async def lifespan(_app):
 
 app = FastAPI(
     lifespan=lifespan,
-    title="Sentinel Saham",
+    title="FEAF · Agentic AI Investment Assistant",
     description="Agent pemantau pengumuman MOPS yang menghitung ulang valuasi "
                 "dan menolak angka yang tidak bisa ditelusuri ke dokumen sumbernya.",
     version="0.1.0",

@@ -1,4 +1,4 @@
-# Deploy ke Dokploy
+# Deploy FEAF ke Dokploy
 
 Repo ini sudah punya `Dockerfile`. Dokploy cukup membangunnya dari GitHub. Kira-kira
 15 menit untuk pertama kali.
@@ -6,6 +6,8 @@ Repo ini sudah punya `Dockerfile`. Dokploy cukup membangunnya dari GitHub. Kira-
 Image-nya sudah diuji (8 Nov): build, health check, kode akses, penarik otomatis,
 dan data yang tetap ada setelah container dibuat ulang.
 
+> Variabel environment tetap berawalan `SENTINEL_` (nama kode internal), walau nama produknya FEAF.
+>
 > Nama menu di bawah mengikuti Dokploy versi umum. Kalau versimu sedikit berbeda,
 > cari padanannya. Isinya sama: sumber Git, tipe build Dockerfile, environment,
 > volume, dan domain.
@@ -35,8 +37,8 @@ curl -s https://openapi.twse.com.tw/v1/opendata/t187ap04_L | head -c 200
 
 ## 1. Buat aplikasi
 
-1. **Projects → Create Project**, beri nama `sentinel`.
-2. Di dalam project: **Create Service → Application**, beri nama `sentinel-web`.
+1. **Projects → Create Project**, beri nama `feaf`.
+2. Di dalam project: **Create Service → Application**, beri nama `feaf-web`.
 
 ## 2. Sumber kode
 
@@ -76,7 +78,7 @@ Tab **Advanced → Volumes / Mounts → Add Volume**:
 | Isian | Nilai |
 |---|---|
 | Mount Type | Volume |
-| Volume Name | `sentinel-data` |
+| Volume Name | `feaf-data` |
 | Mount Path | `/data` |
 
 Tanpa ini, watchlist dan semua riwayat pengumuman **hilang setiap kali redeploy**.
@@ -87,7 +89,7 @@ Tab **Domains → Add Domain**:
 
 | Isian | Nilai |
 |---|---|
-| Host | subdomain milikmu, mis. `sentinel.domainmu.com` (atau tombol generate domain dari Dokploy) |
+| Host | subdomain milikmu, mis. `feaf.domainmu.com` (atau tombol generate domain dari Dokploy) |
 | Container Port | `8000` |
 | HTTPS | aktif, Let's Encrypt |
 
@@ -106,9 +108,9 @@ Lalu buka di browser:
 
 | Alamat | Harus tampil |
 |---|---|
-| `https://sentinel.domainmu.com/sehat` | `{"ok":true, ...}` |
-| `https://sentinel.domainmu.com/` | Halaman Alerts, menu bahasa EN / 中文 / ID |
-| `https://sentinel.domainmu.com/akses?kode=<kodemu>` | Pesan "Access granted", lalu tombol-tombol bisa dipakai |
+| `https://feaf.domainmu.com/sehat` | `{"ok":true, ...}` |
+| `https://feaf.domainmu.com/` | Halaman Alerts, menu bahasa EN / 中文 / ID |
+| `https://feaf.domainmu.com/akses?kode=<kodemu>` | Pesan "Access granted", lalu tombol-tombol bisa dipakai |
 
 Beberapa menit setelah menyala, kotak **Last fetch** di menu samping terisi jam
 penarikan otomatis pertama.
@@ -124,8 +126,8 @@ Setiap ada commit baru di branch tadi, tekan **Deploy** lagi. Bisa juga aktifkan
 
 Kirim dua tautan:
 
-1. **Untuk melihat saja:** `https://sentinel.domainmu.com/?lang=en` (atau `lang=zh` / `lang=id`)
-2. **Untuk mencoba tombol:** `https://sentinel.domainmu.com/akses?kode=<kodemu>`.
+1. **Untuk melihat saja:** `https://feaf.domainmu.com/?lang=en` (atau `lang=zh` / `lang=id`)
+2. **Untuk mencoba tombol:** `https://feaf.domainmu.com/akses?kode=<kodemu>`.
    Bagikan hanya ke tim. Siapa pun yang punya tautan ini bisa mengubah watchlist.
 
 ### Daftar uji untuk teman-teman

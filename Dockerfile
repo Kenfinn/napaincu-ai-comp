@@ -1,6 +1,6 @@
-# Sentinel Saham — image untuk Dokploy / Docker.
-#   docker build -t sentinel .
-#   docker run -p 8000:8000 -v sentinel-data:/data sentinel
+# FEAF · Agentic AI Investment Assistant — image untuk Dokploy / Docker.
+#   docker build -t feaf .
+#   docker run -p 8000:8000 -v feaf-data:/data feaf
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
