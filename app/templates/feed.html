@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% block judul %}Peringatan · Sentinel Saham{% endblock %}
+{% block judul %}{{ t('feed.judul') }} · Sentinel{% endblock %}
 {% block isi %}
 
 <div class="kepala">
   <div>
-    <div class="kicker">Pengumuman MOPS · diproses agent</div>
-    <h1>Peringatan</h1>
+    <div class="kicker">{{ t('feed.kicker') }}</div>
+    <h1>{{ t('feed.judul') }}</h1>
   </div>
   <div style="display:flex; gap:14px; align-items:center;">
-    <a href="/?segarkan=1" class="mono" style="font-size:12px;">Proses ulang</a>
+    <a href="/?segarkan=1" class="mono" style="font-size:12px;">{{ t('tombol.proses_ulang') }}</a>
     <form method="post" action="/periksa" style="margin:0;">
       <input type="hidden" name="kembali" value="/">
-      <button class="tombol" type="submit">⟳ Periksa sekarang</button>
+      <button class="tombol" type="submit">{{ t('tombol.periksa') }}</button>
     </form>
   </div>
 </div>
@@ -22,14 +22,13 @@
 {% set dilewati = daftar | selectattr('status','equalto','dilewati') | list %}
 
 <div class="kartu rapat" style="display:flex; gap:28px;">
-  <div><div class="kicker">Terbit</div><b class="mono" style="font-size:19px;">{{ terbit|length }}</b></div>
-  <div><div class="kicker">Ditolak</div><b class="mono" style="font-size:19px; color:var(--tolak);">{{ ditolak|length }}</b></div>
-  <div><div class="kicker">Ditahan</div><b class="mono" style="font-size:19px; color:var(--amber);">{{ ditahan|length }}</b></div>
-  <div><div class="kicker">Dilewati</div><b class="mono" style="font-size:19px; color:var(--abu);">{{ dilewati|length }}</b></div>
+  <div><div class="kicker">{{ t('st.terbit') }}</div><b class="mono" style="font-size:19px;">{{ terbit|length }}</b></div>
+  <div><div class="kicker">{{ t('st.ditolak') }}</div><b class="mono" style="font-size:19px; color:var(--tolak);">{{ ditolak|length }}</b></div>
+  <div><div class="kicker">{{ t('st.ditahan') }}</div><b class="mono" style="font-size:19px; color:var(--amber);">{{ ditahan|length }}</b></div>
+  <div><div class="kicker">{{ t('st.dilewati') }}</div><b class="mono" style="font-size:19px; color:var(--abu);">{{ dilewati|length }}</b></div>
   <div style="margin-left:auto; text-align:right; max-width:330px;">
-    <div class="kicker">Kenapa empat angka, bukan satu</div>
-    <small style="color:var(--abu-2); line-height:1.5;">Tiga dari empat akhir bukan &ldquo;terbit&rdquo;.
-    Sistem yang tidak bisa berhenti bukan agent — itu pipeline.</small>
+    <div class="kicker">{{ t('feed.kenapa') }}</div>
+    <small style="color:var(--abu-2); line-height:1.5;">{{ t('feed.kenapa_isi') }}</small>
   </div>
 </div>
 
@@ -41,10 +40,10 @@
   </div>
   <div class="tengah">
     <div class="judul">{{ h.judul }}</div>
-    <div class="sub">{{ h.alasan }}</div>
+    <div class="sub">{{ tr(h.alasan_i18n, h.alasan) if h.alasan_i18n else h.alasan }}</div>
   </div>
   <div class="kanan">
-    <span class="lencana l-{{ h.status }}">{{ h.status }}</span>
+    <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
     {% if h.status == 'terbit' and h.muatan and h.muatan.diterima %}
       {% set d = h.muatan.diterima[0].hasil %}
       <span class="delta {{ 'naik' if d.delta.g_tersirat > 0 else 'turun' }}">
@@ -54,7 +53,7 @@
   </div>
 </a>
 {% else %}
-<div class="kartu kosong">Belum ada pengumuman untuk diproses.</div>
+<div class="kartu kosong">{{ t('feed.kosong') }}</div>
 {% endfor %}
 
 {% endblock %}

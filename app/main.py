@@ -14,6 +14,7 @@ Jalankan:
 
 from __future__ import annotations
 
+import json
 import os
 import urllib.parse
 
@@ -22,7 +23,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import config, store, tarik
+from . import config, i18n, store, tarik
 from .agent import llm, pipeline
 
 import sys
@@ -40,20 +41,28 @@ app.mount("/static", StaticFiles(directory=os.path.join(HERE, "static")), name="
 tpl = Jinja2Templates(directory=os.path.join(HERE, "templates"))
 
 
-# --- filter angka: format Indonesia (titik ribuan, koma desimal) ----------
-def rb(x, desimal: int = 0):
-    if x is None:
-        return "—"
-    s = f"{x:,.{desimal}f}"
-    return s.replace(",", "\u0000").replace(".", ",").replace("\u0000", ".")
+# --- filter angka: format mengikuti bahasa --------------------------------
+# EN/中文: 1,480,000.5 · ID: 1.480.000,5
+from jinja2 import pass_context  # noqa: E402
 
 
-def pct(x, desimal: int = 2):
-    return "—" if x is None else rb(x * 100, desimal) + "%"
+@pass_context
+def rb(ctx, x, desimal: int = 0):
+    return "—" if x is None else i18n.angka(x, ctx.get("bahasa", i18n.BAWAAN), desimal)
+
+
+@pass_context
+def pct(ctx, x, desimal: int = 2):
+    return "—" if x is None else rb(ctx, x * 100, desimal) + "%"
 
 
 tpl.env.filters["rb"] = rb
 tpl.env.filters["pct"] = pct
+
+
+def bahasa_dari(request: Request) -> str:
+    """?lang= di URL menang, lalu cookie, lalu bawaan (English)."""
+    return i18n.normal(request.query_params.get("lang") or request.cookies.get("bahasa"))
 
 
 # --- hasil pipeline, dihitung sekali lalu disimpan ------------------------
@@ -71,10 +80,24 @@ def hasil(segarkan: bool = False) -> list[dict]:
 
 def konteks(request: Request, halaman: str, **tambahan) -> dict:
     _, sumber = store.muat_detail()
+    bhs = bahasa_dari(request)
+    pesan_kilat, pesan_ok = None, True
+    if request.query_params.get("pesan"):
+        try:
+            p = json.loads(request.query_params["pesan"])
+            pesan_kilat, pesan_ok = i18n.tr(p, bhs), bool(p.get("ok", True))
+        except (ValueError, AttributeError):
+            pesan_kilat = None
     dasar = {
+        "bahasa": bhs,
+        "daftar_bahasa": i18n.BAHASA,
+        "t": lambda k, **p: i18n.t(k, bhs, **p),
+        "tr": lambda o, cadangan="": i18n.tr(o, bhs, cadangan),
+        "path_sekarang": request.url.path,
+        "pesan_ok": pesan_ok,
         "status_tarik": tarik.baca_status(),
         "jml_watchlist": len(tarik.baca_watchlist()),
-        "pesan": request.query_params.get("pesan"),
+        "pesan": pesan_kilat,
         "request": request,
         "halaman": halaman,
         "emiten": store.emiten_tervaluasi(),
@@ -108,17 +131,19 @@ async def _form(request: Request) -> dict[str, str]:
     return {k: v[0] for k, v in urllib.parse.parse_qs(badan).items()}
 
 
-def _balik(ke: str, pesan: str) -> RedirectResponse:
+def _balik(ke: str, pesan: dict, ok: bool = True) -> RedirectResponse:
+    """Pesan dikirim sebagai kode i18n, bukan kalimat jadi, supaya tampil di bahasa pengguna."""
+    isi = json.dumps({"kode": pesan["kode"], "param": pesan.get("param", {}), "ok": ok},
+                     ensure_ascii=False)
     pisah = "&" if "?" in ke else "?"
-    return RedirectResponse(f"{ke}{pisah}pesan={urllib.parse.quote(pesan)}", status_code=303)
+    return RedirectResponse(f"{ke}{pisah}pesan={urllib.parse.quote(isi)}", status_code=303)
 
 
-def _ringkas_status(st: dict) -> str:
+def _ringkas_status(st: dict) -> tuple[dict, bool]:
     if not st.get("ok"):
         sebab = "; ".join(f"{k}: {v.get('jenis')}" for k, v in st["sumber"].items())
-        return f"Penarikan gagal ({sebab}). Data terakhir yang tersimpan tetap dipakai."
-    return (f"Diperiksa: {st['cocok_watchlist']} pengumuman emiten watchlist di tarikan ini, "
-            f"{st['baru']} baru.")
+        return i18n.pesan("msg.tarik_gagal", sebab=sebab), False
+    return i18n.pesan("msg.tarik_ok", n=st["cocok_watchlist"], baru=st["baru"]), True
 
 
 @app.post("/periksa", summary="Tarik pengumuman terbaru untuk watchlist, lalu proses ulang")
@@ -127,7 +152,8 @@ async def periksa(request: Request):
     st = tarik.periksa_sekarang()
     hasil(segarkan=True)
     ke = f.get("kembali") or "/"
-    return _balik(ke if ke.startswith("/") else "/", _ringkas_status(st))
+    pesan, ok = _ringkas_status(st)
+    return _balik(ke if ke.startswith("/") and not ke.startswith("//") else "/", pesan, ok)
 
 
 @app.get("/watchlist", response_class=HTMLResponse)
@@ -152,15 +178,22 @@ def watchlist(request: Request):
 @app.post("/watchlist/tambah")
 async def watchlist_tambah(request: Request):
     ok, pesan = tarik.tambah_ke_watchlist((await _form(request)).get("kode", ""))
-    if ok:
-        pesan += " Tekan “Periksa sekarang” untuk menarik pengumumannya."
-    return _balik("/watchlist", pesan)
+    return _balik("/watchlist", pesan, ok)
 
 
 @app.post("/watchlist/hapus/{kode}")
 def watchlist_hapus(kode: str):
     tarik.hapus_dari_watchlist(kode)
-    return _balik("/watchlist", f"{kode} dihapus dari watchlist.")
+    return _balik("/watchlist", i18n.pesan("msg.dihapus", kode=kode))
+
+
+@app.get("/bahasa/{kode}")
+def ganti_bahasa(kode: str, ke: str = "/"):
+    """Simpan pilihan bahasa di cookie, lalu kembali ke halaman semula."""
+    tujuan = ke if ke.startswith("/") and not ke.startswith("//") else "/"
+    r = RedirectResponse(tujuan, status_code=303)
+    r.set_cookie("bahasa", i18n.normal(kode), max_age=60 * 60 * 24 * 365, samesite="lax")
+    return r
 
 
 @app.get("/api/watchlist", summary="Daftar kode saham yang dipantau")

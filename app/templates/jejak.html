@@ -1,48 +1,45 @@
 {% extends "base.html" %}
-{% block judul %}Jejak audit {{ h.id }} · Sentinel Saham{% endblock %}
+{% block judul %}{{ t('al.jejak') }} {{ h.id }} · Sentinel{% endblock %}
 {% block isi %}
 
 <div class="kepala">
   <div>
-    <div class="kicker">Operation trace · diwajibkan Appendix 2 butir 6</div>
-    <h1>Jejak audit — {{ h.emiten.kode }}</h1>
+    <div class="kicker">{{ t('jj.kicker') }}</div>
+    <h1>{{ t('jj.judul', kode=h.emiten.kode) }}</h1>
   </div>
-  <span class="lencana l-{{ h.status }}">{{ h.status }}</span>
+  <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
 </div>
 
 <div class="kartu rapat" style="display:flex; gap:26px; flex-wrap:wrap;">
-  <div><div class="kicker">Durasi</div><b class="mono">{{ h.ringkasan.durasi_total_ms }} ms</b></div>
-  <div><div class="kicker">Langkah</div><b class="mono">{{ h.ringkasan.langkah }}</b></div>
-  <div><div class="kicker">Panggilan model</div><b class="mono">{{ h.ringkasan.panggilan_model }}</b></div>
-  <div><div class="kicker">Token masuk</div><b class="mono">{{ h.ringkasan.token_masuk | rb }}</b></div>
-  <div><div class="kicker">Token keluar</div><b class="mono">{{ h.ringkasan.token_keluar | rb }}</b></div>
-  <div><div class="kicker">Biaya</div><b class="mono">${{ h.ringkasan.biaya_usd | rb(4) }}</b></div>
-  <div><div class="kicker">Retry</div><b class="mono">{{ h.ringkasan.retry }}</b></div>
-  <div><div class="kicker">Mode cadangan</div><b class="mono">{{ 'ya' if h.ringkasan.pakai_cadangan else 'tidak' }}</b></div>
+  <div><div class="kicker">{{ t('jj.durasi') }}</div><b class="mono">{{ h.ringkasan.durasi_total_ms }} ms</b></div>
+  <div><div class="kicker">{{ t('jj.langkah') }}</div><b class="mono">{{ h.ringkasan.langkah }}</b></div>
+  <div><div class="kicker">{{ t('jj.panggilan') }}</div><b class="mono">{{ h.ringkasan.panggilan_model }}</b></div>
+  <div><div class="kicker">{{ t('jj.token_masuk') }}</div><b class="mono">{{ h.ringkasan.token_masuk | rb }}</b></div>
+  <div><div class="kicker">{{ t('jj.token_keluar') }}</div><b class="mono">{{ h.ringkasan.token_keluar | rb }}</b></div>
+  <div><div class="kicker">{{ t('jj.biaya') }}</div><b class="mono">${{ h.ringkasan.biaya_usd | rb(4) }}</b></div>
+  <div><div class="kicker">{{ t('jj.retry') }}</div><b class="mono">{{ h.ringkasan.retry }}</b></div>
+  <div><div class="kicker">{{ t('jj.cadangan') }}</div><b class="mono">{{ t('ya') if h.ringkasan.pakai_cadangan else t('tidak') }}</b></div>
 </div>
 
 {% if h.ringkasan.pakai_cadangan %}
-<div class="pita fixture">
-  <div><b>Dijalankan dengan penalar berbasis aturan.</b> Tidak ada kunci API terpasang, jadi tahap
-  pemilah dan penyari memakai jalur deterministik. Jalur ini sekaligus <b>baseline</b> pembanding
-  yang diminta Appendix 2 — jadi angka di atas tetap sah sebagai bahan evaluasi.</div>
-</div>
+<div class="pita fixture"><div>{{ t('jj.pita_cadangan') | safe }}</div></div>
 {% endif %}
 
-<h2>Langkah</h2>
+<h2>{{ t('jj.langkah') }}</h2>
 <div class="kartu">
 {% for l in h.jejak %}
   <div class="langkah {{ l.status }}">
     <span class="no">{{ l.urutan }}</span>
     <div style="flex:1; min-width:0;">
       <div style="display:flex; justify-content:space-between; gap:12px;">
-        <b style="font-size:13px;">{{ l.tahap }}</b>
-        <span class="mono" style="font-size:11px; color:var(--abu);">{{ l.status }} · {{ l.durasi_ms }} ms</span>
+        <b style="font-size:13px;">{{ tr(l.tahap_i18n) if l.tahap_i18n else l.tahap }}</b>
+        {% set st_kunci = ('st.' ~ l.status) if l.status in ('terbit','ditolak','ditahan','dilewati') else ('jst.' ~ l.status) %}
+        <span class="mono" style="font-size:11px; color:var(--abu);">{{ t(st_kunci) if not t(st_kunci).startswith('⟦') else l.status }} · {{ l.durasi_ms }} ms</span>
       </div>
       {% if l.meta and l.meta.model %}
       <div class="mono" style="font-size:10.5px; color:var(--abu); margin-top:3px;">
         {{ l.meta.model }} · prompt {{ l.meta.versi_prompt }}
-        {%- if l.meta.cadangan %} · cadangan: {{ l.meta.sebab_cadangan }}{% endif %}
+        {%- if l.meta.cadangan %} · {{ t('jj.cadangan_sebab', sebab=l.meta.sebab_cadangan) }}{% endif %}
       </div>
       {% endif %}
       <pre>{{ l.keluaran | tojson(indent=2) }}</pre>
@@ -52,10 +49,7 @@
 </div>
 
 <div class="kartu rapat">
-  <small style="color:var(--abu-2); line-height:1.55;">Berkas JSON mentah jejak ini ada di
-  <span class="mono">data/traces/{{ h.id }}.json</span>, dan tersedia lewat
-  <a href="/api/jejak/{{ h.id }}" class="mono">/api/jejak/{{ h.id }}</a>.
-  Ditulis sebagai bagian dari pemakaian biasa, bukan dikarang menjelang tenggat.</small>
+  <small style="color:var(--abu-2); line-height:1.55;">{{ t('jj.berkas', id=(h.id | e)) | safe }}</small>
 </div>
 
 {% endblock %}

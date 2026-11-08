@@ -30,6 +30,7 @@ import urllib.request
 from datetime import datetime, timezone
 
 from . import config
+from .i18n import pesan
 
 SUMBER = {
     "twse": {
@@ -91,15 +92,16 @@ def simpan_watchlist(kode: list[str]) -> list[str]:
 KODE_SAH = re.compile(r"^[0-9A-Z]{4,6}$")
 
 
-def tambah_ke_watchlist(kode: str) -> tuple[bool, str]:
+def tambah_ke_watchlist(kode: str) -> tuple[bool, dict]:
+    """Mengembalikan (berhasil, pesan) — pesan berupa kode i18n supaya tampil tiga bahasa."""
     kode = (kode or "").strip().upper()
     if not KODE_SAH.match(kode):
-        return False, f"“{kode}” bukan bentuk kode saham Taiwan (4–6 angka/huruf)."
+        return False, pesan("msg.kode_salah", kode=kode[:12])
     sekarang = baca_watchlist()
     if kode in sekarang:
-        return False, f"{kode} sudah ada di watchlist."
+        return False, pesan("msg.sudah_ada", kode=kode)
     simpan_watchlist(sekarang + [kode])
-    return True, f"{kode} ditambahkan."
+    return True, pesan("msg.ditambah", kode=kode)
 
 
 def hapus_dari_watchlist(kode: str) -> list[str]:

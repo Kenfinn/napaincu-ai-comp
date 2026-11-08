@@ -300,5 +300,73 @@ class TestPenarikDinamis(unittest.TestCase):
         self.assertIn("3008", self.tarik.baca_watchlist())
 
 
+class TestTigaBahasa(unittest.TestCase):
+    """Setiap teks wajib ada dalam English, 繁體中文, dan Bahasa Indonesia."""
+
+    @classmethod
+    def setUpClass(cls):
+        import tempfile
+        from fastapi.testclient import TestClient
+        from app import config, i18n, main, tarik
+        cls.i18n = i18n
+        cls._tmp = tempfile.TemporaryDirectory()
+        cls._asli = {"PARSED_DIR": config.PARSED_DIR, "TRACE_DIR": config.TRACE_DIR}
+        config.PARSED_DIR = os.path.join(cls._tmp.name, "parsed")   # kosong → fixture
+        config.TRACE_DIR = os.path.join(cls._tmp.name, "traces")
+        cls._wl = tarik.WATCHLIST_FILE
+        tarik.WATCHLIST_FILE = os.path.join(cls._tmp.name, "watchlist.json")
+        main._cache = None
+        cls.config, cls.tarik, cls.main = config, tarik, main
+        cls.c = TestClient(main.app)
+
+    @classmethod
+    def tearDownClass(cls):
+        for k, v in cls._asli.items():
+            setattr(cls.config, k, v)
+        cls.tarik.WATCHLIST_FILE = cls._wl
+        cls.main._cache = None
+        cls._tmp.cleanup()
+
+    def test_kamus_lengkap(self):
+        for kunci, isi in self.i18n.semua_kunci().items():
+            with self.subTest(kunci=kunci):
+                self.assertEqual(len(isi), 3)
+                self.assertTrue(all(x.strip() for x in isi), "ada bahasa yang kosong")
+                ph = [set(re.findall(r"{(\w+)}", x)) for x in isi]
+                self.assertTrue(ph[0] == ph[1] == ph[2], f"placeholder beda: {ph}")
+
+    def test_semua_halaman_tiga_bahasa(self):
+        halaman = ["/", "/watchlist", "/valuasi/2330",
+                   "/peringatan/2330-2026-09-18-1", "/jejak/2330-2026-09-18-1",
+                   "/peringatan/2330-2026-09-19-4", "/peringatan/2454-2026-09-21-7",
+                   "/peringatan/2330-2026-09-22-3"]
+        penanda = {"en": "Watchlist", "zh": "自選股", "id": "Watchlist"}
+        for bhs in ("en", "zh", "id"):
+            for url in halaman:
+                with self.subTest(bahasa=bhs, url=url):
+                    r = self.c.get(url, params={"lang": bhs})
+                    self.assertEqual(r.status_code, 200)
+                    self.assertNotIn("⟦", r.text, "ada kunci terjemahan yang hilang")
+                    self.assertIn(penanda[bhs], r.text)
+
+    def test_teks_agent_ikut_diterjemahkan(self):
+        en = self.c.get("/peringatan/2330-2026-09-19-4", params={"lang": "en"}).text
+        zh = self.c.get("/peringatan/2330-2026-09-19-4", params={"lang": "zh"}).text
+        self.assertIn("Currency supported by the model", en)
+        self.assertNotIn("Mata uang didukung model", en)
+        self.assertIn("幣別為模型所支援", zh)
+
+    def test_format_angka_ikut_bahasa(self):
+        self.assertEqual(self.i18n.angka(1480000.5, "en", 1), "1,480,000.5")
+        self.assertEqual(self.i18n.angka(1480000.5, "id", 1), "1.480.000,5")
+
+    def test_pilihan_bahasa_disimpan_di_cookie(self):
+        r = self.c.get("/bahasa/zh", params={"ke": "/watchlist"}, follow_redirects=False)
+        self.assertEqual(r.status_code, 303)
+        self.assertIn("bahasa=zh", r.headers.get("set-cookie", ""))
+        r = self.c.get("/bahasa/zh", params={"ke": "//jahat.example"}, follow_redirects=False)
+        self.assertEqual(r.headers["location"], "/")
+
+
 if __name__ == "__main__":
     unittest.main()

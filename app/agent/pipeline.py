@@ -25,6 +25,7 @@ from datetime import datetime, timezone
 
 from .. import config, store
 from . import extract, recompute, screen, verify
+from ..i18n import pesan
 
 
 def _sekarang() -> str:
@@ -41,8 +42,9 @@ class Jejak:
         self.mulai_iso = _sekarang()
 
     def catat(self, nama: str, status: str, masukan, keluaran, meta: dict | None = None,
-              t0: float | None = None) -> None:
+              t0: float | None = None, i18n: dict | None = None) -> None:
         self.langkah.append({
+            "tahap_i18n": i18n,
             "urutan": len(self.langkah),
             "tahap": nama,
             "status": status,
@@ -84,10 +86,11 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
     t0 = time.monotonic()
     hasil_saring = screen.saring(detail)
     j.catat("0 · Saringan pasal", "lolos" if hasil_saring["lolos"] else "berhenti",
-            ringkas_dok, hasil_saring, t0=t0)
+            ringkas_dok, hasil_saring, t0=t0, i18n=pesan("tahap.saring"))
 
     if not hasil_saring["lolos"]:
-        return _selesai(j, "dilewati", detail, None, hasil_saring["alasan"])
+        return _selesai(j, "dilewati", detail, None, hasil_saring["alasan"],
+                        hasil_saring.get("alasan_i18n"))
 
     # --- tahap 1 & 2 -------------------------------------------------------
     # Pemilah dan penyari digabung dalam satu panggilan: pertanyaan "input mana yang
@@ -98,22 +101,26 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
     status = "lolos" if temuan else "berhenti"
     j.catat("1–2 · Pemilah & penyari", status,
             {"kandidat_input": hasil_saring["input_mungkin"]},
-            {"jumlah_temuan": len(temuan), "temuan": temuan}, meta, t0=t0)
+            {"jumlah_temuan": len(temuan), "temuan": temuan}, meta, t0=t0,
+            i18n=pesan("tahap.pilah_sari"))
 
     if meta.get("injeksi_terdeteksi"):
         j.catat("· Penanda injeksi", "tercatat",
                 {"penanda": meta["injeksi_terdeteksi"]},
                 {"tindakan": "Tidak mengubah perilaku. Teks dokumen adalah data, "
-                             "bukan perintah. Dicatat untuk ditinjau manusia."})
+                             "bukan perintah. Dicatat untuk ditinjau manusia."},
+                i18n=pesan("tahap.injeksi"))
 
     if not temuan:
         return _selesai(j, "ditahan", detail, None,
-                        "Tidak ada angka yang bisa ditarik lengkap dengan kalimat sumbernya.")
+                        "Tidak ada angka yang bisa ditarik lengkap dengan kalimat sumbernya.",
+                        pesan("akhir.tanpa_angka"))
 
     if d_valuasi is None:
         return _selesai(j, "ditahan", detail, None,
                         f"Belum ada berkas valuasi untuk emiten {detail.get('code')}. "
-                        f"Angka tertarik, tapi tidak ada model untuk menghitung ulang.")
+                        f"Angka tertarik, tapi tidak ada model untuk menghitung ulang.",
+                        pesan("akhir.tanpa_valuasi", kode=detail.get("code")))
 
     # --- tahap 3 & 4 per temuan -------------------------------------------
     diterima, ditolak = [], []
@@ -123,40 +130,52 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
         v_awal = verify.vonis(cek_awal)
         j.catat(f"4a · Pemeriksa pra-hitung ({t['input']})",
                 "lolos" if v_awal["lolos"] else "tolak",
-                {"temuan": t}, {"cek": cek_awal, "vonis": v_awal}, t0=t0)
+                {"temuan": t}, {"cek": cek_awal, "vonis": v_awal}, t0=t0,
+                i18n=pesan("tahap.periksa_awal", input=t["input"]))
 
         if not v_awal["lolos"]:
-            ditolak.append({"temuan": t, "sebab": v_awal["sebab"]})
+            ditolak.append({"temuan": t, "sebab": v_awal["sebab"],
+                            "sebab_i18n": v_awal["sebab_i18n"]})
             continue
 
         t0 = time.monotonic()
         hasil = recompute.hitung_ulang(d_valuasi, t["input"], t["nilai_juta_ntd"])
         j.catat(f"3 · Penghitung ({t['input']})", "lolos",
                 {"input": t["input"], "nilai_baru": t["nilai_juta_ntd"]},
-                _ringkas_hitung(hasil), t0=t0)
+                _ringkas_hitung(hasil), t0=t0, i18n=pesan("tahap.hitung", input=t["input"]))
 
         t0 = time.monotonic()
         cek_akhir = verify.periksa_hasil(hasil)
         v_akhir = verify.vonis(cek_akhir)
         j.catat(f"4b · Pemeriksa pasca-hitung ({t['input']})",
                 "lolos" if v_akhir["lolos"] else "tolak",
-                {"input": t["input"]}, {"cek": cek_akhir, "vonis": v_akhir}, t0=t0)
+                {"input": t["input"]}, {"cek": cek_akhir, "vonis": v_akhir}, t0=t0,
+                i18n=pesan("tahap.periksa_akhir", input=t["input"]))
 
         if v_akhir["lolos"]:
             diterima.append({"temuan": t, "hasil": hasil, "cek": cek_awal + cek_akhir})
         else:
-            ditolak.append({"temuan": t, "sebab": v_akhir["sebab"]})
+            ditolak.append({"temuan": t, "sebab": v_akhir["sebab"],
+                            "sebab_i18n": v_akhir["sebab_i18n"]})
 
     if not diterima:
         # Dua temuan sering gagal dengan sebab yang sama persis (mis. satu mata uang
         # asing menyentuh dua input). Diulang apa adanya, ringkasannya jadi dinding
         # teks yang tidak terbaca, jadi disaring unik dengan urutan tetap dijaga.
         unik = list(dict.fromkeys(s for d in ditolak for s in d["sebab"]))
-        return _selesai(j, "ditolak", detail, {"ditolak": ditolak}, "; ".join(unik))
+        unik_i18n, lihat = [], set()
+        for d in ditolak:
+            for s in d["sebab_i18n"]:
+                k = repr(s)
+                if k not in lihat:
+                    lihat.add(k)
+                    unik_i18n.append(s)
+        return _selesai(j, "ditolak", detail, {"ditolak": ditolak}, "; ".join(unik), unik_i18n)
 
     return _selesai(j, "terbit", detail,
                     {"diterima": diterima, "ditolak": ditolak},
-                    f"{len(diterima)} temuan lolos seluruh pemeriksaan.")
+                    f"{len(diterima)} temuan lolos seluruh pemeriksaan.",
+                    pesan("akhir.terbit", n=len(diterima)))
 
 
 def _ringkas_hitung(h: dict) -> dict:
@@ -175,12 +194,14 @@ def _ringkas_hitung(h: dict) -> dict:
     }
 
 
-def _selesai(j: Jejak, status: str, detail: dict, muatan, alasan: str) -> dict:
-    j.catat("· Selesai", status, {}, {"alasan": alasan})
+def _selesai(j: Jejak, status: str, detail: dict, muatan, alasan: str,
+             alasan_i18n=None) -> dict:
+    j.catat("· Selesai", status, {}, {"alasan": alasan}, i18n=pesan("tahap.selesai"))
     hasil = {
         "id": j.pengenal,
         "status": status,
         "alasan": alasan,
+        "alasan_i18n": alasan_i18n,
         "emiten": {"kode": detail.get("code"), "nama": detail.get("name")},
         "judul": detail.get("subject"),
         "tanggal": detail.get("date"),

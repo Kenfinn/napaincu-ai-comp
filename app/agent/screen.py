@@ -13,6 +13,8 @@ penalaran dibutuhkan, alih-alih menabrakkan model ke segala hal.
 
 from __future__ import annotations
 
+from ..i18n import pesan
+
 # PERINGATAN — pemetaan ini masih SEMENTARA.
 #
 # Nomor pasal di bawah adalah dugaan kerja, belum dicocokkan baris per baris dengan
@@ -59,6 +61,7 @@ def saring(detail: dict) -> dict:
             "alasan": "Nomor 符合條款 tidak ada di halaman, tidak ada dasar menyaring. "
                       "Diteruskan dengan tanda supaya ditinjau manusia.",
             "ragu": True,
+            "alasan_i18n": pesan("saring.tanpa_pasal"),
         }
 
     cocok = KLAUSA_RELEVAN.get(klausa)
@@ -71,6 +74,7 @@ def saring(detail: dict) -> dict:
             "alasan": f"Pasal {klausa} tidak ada dalam daftar pasal yang dapat mengubah "
                       f"input valuasi. Tidak diteruskan ke model.",
             "ragu": False,
+            "alasan_i18n": pesan("saring.di_luar", k=klausa),
         }
 
     return {
@@ -81,4 +85,7 @@ def saring(detail: dict) -> dict:
         "alasan": f"Pasal {klausa} — {cocok['nama']}. Dapat menyentuh: "
                   f"{', '.join(cocok['input'])}.",
         "ragu": False,
+        "alasan_i18n": {"kode": "saring.cocok",
+                        "param": {"k": klausa, "input": ", ".join(cocok["input"])},
+                        "param_kode": {"nama": f"klausa.{klausa}"}},
     }

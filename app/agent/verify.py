@@ -15,6 +15,7 @@ from __future__ import annotations
 import re
 
 from . import extract, llm, recompute
+from ..i18n import pesan
 
 # Sebuah pengumuman tunggal yang mengubah input valuasi lebih dari sekian kali lipat
 # hampir pasti kesalahan satuan atau salah tarik butir, bukan temuan nyata. Angka di
@@ -41,8 +42,15 @@ def _rb(x: float, desimal: int = 0) -> str:
     return f"{x:,.{desimal}f}".replace(",", "\u0000").replace(".", ",").replace("\u0000", ".")
 
 
-def _cek(nama: str, lolos: bool, alasan: str) -> dict:
-    return {"nama": nama, "lolos": lolos, "alasan": alasan}
+def _cek(nama: str, lolos: bool, alasan: str, kunci: str | None = None,
+         kunci_alasan: str | None = None, **param) -> dict:
+    """Satu pemeriksaan. `nama`/`alasan` Indonesia tetap disimpan untuk JSON mentah;
+    kode + parameter dipakai layar untuk menampilkannya dalam tiga bahasa."""
+    c = {"nama": nama, "lolos": lolos, "alasan": alasan}
+    if kunci:
+        c["nama_i18n"] = pesan(kunci)
+        c["alasan_i18n"] = pesan(kunci_alasan or f"{kunci}.{'ok' if lolos else 'x'}", **param)
+    return c
 
 
 def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
@@ -59,7 +67,8 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
         "Label butir sah untuk input ini",
         label in sah,
         f"Label '{label}' {'ada' if label in sah else 'TIDAK ada'} dalam daftar label sah "
-        f"untuk {temuan.get('input')}: {', '.join(sah) or '(kosong)'}"))
+        f"untuk {temuan.get('input')}: {', '.join(sah) or '(kosong)'}",
+        "cek.label", label=label, input=temuan.get("input"), sah=", ".join(sah) or "—"))
 
     # 2 — kalimat yang dikutip harus benar-benar ada di dokumen.
     kutipan = (temuan.get("kutipan") or "").strip()
@@ -69,7 +78,8 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
         "Kutipan ditemukan di dokumen sumber",
         ada_kutipan,
         "Kutipan cocok dengan isi dokumen" if ada_kutipan
-        else f"Kutipan '{isi_kutipan[:60]}' tidak ditemukan di dokumen — kemungkinan dikarang"))
+        else f"Kutipan '{isi_kutipan[:60]}' tidak ditemukan di dokumen — kemungkinan dikarang",
+        "cek.kutipan", kutipan=isi_kutipan[:60]))
 
     # 3 — digit angkanya harus ada di dokumen. Koma diabaikan supaya
     # '1,480,000,000' dan '1480000000' dianggap sama.
@@ -79,7 +89,8 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
         "Angka ditemukan di dokumen sumber",
         ada_angka,
         f"Angka {temuan.get('nilai_mentah')} ada di dokumen" if ada_angka
-        else f"Angka {temuan.get('nilai_mentah')} TIDAK ada di dokumen — halusinasi"))
+        else f"Angka {temuan.get('nilai_mentah')} TIDAK ada di dokumen — halusinasi",
+        "cek.angka", angka=temuan.get("nilai_mentah")))
 
     # 4 — mata uang. Model valuasi seluruhnya NTD dan tidak memuat kurs.
     mu = temuan.get("mata_uang")
@@ -90,7 +101,8 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
         "NTD (diasumsikan, sesuai konvensi MOPS)" if mu is None
         else ("NTD" if mu_ok else
               f"Jumlah berdenominasi {mu}. Model valuasi tidak memuat kurs, "
-              f"jadi angka ini tidak boleh dikonversi diam-diam.")))
+              f"jadi angka ini tidak boleh dikonversi diam-diam."),
+        "cek.mu", "cek.mu.asumsi" if mu is None else ("cek.mu.ok" if mu_ok else "cek.mu.x"), mu=mu))
 
     # 5 — satuan harus dikenali, karena selisihnya seribu kali lipat.
     tok = temuan.get("satuan")
@@ -99,7 +111,8 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
         tok in extract.SATUAN,
         f"Satuan '{tok}' dikenali (pengali {extract.SATUAN.get(tok)} ke juta NTD)"
         if tok in extract.SATUAN
-        else f"Satuan '{tok}' tidak dikenali — tidak bisa dikonversi dengan aman"))
+        else f"Satuan '{tok}' tidak dikenali — tidak bisa dikonversi dengan aman",
+        "cek.satuan", satuan=tok, pengali=str(extract.SATUAN.get(tok))))
 
     # 6 — hasil konversi harus ada. Kalau None, salah satu di atas menggagalkannya.
     nilai = temuan.get("nilai_juta_ntd")
@@ -107,13 +120,15 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
         "Nilai terkonversi tersedia",
         nilai is not None,
         f"{_rb(nilai)} juta NTD" if nilai is not None
-        else "Konversi tidak dilakukan — gagal-tertutup karena satuan atau mata uang"))
+        else "Konversi tidak dilakukan — gagal-tertutup karena satuan atau mata uang",
+        "cek.konversi", nilai=nilai))
 
     # 7 — besaran harus masuk akal dibanding nilai yang berlaku sekarang.
     lama = recompute.nilai_sekarang(d_valuasi, temuan.get("input"))
     if nilai is None or not lama:
         cek.append(_cek("Besaran masuk akal", False,
-                        "Tidak bisa dinilai — nilai baru atau nilai lama tidak tersedia"))
+                        "Tidak bisa dinilai — nilai baru atau nilai lama tidak tersedia",
+                        "cek.besaran", "cek.besaran.na"))
     else:
         rasio = nilai / lama
         wajar = PITA_BAWAH <= rasio <= PITA_ATAS
@@ -123,7 +138,9 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
             f"{_rb(nilai)} berbanding {_rb(lama)} juta NTD = {_rb(rasio, 2)}× "
             f"({'dalam' if wajar else 'DI LUAR'} pita {_rb(PITA_BAWAH, 1)}–{_rb(PITA_ATAS, 1)}×)"
             + ("" if wajar else ". Satu pengumuman yang menggeser input sebesar ini "
-                                "hampir pasti salah satuan atau salah butir.")))
+                                "hampir pasti salah satuan atau salah butir."),
+            "cek.besaran", nilai=nilai, lama=lama, rasio=round(rasio, 2),
+            bawah=PITA_BAWAH, atas=PITA_ATAS))
 
     return cek
 
@@ -136,7 +153,8 @@ def periksa_hasil(hasil: dict) -> list[dict]:
         "Sirkularitas utuh",
         utuh,
         f"g dimasukkan kembali mengembalikan EV yang sama (selisih {drift:.2e}%)" if utuh
-        else f"Selisih sirkularitas {drift:.2e}% di atas batas — ada bug aritmetika")]
+        else f"Selisih sirkularitas {drift:.2e}% di atas batas — ada bug aritmetika",
+        "cek.sirkular", drift=f"{drift:.2e}")]
 
 
 def vonis(cek: list[dict]) -> dict:
@@ -146,4 +164,6 @@ def vonis(cek: list[dict]) -> dict:
         "jumlah_cek": len(cek),
         "jumlah_gagal": len(gagal),
         "sebab": [c["nama"] + " — " + c["alasan"] for c in gagal],
+        "sebab_i18n": [{"nama": c.get("nama_i18n") or c["nama"],
+                        "alasan": c.get("alasan_i18n") or c["alasan"]} for c in gagal],
     }

@@ -93,6 +93,7 @@ def hitung_ulang(d: dict, input_nama: str, nilai: float) -> dict:
     return {
         "input": input_nama,
         "arti": arti,
+        "arti_i18n": {"kode": f"arti.{input_nama}", "param": {}},
         "nilai_lama": nilai_sekarang(d, input_nama),
         "nilai_baru": nilai,
         "g_skenario": g_skenario,

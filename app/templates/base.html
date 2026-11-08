@@ -1,70 +1,69 @@
 <!doctype html>
-<html lang="id">
+<html lang="{{ {'en':'en','zh':'zh-Hant-TW','id':'id'}[bahasa] }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% block judul %}Sentinel Saham{% endblock %}</title>
+<title>{% block judul %}Sentinel{% endblock %}</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
-
 <nav class="rail">
   <div class="merek">
     <b>Sentinel</b>
-    <span>Saham TW</span>
+    <span>{{ t('merek.sub') }}</span>
   </div>
-
   <div class="nav">
-    <a href="/watchlist" class="{{ 'on' if halaman == 'watchlist' }}">Watchlist
+    <a href="/watchlist" class="{{ 'on' if halaman == 'watchlist' }}">{{ t('nav.watchlist') }}
       <span class="hit abu">{{ jml_watchlist }}</span></a>
-    <a href="/" class="{{ 'on' if halaman == 'feed' }}">Peringatan
+    <a href="/" class="{{ 'on' if halaman == 'feed' }}">{{ t('nav.feed') }}
       {% if jml_terbit %}<span class="hit">{{ jml_terbit }}</span>{% endif %}</a>
     {% for k in emiten %}
-    <a href="/valuasi/{{ k }}" class="{{ 'on' if halaman == 'valuasi' and kode == k }}">Valuasi {{ k }}</a>
+    <a href="/valuasi/{{ k }}" class="{{ 'on' if halaman == 'valuasi' and kode == k }}">{{ t('nav.valuasi', kode=k) }}</a>
     {% endfor %}
-    <a href="/docs">API</a>
+    <a href="/docs">{{ t('nav.api') }}</a>
   </div>
-
+  <div class="bahasa">
+    <span class="lbl">{{ t('nav.bahasa') }}</span>
+    <div>
+    {% for k, nama in daftar_bahasa.items() %}
+      <a href="/bahasa/{{ k }}?ke={{ path_sekarang | urlencode }}" class="{{ 'on' if k == bahasa }}"
+         hreflang="{{ k }}">{{ {'en':'EN','zh':'中文','id':'ID'}[k] }}</a>
+    {% endfor %}
+    </div>
+  </div>
   <div class="status-kotak">
-    <span class="lbl">Mesin penalar</span>
+    <span class="lbl">{{ t('status.mesin') }}</span>
     <div class="mesin">
       <span class="titik {{ '' if pakai_model else 'kuning' }}"></span>
-      <span>{{ model }}</span>
+      <span>{{ model if pakai_model else t('status.aturan') }}</span>
     </div>
     <small>
-      {% if pakai_model %}Model aktif.{% else %}Tanpa kunci API — penalar berbasis aturan.{% endif %}
-      Sumber data: <b>{{ sumber_data }}</b>.
+      {{ t('status.model_aktif') if pakai_model else t('status.tanpa_kunci') }}
+      {{ t('status.sumber') }} <b>{{ t('sumber.' ~ sumber_data) }}</b>.
     </small>
-    <span class="lbl" style="margin-top:10px;">Penarikan terakhir</span>
+    <span class="lbl" style="margin-top:10px;">{{ t('status.tarik') }}</span>
     <div class="mesin">
       {% if status_tarik %}
       <span class="titik {{ '' if status_tarik.ok else 'merah' }}"></span>
       <span>{{ status_tarik.waktu[:16] | replace('T', ' ') }} UTC</span>
       {% else %}
-      <span class="titik kuning"></span><span>belum pernah</span>
+      <span class="titik kuning"></span><span>{{ t('status.belum') }}</span>
       {% endif %}
     </div>
     {% if status_tarik and not status_tarik.ok %}
-    <small>Gagal menarik. Memakai data terakhir yang tersimpan.</small>
+    <small>{{ t('status.tarik_gagal') }}</small>
     {% endif %}
   </div>
 </nav>
-
 <main class="isi">
   {% if sumber_data == 'fixture' %}
-  <div class="pita fixture">
-    <div><b>Data contoh.</b> Layar ini memakai empat kasus uji di
-    <span class="mono">data/fixtures/</span>. Tekan <b>Periksa sekarang</b> untuk menarik pengumuman
-    asli emiten di watchlist dari OpenAPI resmi bursa. Setelah itu data asli yang dipakai, lewat
-    kode baca yang sama persis.</div>
-  </div>
+  <div class="pita fixture"><div>{{ t('pita.fixture') | safe }}</div></div>
   {% endif %}
   {% if pesan %}
-  <div class="pita {{ 'bahaya' if 'gagal' in pesan.lower() or 'bukan' in pesan.lower() else 'nyata' }}"><div>{{ pesan }}</div></div>
+  <div class="pita {{ 'nyata' if pesan_ok else 'bahaya' }}"><div>{{ pesan }}</div></div>
   {% endif %}
   {% block isi %}{% endblock %}
 </main>
-
 </body>
 </html>
