@@ -11,9 +11,11 @@ import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DATA_DIR = os.path.join(ROOT, "data")
+# Data hasil tarikan bisa dipindah ke volume (mis. /data di Docker) supaya tidak hilang
+# saat redeploy. Fixture tetap di repo — ia bagian dari kode, bukan data hasil jalan.
+DATA_DIR = os.environ.get("SENTINEL_DATA_DIR") or os.path.join(ROOT, "data")
 PARSED_DIR = os.path.join(DATA_DIR, "parsed")
-FIXTURE_DIR = os.path.join(DATA_DIR, "fixtures")
+FIXTURE_DIR = os.path.join(ROOT, "data", "fixtures")
 VALUATION_DIR = os.path.join(ROOT, "valuation", "inputs")
 TRACE_DIR = os.path.join(DATA_DIR, "traces")
 
@@ -38,3 +40,16 @@ TIMEOUT = int(os.environ.get("SENTINEL_TIMEOUT", "45"))
 # Ambang keyakinan pemilah. Di bawah ini pengumuman tidak diteruskan ke
 # penghitungan ulang, tapi tetap dicatat supaya bisa ditinjau manusia.
 TRIAGE_THRESHOLD = float(os.environ.get("SENTINEL_TRIAGE_THRESHOLD", "0.55"))
+
+# --- deploy ------------------------------------------------------------------
+# Periksa pengumuman otomatis tiap N detik selama server menyala. 0 = mati (bawaan).
+# Minimal 300 detik — OpenAPI bursa adalah layanan publik.
+TARIK_OTOMATIS_DETIK = int(os.environ.get("SENTINEL_TARIK_OTOMATIS_DETIK", "0") or 0)
+
+# Kalau diisi, tombol yang mengubah sesuatu (tambah/hapus watchlist, Periksa sekarang)
+# hanya jalan setelah membuka /akses?kode=<isi ini> sekali. Halaman baca tetap terbuka.
+KODE_AKSES = os.environ.get("SENTINEL_KODE_AKSES", "")
+
+# Tampilkan empat kasus contoh berdampingan dengan data asli (ditandai "contoh"),
+# supaya kasus injeksi, mata uang asing, dan terbit tetap bisa ditunjukkan.
+SERTAKAN_CONTOH = os.environ.get("SENTINEL_SERTAKAN_CONTOH", "0") == "1"

@@ -368,5 +368,50 @@ class TestTigaBahasa(unittest.TestCase):
         self.assertEqual(r.headers["location"], "/")
 
 
+class TestDeploy(unittest.TestCase):
+    """Kode akses melindungi tombol ubah; halaman baca tetap terbuka."""
+
+    def setUp(self):
+        import tempfile
+        from fastapi.testclient import TestClient
+        from app import config, main, tarik
+        self.config, self.tarik, self.main = config, tarik, main
+        self._tmp = tempfile.TemporaryDirectory()
+        self._asli = (config.KODE_AKSES, tarik.WATCHLIST_FILE, config.PARSED_DIR, config.TRACE_DIR)
+        config.KODE_AKSES = "uji-rahasia"
+        tarik.WATCHLIST_FILE = os.path.join(self._tmp.name, "watchlist.json")
+        config.PARSED_DIR = os.path.join(self._tmp.name, "parsed")
+        config.TRACE_DIR = os.path.join(self._tmp.name, "traces")
+        main._cache = None
+        self.c = TestClient(main.app)
+
+    def tearDown(self):
+        (self.config.KODE_AKSES, self.tarik.WATCHLIST_FILE,
+         self.config.PARSED_DIR, self.config.TRACE_DIR) = self._asli
+        self.main._cache = None
+        self._tmp.cleanup()
+
+    def test_tanpa_akses_tombol_ditolak_halaman_tetap_terbuka(self):
+        self.assertEqual(self.c.get("/watchlist").status_code, 200)
+        r = self.c.post("/watchlist/tambah", data={"kode": "3008"}, follow_redirects=False)
+        self.assertIn("perlu_akses", r.headers["location"])
+        self.assertNotIn("3008", self.tarik.baca_watchlist())
+
+    def test_kode_salah_tidak_membuka(self):
+        self.c.get("/akses", params={"kode": "tebak"})
+        self.c.post("/watchlist/tambah", data={"kode": "3008"})
+        self.assertNotIn("3008", self.tarik.baca_watchlist())
+
+    def test_dengan_akses_tombol_jalan(self):
+        self.c.get("/akses", params={"kode": "uji-rahasia"})
+        self.c.post("/watchlist/tambah", data={"kode": "3008"})
+        self.assertIn("3008", self.tarik.baca_watchlist())
+
+    def test_sehat(self):
+        r = self.c.get("/sehat")
+        self.assertEqual(r.status_code, 200)
+        self.assertTrue(r.json()["ok"])
+
+
 if __name__ == "__main__":
     unittest.main()

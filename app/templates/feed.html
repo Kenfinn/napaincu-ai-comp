@@ -36,6 +36,7 @@
 <a class="baris" href="/peringatan/{{ h.id }}">
   <div class="kiri">
     <div class="kode">{{ h.emiten.kode }}</div>
+    {% if h.contoh and sumber_data == 'nyata' %}<span class="lencana l-dilewati" style="margin-top:4px;">{{ t('label.contoh') }}</span>{% endif %}
     <div class="tgl">{{ h.tanggal }}</div>
   </div>
   <div class="tengah">

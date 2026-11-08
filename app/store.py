@@ -45,7 +45,12 @@ def muat_pengumuman() -> tuple[list[dict], str]:
 
 
 def muat_detail() -> tuple[list[dict], str]:
-    return _pick("details.json")
+    rows, sumber = _pick("details.json")
+    if sumber == "nyata" and config.SERTAKAN_CONTOH:
+        # Contoh ditandai `_fixture`, dan layar memberi label "contoh" — tidak pernah
+        # tercampur diam-diam dengan data asli.
+        rows = rows + _read(os.path.join(config.FIXTURE_DIR, "details.json"))
+    return rows, sumber
 
 
 def detail_untuk(source_url: str) -> dict | None:

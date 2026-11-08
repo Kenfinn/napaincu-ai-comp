@@ -14,9 +14,13 @@ Jalankan:
 
 from __future__ import annotations
 
+import hmac
 import json
 import os
+import threading
+import time
 import urllib.parse
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
@@ -30,7 +34,27 @@ import sys
 sys.path.insert(0, os.path.join(config.ROOT, "scripts"))
 import dcf                                               # noqa: E402
 
+def _pemantau() -> None:
+    """Periksa pengumuman berkala di latar belakang. Galat dicatat di status, tidak mematikan server."""
+    jeda = max(config.TARIK_OTOMATIS_DETIK, 300)
+    while True:
+        try:
+            tarik.periksa_sekarang()
+            hasil(segarkan=True)
+        except Exception as e:                        # noqa: BLE001
+            print(f"[pemantau] gagal: {type(e).__name__}: {e}", flush=True)
+        time.sleep(jeda)
+
+
+@asynccontextmanager
+async def lifespan(_app):
+    if config.TARIK_OTOMATIS_DETIK > 0:
+        threading.Thread(target=_pemantau, name="pemantau", daemon=True).start()
+    yield
+
+
 app = FastAPI(
+    lifespan=lifespan,
     title="Sentinel Saham",
     description="Agent pemantau pengumuman MOPS yang menghitung ulang valuasi "
                 "dan menolak angka yang tidak bisa ditelusuri ke dokumen sumbernya.",
@@ -69,13 +93,15 @@ def bahasa_dari(request: Request) -> str:
 # Dengan fixture ini seketika, tapi dengan 711 pengumuman dan panggilan model
 # sungguhan ia mahal — jadi jangan dijalankan ulang tiap permintaan.
 _cache: list[dict] | None = None
+_kunci_cache = threading.Lock()
 
 
 def hasil(segarkan: bool = False) -> list[dict]:
     global _cache
-    if _cache is None or segarkan:
-        _cache = pipeline.jalankan_semua()
-    return _cache
+    with _kunci_cache:
+        if _cache is None or segarkan:
+            _cache = pipeline.jalankan_semua()
+        return _cache
 
 
 def konteks(request: Request, halaman: str, **tambahan) -> dict:
@@ -118,7 +144,8 @@ def feed(request: Request, segarkan: int = 0):
     if sumber == "nyata":
         # Saham yang dihapus dari watchlist berhenti tampil; riwayatnya tetap tersimpan.
         wl = set(tarik.baca_watchlist())
-        daftar = [h for h in daftar if (h.get("emiten") or {}).get("kode") in wl]
+        daftar = [h for h in daftar
+                  if h.get("contoh") or (h.get("emiten") or {}).get("kode") in wl]
     return tpl.TemplateResponse(
         request=request, name="feed.html",
         context=konteks(request, "feed", daftar=daftar))
@@ -146,9 +173,40 @@ def _ringkas_status(st: dict) -> tuple[dict, bool]:
     return i18n.pesan("msg.tarik_ok", n=st["cocok_watchlist"], baru=st["baru"]), True
 
 
+def _boleh_ubah(request: Request) -> bool:
+    """Tanpa SENTINEL_KODE_AKSES semua boleh. Dengan itu, perlu cookie dari /akses."""
+    if not config.KODE_AKSES:
+        return True
+    return hmac.compare_digest(request.cookies.get("akses", ""), config.KODE_AKSES)
+
+
+def _tolak_akses(ke: str) -> RedirectResponse:
+    return _balik(ke, i18n.pesan("msg.perlu_akses"), ok=False)
+
+
+@app.get("/akses", include_in_schema=False)
+def akses(kode: str = ""):
+    """Buka tombol ubah untuk browser ini: /akses?kode=<SENTINEL_KODE_AKSES>."""
+    if config.KODE_AKSES and hmac.compare_digest(kode, config.KODE_AKSES):
+        r = _balik("/watchlist", i18n.pesan("msg.akses_ok"))
+        r.set_cookie("akses", kode, max_age=60 * 60 * 24 * 30, httponly=True, samesite="lax")
+        return r
+    return _balik("/", i18n.pesan("msg.akses_salah"), ok=False)
+
+
+@app.get("/sehat", include_in_schema=False)
+def sehat():
+    """Untuk health check Dokploy/Docker: server hidup dan data terbaca."""
+    detail, sumber = store.muat_detail()
+    return {"ok": True, "sumber": sumber, "pengumuman": len(detail),
+            "tarik_terakhir": (tarik.baca_status() or {}).get("waktu")}
+
+
 @app.post("/periksa", summary="Tarik pengumuman terbaru untuk watchlist, lalu proses ulang")
 async def periksa(request: Request):
     f = await _form(request)
+    if not _boleh_ubah(request):
+        return _tolak_akses("/")
     st = tarik.periksa_sekarang()
     hasil(segarkan=True)
     ke = f.get("kembali") or "/"
@@ -177,12 +235,16 @@ def watchlist(request: Request):
 
 @app.post("/watchlist/tambah")
 async def watchlist_tambah(request: Request):
+    if not _boleh_ubah(request):
+        return _tolak_akses("/watchlist")
     ok, pesan = tarik.tambah_ke_watchlist((await _form(request)).get("kode", ""))
     return _balik("/watchlist", pesan, ok)
 
 
 @app.post("/watchlist/hapus/{kode}")
-def watchlist_hapus(kode: str):
+def watchlist_hapus(request: Request, kode: str):
+    if not _boleh_ubah(request):
+        return _tolak_akses("/watchlist")
     tarik.hapus_dari_watchlist(kode)
     return _balik("/watchlist", i18n.pesan("msg.dihapus", kode=kode))
 

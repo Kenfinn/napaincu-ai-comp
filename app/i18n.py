@@ -124,6 +124,14 @@ _T: dict[str, tuple[str, str, str]] = {
                         "擷取失敗（{sebab}），仍使用最近儲存的資料。",
                         "Penarikan gagal ({sebab}). Data terakhir yang tersimpan tetap dipakai."),
 
+    "msg.perlu_akses": ("This action needs an access code. Ask the team for the access link.",
+                        "此操作需要存取碼，請向團隊索取存取連結。",
+                        "Tindakan ini butuh kode akses. Minta tautan akses ke tim."),
+    "msg.akses_ok": ("Access granted for this browser.", "此瀏覽器已獲得存取權限。",
+                     "Akses dibuka untuk browser ini."),
+    "msg.akses_salah": ("Wrong access code.", "存取碼錯誤。", "Kode akses salah."),
+    "label.contoh": ("sample", "範例", "contoh"),
+
     # --- detail peringatan ---------------------------------------------------------
     "al.ditolak": (
         "<b>Alert not published.</b> The verifier failed the claim before the figure could touch the "

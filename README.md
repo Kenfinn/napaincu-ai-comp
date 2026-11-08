@@ -42,6 +42,16 @@ Endpoint itu tidak menyimpan riwayat, jadi setiap tarikan digabung ke
 `data/parsed/details.json` tanpa duplikat. Riwayat yang lebih lama hanya bisa ditarik
 dari MOPS lewat jaringan Taiwan (`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`).
 
+### Deploy (Docker / Dokploy)
+
+```bash
+docker build -t sentinel .
+docker run -p 8000:8000 -v sentinel-data:/data -e SENTINEL_TARIK_OTOMATIS_DETIK=600 sentinel
+```
+
+Langkah lengkap untuk Dokploy, termasuk kode akses dan daftar uji untuk tim, ada di
+[`docs/deploy-dokploy.md`](docs/deploy-dokploy.md).
+
 ### Menjalankan tes
 
 ```bash

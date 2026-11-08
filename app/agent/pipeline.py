@@ -199,6 +199,7 @@ def _selesai(j: Jejak, status: str, detail: dict, muatan, alasan: str,
     j.catat("· Selesai", status, {}, {"alasan": alasan}, i18n=pesan("tahap.selesai"))
     hasil = {
         "id": j.pengenal,
+        "contoh": bool(detail.get("_fixture")),
         "status": status,
         "alasan": alasan,
         "alasan_i18n": alasan_i18n,
