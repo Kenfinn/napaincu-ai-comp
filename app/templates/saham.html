@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block judul %}{{ kode_saham }} {{ nama_saham or '' }} · FEAF{% endblock %}
+{% block isi %}
+
+{% macro url(tab_=tab, lap_=lap, per_=per, mode_=mode) -%}
+/saham/{{ kode_saham }}?tab={{ tab_ }}&lap={{ lap_ }}&per={{ per_ }}&mode={{ mode_ }}
+{%- endmacro %}
+
+<div class="kepala-saham">
+  <div>
+    <div class="kicker">{{ harga.bursa if harga else '' }}</div>
+    <h1><span class="mono">{{ kode_saham }}</span> {{ nama_saham or '' }}</h1>
+  </div>
+  <div class="harga-besar">
+    {% if harga and harga.tutup is not none %}
+      <b class="mono">{{ harga.tutup | rb(2) }}</b>
+      {% if harga.ubah is not none %}
+      <span class="delta {{ 'naik' if harga.ubah > 0 else ('turun' if harga.ubah < 0 else '') }}">
+        {{ '▲' if harga.ubah > 0 else ('▼' if harga.ubah < 0 else '') }} {{ harga.ubah | abs | rb(2) }}
+        ({{ (harga.ubah_pct | abs) | pct }})</span>
+      {% endif %}
+      <small>{{ t('sh.harga_per', tgl=harga.tanggal, bursa=harga.bursa) }}</small>
+    {% else %}
+      <small>{{ t('sh.tanpa_harga') }}</small>
+    {% endif %}
+  </div>
+  <div>
+    {% if di_watchlist %}
+      <span class="lencana l-terbit">✔ {{ t('sh.di_watchlist') }}</span>
+    {% else %}
+      <form method="post" action="/watchlist/tambah" style="margin:0;">
+        <input type="hidden" name="kode" value="{{ kode_saham }}">
+        <input type="hidden" name="kembali" value="/saham/{{ kode_saham }}">
+        <button class="tombol" type="submit">{{ t('sh.tambah_wl') }}</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+<nav class="tab-saham">
+  {% for k in ['stream', 'stats', 'keu', 'valuasi', 'profil'] %}
+  <a href="{{ url(tab_=k) }}" class="{{ 'on' if tab == k }}">{{ t('sh.tab.' ~ k) }}</a>
+  {% endfor %}
+</nav>
+
+{# ------------------------------------------------------------------ STREAM #}
+{% if tab == 'stream' %}
+  {% for h in daftar %}
+  <a class="baris" href="/peringatan/{{ h.id }}">
+    <div class="kiri">
+      <div class="tgl">{{ h.tanggal }}</div>
+      {% if h.contoh %}<span class="lencana l-dilewati" style="margin-top:4px;">{{ t('label.contoh') }}</span>{% endif %}
+    </div>
+    <div class="tengah">
+      <div class="judul">{{ h.judul }}</div>
+      <div class="sub">{{ tr(h.alasan_i18n, h.alasan) if h.alasan_i18n else h.alasan }}</div>
+    </div>
+    <div class="kanan"><span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span></div>
+  </a>
+  {% else %}
+  <div class="kartu kosong">{{ t('sh.stream_kosong') }}</div>
+  {% endfor %}
+
+{# ------------------------------------------------------------------- STATS #}
+{% elif tab == 'stats' %}
+  <div style="display:flex; gap:12px; align-items:flex-start;">
+    <div style="flex:1;">
+      <h2>{{ t('st.pasar') }}</h2>
+      <div class="kartu">
+        {% set h = s.harga %}{% set r = s.rasio %}
+        <div class="kv"><span class="k">{{ t('st.harga') }}</span><span class="v">{{ h.tutup | rb(2) if h else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.ubah') }}</span>
+          <span class="v delta {{ 'naik' if h and h.ubah and h.ubah > 0 else ('turun' if h and h.ubah and h.ubah < 0 else '') }}">
+          {{ (h.ubah | rb(2)) if h else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.rentang') }}</span><span class="v">{{ (h.rendah | rb(2)) ~ ' – ' ~ (h.tinggi | rb(2)) if h else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.volume') }}</span><span class="v">{{ h.volume | rb if h else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.kapitalisasi') }}</span><span class="v">{{ ((s.kapitalisasi / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.kapitalisasi else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.lembar') }}</span><span class="v">{{ s.lembar | rb if s.lembar else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.per') }}</span><span class="v">{{ r.per | rb(2) if r and r.per else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.pbr') }}</span><span class="v">{{ r.pbr | rb(2) if r and r.pbr else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.yield') }}</span><span class="v">{{ (r.yield | rb(2)) ~ '%' if r and r.yield is not none else '—' }}</span></div>
+      </div>
+    </div>
+    <div style="flex:1;">
+      <h2>{{ t('st.fundamental') }}</h2>
+      <div class="kartu">
+        {% if s.ttm_sampai %}<div class="kicker" style="margin-bottom:6px;">{{ t('st.ttm', tgl=s.ttm_sampai) }}</div>{% endif %}
+        <div class="kv"><span class="k">{{ t('st.pendapatan') }}</span><span class="v">{{ ((s.pendapatan_ttm / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.pendapatan_ttm else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.laba') }}</span><span class="v">{{ ((s.laba_bersih_ttm / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.laba_bersih_ttm else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.eps') }}</span><span class="v">{{ s.eps_ttm | rb(2) if s.eps_ttm is not none else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.mk') }}</span><span class="v">{{ s.margin_kotor | pct(1) }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.mu') }}</span><span class="v">{{ s.margin_usaha | pct(1) }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.mb') }}</span><span class="v">{{ s.margin_bersih | pct(1) }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.roe') }}</span><span class="v">{{ s.roe | pct(1) }}</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="catatan">{{ t('st.sumber') }}</p>
+
+{# --------------------------------------------------------------- FINANCIALS #}
+{% elif tab == 'keu' %}
+  <div class="kontrol">
+    <div class="segmen">
+      {% for k in ['lr', 'neraca', 'arus'] %}<a href="{{ url(lap_=k) }}" class="{{ 'on' if lap == k }}">{{ t('sh.' ~ k) }}</a>{% endfor %}
+    </div>
+    <div class="segmen">
+      <a href="{{ url(per_='q') }}" class="{{ 'on' if per == 'q' }}">{{ t('sh.kuartal') }}</a>
+      <a href="{{ url(per_='y') }}" class="{{ 'on' if per == 'y' }}">{{ t('sh.tahunan') }}</a>
+    </div>
+    <div class="segmen">
+      <a href="{{ url(mode_='nilai') }}" class="{{ 'on' if mode == 'nilai' }}">{{ t('sh.nilai') }}</a>
+      <a href="{{ url(mode_='yoy') }}" class="{{ 'on' if mode == 'yoy' }}">{{ t('sh.yoy') }}</a>
+    </div>
+  </div>
+
+  {% if tb.info.galat and tb.ada %}
+  <div class="pita fixture"><div>{{ t('sh.cache', tgl=tb.info.tgl, galat=tb.info.galat) }}</div></div>
+  {% endif %}
+
+  {% if tb.ada %}
+  <div class="kartu tabel-geser">
+    <table class="fin">
+      <tr>
+        <th class="pos">{{ t('sh.satuan') if mode == 'nilai' else t('sh.satuan_yoy') }}</th>
+        {% for c in tb.kolom %}<th>{{ c.label }}</th>{% endfor %}
+      </tr>
+      {% for b in tb.baris %}
+      <tr class="{{ 'tebal' if b.tebal }}">
+        <td class="pos">
+          {% if bahasa == 'zh' %}{{ b.nama_zh }}{% else %}{{ t('pos.' ~ b.kunci) }}<small>{{ b.nama_zh }}</small>{% endif %}
+          {% if b.turunan %}<span class="lencana l-dilewati">{{ t('sh.fcf_catatan') }}</span>{% endif %}
+        </td>
+        {% for v in b.sel %}
+          {% if v is none %}<td class="num kosong-sel">—</td>
+          {% elif mode == 'yoy' %}<td class="num {{ 'sel-naik' if v > 0 else ('sel-turun' if v < 0 else '') }}">{{ v | pct(1) }}</td>
+          {% else %}<td class="num {{ 'neg' if v < 0 }}">{{ v | rb(0 if b.uang else 2) }}</td>
+          {% endif %}
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% else %}
+  <div class="pita bahaya"><div>{{ t('sh.keu_kosong', galat=tb.info.galat or '—') }}</div></div>
+  {% endif %}
+  <p class="catatan">{{ t('sh.sumber_keu') }}</p>
+
+{# ----------------------------------------------------------------- VALUASI #}
+{% elif tab == 'valuasi' %}
+  {% if r %}
+  <div class="kartu">
+    <div class="kv"><span class="k">{{ t('va.harga') }}</span><span class="v">{{ r.price_per_share | rb }} NTD · {{ t('va.per', tgl=r.as_of) }}</span></div>
+    <div class="kv"><span class="k">{{ t('va.g_pasar') }}</span><span class="v">{{ r.implied_growth | pct }}</span></div>
+    <div class="kv"><span class="k">{{ t('va.batas_g') }}</span><span class="v">{{ r.terminal_growth_ceiling | pct }}</span></div>
+    <div class="kv"><span class="k">WACC</span><span class="v">{{ r.wacc | pct }}</span></div>
+    {% if r.exceeds_ceiling %}<div class="pita fixture" style="margin:12px 0 0;"><div>{{ t('va.melampaui') }}</div></div>{% endif %}
+    <p style="margin:12px 0 0;"><a href="/valuasi/{{ kode_saham }}">{{ t('va.buka') }}</a></p>
+  </div>
+  {% else %}
+  <div class="kartu kosong">{{ t('va.belum') }}</div>
+  {% endif %}
+
+{# ------------------------------------------------------------------ PROFIL #}
+{% elif tab == 'profil' %}
+  {% if p %}
+  <div class="kartu">
+    <div class="kv"><span class="k">{{ t('pf.nama') }}</span><span class="v">{{ p.nama_lengkap or '—' }}</span></div>
+    <div class="kv"><span class="k">{{ t('pf.en') }}</span><span class="v">{{ p.nama_en or '—' }}</span></div>
+    <div class="kv"><span class="k">{{ t('pf.industri') }}</span><span class="v">{{ p.industri or '—' }}</span></div>
+    <div class="kv"><span class="k">{{ t('pf.bursa') }}</span><span class="v">{{ p.bursa }}</span></div>
+    <div class="kv"><span class="k">{{ t('pf.berdiri') }}</span><span class="v">{{ p.berdiri or '—' }}</span></div>
+    <div class="kv"><span class="k">{{ t('pf.tercatat') }}</span><span class="v">{{ p.tercatat or '—' }}</span></div>
+    <div class="kv"><span class="k">{{ t('pf.modal') }}</span><span class="v">{{ p.modal | rb if p.modal else '—' }}</span></div>
+    <div class="kv"><span class="k">{{ t('pf.alamat') }}</span><span class="v">{{ p.alamat or '—' }}</span></div>
+    <div class="kv"><span class="k">{{ t('pf.situs') }}</span><span class="v">
+      {% if p.situs and p.situs.startswith('http') %}<a href="{{ p.situs }}" target="_blank" rel="noopener">{{ p.situs }}</a>{% else %}{{ p.situs or '—' }}{% endif %}</span></div>
+  </div>
+  {% if p.keuangan %}<div class="pita fixture"><div>{{ t('pf.keuangan') }}</div></div>{% endif %}
+  <p class="catatan">{{ t('pf.pii') }}</p>
+  {% else %}
+  <div class="kartu kosong">{{ t('pf.kosong') }}</div>
+  {% endif %}
+{% endif %}
+
+{% endblock %}

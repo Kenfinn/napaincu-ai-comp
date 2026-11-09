@@ -142,3 +142,41 @@ table.wl tr:last-child td { border-bottom: 0; }
 .bahasa a { font: 600 11.5px "IBM Plex Mono", monospace; color: #A9BDD1; padding: 4px 9px; border-radius: 4px;
             box-shadow: inset 0 0 0 1px #2A4D72; }
 .bahasa a.on { background: var(--navy-3); color: #fff; box-shadow: none; }
+
+/* --- halaman saham --- */
+.cari { margin: 2px 0 10px; }
+.cari input { width: 100%; font: 500 12.5px "IBM Plex Mono", monospace; padding: 8px 10px; border-radius: 5px;
+              border: 1px solid #2A4D72; background: var(--navy-2); color: #fff; }
+.cari input::placeholder { color: #7E9BB8; }
+.kepala-saham { display: flex; align-items: flex-end; gap: 28px; margin-bottom: 14px; }
+.kepala-saham h1 { margin: 0; font-size: 22px; }
+.kepala-saham > div:first-child { flex: 1; }
+.harga-besar { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.harga-besar b { font-size: 24px; }
+.harga-besar small { color: var(--abu); font-size: 11px; }
+.tab-saham { display: flex; border: 1px solid var(--garis); border-radius: 6px; background: var(--surface);
+             margin-bottom: 14px; overflow-x: auto; }
+.tab-saham a { flex: 1; text-align: center; padding: 12px 10px; font-size: 13.5px; color: var(--abu-2);
+               border-right: 1px solid var(--garis); white-space: nowrap; }
+.tab-saham a:last-child { border-right: 0; }
+.tab-saham a.on { color: var(--navy); font-weight: 700; box-shadow: inset 0 -3px 0 var(--navy); }
+.kontrol { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.segmen { display: inline-flex; border: 1px solid var(--garis); border-radius: 5px; overflow: hidden; background: var(--surface); }
+.segmen a { padding: 8px 13px; font-size: 12.5px; color: var(--abu-2); border-right: 1px solid var(--garis); }
+.segmen a:last-child { border-right: 0; }
+.segmen a.on { background: var(--navy); color: #fff; font-weight: 600; }
+.tabel-geser { overflow-x: auto; padding: 0; }
+table.fin { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+table.fin th { font: 600 11.5px "IBM Plex Mono", monospace; text-align: right; padding: 10px 12px;
+               border-bottom: 2px solid var(--garis); white-space: nowrap; }
+table.fin th.pos, table.fin td.pos { text-align: left; position: sticky; left: 0; background: var(--surface);
+                                     min-width: 230px; }
+table.fin td { padding: 8px 12px; border-bottom: 1px solid var(--garis); text-align: right; white-space: nowrap; }
+table.fin td.pos small { display: block; color: var(--abu); font-size: 10.5px; }
+table.fin tr.tebal td { font-weight: 700; }
+table.fin td.neg { color: var(--abu-2); }
+table.fin td.sel-naik { background: #FBE4E1; color: #8F2318; }
+table.fin td.sel-turun { background: #E1F2E8; color: #12604A; }
+table.fin td.kosong-sel { color: var(--abu); }
+.catatan { font-size: 11.5px; color: var(--abu-2); line-height: 1.5; margin: 10px 2px 0; }
+.tab-saham a, .segmen a, .bahasa a, .nav a { text-decoration: none; }

@@ -13,6 +13,9 @@
     <b>FEAF</b>
     <span>{{ t('merek.sub') }}</span>
   </div>
+  <form class="cari" method="get" action="/saham">
+    <input name="kode" placeholder="{{ t('sh.cari') }}" maxlength="6" autocomplete="off" aria-label="{{ t('sh.cari') }}">
+  </form>
   <div class="nav">
     <a href="/watchlist" class="{{ 'on' if halaman == 'watchlist' }}">{{ t('nav.watchlist') }}
       <span class="hit abu">{{ jml_watchlist }}</span></a>

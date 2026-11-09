@@ -69,6 +69,7 @@ SENTINEL_TARIK_OTOMATIS_DETIK=600
 | `SENTINEL_KODE_AKSES` | Tanpa kode ini, pengunjung hanya bisa melihat. Tombol tambah/hapus watchlist dan *Check now* hanya jalan setelah membuka `/akses?kode=...` sekali |
 | `SENTINEL_SERTAKAN_CONTOH` | `1` = empat kasus contoh (terbit, injeksi, USD, dilewati) tetap tampil di samping data asli, berlabel "sample" |
 | `SENTINEL_TARIK_OTOMATIS_DETIK` | Periksa pengumuman tiap N detik (minimal 300). `600` = tiap 10 menit, 24 jam, supaya riwayat terkumpul sendiri |
+| `FINMIND_TOKEN` | **Opsional, disarankan.** Token gratis dari finmindtrade.com untuk tab Keuangan di halaman saham. Tanpa token, kuotanya 300 permintaan per jam (cukup untuk ±100 saham karena di-cache 12 jam) |
 | `GEMINI_API_KEY` | **Opsional.** Tanpa ini, agent memakai penalar aturan. Isi di sini, **jangan pernah** di kode |
 
 ## 4. Volume (wajib)
@@ -142,6 +143,8 @@ Kirim dua tautan:
 | 6 | Watchlist: tambah kode yang salah, mis. `12;ab` | Ditolak dengan pesan |
 | 7 | Watchlist: tambah saham yang sedang aktif mengumumkan, lalu **Check now** | Pengumuman asli hari itu masuk ke Alerts |
 | 8 | Buka **Valuation 2330** | Reverse DCF, WACC, sensitivitas |
+| 9 | Ketik `2330` di kotak pencarian menu samping | Halaman saham: harga, tab Stream / Key Stats / Financials / Valuation / Profile |
+| 10 | Tab **Financials** → Annual → YoY growth | Tabel pertumbuhan berwarna (merah = naik, hijau = turun) |
 
 ### Yang memang belum ada (jangan dilaporkan sebagai bug)
 

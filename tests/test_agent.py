@@ -413,5 +413,97 @@ class TestDeploy(unittest.TestCase):
         self.assertTrue(r.json()["ok"])
 
 
+class TestHalamanSaham(unittest.TestCase):
+    """Halaman saham ala Stockbit: angka tabel harus konsisten dengan laporan aslinya."""
+
+    def setUp(self):
+        import tempfile
+        from fastapi.testclient import TestClient
+        from app import config, main, pasar, tarik
+        self.pasar, self.config, self.main, self.tarik = pasar, config, main, tarik
+        self._tmp = tempfile.TemporaryDirectory()
+        self._asli = (pasar.CACHE_DIR, pasar._finmind, pasar._ambil_json,
+                      config.PARSED_DIR, config.TRACE_DIR, tarik.WATCHLIST_FILE)
+        pasar.CACHE_DIR = os.path.join(self._tmp.name, "pasar")
+        config.PARSED_DIR = os.path.join(self._tmp.name, "parsed")
+        config.TRACE_DIR = os.path.join(self._tmp.name, "traces")
+        tarik.WATCHLIST_FILE = os.path.join(self._tmp.name, "watchlist.json")
+
+        def tanpa_jaringan(*_a, **_k):
+            raise ConnectionError("tes tanpa jaringan")
+        pasar._finmind = tanpa_jaringan
+        pasar._ambil_json = tanpa_jaringan
+        for nama, data in _baca_json("tests", "data", "pasar_sampel.json").items():
+            pasar._tulis_cache(nama, data)
+        main._cache = None
+        self.c = TestClient(main.app)
+
+    def tearDown(self):
+        (self.pasar.CACHE_DIR, self.pasar._finmind, self.pasar._ambil_json,
+         self.config.PARSED_DIR, self.config.TRACE_DIR, self.tarik.WATCHLIST_FILE) = self._asli
+        self.main._cache = None
+        self._tmp.cleanup()
+
+    def _baris(self, tb, kunci):
+        return dict(zip([c["tgl"] for c in tb["kolom"]],
+                        next(b["sel"] for b in tb["baris"] if b["kunci"] == kunci)))
+
+    def test_arus_kas_tahunan_sama_dengan_kumulatif_q4(self):
+        cfo = self._baris(self.pasar.tabel("2330", "arus", "y"), "CashFlowsFromOperatingActivities")
+        self.assertAlmostEqual(cfo["2025-12-31"], 2274976, delta=1)   # = cash_flow 2025 di 2330.json
+
+    def test_arus_kas_kuartal_adalah_selisih_kumulatif(self):
+        mentah, _ = self.pasar.keuangan_mentah("2330", "arus")
+        kum = {r["date"]: r["value"] for r in mentah if r["type"] == "CashFlowsFromOperatingActivities"}
+        q = self._baris(self.pasar.tabel("2330", "arus", "q"), "CashFlowsFromOperatingActivities")
+        self.assertAlmostEqual(q["2026-06-30"] * 1e6, kum["2026-06-30"] - kum["2026-03-31"], delta=1e3)
+        self.assertAlmostEqual(q["2026-03-31"] * 1e6, kum["2026-03-31"], delta=1e3)
+
+    def test_laba_rugi_tahunan_jumlah_empat_kuartal(self):
+        q = self._baris(self.pasar.tabel("2330", "lr", "q", maks=20), "Revenue")
+        y = self._baris(self.pasar.tabel("2330", "lr", "y"), "Revenue")
+        jumlah = sum(v for t, v in q.items() if t.startswith("2025"))
+        self.assertAlmostEqual(y["2025-12-31"], jumlah, delta=1)
+
+    def test_yoy_tanpa_kolom_kosong(self):
+        tb = self.pasar.tabel("2330", "lr", "y", "yoy")
+        for i, c in enumerate(tb["kolom"]):
+            self.assertTrue(any(b["sel"][i] is not None for b in tb["baris"]), c)
+
+    def test_eps_ttm_konsisten_dengan_per_bursa(self):
+        s = self.pasar.statistik("2330")
+        per_hitung = s["harga"]["tutup"] / s["eps_ttm"]
+        self.assertAlmostEqual(per_hitung, s["rasio"]["per"], delta=s["rasio"]["per"] * 0.02)
+
+    def test_profil_tanpa_data_pribadi(self):
+        p = self.pasar.profil("2330")
+        self.assertEqual(p["nama"], "台積電")
+        teks = json.dumps(_baca_json("tests", "data", "pasar_sampel.json"), ensure_ascii=False)
+        for k in self.pasar.PROFIL_DIBUANG:
+            self.assertNotIn(f'"{k}"', teks)
+
+    def test_sumber_gagal_tetap_pakai_cache_lama(self):
+        import time as _t
+        path = self.pasar._path("finmind_lr_2330")
+        with open(path, encoding="utf-8") as f:
+            isi = json.load(f)
+        isi["waktu"] = _t.time() - 10 * 86400                     # cache basi
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(isi, f)
+        tb = self.pasar.tabel("2330", "lr", "q")
+        self.assertTrue(tb["ada"])
+        self.assertTrue(tb["info"]["galat"])
+
+    def test_semua_tab_tiga_bahasa(self):
+        for bhs in ("en", "zh", "id"):
+            for q in ("tab=stream", "tab=stats", "tab=keu&lap=lr&per=y&mode=yoy",
+                      "tab=keu&lap=neraca", "tab=keu&lap=arus&per=y", "tab=valuasi", "tab=profil"):
+                with self.subTest(bahasa=bhs, q=q):
+                    r = self.c.get(f"/saham/2330?{q}&lang={bhs}")
+                    self.assertEqual(r.status_code, 200)
+                    self.assertNotIn("⟦", r.text)
+        self.assertEqual(self.c.get("/saham/23;30").status_code, 404)
+
+
 if __name__ == "__main__":
     unittest.main()

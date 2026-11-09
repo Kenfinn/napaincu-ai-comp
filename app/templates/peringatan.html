@@ -4,7 +4,7 @@
 
 <div class="kepala">
   <div>
-    <div class="kicker">{{ h.emiten.kode }} {{ h.emiten.nama }} · {{ h.tanggal }}</div>
+    <div class="kicker"><a href="/saham/{{ h.emiten.kode }}">{{ h.emiten.kode }} {{ h.emiten.nama }}</a> · {{ h.tanggal }}</div>
     <h1>{{ h.judul }}</h1>
   </div>
   <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>

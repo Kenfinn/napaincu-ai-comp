@@ -28,7 +28,7 @@
         <th>{{ t('wl.k_jumlah') }}</th><th>{{ t('wl.k_terakhir') }}</th><th></th></tr>
     {% for b in baris %}
     <tr>
-      <td class="mono" style="font-weight:600;">{{ b.kode }}</td>
+      <td class="mono" style="font-weight:600;"><a href="/saham/{{ b.kode }}">{{ b.kode }}</a></td>
       <td>{{ b.nama or '—' }}</td>
       <td>{% if b.valuasi %}<a href="/valuasi/{{ b.kode }}">{{ t('wl.dcf') }}</a>{% else %}<span style="color:var(--abu);">{{ t('wl.angka_saja') }}</span>{% endif %}</td>
       <td class="mono">{{ b.jumlah }}</td>
