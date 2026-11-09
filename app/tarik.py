@@ -272,21 +272,30 @@ def _tulis_atomik(path: str, data) -> None:
 
 
 def _kunci(d: dict) -> tuple:
-    return (d.get("code"), d.get("date"), d.get("time"), d.get("subject"))
+    """Pengumuman yang sama dari OpenAPI dan dari halaman MOPS harus dianggap satu.
+
+    Jam diambil digitnya saja ('17:32:05' = '173205'), subjek tanpa spasi atau baris
+    baru (OpenAPI menyisipkan '\r\n' di tengah judul panjang).
+    """
+    jam = re.sub(r"\D", "", str(d.get("time") or "")).zfill(6)[-6:]
+    subjek = re.sub(r"\s+", "", str(d.get("subject") or ""))
+    return (str(d.get("code") or ""), d.get("date"), jam, subjek)
 
 
-def gabung(baru: list[dict]) -> int:
+def gabung(baru: list[dict], tujuan: str | None = None, daftar: str | None = None) -> int:
     """Gabungkan ke details.json tanpa duplikat. Mengembalikan jumlah yang benar-benar baru."""
-    lama = _baca_list(DETAIL_FILE)
+    DETAIL_FILE_ = tujuan or DETAIL_FILE
+    LIST_FILE_ = daftar or LIST_FILE
+    lama = _baca_list(DETAIL_FILE_)
     ada = {_kunci(d) for d in lama}
     tambah = [d for d in baru if _kunci(d) not in ada]
-    if not tambah and os.path.exists(DETAIL_FILE):
+    if not tambah and os.path.exists(DETAIL_FILE_):
         return 0
     semua = lama + tambah
     semua.sort(key=lambda d: (d.get("date") or "", d.get("time") or ""), reverse=True)
-    _tulis_atomik(DETAIL_FILE, semua)
+    _tulis_atomik(DETAIL_FILE_, semua)
     # Daftar ringkas untuk layar & skrip lain — diturunkan dari detail, satu sumber kebenaran.
-    _tulis_atomik(LIST_FILE, [{
+    _tulis_atomik(LIST_FILE_, [{
         "code": d["code"], "name": d["name"], "date": d["date"], "time": d["time"],
         "subject": d["subject"], "detail_url": d["source_url"],
     } for d in semua])
@@ -347,3 +356,42 @@ def periksa_sekarang(watchlist: list[str] | None = None) -> dict:
     status["ok"] = any(s.get("ok") for s in status["sumber"].values())
     _tulis_atomik(STATUS_FILE, status)
     return status
+
+
+# --------------------------------------------------------------------------- impor riwayat
+
+TANGGAL_ISO = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+MAKS_IMPOR = 5000
+
+
+def bersihkan_impor(data) -> tuple[list[dict], list[str]]:
+    """Validasi riwayat kiriman laptop (scripts/kirim_riwayat.py) sebelum digabung.
+
+    Hanya rekaman yang bentuknya benar yang diterima. Field data pribadi dibuang lagi
+    di sini walau seharusnya sudah dibuang di laptop — server tidak menganggap
+    kiriman sudah bersih.
+    """
+    if not isinstance(data, list):
+        return [], ["badan bukan daftar JSON"]
+    if len(data) > MAKS_IMPOR:
+        return [], [f"lebih dari {MAKS_IMPOR} rekaman dalam satu kiriman"]
+    diterima, tolak = [], []
+    for i, r in enumerate(data):
+        if not isinstance(r, dict):
+            tolak.append(f"#{i}: bukan objek")
+            continue
+        kode = str(r.get("code") or "").strip().upper()
+        if not KODE_SAH.match(kode) or not TANGGAL_ISO.match(str(r.get("date") or "")):
+            tolak.append(f"#{i}: kode atau tanggal tidak sah")
+            continue
+        butir = r.get("items")
+        if not isinstance(butir, list) or not all(isinstance(b, dict) for b in butir):
+            tolak.append(f"#{i}: items bukan daftar butir")
+            continue
+        bersih = {k: v for k, v in r.items() if k not in PII_LABELS}
+        bersih["code"] = kode
+        bersih.setdefault("sumber_data", "MOPS t05st01 (ditarik dari jaringan Taiwan)")
+        bersih["dropped_pii"] = sorted(set((r.get("dropped_pii") or []))
+                                       | {k for k in PII_LABELS if k in r})
+        diterima.append(bersih)
+    return diterima, tolak

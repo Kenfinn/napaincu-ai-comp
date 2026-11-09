@@ -51,8 +51,8 @@ DEFAULT_CODES = [
 
 # Tiga domain melayani isi yang sama. Kalau satu gagal, coba berikutnya.
 HOSTS = [
+    "https://mopsov.twse.com.tw",   # terbukti melayani (14 Sep); mops. menolak bahkan dari Taiwan
     "https://mops.twse.com.tw",
-    "https://mopsov.twse.com.tw",
     "https://mopsc.twse.com.tw",
 ]
 

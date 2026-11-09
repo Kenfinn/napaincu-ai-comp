@@ -18,7 +18,9 @@ cadangan** sampai ke layar.
 
 from __future__ import annotations
 
+import hashlib
 import json
+import os
 import re
 import time
 import urllib.error
@@ -106,7 +108,62 @@ def _urai_json(teks: str) -> dict:
     return hasil
 
 
+CACHE_DIR = os.path.join(config.DATA_DIR, "cache_model")
+
+
+def _kunci_cache(instruksi: str, dokumen: str) -> str:
+    """Pengumuman yang sama + prompt yang sama + model yang sama → jawaban yang sama
+    (suhu 0). Versi prompt ikut di kunci, jadi mengubah prompt otomatis memanggil ulang."""
+    bahan = "\u0000".join((config.PENYEDIA, config.MODEL, VERSI_PROMPT, SISTEM, instruksi, dokumen))
+    return hashlib.sha256(bahan.encode("utf-8")).hexdigest()
+
+
+def _baca_cache(kunci: str) -> dict | None:
+    p = os.path.join(CACHE_DIR, f"{kunci}.json")
+    if not os.path.exists(p):
+        return None
+    try:
+        with open(p, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return None
+
+
+def _tulis_cache(kunci: str, jawaban: dict, meta: dict) -> None:
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    tmp = os.path.join(CACHE_DIR, f"{kunci}.json.tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump({"jawaban": jawaban, "meta_asli": meta}, f, ensure_ascii=False)
+    os.replace(tmp, os.path.join(CACHE_DIR, f"{kunci}.json"))
+
+
 def tanya(instruksi: str, dokumen: str) -> tuple[dict, dict]:
+    """Seperti `_tanya_model`, tapi jawaban yang pernah diterima dipakai ulang.
+
+    Tanpa ini, setiap pemeriksaan berkala memproses ulang seluruh riwayat dan memanggil
+    model lagi untuk pengumuman yang sama — kuota free tier habis dalam hitungan jam.
+    Pemakaian cache tercatat di jejak (`cache: true`) dan tidak dihitung sebagai
+    panggilan model, supaya metrik biaya Appendix 2 tetap jujur.
+    """
+    if not tersedia():
+        raise GagalModel("tidak ada kunci API")
+    kunci = _kunci_cache(instruksi, dokumen)
+    lama = _baca_cache(kunci)
+    if lama is not None:
+        asli = lama.get("meta_asli") or {}
+        return lama["jawaban"], {
+            "penyedia": config.PENYEDIA, "model": config.MODEL, "versi_prompt": VERSI_PROMPT,
+            "retry": 0, "cadangan": False, "cache": True,
+            "token_masuk": 0, "token_keluar": 0, "biaya_usd": 0.0, "latensi_ms": 0,
+            "token_masuk_asli": asli.get("token_masuk", 0),
+            "token_keluar_asli": asli.get("token_keluar", 0),
+        }
+    jawaban, meta = _tanya_model(instruksi, dokumen)
+    _tulis_cache(kunci, jawaban, meta)
+    return jawaban, meta
+
+
+def _tanya_model(instruksi: str, dokumen: str) -> tuple[dict, dict]:
     """Tanya model, dengan percobaan ulang. Melempar GagalModel kalau habis jatah.
 
     Pemanggil bertanggung jawab menangkapnya dan turun ke penalar aturan — supaya

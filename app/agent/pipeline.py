@@ -67,7 +67,9 @@ class Jejak:
             "retry": sum(l["meta"].get("retry", 0) for l in self.langkah),
             "pakai_cadangan": any(l["meta"].get("cadangan") for l in self.langkah),
             "panggilan_model": sum(1 for l in self.langkah
-                                   if l["meta"].get("penyedia") not in (None, "aturan")),
+                                   if l["meta"].get("penyedia") not in (None, "aturan")
+                                   and not l["meta"].get("cache")),
+            "jawaban_cache": sum(1 for l in self.langkah if l["meta"].get("cache")),
         }
 
 

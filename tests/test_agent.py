@@ -505,5 +505,80 @@ class TestHalamanSaham(unittest.TestCase):
         self.assertEqual(self.c.get("/saham/23;30").status_code, 404)
 
 
+class TestCacheModelDanImpor(unittest.TestCase):
+    """Model tidak dipanggil dua kali untuk pengumuman yang sama; impor riwayat aman."""
+
+    def setUp(self):
+        import tempfile
+        from fastapi.testclient import TestClient
+        from app import config, main, tarik
+        from app.agent import llm
+        self.config, self.main, self.tarik, self.llm = config, main, tarik, llm
+        self._tmp = tempfile.TemporaryDirectory()
+        self._asli = (llm.CACHE_DIR, llm._panggil_gemini, config.API_KEY, config.KODE_AKSES,
+                      config.PARSED_DIR, config.TRACE_DIR, tarik.DETAIL_FILE, tarik.LIST_FILE,
+                      tarik.WATCHLIST_FILE)
+        llm.CACHE_DIR = os.path.join(self._tmp.name, "cache_model")
+        config.PARSED_DIR = os.path.join(self._tmp.name, "parsed")
+        config.TRACE_DIR = os.path.join(self._tmp.name, "traces")
+        tarik.DETAIL_FILE = os.path.join(config.PARSED_DIR, "details.json")
+        tarik.LIST_FILE = os.path.join(config.PARSED_DIR, "announcements.json")
+        tarik.WATCHLIST_FILE = os.path.join(self._tmp.name, "watchlist.json")
+        self.panggil = 0
+
+        def palsu(instruksi, dokumen):
+            self.panggil += 1
+            return {"temuan": []}, {"token_masuk": 100, "token_keluar": 5, "biaya_usd": 0.0}
+        llm._panggil_gemini = palsu
+        main._cache = None
+        self.c = TestClient(main.app)
+
+    def tearDown(self):
+        (self.llm.CACHE_DIR, self.llm._panggil_gemini, self.config.API_KEY, self.config.KODE_AKSES,
+         self.config.PARSED_DIR, self.config.TRACE_DIR, self.tarik.DETAIL_FILE, self.tarik.LIST_FILE,
+         self.tarik.WATCHLIST_FILE) = self._asli
+        self.main._cache = None
+        self._tmp.cleanup()
+
+    def test_pengumuman_sama_tidak_memanggil_model_lagi(self):
+        self.config.API_KEY = "kunci-uji"
+        d = detail("kasus-1-capex-bersih")
+        h1 = pipeline.jalankan(d, valuasi())
+        h2 = pipeline.jalankan(d, valuasi())
+        self.assertEqual(self.panggil, 1)
+        self.assertEqual(h1["ringkasan"]["panggilan_model"], 1)
+        self.assertEqual(h2["ringkasan"]["panggilan_model"], 0)
+        self.assertEqual(h2["ringkasan"]["jawaban_cache"], 1)
+
+    def test_kunci_dedup_lintas_sumber(self):
+        a = {"code": "2330", "date": "2026-11-07", "time": "17:32:05", "subject": "公告本公司\r\n董事會"}
+        b = {"code": "2330", "date": "2026-11-07", "time": "173205", "subject": "公告本公司董事會"}
+        self.assertEqual(self.tarik._kunci(a), self.tarik._kunci(b))
+
+    def test_impor_butuh_kode_akses(self):
+        self.config.KODE_AKSES = ""
+        r = self.c.post("/api/impor", json=[], headers={"X-Kode-Akses": ""})
+        self.assertEqual(r.status_code, 403)
+        self.config.KODE_AKSES = "rahasia-uji"
+        r = self.c.post("/api/impor", json=[], headers={"X-Kode-Akses": "salah"})
+        self.assertEqual(r.status_code, 403)
+
+    def test_impor_menggabung_dan_membuang_pii(self):
+        self.config.KODE_AKSES = "rahasia-uji"
+        rek = dict(detail("kasus-1-capex-bersih"))
+        rek.pop("_fixture", None)
+        rek["發言人"] = "Nama Orang"
+        kirim = [rek, {"code": "23;30", "date": "x", "items": []}]
+        r = self.c.post("/api/impor", json=kirim, headers={"X-Kode-Akses": "rahasia-uji"})
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.json()["baru"], 1)
+        self.assertEqual(r.json()["ditolak"], 1)
+        with open(self.tarik.DETAIL_FILE, encoding="utf-8") as f:
+            teks = f.read()
+        self.assertNotIn("Nama Orang", teks)
+        r = self.c.post("/api/impor", json=[rek], headers={"X-Kode-Akses": "rahasia-uji"})
+        self.assertEqual(r.json()["baru"], 0)                      # kirim ulang aman
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -310,6 +310,30 @@ def api_keuangan(kode: str, lap: str = "lr", per: str = "q", mode: str = "nilai"
                                     "yoy" if mode == "yoy" else "nilai"))
 
 
+@app.post("/api/impor", summary="Impor riwayat pengumuman MOPS dari laptop di jaringan Taiwan")
+async def api_impor(request: Request):
+    """Dipakai scripts/kirim_riwayat.py. Wajib header X-Kode-Akses = SENTINEL_KODE_AKSES.
+
+    Tanpa SENTINEL_KODE_AKSES di server, impor ditutup sama sekali: endpoint yang
+    menulis data tidak boleh terbuka untuk siapa pun yang tahu alamatnya.
+    """
+    kode = request.headers.get("x-kode-akses", "")
+    if not config.KODE_AKSES or not hmac.compare_digest(kode, config.KODE_AKSES):
+        raise HTTPException(403, "Kode akses salah atau impor belum diaktifkan")
+    badan = await request.body()
+    if len(badan) > 25 * 1024 * 1024:
+        raise HTTPException(413, "Kiriman terlalu besar (maks 25 MB); kirim bertahap")
+    try:
+        data = json.loads(badan.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError):
+        raise HTTPException(400, "Badan bukan JSON")
+    diterima, tolak = tarik.bersihkan_impor(data)
+    baru = tarik.gabung(diterima) if diterima else 0
+    if baru:
+        hasil(segarkan=True)
+    return {"diterima": len(diterima), "baru": baru, "ditolak": len(tolak), "contoh_tolak": tolak[:5]}
+
+
 @app.get("/api/watchlist", summary="Daftar kode saham yang dipantau")
 def api_watchlist():
     return JSONResponse({"kode": tarik.baca_watchlist(), "status_tarik": tarik.baca_status()})

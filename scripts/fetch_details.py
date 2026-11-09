@@ -43,6 +43,7 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
 PARSED_DIR = os.path.join(ROOT, "data", "parsed")
 LIST_FILE = os.path.join(PARSED_DIR, "announcements.json")
 OUT_FILE = os.path.join(PARSED_DIR, "details.json")
@@ -116,7 +117,17 @@ def clause_number(raw: str) -> int | None:
 
 
 def split_items(body: str) -> list[dict]:
-    """Pecah butir bernomor jadi pasangan label→isi."""
+    """Pecah butir bernomor jadi pasangan label→isi — fungsi yang sama dengan penarik OpenAPI.
+
+    Satu pengurai untuk dua sumber, supaya label butir (yang dicocokkan pemeriksa)
+    tidak bergantung pada jalur data mana yang dipakai.
+    """
+    from app.tarik import urai_butir
+    return urai_butir(body)
+
+
+def _split_items_lama(body: str) -> list[dict]:
+    """Pengurai lama — disimpan untuk pembanding, tidak dipakai."""
     parts = ITEM_SPLIT.split(body)
     items: list[dict] = []
     for i in range(1, len(parts) - 1, 2):
@@ -253,9 +264,15 @@ def main() -> int:
         out.append(rec)
         print(f"OK — pasal {rec.get('clause')}, {len(rec['items'])} butir")
 
-    os.makedirs(PARSED_DIR, exist_ok=True)
-    with open(OUT_FILE, "w", encoding="utf-8") as f:
-        json.dump(out, f, ensure_ascii=False, indent=2)
+    # Digabung, bukan ditimpa: menarik 2330 lalu 2454 dalam dua kali jalan tidak
+    # menghapus hasil yang pertama. Duplikat (termasuk dari OpenAPI) dilewati.
+    from app.tarik import gabung
+    for r in out:
+        r.setdefault("sumber_data", "MOPS t05st01 (ditarik dari jaringan Taiwan)")
+    # Indeks ke berkas terpisah: announcements.json di laptop adalah daftar MOPS yang
+    # menjadi masukan skrip ini, dan tidak boleh tertimpa.
+    baru = gabung(out, OUT_FILE, os.path.join(PARSED_DIR, "details_index.json"))
+    print(f"\n{baru} pengumuman baru digabung ke {os.path.relpath(OUT_FILE, ROOT)}")
 
     clauses: dict[int | None, int] = {}
     for r in out:
