@@ -63,10 +63,11 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
     # teks yang berusaha mengarahkan agent biasanya diselipkan.
     sah = extract.LABEL_SAH.get(temuan.get("input"), ())
     label = (temuan.get("label") or "").strip()
+    sah_ok = extract.label_sah(label, temuan.get("input"))
     cek.append(_cek(
         "Label butir sah untuk input ini",
-        label in sah,
-        f"Label '{label}' {'ada' if label in sah else 'TIDAK ada'} dalam daftar label sah "
+        sah_ok,
+        f"Label '{label}' {'ada' if sah_ok else 'TIDAK ada'} dalam daftar label sah "
         f"untuk {temuan.get('input')}: {', '.join(sah) or '(kosong)'}",
         "cek.label", label=label, input=temuan.get("input"), sah=", ".join(sah) or "—"))
 

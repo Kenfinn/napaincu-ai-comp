@@ -183,6 +183,63 @@ def _jam(t: str) -> str:
 BUTIR = re.compile(r"(?m)^[ \t　]*(\d{1,2})\s*[.．、]\s*")
 
 
+SUB_BUTIR = re.compile(r"[(（](\d{1,2})[)）]\s*")
+SATUAN_LABEL = re.compile(r"[(（]\s*(仟元|千元|百萬元|億元|元|新台幣仟元|新臺幣仟元)\s*[)）]")
+
+
+def inti_label(label: str) -> str:
+    """Label tanpa keterangan dalam kurung dan tanpa nomor sub-butir — yang dicocokkan pemeriksa."""
+    s = re.sub(r"^\s*[(（]\d{1,2}[)）]\s*", "", label or "")
+    s = re.sub(r"[（(][^）)]*[)）]", "", s)
+    return " ".join(s.split()).strip()
+
+
+def satuan_label(label: str) -> str | None:
+    """Satuan yang ditulis di label, mis. '背書保證餘額(仟元)' → '仟元'."""
+    m = SATUAN_LABEL.search(label or "")
+    if not m:
+        return None
+    return m.group(1).replace("新台幣", "").replace("新臺幣", "")
+
+
+def _pecah_label(isi: str) -> tuple[str, str]:
+    """Pisahkan 'label: nilai'. Titik dua di dalam kurung label tidak dihitung."""
+    dalam = 0
+    for i, c in enumerate(isi):
+        if c in "(（":
+            dalam += 1
+        elif c in ")）":
+            dalam = max(0, dalam - 1)
+        elif c in ":：" and dalam == 0:
+            return isi[:i], isi[i + 1:]
+    return isi, ""
+
+
+def _urai_sub(nilai: str) -> list[dict]:
+    """Sub-butir berurutan (1)(2)(3)… di dalam satu butir, mis. rincian penjaminan.
+
+    Seperti butir utama, hanya nomor berurutan yang diakui. Sub-butir tanpa titik dua
+    (bukan pasangan label–nilai) diabaikan.
+    """
+    posisi, harap = [], 1
+    for m in SUB_BUTIR.finditer(nilai):
+        if int(m.group(1)) == harap:
+            posisi.append((harap, m.start(), m.end()))
+            harap += 1
+    if len(posisi) < 2:
+        return []
+    sub = []
+    for i, (n, _, akhir) in enumerate(posisi):
+        ujung = posisi[i + 1][1] if i + 1 < len(posisi) else len(nilai)
+        label, isi = _pecah_label(nilai[akhir:ujung])
+        if not isi.strip():
+            continue
+        lengkap = " ".join(label.split())
+        sub.append({"no": n, "label": inti_label(lengkap) or lengkap, "label_lengkap": lengkap,
+                    "satuan_label": satuan_label(lengkap), "value": " ".join(isi.split())})
+    return sub
+
+
 def urai_butir(teks: str) -> list[dict]:
     """Pecah 說明 menjadi butir bernomor.
 
@@ -202,18 +259,23 @@ def urai_butir(teks: str) -> list[dict]:
     for i, (n, _, akhir) in enumerate(posisi):
         ujung = posisi[i + 1][1] if i + 1 < len(posisi) else len(teks)
         isi = teks[akhir:ujung]
-        sep = re.search(r"[:：]", isi)
-        label, nilai = (isi[:sep.start()], isi[sep.end():]) if sep else (isi, "")
+        label, nilai = _pecah_label(isi)
         label_lengkap = " ".join(label.split())
         # Label resmi kadang membawa keterangan panjang dalam kurung, mis.
-        # 其他應敘明事項(若事件發生或決議之主體…). Yang dicocokkan pemeriksa adalah intinya.
-        inti = re.sub(r"[（(][^）)]*[)）]", "", label_lengkap).strip()
-        butir.append({
+        # 其他應敘明事項(若事件發生或決議之主體…). Yang dicocokkan pemeriksa adalah intinya,
+        # tapi SATUAN di kurung, mis. 營業收入(仟元), wajib disimpan: tanpa itu angka
+        # MOPS tidak bisa dikonversi dan selisihnya seribu kali lipat.
+        b = {
             "no": n,
-            "label": inti or label_lengkap,
+            "label": inti_label(label_lengkap) or label_lengkap,
             "label_lengkap": label_lengkap,
+            "satuan_label": satuan_label(label_lengkap),
             "value": " ".join(nilai.split()),
-        })
+        }
+        sub = _urai_sub(nilai)
+        if sub:
+            b["sub"] = sub
+        butir.append(b)
     return butir
 
 

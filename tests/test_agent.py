@@ -842,5 +842,87 @@ class TestStateDanReview(unittest.TestCase):
             self.assertIn("HELD", r.text)
 
 
+class TestPenguraiPengumumanAsli(unittest.TestCase):
+    """Satuan di label dan sub-butir (n) pada pengumuman MOPS asli (sampel 10 Nov)."""
+
+    @classmethod
+    def setUpClass(cls):
+        from app import tarik
+        cls.tarik = tarik
+        cls.rek = {str(r["符合條款"]).strip(): tarik.normalkan(r, "twse", "uji")
+                   for r in _baca_json("tests", "data", "openapi_pasal_sampel.json")}
+
+    def _butir(self, pasal, potongan_label):
+        for b in self.rek[pasal]["items"]:
+            for x in [b] + b.get("sub", []):
+                if potongan_label in x["label"]:
+                    return x
+        raise AssertionError(f"{potongan_label} tidak ada di {pasal}")
+
+    def test_satuan_dari_label_laporan_keuangan(self):
+        b = self._butir("第31款", "營業收入")
+        self.assertEqual(b["satuan_label"], "仟元")
+        self.assertEqual(self._butir("第31款", "基本每股盈餘")["satuan_label"], "元")
+
+    def test_sub_butir_penjaminan(self):
+        b = self._butir("第22款", "原背書保證之餘額")
+        self.assertEqual(b["satuan_label"], "仟元")
+        self.assertRegex(b["value"], r"^[\d,]+$")
+
+    def test_dokumen_teks_memuat_satuan_untuk_model_dan_pemeriksa(self):
+        from app.agent import llm
+        teks = llm.dokumen_teks(self.rek["第31款"])
+        self.assertIn("營業收入(仟元)", teks)
+
+    def test_penalar_aturan_membaca_satuan_dari_label(self):
+        from app.agent import extract
+        b = self._butir("第22款", "原背書保證之餘額")
+        t = extract._sari_satu(b, "debt")
+        self.assertEqual(t["satuan"], "仟元")
+        self.assertIsNotNone(t["nilai_juta_ntd"])
+
+    def test_label_dinormalkan(self):
+        from app.agent import extract
+        self.assertEqual(extract._normal_label("(6)迄事實發生日止背書保證餘額(仟元)"),
+                         extract._normal_label("迄事實發生日止背書保證餘額"))
+
+
+class TestKandidatGold(unittest.TestCase):
+    """Kandidat gold set dari arsip mentah: seimbang, bisa diulang, tanpa data pribadi."""
+
+    def setUp(self):
+        import shutil
+        import tempfile
+        from app import gold
+        self.gold = gold
+        self._tmp = tempfile.TemporaryDirectory()
+        shutil.copy(os.path.join(ROOT, "tests", "data", "openapi_pasal_sampel.json"),
+                    os.path.join(self._tmp.name, "20261110T000000Z-twse.json"))
+        self.rek = gold.muat_arsip(self._tmp.name)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_pilih_seimbang_dan_bisa_diulang(self):
+        a = self.gold.pilih(self.rek, per_pasal=1, negatif_per_pasal=1)
+        b = self.gold.pilih(self.rek, per_pasal=1, negatif_per_pasal=1)
+        self.assertEqual([x["source_url"] for x in a], [x["source_url"] for x in b])
+        self.assertIn(31, {x["clause"] for x in a})
+        self.assertIn(12, {x["clause"] for x in a})            # contoh yang seharusnya dilewati
+
+    def test_csv_bisa_dibaca_skrip_evaluasi(self):
+        sys.path.insert(0, os.path.join(ROOT, "scripts"))
+        import evaluasi
+        p = os.path.join(self._tmp.name, "gold.csv")
+        with open(p, "w", encoding="utf-8") as f:
+            f.write(self.gold.csv_kandidat(self.gold.pilih(self.rek)))
+        self.assertEqual(evaluasi.muat_gold(p), {})            # belum dilabeli → dilewati, bukan galat
+        with open(p, "a", encoding="utf-8") as f:
+            f.write("u#risiko,2330,,,22,,,ya,risiko,,,FR,penjaminan 49% ekuitas\n")
+        g = evaluasi.muat_gold(p)
+        self.assertTrue(g["u#risiko"]["risiko"])
+        self.assertNotIn("發言人", open(p, encoding="utf-8").read())
+
+
 if __name__ == "__main__":
     unittest.main()

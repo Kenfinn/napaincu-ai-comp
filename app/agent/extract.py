@@ -52,6 +52,19 @@ PENANDA_INJEKSI = (
 )
 
 
+def _normal_label(s: str) -> str:
+    s = re.sub(r"^\s*[(（]\d{1,2}[)）]\s*", "", s or "")
+    s = re.sub(r"[（(][^）)]*[)）]", "", s)
+    return re.sub(r"[\s，,、]", "", s)
+
+
+def label_sah(label: str, input_nama: str) -> bool:
+    """Label butir cocok untuk input ini? Dibandingkan setelah kurung, nomor sub-butir,
+    spasi, dan tanda baca dibuang — MOPS menulis label yang sama dengan variasi kecil."""
+    n = _normal_label(label)
+    return bool(n) and any(n == _normal_label(s) for s in LABEL_SAH.get(input_nama, ()))
+
+
 def deteksi_injeksi(dokumen: str) -> list[str]:
     rendah = dokumen.lower()
     return [p for p in PENANDA_INJEKSI if (p.lower() in rendah)]
@@ -100,7 +113,10 @@ def _sari_satu(butir: dict, input_nama: str) -> dict | None:
         return None
     mentah = m.group(1)
     tok, pengali = _satuan_dari(nilai)
-    mu = _mata_uang_dari(nilai)
+    if tok is None:
+        # Satuan sering hanya tertulis di label, mis. 背書保證餘額(仟元): 4,644,640
+        tok, pengali = _satuan_dari(butir.get("label_lengkap") or "")
+    mu = _mata_uang_dari(nilai) or _mata_uang_dari(butir.get("label_lengkap") or "")
     return {
         "input": input_nama,
         "nilai_mentah": mentah,
@@ -119,8 +135,9 @@ def _sari_aturan(detail: dict, kandidat: list[str]) -> list[dict]:
     temuan = []
     for input_nama in kandidat:
         sah = LABEL_SAH.get(input_nama, ())
-        for butir in detail.get("items", []):
-            if butir.get("label", "") in sah:
+        semua = [b for it in detail.get("items", []) for b in [it] + it.get("sub", [])]
+        for butir in semua:
+            if label_sah(butir.get("label", ""), input_nama):
                 hasil = _sari_satu(butir, input_nama)
                 if hasil:
                     temuan.append(hasil)

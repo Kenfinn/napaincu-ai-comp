@@ -297,5 +297,9 @@ def dokumen_teks(detail: dict) -> str:
         "",
     ]
     for it in detail.get("items", []):
-        baris.append(f"{it.get('no')}. {it.get('label', '')}: {it.get('value', '')}")
+        # Label lengkap, bukan inti: satuan seperti (仟元) hanya tertulis di label.
+        baris.append(f"{it.get('no')}. {it.get('label_lengkap') or it.get('label', '')}: {it.get('value', '')}")
+        for s in it.get("sub", []):
+            baris.append(f"   {it.get('no')}.({s.get('no')}) {s.get('label_lengkap') or s.get('label', '')}: "
+                         f"{s.get('value', '')}")
     return "\n".join(baris)

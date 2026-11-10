@@ -42,7 +42,25 @@ dengan `source_url` yang sama.
 **Ragu?** Tulis tebakan terbaik di kolom yang ada, lalu tulis "RAGU: …" di `catatan`.
 Jangan dilewati. Kasus yang sulit justru paling berguna.
 
-## Memilih pengumuman
+## Cara tercepat: unduh kandidat dari server
+
+Server menyimpan semua pengumuman asli sejak 8 Nov (semua emiten, bukan hanya watchlist).
+Buka tautan akses dulu (`/akses?kode=...`), lalu unduh:
+
+```
+https://feaf.afinzaki.my.id/ekspor/kandidat-gold.csv
+```
+
+Isinya sekitar 50 pengumuman yang sudah dipilih seimbang per pasal (termasuk yang
+seharusnya **tidak** terbit), dengan kolom `ringkasan_butir` berisi butir-butir yang
+memuat angka. Kalian cukup mengisi kolom `harus_terbit`, `input`, `nilai_juta_ntd`,
+`butir_no`, `pelabel`, `catatan`. Baris yang belum diisi dilewati saat evaluasi.
+
+**Sebelum melabeli, putuskan dulu pemetaan pasal di `docs/pemetaan-pasal.md`**, karena
+jawaban "harus terbit atau tidak" bergantung padanya. Untuk pasal 22/23 (sinyal risiko),
+isi `harus_terbit=ya` dan `input=risiko`, tanpa `nilai_juta_ntd`.
+
+## Memilih pengumuman sendiri
 
 Data asli ada di laptop yang menjalankan `scripts/fetch_details.py` dari jaringan Taiwan
 (`data/parsed/details.json`). Agar evaluasinya jujur:

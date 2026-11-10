@@ -397,6 +397,19 @@ def api_review():
     })
 
 
+@app.get("/ekspor/kandidat-gold.csv", include_in_schema=False)
+def ekspor_kandidat_gold(request: Request, per_pasal: int = 4):
+    """Kandidat gold set dari arsip server, untuk dilabeli tim keuangan (butuh kode akses)."""
+    if not _boleh_ubah(request):
+        raise HTTPException(403, "Buka /akses?kode=... dulu")
+    from fastapi.responses import Response
+    from . import gold
+    rek = gold.pilih(gold.muat_arsip(), per_pasal=max(1, min(per_pasal, 10)))
+    # BOM supaya Excel membuka huruf Mandarin dengan benar.
+    return Response("\ufeff" + gold.csv_kandidat(rek), media_type="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": "attachment; filename=kandidat-gold.csv"})
+
+
 @app.get("/api/watchlist", summary="Daftar kode saham yang dipantau")
 def api_watchlist():
     return JSONResponse({"kode": tarik.baca_watchlist(), "status_tarik": tarik.baca_status()})

@@ -74,6 +74,8 @@ def muat_gold(path: str) -> dict[str, dict]:
             if not url:
                 continue
             ya = (baris.get("harus_terbit") or "").strip().lower()
+            if not ya:
+                continue                # kandidat yang belum dilabeli — dilewati, bukan galat
             if ya not in ("ya", "tidak"):
                 raise ValueError(f"{path}:{no}: harus_terbit harus 'ya' atau 'tidak', bukan {ya!r}")
             g = gold.setdefault(url, {
@@ -88,8 +90,14 @@ def muat_gold(path: str) -> dict[str, dict]:
             if ya == "ya":
                 inp = (baris.get("input") or "").strip()
                 nilai = (baris.get("nilai_juta_ntd") or "").replace(",", "").strip()
+                if inp == "risiko":
+                    # Sinyal risiko (pasal 22/23/1/3/40): yang dinilai keputusan terbit/tahan,
+                    # bukan satu angka input DCF.
+                    g["risiko"] = True
+                    continue
                 if not inp or not nilai:
-                    raise ValueError(f"{path}:{no}: harus_terbit=ya wajib mengisi input dan nilai_juta_ntd")
+                    raise ValueError(f"{path}:{no}: harus_terbit=ya wajib mengisi input dan nilai_juta_ntd"
+                                     " (kecuali input=risiko)")
                 g["angka"].append((inp, float(nilai)))
     return gold
 
@@ -249,6 +257,8 @@ def laporan(m_per_mode: dict[str, dict], sumber: str, gold_path: str, label_mode
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--gold", default=GOLD_DEFAULT)
+    ap.add_argument("--arsip", action="store_true",
+                    help="ambil pengumuman juga dari arsip mentah penarik (semua emiten), bukan hanya watchlist")
     ap.add_argument("--mode", nargs="+", choices=MODE_SEMUA)
     ap.add_argument("--menit-manual", type=float, default=None,
                     help="menit per pengumuman secara manual, dari wawancara")
@@ -258,6 +268,11 @@ def main(argv: list[str] | None = None) -> int:
     mode = a.mode or [m for m in MODE_SEMUA if m != "model" or config.API_KEY]
     gold = muat_gold(a.gold)
     semua, sumber = store.muat_detail()
+    if a.arsip:
+        from app import gold as _gold
+        ada = {d.get("source_url") for d in semua}
+        semua = semua + [d for d in _gold.muat_arsip() if d["source_url"] not in ada]
+        sumber = f"{sumber} + arsip"
     data = [d for d in semua if d.get("source_url") in gold]
     tak_berlabel = len(semua) - len(data)
     hilang = set(gold) - {d.get("source_url") for d in data}
