@@ -118,6 +118,28 @@ Laporan pelaksanaan tugas semalam P1 sampai P10 untuk FEAF (Agentic AI Investmen
   - Dibuat: `scripts/impor_arsip.py`
   - Diubah: `app/agent/llm.py`, `app/config.py`, `app/main.py`, `app/tarik.py`, `app/teks/antigravity.py`, `app/templates/feed.html`, `app/templates/review.html`, `tests/test_putaran2.py`
 
+---
+
+### D-c: Pinjaman Jangka Pendek dan Tanda Utang Lancar
+- Jam mulai: 01:07
+- Jam selesai: 01:17
+- Status: Selesai
+- Commit: `fb49d77`
+- Tes yang ditambah dan hasilnya:
+  - 2 tes baru di `tests/test_putaran2.py` (semua lulus):
+    - `test_dc_pinjaman_jangka_pendek_masuk_utang`: memverifikasi bahwa `dcf.net_debt` menjumlahkan `short_term_borrowings` ke dalam total utang berbobot bunga (`debt`), bertambah tepat 35,0 juta NTD pada sampel neraca uji, dan bernilai sama bila field tersebut tidak ada.
+    - `test_dc_tanda_tidak_tersedia`: sampel tanpa bagian lancar utang jangka panjang menandai `"tidak_tersedia": ["current_portion_lt_debt"]` dan menampilkan peringatan tiga bahasa di `/saham/2330?tab=valuasi` serta `/valuasi/2330` tanpa penanda tak terterjemahkan `⟦`.
+  - `TestParitasKalkulator` dan seluruh tes lama tetap lulus. Total tes lulus: 151 tes.
+- Angka QA manual:
+  - Eksekusi `python3 scripts/valuasi_otomatis.py 2330 --banding`:
+    - `balance_sheet.short_term_borrowings`: 0.0 vs 0.0 (0.00%)
+    - `balance_sheet.current_portion_lt_debt`: 0.0 vs 136,926.5 (-100.00%, karena FinMind menggabungkan ke OtherCurrentLiabilities)
+    - `DCF: debt`: 896,062.0 vs 1,032,988.5 (-13.26%)
+    - Peringatan transparan muncul di tab Valuation dalam 3 bahasa. Pada P7 (D-b), field ini akan ditimpa kertas kerja manual.
+- Berkas yang diubah:
+  - Diubah: `scripts/dcf.py` (tepat 1 baris di `net_debt`), `app/valuasi_otomatis.py`, `app/teks/antigravity.py`, `app/main.py`, `app/templates/valuasi.html`, `scripts/valuasi_otomatis.py`, `docs/valuasi-otomatis.md`, `tests/test_putaran2.py`
+
+
 
 
 
