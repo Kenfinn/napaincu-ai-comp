@@ -340,8 +340,10 @@ def _gemini(contents: list[dict], bahasa: str) -> tuple[dict, dict]:
                 jawab = json.loads(r.read().decode("utf-8"))
             break
         except urllib.error.HTTPError as e:
-            if e.code == 404 and percobaan == 0 and llm._cari_pengganti():
-                continue
+            if e.code == 404 and percobaan == 0:
+                llm._gagal_404.add(llm.model_dipakai())
+                if llm._cari_pengganti():
+                    continue
             raise llm.GagalModel(f"HTTP {e.code}") from e
         except (urllib.error.URLError, TimeoutError) as e:
             if percobaan == 0:

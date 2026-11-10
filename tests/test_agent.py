@@ -698,11 +698,13 @@ class TestModelPengganti(unittest.TestCase):
                       config.API_KEY, config.MODEL, config.RETRY_MAKS)
         llm.CACHE_DIR = self._tmp.name
         llm._model_aktif = None
+        llm._gagal_404.clear()
         config.API_KEY, config.MODEL, config.RETRY_MAKS = "uji", "gemini-2.5-flash", 0
 
     def tearDown(self):
         (self.llm.CACHE_DIR, self.llm._panggil_gemini, self.llm._daftar_model, self.llm._model_aktif,
          self.config.API_KEY, self.config.MODEL, self.config.RETRY_MAKS) = self._asli
+        self.llm._gagal_404.clear()
         self._tmp.cleanup()
 
     def test_pilih_model(self):
@@ -731,6 +733,26 @@ class TestModelPengganti(unittest.TestCase):
         self.assertEqual(meta["model"], "gemini-3.0-flash")
         self.assertEqual(meta["model_diminta"], "gemini-2.5-flash")
         self.assertEqual(self.llm.nama_model(), "gemini-3.0-flash")
+
+    def test_model_tercantum_tapi_404_dicoret_lalu_diganti(self):
+        """Kasus server 10 Nov: gemini-2.5-flash ada di ListModels tapi generateContent 404."""
+        import io
+        import urllib.error
+        dipakai = []
+        mati = {"gemini-2.5-flash", "gemini-3.8-flash"}
+
+        def panggil(instruksi, dokumen):
+            dipakai.append(self.llm.model_dipakai())
+            if self.llm.model_dipakai() in mati:
+                raise urllib.error.HTTPError("u", 404, "Not Found", {}, io.BytesIO(b""))
+            return {"temuan": []}, {"token_masuk": 1, "token_keluar": 1, "biaya_usd": 0.0}
+        self.llm._panggil_gemini = panggil
+        self.llm._daftar_model = lambda: ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3-flash-preview",
+                                          "gemini-3.7-flash", "gemini-3.8-flash", "gemini-3.8-flash-tts",
+                                          "gemini-flash-latest"]
+        _, meta = self.llm.tanya("i", "d")
+        self.assertEqual(dipakai, ["gemini-2.5-flash", "gemini-3.8-flash", "gemini-3.7-flash"])
+        self.assertEqual(meta["model"], "gemini-3.7-flash")
 
     def test_sebab_listmodels_gagal_tercatat(self):
         import io

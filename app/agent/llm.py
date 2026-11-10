@@ -74,13 +74,21 @@ def _versi(nama: str) -> tuple:
     return tuple(float(a) for a in angka[:1]) or (0.0,)
 
 
-def pilih_model(daftar: list[str], diminta: str) -> str | None:
+# Model yang menjawab 404 di generateContent selama proses ini hidup. Google bisa tetap
+# mencantumkan model di ListModels padahal sudah ditutup untuk kunci tertentu (terjadi
+# pada gemini-2.5-flash, 10 Nov), jadi daftar saja tidak cukup.
+_gagal_404: set[str] = set()
+GANTI_MAKS = 3
+
+
+def pilih_model(daftar: list[str], diminta: str, kecuali: set[str] | frozenset = frozenset()) -> str | None:
     """Pilih pengganti dari daftar model yang mendukung generateContent.
 
     Urutan: nama yang diminta bila ada → flash stabil versi tertinggi → alias
     flash-latest → flash apa pun. Varian lite/image/tts/live/thinking/preview/exp
     dihindari selama ada pilihan stabil, karena perilakunya berbeda dan bisa hilang.
     """
+    daftar = [m for m in daftar if m not in kecuali]
     if diminta in daftar:
         return diminta
     flash = [m for m in daftar if "flash" in m]
@@ -122,12 +130,12 @@ def _cari_pengganti() -> str | None:
     except (urllib.error.URLError, ValueError, KeyError, TimeoutError) as e:
         _galat_pengganti = f"ListModels gagal: {type(e).__name__}: {e}"[:200]
         return None
-    pilihan = pilih_model(daftar, config.MODEL)
+    pilihan = pilih_model(daftar, config.MODEL, _gagal_404)
     if pilihan:
         _model_aktif = pilihan
         _galat_pengganti = None
     else:
-        _galat_pengganti = (f"ListModels berisi {len(daftar)} model, tanpa flash"
+        _galat_pengganti = (f"ListModels berisi {len(daftar)} model, tanpa flash yang belum dicoba"
                             + (f"; contoh: {', '.join(daftar[:5])}" if daftar else ""))
     return pilihan
 
@@ -261,7 +269,7 @@ def _tanya_model(instruksi: str, dokumen: str) -> tuple[dict, dict]:
 
     mulai = time.monotonic()
     galat: list[str] = []
-    sudah_ganti = False
+    ganti = 0
     percobaan = 0
     while percobaan <= config.RETRY_MAKS:
         try:
@@ -278,16 +286,20 @@ def _tanya_model(instruksi: str, dokumen: str) -> tuple[dict, dict]:
             return hasil, meta
         except urllib.error.HTTPError as e:
             galat.append(f"percobaan {percobaan + 1} ({model_dipakai()}): {e}")
-            if e.code == 404 and not sudah_ganti:
-                # Model tidak ditemukan — mengulang dengan nama yang sama sia-sia.
-                # Cari pengganti sekali, lalu coba lagi tanpa memakan jatah retry.
-                sudah_ganti = True
+            if e.code == 404 and ganti < GANTI_MAKS:
+                # Model tidak ditemukan. Mengulang dengan nama yang sama sia-sia: coret model
+                # itu, cari pengganti, coba lagi tanpa memakan jatah retry.
+                ganti += 1
+                gagal = model_dipakai()
+                _gagal_404.add(gagal)
                 pengganti = _cari_pengganti()
-                if pengganti and pengganti != config.MODEL:
-                    galat.append(f"model {config.MODEL} tidak tersedia, diganti {pengganti}")
+                if pengganti and pengganti not in _gagal_404:
+                    galat.append(f"model {gagal} tidak tersedia (404), diganti {pengganti}")
                     continue
                 raise GagalModel("; ".join(galat + ["tidak ada model flash pengganti"
                                                     + (f" ({_galat_pengganti})" if _galat_pengganti else "")])) from e
+            if e.code == 404:
+                raise GagalModel("; ".join(galat + [f"{GANTI_MAKS} model berturut-turut 404"])) from e
             if e.code in (400, 401, 403):
                 raise GagalModel("; ".join(galat + ["kunci API ditolak atau tidak berizin"])) from e
         except (urllib.error.URLError, TimeoutError, GagalModel) as e:
