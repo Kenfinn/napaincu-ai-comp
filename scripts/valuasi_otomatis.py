@@ -187,7 +187,7 @@ def bandingkan_dengan_manual(kode: str = "2330") -> tuple[str, dict]:
         oto["wacc_inputs"]["beta"],
         manual["wacc_inputs"]["beta"],
         "num4",
-        f"Regresi 2y mingguan Yahoo ({oto.get('jumlah_pekan_beta')} pekan) vs manual",
+        f"Regresi 2y mingguan bursa resmi ({oto.get('jumlah_pekan_beta')} pekan) vs manual",
     )
     tambah(
         "wacc_inputs.total_interest_expense",

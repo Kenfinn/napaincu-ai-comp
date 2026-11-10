@@ -74,9 +74,9 @@ _T: dict[str, tuple[str, str, str]] = {
         "pasangan return mingguan kurang dari 52 minggu ({n} minggu)",
     ),
     "va.beta.gagal_ambil": (
-        "price history unavailable from Yahoo Finance",
-        "無法自 Yahoo Finance 取得歷史股價",
-        "riwayat harga dari Yahoo Finance tidak tersedia",
+        "price history unavailable from official exchange endpoint",
+        "無法自交易所官方取得歷史股價",
+        "riwayat harga dari bursa resmi tidak tersedia",
     ),
     "va.beta.varians_nol": (
         "market index variance is zero",

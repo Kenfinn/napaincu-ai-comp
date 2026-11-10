@@ -12,8 +12,8 @@ Sumber data (semua gratis, dapat diaudit):
 - Neraca, laporan arus kas (3 tahun fiskal penuh terakhir), dan laba rugi (pajak 4 kuartal):
   FinMind (`TaiwanStockBalanceSheet`, `TaiwanStockCashFlowsStatement`,
   `TaiwanStockFinancialStatements`) lewat `app.pasar.keuangan_mentah(kode, ...)`.
-- Beta: regresi return mingguan 2 tahun saham terhadap TAIEX (`^TWII`) dari
-  Yahoo Finance chart API (`v8/finance/chart/{simbol}?range=2y&interval=1wk`).
+- Beta: regresi return mingguan 2 tahun saham terhadap TAIEX dari data harian resmi
+  TWSE (STOCK_DAY) / TPEx (tradingStock) dan TAIEX (MI_5MINS_HIST).
   Bila pasangan mingguan < 52 atau gagal ambil, jatuh ke beta cadangan 1,0 dengan alasan.
 
 Semua nilai uang dalam **juta NTD** (nilai FinMind dalam NTD dibagi `1e6`).
@@ -31,7 +31,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from app import config, i18n, pasar
+from app import config, harga_resmi, i18n, pasar
 from scripts import dcf
 
 log = logging.getLogger(__name__)
@@ -40,8 +40,6 @@ CACHE_DIR: Path = Path(config.DATA_DIR) / "valuasi_otomatis"
 TTL_VALUASI = 12 * 3600  # 12 jam
 TTL_BETA = 7 * 86400     # 7 hari untuk deret harga mingguan 2 tahun
 
-YAHOO_CHART_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{simbol}?range=2y&interval=1wk"
-SIMBOL_INDEKS = "^TWII"
 MIN_MINGGU_BETA = 52
 
 # Parameter WACC pasar Taiwan — sama persis dengan valuation/inputs/2330.json
@@ -77,93 +75,54 @@ def _normal_tanggal_harga(tgl: str | None) -> str:
     return (tgl or "").strip() or dt.date.today().isoformat()
 
 
-def _ambil_yahoo_chart(simbol: str) -> dict:
-    """Ambil JSON chart mingguan 2 tahun dari Yahoo Finance."""
-    simbol_aman = urllib.parse.quote(simbol, safe="")
-    url = YAHOO_CHART_URL.format(simbol=simbol_aman)
-    req = urllib.request.Request(url, headers={"User-Agent": pasar.UA, "Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=20) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+def _daftar_25_bulan(ref_date: dt.date | None = None) -> list[str]:
+    """Kembalikan daftar 25 bulan (2 tahun penuh + bulan berjalan) YYYYMM terurut."""
+    if ref_date is None:
+        ref_date = dt.date.today()
+    y, m = ref_date.year, ref_date.month
+    bulan_list = []
+    for i in range(24, -1, -1):
+        total_m = (y * 12 + m - 1) - i
+        cur_y = total_m // 12
+        cur_m = (total_m % 12) + 1
+        bulan_list.append(f"{cur_y:04d}{cur_m:02d}")
+    return bulan_list
 
 
-def _seri_mingguan_yahoo(simbol: str) -> list[dict]:
-    """Kembalikan daftar [{'pekan': 'YYYY-Www', 'tutup': float}] terurut dari Yahoo Finance."""
-    kunci_cache = "yahoo_1wk_2y_" + simbol.replace("^", "IDX_").replace(".", "_")
-
-    def _tarik():
-        mentah = _ambil_yahoo_chart(simbol)
-        hasil = ((mentah or {}).get("chart") or {}).get("result") or []
-        if not hasil:
-            return []
-        r0 = hasil[0]
-        ts_list = r0.get("timestamp") or []
-        ind = r0.get("indicators") or {}
-        adj_list = ((ind.get("adjclose") or [{}])[0]).get("adjclose") if ind.get("adjclose") else None
-        close_list = ((ind.get("quote") or [{}])[0]).get("close") if ind.get("quote") else None
-        seri_harga = adj_list if adj_list else (close_list or [])
-
-        per_pekan: dict[str, float] = {}
-        for ts, h in zip(ts_list, seri_harga):
-            if ts is None or h is None:
-                continue
-            try:
-                val = float(h)
-            except (TypeError, ValueError):
-                continue
-            if val <= 0:
-                continue
-            tgl = dt.datetime.fromtimestamp(int(ts), tz=dt.timezone.utc).date()
-            iso_th, iso_mg, _ = tgl.isocalendar()
-            per_pekan[f"{iso_th:04d}-W{iso_mg:02d}"] = val
-
-        return [{"pekan": k, "tutup": per_pekan[k]} for k in sorted(per_pekan)]
-
-    data, _ = pasar._dengan_cache(kunci_cache, TTL_BETA, _tarik)
-    return data if isinstance(data, list) else []
+def _deret_harian_ke_mingguan(deret: list[tuple[str, float]]) -> dict[str, float]:
+    """Konversi deret harian terurut menjadi harga penutupan hari bursa terakhir tiap minggu ISO."""
+    pekan_harga: dict[str, float] = {}
+    for tgl_iso, tutup in sorted(deret, key=lambda x: x[0]):
+        try:
+            d = dt.date.fromisoformat(tgl_iso)
+            iso_th, iso_mg, _ = d.isocalendar()
+            kunci = f"{iso_th:04d}-W{iso_mg:02d}"
+            pekan_harga[kunci] = float(tutup)
+        except Exception:
+            continue
+    return pekan_harga
 
 
-def _return_per_pekan(seri: list[dict]) -> dict[str, float]:
-    """Hitung return mingguan (P_t / P_{t-1} - 1) dari deret harga mingguan terurut."""
+def _return_mingguan_dari_harga(pekan_harga: dict[str, float]) -> dict[str, float]:
+    """Hitung return mingguan (P_t / P_{t-1} - 1) dari dict {pekan: tutup}."""
+    pekan_list = sorted(pekan_harga.keys())
     ret: dict[str, float] = {}
-    for i in range(1, len(seri)):
-        p0 = seri[i - 1].get("tutup")
-        p1 = seri[i].get("tutup")
-        pekan = seri[i].get("pekan")
-        if p0 and p1 and p0 > 0 and pekan:
-            ret[pekan] = (p1 - p0) / p0
+    for i in range(1, len(pekan_list)):
+        p0 = pekan_harga[pekan_list[i - 1]]
+        p1 = pekan_harga[pekan_list[i]]
+        if p0 and p0 > 0:
+            ret[pekan_list[i]] = (p1 - p0) / p0
     return ret
 
 
-def hitung_beta(kode: str, bursa: str = "TWSE") -> dict:
-    """Hitung beta 2 tahun mingguan saham terhadap TAIEX (^TWII).
-
-    beta = cov(r_s, r_m) / var(r_m) pada pekan yang sama.
-    Bila pasangan pekan < 52, gagal ambil, atau var(r_m) == 0 → beta 1,0 dengan
-    `beta_cadangan: True` dan alasan 3 bahasa.
-    """
-    akhiran = ".TWO" if (bursa or "").upper() == "TPEX" else ".TW"
-    simbol_saham = f"{kode}{akhiran}"
-    url_saham = YAHOO_CHART_URL.format(simbol=simbol_saham)
-    url_indeks = YAHOO_CHART_URL.format(simbol="%5ETWII")
-
-    seri_s = _seri_mingguan_yahoo(simbol_saham)
-    seri_m = _seri_mingguan_yahoo(SIMBOL_INDEKS)
-
-    if not seri_s or not seri_m:
-        alasan = i18n.pesan("va.beta.gagal_ambil")
-        return {
-            "beta": 1.0,
-            "beta_cadangan": True,
-            "jumlah_pekan": 0,
-            "simbol": simbol_saham,
-            "url_saham": url_saham,
-            "url_indeks": url_indeks,
-            "alasan": alasan["teks"],
-            "alasan_i18n": alasan,
-        }
-
-    ret_s = _return_per_pekan(seri_s)
-    ret_m = _return_per_pekan(seri_m)
+def hitung_beta_dari_return(
+    ret_s: dict[str, float],
+    ret_m: dict[str, float],
+    simbol: str = "",
+    url_saham: str = "",
+    url_indeks: str = "",
+) -> dict:
+    """Hitung beta dari dua deret return mingguan yang dicocokkan per pekan ISO (sampel n-1)."""
     pekan_sama = sorted(set(ret_s) & set(ret_m))
     n = len(pekan_sama)
 
@@ -173,7 +132,7 @@ def hitung_beta(kode: str, bursa: str = "TWSE") -> dict:
             "beta": 1.0,
             "beta_cadangan": True,
             "jumlah_pekan": n,
-            "simbol": simbol_saham,
+            "simbol": simbol,
             "url_saham": url_saham,
             "url_indeks": url_indeks,
             "alasan": alasan["teks"],
@@ -184,8 +143,8 @@ def hitung_beta(kode: str, bursa: str = "TWSE") -> dict:
     xm = [ret_m[p] for p in pekan_sama]
     rata_s = sum(xs) / n
     rata_m = sum(xm) / n
-    cov = sum((s - rata_s) * (m - rata_m) for s, m in zip(xs, xm))
-    var_m = sum((m - rata_m) ** 2 for m in xm)
+    cov = sum((s - rata_s) * (m - rata_m) for s, m in zip(xs, xm)) / (n - 1)
+    var_m = sum((m - rata_m) ** 2 for m in xm) / (n - 1)
 
     if var_m <= 1e-18:
         alasan = i18n.pesan("va.beta.varians_nol")
@@ -193,7 +152,7 @@ def hitung_beta(kode: str, bursa: str = "TWSE") -> dict:
             "beta": 1.0,
             "beta_cadangan": True,
             "jumlah_pekan": n,
-            "simbol": simbol_saham,
+            "simbol": simbol,
             "url_saham": url_saham,
             "url_indeks": url_indeks,
             "alasan": alasan["teks"],
@@ -209,7 +168,7 @@ def hitung_beta(kode: str, bursa: str = "TWSE") -> dict:
             "beta": 1.0,
             "beta_cadangan": True,
             "jumlah_pekan": n,
-            "simbol": simbol_saham,
+            "simbol": simbol,
             "url_saham": url_saham,
             "url_indeks": url_indeks,
             "alasan": alasan["teks"],
@@ -222,12 +181,76 @@ def hitung_beta(kode: str, bursa: str = "TWSE") -> dict:
         "jumlah_pekan": n,
         "pekan_awal": pekan_sama[0],
         "pekan_akhir": pekan_sama[-1],
-        "simbol": simbol_saham,
+        "simbol": simbol,
         "url_saham": url_saham,
         "url_indeks": url_indeks,
         "alasan": "",
         "alasan_i18n": None,
     }
+
+
+def hitung_beta(kode: str, bursa: str = "TWSE") -> dict:
+    """Hitung beta 2 tahun mingguan saham terhadap TAIEX dari data harga harian resmi TWSE/TPEx.
+
+    beta = cov(r_s, r_m) / var(r_m) pada pekan yang sama (rumus sampel n - 1).
+    Bila pasangan pekan < 52, gagal ambil, atau var(r_m) == 0 -> beta 1,0 dengan
+    `beta_cadangan: True` dan alasan 3 bahasa.
+    """
+    bursa_norm = (bursa or "").strip().upper()
+    if bursa_norm not in ("TWSE", "TPEX"):
+        try:
+            h = pasar.harga(kode)
+            bursa_norm = str(h.get("bursa") or "TWSE").upper()
+        except Exception:
+            bursa_norm = "TWSE"
+    nama_bursa = "TWSE" if bursa_norm == "TWSE" else "TPEx"
+    simbol_saham = f"{kode} ({nama_bursa})"
+
+    if nama_bursa == "TWSE":
+        url_saham = f"https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?stockNo={kode}"
+    else:
+        url_saham = f"https://www.tpex.org.tw/www/zh-tw/afterTrading/tradingStock?code={kode}"
+    url_indeks = "https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST"
+
+    daftar_bulan = _daftar_25_bulan()
+    deret_s: list[tuple[str, float]] = []
+    deret_m: list[tuple[str, float]] = []
+
+    for bln in daftar_bulan:
+        try:
+            sb = harga_resmi.harian(kode, nama_bursa, bln)
+            if sb:
+                deret_s.extend(sb)
+        except Exception as e:
+            log.warning("Gagal ambil harga saham %s bulan %s: %s", kode, bln, e)
+        try:
+            mb = harga_resmi.taiex(bln)
+            if mb:
+                deret_m.extend(mb)
+        except Exception as e:
+            log.warning("Gagal ambil indeks TAIEX bulan %s: %s", bln, e)
+
+    if not deret_s or not deret_m:
+        alasan = i18n.pesan("va.beta.gagal_ambil")
+        return {
+            "beta": 1.0,
+            "beta_cadangan": True,
+            "jumlah_pekan": 0,
+            "simbol": simbol_saham,
+            "url_saham": url_saham,
+            "url_indeks": url_indeks,
+            "alasan": alasan["teks"],
+            "alasan_i18n": alasan,
+        }
+
+    pekan_s = _deret_harian_ke_mingguan(deret_s)
+    pekan_m = _deret_harian_ke_mingguan(deret_m)
+    ret_s = _return_mingguan_dari_harga(pekan_s)
+    ret_m = _return_mingguan_dari_harga(pekan_m)
+
+    return hitung_beta_dari_return(
+        ret_s, ret_m, simbol=simbol_saham, url_saham=url_saham, url_indeks=url_indeks
+    )
 
 
 def _kelompok_per_tanggal(
@@ -557,7 +580,7 @@ def bangun(kode: str) -> dict:
 
     # 9. Susun dict input sesuai skema valuation/inputs/2330.json
     catatan_beta = (
-        f"Yahoo Finance 2y weekly regression ({info_beta['simbol']} vs ^TWII, "
+        f"TWSE/TPEx official daily close 2y weekly regression ({info_beta['simbol']} vs TAIEX, "
         f"{info_beta['jumlah_pekan']} weeks: {info_beta.get('pekan_awal', '')}..{info_beta.get('pekan_akhir', '')}) — "
         f"{info_beta['url_saham']} & {info_beta['url_indeks']}"
         if not beta_cadangan

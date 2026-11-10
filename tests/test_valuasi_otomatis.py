@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import calendar
 import copy
 import json
 import os
@@ -12,13 +13,13 @@ from unittest import mock
 
 from fastapi.testclient import TestClient
 
-from app import config, i18n, main, pasar, store, valuasi_otomatis
+from app import config, harga_resmi, i18n, main, pasar, store, valuasi_otomatis
 from app.agent import pipeline
 from scripts import dcf
 
 DATA_TES = Path(__file__).resolve().parent / "data"
 PASAR_SAMPEL = json.loads((DATA_TES / "pasar_sampel.json").read_text(encoding="utf-8"))
-YAHOO_SAMPEL = json.loads((DATA_TES / "yahoo_sampel.json").read_text(encoding="utf-8"))
+HARGA_RESMI_SAMPEL = json.loads((DATA_TES / "harga_resmi_sampel.json").read_text(encoding="utf-8"))
 MANUAL_2330 = json.loads((Path(config.VALUATION_DIR) / "2330.json").read_text(encoding="utf-8"))
 
 
@@ -64,9 +65,19 @@ class _LingkunganOfflineMixin:
                 side_effect=AssertionError("Tes tidak boleh memanggil jaringan (_finmind)"),
             ),
             mock.patch.object(
-                valuasi_otomatis,
-                "_ambil_yahoo_chart",
-                side_effect=self._mock_yahoo_chart,
+                harga_resmi,
+                "_ambil_json",
+                side_effect=AssertionError("Tes tidak boleh memanggil jaringan (_ambil_json harga_resmi)"),
+            ),
+            mock.patch.object(
+                harga_resmi,
+                "harian",
+                side_effect=self._mock_harian,
+            ),
+            mock.patch.object(
+                harga_resmi,
+                "taiex",
+                side_effect=self._mock_taiex,
             ),
         ]
         for p in self._patches:
@@ -98,13 +109,37 @@ class _LingkunganOfflineMixin:
         self._tmp.cleanup()
         super().tearDown()
 
-    def _mock_yahoo_chart(self, simbol: str) -> dict:
-        if simbol in YAHOO_SAMPEL:
-            return copy.deepcopy(YAHOO_SAMPEL[simbol])
-        # Untuk simbol saham lain di tes, gunakan deret 2330.TW sebagai sampel dasar
-        if simbol.endswith(".TW") or simbol.endswith(".TWO"):
-            return copy.deepcopy(YAHOO_SAMPEL["2330.TW"])
-        raise RuntimeError(f"Simbol Yahoo tidak ada di sampel: {simbol}")
+    def _mock_harian(self, kode: str, bursa: str = "", bulan: str = "") -> list[tuple[str, float]]:
+        sample_months = ["202408", "202409", "202410"]
+        src_bln = sample_months[int(bulan) % 3] if str(bulan).isdigit() else "202408"
+        bursa_norm = (bursa or "TWSE").upper()
+        key = "tpex_6488" if bursa_norm == "TPEX" or str(kode) == "6488" else "twse_2330"
+        raw = HARGA_RESMI_SAMPEL[key][src_bln]
+        parsed = harga_resmi.urai_tpex(raw) if key == "tpex_6488" else harga_resmi.urai_twse(raw)
+        out = []
+        th, bl = int(bulan[:4]), int(bulan[4:])
+        max_d = calendar.monthrange(th, bl)[1]
+        for iso, val in parsed:
+            day = min(int(iso.split("-")[2]), max_d)
+            new_iso = f"{th:04d}-{bl:02d}-{day:02d}"
+            scale = 1.0 + 0.003 * ((int(bulan) % 7) - 3)
+            out.append((new_iso, round(val * scale, 2)))
+        return out
+
+    def _mock_taiex(self, bulan: str = "") -> list[tuple[str, float]]:
+        sample_months = ["202408", "202409", "202410"]
+        src_bln = sample_months[int(bulan) % 3] if str(bulan).isdigit() else "202408"
+        raw = HARGA_RESMI_SAMPEL["taiex"][src_bln]
+        parsed = harga_resmi.urai_taiex(raw)
+        out = []
+        th, bl = int(bulan[:4]), int(bulan[4:])
+        max_d = calendar.monthrange(th, bl)[1]
+        for iso, val in parsed:
+            day = min(int(iso.split("-")[2]), max_d)
+            new_iso = f"{th:04d}-{bl:02d}-{day:02d}"
+            scale = 1.0 + 0.002 * ((int(bulan) % 5) - 2)
+            out.append((new_iso, round(val * scale, 2)))
+        return out
 
     def _salin_keuangan_sampel(self, kode_target: str) -> None:
         """Salin laporan FinMind 2330 ke `kode_target` di cache sementara."""
@@ -151,31 +186,26 @@ class TestValuasiOtomatis(_LingkunganOfflineMixin, unittest.TestCase):
         self.assertEqual(r_o["incomplete_sources"], [])
 
     def test_perhitungan_beta_dari_sampel_deret_harga(self):
-        """hitung_beta menghitung cov(rs, rm) / var(rm) dengan tepat dari sampel 60 minggu."""
+        """hitung_beta menghitung cov(rs, rm) / var(rm) dengan tepat dari deret harga resmi."""
         info = valuasi_otomatis.hitung_beta("2330", bursa="TWSE")
         self.assertFalse(info["beta_cadangan"])
         self.assertGreaterEqual(info["jumlah_pekan"], 52)
-        self.assertEqual(info["simbol"], "2330.TW")
+        self.assertIn("2330", info["simbol"])
         self.assertGreater(info["beta"], 0.5)
         self.assertLess(info["beta"], 3.0)
 
-        # Emiten TPEx memakai akhiran .TWO
+        # Emiten TPEx memakai pasar TPEx
         info_tpex = valuasi_otomatis.hitung_beta("6488", bursa="TPEx")
-        self.assertEqual(info_tpex["simbol"], "6488.TWO")
+        self.assertIn("6488", info_tpex["simbol"])
         self.assertFalse(info_tpex["beta_cadangan"])
 
     def test_beta_cadangan_bila_kurang_52_minggu_atau_gagal(self):
         """Kurang dari 52 pasangan minggu atau gagal ambil → beta 1,0 dan beta_cadangan=True."""
-        pendek = copy.deepcopy(YAHOO_SAMPEL["2330.TW"])
-        pendek["chart"]["result"][0]["timestamp"] = pendek["chart"]["result"][0]["timestamp"][:20]
-        pendek["chart"]["result"][0]["indicators"]["adjclose"][0]["adjclose"] = (
-            pendek["chart"]["result"][0]["indicators"]["adjclose"][0]["adjclose"][:20]
-        )
-
+        daftar_2bln = ["202408", "202409"]
         with mock.patch.object(
             valuasi_otomatis,
-            "_ambil_yahoo_chart",
-            side_effect=lambda s: pendek if s == "2454.TW" else copy.deepcopy(YAHOO_SAMPEL["^TWII"]),
+            "_daftar_25_bulan",
+            return_value=daftar_2bln,
         ):
             info_pendek = valuasi_otomatis.hitung_beta("2454", bursa="TWSE")
             self.assertTrue(info_pendek["beta_cadangan"])
@@ -183,9 +213,9 @@ class TestValuasiOtomatis(_LingkunganOfflineMixin, unittest.TestCase):
             self.assertEqual(info_pendek["alasan_i18n"]["kode"], "va.beta.kurang_data")
 
         with mock.patch.object(
-            valuasi_otomatis,
-            "_ambil_yahoo_chart",
-            side_effect=OSError("jaringan terputus"),
+            harga_resmi,
+            "harian",
+            return_value=[],
         ):
             info_gagal = valuasi_otomatis.hitung_beta("2317", bursa="TWSE")
             self.assertTrue(info_gagal["beta_cadangan"])
