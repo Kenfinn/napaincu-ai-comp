@@ -179,6 +179,7 @@ _T: dict[str, tuple[str, str, str]] = {
     "jj.durasi": ("Duration", "耗時", "Durasi"),
     "jj.langkah": ("Steps", "步驟", "Langkah"),
     "jj.panggilan": ("Model calls", "模型呼叫", "Panggilan model"),
+    "jj.cache": ("Cached answers", "快取回覆", "Jawaban cache"),
     "jj.token_masuk": ("Input tokens", "輸入 token", "Token masuk"),
     "jj.token_keluar": ("Output tokens", "輸出 token", "Token keluar"),
     "jj.biaya": ("Cost", "成本", "Biaya"),

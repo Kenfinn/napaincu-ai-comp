@@ -14,6 +14,7 @@
   <div><div class="kicker">{{ t('jj.durasi') }}</div><b class="mono">{{ h.ringkasan.durasi_total_ms }} ms</b></div>
   <div><div class="kicker">{{ t('jj.langkah') }}</div><b class="mono">{{ h.ringkasan.langkah }}</b></div>
   <div><div class="kicker">{{ t('jj.panggilan') }}</div><b class="mono">{{ h.ringkasan.panggilan_model }}</b></div>
+  <div><div class="kicker">{{ t('jj.cache') }}</div><b class="mono">{{ h.ringkasan.jawaban_cache or 0 }}</b></div>
   <div><div class="kicker">{{ t('jj.token_masuk') }}</div><b class="mono">{{ h.ringkasan.token_masuk | rb }}</b></div>
   <div><div class="kicker">{{ t('jj.token_keluar') }}</div><b class="mono">{{ h.ringkasan.token_keluar | rb }}</b></div>
   <div><div class="kicker">{{ t('jj.biaya') }}</div><b class="mono">${{ h.ringkasan.biaya_usd | rb(4) }}</b></div>
