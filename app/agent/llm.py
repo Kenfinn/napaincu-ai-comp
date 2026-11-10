@@ -102,14 +102,33 @@ def _daftar_model() -> list[str]:
             if "generateContent" in m.get("supportedGenerationMethods", [])]
 
 
+# Sebab terakhir pencarian model pengganti gagal, supaya tercatat di jejak audit.
+# Tanpa ini, "tidak ada model flash pengganti" tidak membedakan kunci ditolak, API belum
+# aktif, atau daftar model memang tanpa flash.
+_galat_pengganti: str | None = None
+
+
 def _cari_pengganti() -> str | None:
-    global _model_aktif
+    global _model_aktif, _galat_pengganti
     try:
-        pilihan = pilih_model(_daftar_model(), config.MODEL)
-    except (urllib.error.URLError, ValueError, KeyError):
+        daftar = _daftar_model()
+    except urllib.error.HTTPError as e:
+        try:
+            isi = json.loads(e.read().decode("utf-8")).get("error", {})
+            _galat_pengganti = f"ListModels HTTP {e.code} {isi.get('status', '')}: {str(isi.get('message', ''))[:160]}"
+        except (ValueError, AttributeError):
+            _galat_pengganti = f"ListModels HTTP {e.code}"
         return None
+    except (urllib.error.URLError, ValueError, KeyError, TimeoutError) as e:
+        _galat_pengganti = f"ListModels gagal: {type(e).__name__}: {e}"[:200]
+        return None
+    pilihan = pilih_model(daftar, config.MODEL)
     if pilihan:
         _model_aktif = pilihan
+        _galat_pengganti = None
+    else:
+        _galat_pengganti = (f"ListModels berisi {len(daftar)} model, tanpa flash"
+                            + (f"; contoh: {', '.join(daftar[:5])}" if daftar else ""))
     return pilihan
 
 
@@ -267,7 +286,8 @@ def _tanya_model(instruksi: str, dokumen: str) -> tuple[dict, dict]:
                 if pengganti and pengganti != config.MODEL:
                     galat.append(f"model {config.MODEL} tidak tersedia, diganti {pengganti}")
                     continue
-                raise GagalModel("; ".join(galat + ["tidak ada model flash pengganti"])) from e
+                raise GagalModel("; ".join(galat + ["tidak ada model flash pengganti"
+                                                    + (f" ({_galat_pengganti})" if _galat_pengganti else "")])) from e
             if e.code in (400, 401, 403):
                 raise GagalModel("; ".join(galat + ["kunci API ditolak atau tidak berizin"])) from e
         except (urllib.error.URLError, TimeoutError, GagalModel) as e:

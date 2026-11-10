@@ -732,6 +732,22 @@ class TestModelPengganti(unittest.TestCase):
         self.assertEqual(meta["model_diminta"], "gemini-2.5-flash")
         self.assertEqual(self.llm.nama_model(), "gemini-3.0-flash")
 
+    def test_sebab_listmodels_gagal_tercatat(self):
+        import io
+        import urllib.error
+
+        def panggil(instruksi, dokumen):
+            raise urllib.error.HTTPError("u", 404, "Not Found", {}, io.BytesIO(b""))
+
+        def daftar():
+            raise urllib.error.HTTPError("u", 403, "Forbidden", {}, io.BytesIO(
+                b'{"error": {"status": "PERMISSION_DENIED", "message": "API has not been used in project"}}'))
+        self.llm._panggil_gemini = panggil
+        self.llm._daftar_model = daftar
+        with self.assertRaises(self.llm.GagalModel) as ctx:
+            self.llm.tanya("i", "d")
+        self.assertIn("ListModels HTTP 403 PERMISSION_DENIED", str(ctx.exception))
+
     def test_kunci_ditolak_tidak_diulang(self):
         import io
         import urllib.error
