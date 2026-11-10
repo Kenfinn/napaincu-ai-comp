@@ -8,6 +8,7 @@ from __future__ import annotations
 import copy
 import html
 import json
+import os
 import random
 import re
 import tempfile
@@ -17,8 +18,10 @@ from unittest import mock
 
 from fastapi.testclient import TestClient
 
-from app import config, harga_resmi, i18n, main, pasar, valuasi_otomatis
+from app import config, harga_resmi, i18n, main, pasar, tarik, valuasi_otomatis
+from app.agent import extract, llm
 
+ROOT = Path(__file__).resolve().parent.parent
 DATA_TES = Path(__file__).resolve().parent / "data"
 HARGA_RESMI_SAMPEL = json.loads((DATA_TES / "harga_resmi_sampel.json").read_text(encoding="utf-8"))
 
@@ -286,5 +289,135 @@ class TestR3KunciBaca(unittest.TestCase):
             r = c.get(f"/?lang={lang}")
             self.assertEqual(r.status_code, 401)
             self.assertNotIn("⟦", r.text, f"Penanda tak terterjemahkan ditemukan di bahasa {lang}")
+
+
+class TestDaSemuaEmiten(unittest.TestCase):
+    """Pemeriksa untuk item D-a: proses pengumuman semua emiten."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self._asli_tarik = {
+            "WATCHLIST_FILE": tarik.WATCHLIST_FILE,
+            "STATUS_FILE": tarik.STATUS_FILE,
+            "RAW_DIR": tarik.RAW_DIR,
+            "DETAIL_FILE": tarik.DETAIL_FILE,
+            "LIST_FILE": tarik.LIST_FILE,
+            "ambil": tarik.ambil,
+        }
+        for n in ("WATCHLIST_FILE", "STATUS_FILE", "RAW_DIR", "DETAIL_FILE", "LIST_FILE"):
+            setattr(tarik, n, os.path.join(self.tmp.name, os.path.basename(getattr(tarik, n))))
+
+        self._asli_config = {
+            "PROSES_SEMUA": getattr(config, "PROSES_SEMUA", True),
+            "API_KEY": config.API_KEY,
+            "KUNCI_BACA": config.KUNCI_BACA,
+            "KODE_AKSES": config.KODE_AKSES,
+        }
+        self._asli_llm_cache = llm.CACHE_DIR
+        self._asli_tanya_model = llm._tanya_model
+
+    def tearDown(self):
+        for n, v in self._asli_tarik.items():
+            setattr(tarik, n, v)
+        for n, v in self._asli_config.items():
+            setattr(config, n, v)
+        llm.CACHE_DIR = self._asli_llm_cache
+        llm._tanya_model = self._asli_tanya_model
+        llm._jatah_sisa = None
+        self.tmp.cleanup()
+
+    def test_da_semua_emiten_disimpan(self):
+        """periksa_sekarang() tanpa argumen menyimpan semua 7 rekaman dari sampel, watchlist 1 kode, dijalankan lagi baru 0."""
+        with open(os.path.join(ROOT, "tests", "data", "openapi_pasal_sampel.json"), encoding="utf-8") as f:
+            sampel_7 = json.load(f)
+
+        tarik.ambil = lambda s: sampel_7 if s == "twse" else []
+        tarik.simpan_watchlist(["2420"])
+        config.PROSES_SEMUA = True
+
+        st = tarik.periksa_sekarang()
+        self.assertTrue(st["ok"])
+        self.assertEqual(st["disimpan"], 7)
+        self.assertEqual(st["baru"], 7)
+        self.assertEqual(st["cocok_watchlist"], 1)
+
+        with open(tarik.DETAIL_FILE, encoding="utf-8") as f:
+            tersimpan = json.load(f)
+        self.assertEqual(len(tersimpan), 7)
+
+        # Jalankan lagi -> baru 0
+        st2 = tarik.periksa_sekarang()
+        self.assertEqual(st2["baru"], 0)
+
+    def test_da_argumen_eksplisit_tetap_watchlist(self):
+        """periksa_sekarang(['2420']) hanya menyimpan rekaman dengan kode 2420."""
+        with open(os.path.join(ROOT, "tests", "data", "openapi_pasal_sampel.json"), encoding="utf-8") as f:
+            sampel_7 = json.load(f)
+
+        tarik.ambil = lambda s: sampel_7 if s == "twse" else []
+        config.PROSES_SEMUA = True
+
+        st = tarik.periksa_sekarang(["2420"])
+        self.assertTrue(st["ok"])
+        self.assertEqual(st["disimpan"], 1)
+        self.assertEqual(st["baru"], 1)
+
+        with open(tarik.DETAIL_FILE, encoding="utf-8") as f:
+            tersimpan = json.load(f)
+        self.assertEqual(len(tersimpan), 1)
+        self.assertEqual(tersimpan[0]["code"], "2420")
+
+    def test_da_jatah_model(self):
+        """_tanya_model dipanggil 2 kali saat jatah=2; yang ketiga turun ke aturan dengan sebab memuat 'jatah'."""
+        config.API_KEY = "uji"
+        llm.CACHE_DIR = os.path.join(self.tmp.name, "cache_model")
+        panggilan = 0
+
+        def tiru_tanya(instruksi, dokumen):
+            nonlocal panggilan
+            panggilan += 1
+            return {"temuan": []}, {"token_masuk": 10, "token_keluar": 10}
+
+        llm._tanya_model = tiru_tanya
+        llm.mulai_jalan(2)
+
+        det1 = {
+            "code": "2330", "name": "TSMC", "date": "2026-09-19", "time": "14:00:00",
+            "subject": "Capex 1", "clause": 11, "items": [{"no": 1, "label": "金額", "label_lengkap": "金額", "satuan_label": "", "value": "100 仟元"}],
+        }
+        det2 = {
+            "code": "2454", "name": "Mediatek", "date": "2026-09-20", "time": "14:00:00",
+            "subject": "Capex 2", "clause": 11, "items": [{"no": 1, "label": "金額", "label_lengkap": "金額", "satuan_label": "", "value": "200 仟元"}],
+        }
+        det3 = {
+            "code": "2317", "name": "HonHai", "date": "2026-09-21", "time": "14:00:00",
+            "subject": "Capex 3", "clause": 11, "items": [{"no": 1, "label": "金額", "label_lengkap": "金額", "satuan_label": "", "value": "300 仟元"}],
+        }
+
+        t1, m1 = extract.sari(det1, ["capex"])
+        self.assertFalse(m1.get("cadangan"))
+
+        t2, m2 = extract.sari(det2, ["capex"])
+        self.assertFalse(m2.get("cadangan"))
+
+        t3, m3 = extract.sari(det3, ["capex"])
+        self.assertTrue(m3.get("cadangan"))
+        self.assertIn("jatah", m3.get("sebab_cadangan", "").lower())
+        self.assertEqual(panggilan, 2)
+
+    def test_da_halaman_lingkup(self):
+        """/?lingkup=semua dan /review?lingkup=semua -> 200 di tiga bahasa tanpa '⟦'."""
+        config.KUNCI_BACA = False
+        config.KODE_AKSES = ""
+        c = TestClient(main.app)
+
+        for lang in ("en", "zh", "id"):
+            r_feed = c.get(f"/?lingkup=semua&lang={lang}")
+            self.assertEqual(r_feed.status_code, 200, f"Gagal feed lang={lang}")
+            self.assertNotIn("⟦", r_feed.text, f"Unrendered i18n di feed lang={lang}")
+
+            r_rev = c.get(f"/review?lingkup=semua&lang={lang}")
+            self.assertEqual(r_rev.status_code, 200, f"Gagal review lang={lang}")
+            self.assertNotIn("⟦", r_rev.text, f"Unrendered i18n di review lang={lang}")
 
 

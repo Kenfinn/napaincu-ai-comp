@@ -95,13 +95,31 @@ def bahasa_dari(request: Request) -> str:
 # sungguhan ia mahal — jadi jangan dijalankan ulang tiap permintaan.
 _cache: list[dict] | None = None
 _kunci_cache = threading.Lock()
+_kunci_jalan = threading.Lock()
 
 
 def hasil(segarkan: bool = False) -> list[dict]:
     global _cache
+    if segarkan:
+        with _kunci_jalan:
+            llm.mulai_jalan(config.MODEL_MAKS_PER_JALAN)
+            baru = pipeline.jalankan_semua()
+            with _kunci_cache:
+                _cache = baru
+            return _cache
+
     with _kunci_cache:
-        if _cache is None or segarkan:
-            _cache = pipeline.jalankan_semua()
+        if _cache is not None:
+            return _cache
+
+    with _kunci_jalan:
+        with _kunci_cache:
+            if _cache is not None:
+                return _cache
+        llm.mulai_jalan(config.MODEL_MAKS_PER_JALAN)
+        baru = pipeline.jalankan_semua()
+        with _kunci_cache:
+            _cache = baru
         return _cache
 
 
@@ -127,6 +145,7 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
             pesan_kilat, pesan_ok = i18n.tr(p, bhs), bool(p.get("ok", True))
         except (ValueError, AttributeError):
             pesan_kilat = None
+    wl_set = set(tarik.baca_watchlist())
     dasar = {
         "bahasa": bhs,
         "daftar_bahasa": i18n.BAHASA,
@@ -145,7 +164,7 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
         "pakai_model": llm.tersedia(),
         "sumber_data": sumber,
         "jml_terbit": sum(1 for h in hasil() if h["status"] == "terbit"),
-        "jml_review": sum(1 for h in hasil() if h["status"] == "ditahan"),
+        "jml_review": sum(1 for h in hasil() if h["status"] == "ditahan" and (h.get("contoh") or (h.get("emiten") or {}).get("kode") in wl_set)),
         "kode": None,
     }
     dasar.update(tambahan)
@@ -155,15 +174,18 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
 @app.get("/", response_class=HTMLResponse)
 def feed(request: Request, segarkan: int = 0):
     daftar = hasil(bool(segarkan))
-    _, sumber = store.muat_detail()
-    if sumber == "nyata":
-        # Saham yang dihapus dari watchlist berhenti tampil; riwayatnya tetap tersimpan.
+    lingkup = request.query_params.get("lingkup", "watchlist")
+    total_semua = len(daftar)
+    if lingkup == "semua":
+        daftar_tampil = daftar[:300]
+    else:
         wl = set(tarik.baca_watchlist())
-        daftar = [h for h in daftar
-                  if h.get("contoh") or (h.get("emiten") or {}).get("kode") in wl]
+        daftar_tampil = [h for h in daftar
+                         if h.get("contoh") or (h.get("emiten") or {}).get("kode") in wl]
     return tpl.TemplateResponse(
         request=request, name="feed.html",
-        context=konteks(request, "feed", daftar=daftar))
+        context=konteks(request, "feed", daftar=daftar_tampil, lingkup=lingkup,
+                        total_semua=total_semua, jml_tampil=len(daftar_tampil)))
 
 
 # --- penarikan dinamis & watchlist ----------------------------------------
@@ -389,14 +411,22 @@ async def api_impor(request: Request):
 @app.get("/review", response_class=HTMLResponse)
 def halaman_review(request: Request):
     semua = hasil()
-    menunggu = [h for h in semua if h["status"] == "ditahan"]
+    lingkup = request.query_params.get("lingkup", "watchlist")
+    menunggu_semua = [h for h in semua if h["status"] == "ditahan"]
+    wl = set(tarik.baca_watchlist())
+    if lingkup == "semua":
+        menunggu = menunggu_semua
+    else:
+        menunggu = [h for h in menunggu_semua
+                    if h.get("contoh") or (h.get("emiten") or {}).get("kode") in wl]
     kep = review.baca()
     per_id = {h["id"]: h for h in semua}
     riwayat = sorted(({**v, "id": v.get("id") or k.split("#")[0],
                        "h": per_id.get(v.get("id") or k.split("#")[0])} for k, v in kep.items()),
                      key=lambda x: x["waktu"], reverse=True)
     return tpl.TemplateResponse(request=request, name="review.html",
-                                context=konteks(request, "review", menunggu=menunggu, riwayat=riwayat))
+                                context=konteks(request, "review", menunggu=menunggu, riwayat=riwayat,
+                                                lingkup=lingkup, total_menunggu=len(menunggu_semua)))
 
 
 @app.post("/review/{pengenal}")

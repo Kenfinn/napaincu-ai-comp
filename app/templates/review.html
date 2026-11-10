@@ -7,7 +7,12 @@
     <div class="kicker">{{ t('rv.kicker') }}</div>
     <h1>{{ t('rv.judul') }} <span class="mono" style="color:var(--amber);">{{ menunggu | length }}</span></h1>
   </div>
+  <div class="segmen">
+    <a href="/review?lingkup=watchlist" class="{{ 'on' if lingkup != 'semua' }}">{{ t('rv.lingkup.watchlist') }}</a>
+    <a href="/review?lingkup=semua" class="{{ 'on' if lingkup == 'semua' }}">{{ t('rv.lingkup.semua') }}</a>
+  </div>
 </div>
+
 <p class="catatan" style="margin:-6px 2px 14px;">{{ t('rv.isi') }}</p>
 
 {% for h in menunggu %}

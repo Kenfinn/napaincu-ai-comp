@@ -14,4 +14,16 @@ T: dict[str, tuple[str, str, str]] = {
     "kunci.label_kode": ("Access code", "存取碼", "Kode akses"),
     "kunci.tombol": ("Unlock", "解鎖", "Buka Akses"),
     "kunci.placeholder": ("Enter access code...", "請輸入存取碼...", "Masukkan kode akses..."),
+
+    # --- D-a: Lingkup tampilan feed & review ---
+    "feed.lingkup.watchlist": ("Watchlist", "關注清單", "Watchlist"),
+    "feed.lingkup.semua": ("All Issuers", "全部發行公司", "Semua Emiten"),
+    "feed.tampil_dari": (
+        "Showing {n} of {total} announcements",
+        "顯示 {total} 則公告中的 {n} 則",
+        "Menampilkan {n} dari {total} pengumuman",
+    ),
+    "rv.lingkup.watchlist": ("Watchlist", "關注清單", "Watchlist"),
+    "rv.lingkup.semua": ("All Issuers", "全部發行公司", "Semua Emiten"),
 }
+

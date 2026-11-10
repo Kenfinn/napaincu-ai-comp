@@ -66,3 +66,7 @@ else:
 # Tampilkan empat kasus contoh berdampingan dengan data asli (ditandai "contoh"),
 # supaya kasus injeksi, mata uang asing, dan terbit tetap bisa ditunjukkan.
 SERTAKAN_CONTOH = os.environ.get("SENTINEL_SERTAKAN_CONTOH", "0") == "1"
+
+# --- proses semua emiten & jatah model ---------------------------------------
+PROSES_SEMUA = os.environ.get("SENTINEL_PROSES_SEMUA", "1") == "1"
+MODEL_MAKS_PER_JALAN = int(os.environ.get("SENTINEL_MODEL_MAKS_PER_JALAN", "40"))

@@ -190,6 +190,14 @@ def _tulis_cache(kunci: str, jawaban: dict, meta: dict) -> None:
     os.replace(tmp, os.path.join(CACHE_DIR, f"{kunci}.json"))
 
 
+_jatah_sisa: int | None = None
+
+
+def mulai_jalan(maks: int) -> None:
+    global _jatah_sisa
+    _jatah_sisa = maks
+
+
 def tanya(instruksi: str, dokumen: str) -> tuple[dict, dict]:
     """Seperti `_tanya_model`, tapi jawaban yang pernah diterima dipakai ulang.
 
@@ -211,6 +219,11 @@ def tanya(instruksi: str, dokumen: str) -> tuple[dict, dict]:
             "token_masuk_asli": asli.get("token_masuk", 0),
             "token_keluar_asli": asli.get("token_keluar", 0),
         }
+    global _jatah_sisa
+    if _jatah_sisa is not None:
+        if _jatah_sisa <= 0:
+            raise GagalModel("jatah panggilan model per jalan habis")
+        _jatah_sisa -= 1
     jawaban, meta = _tanya_model(instruksi, dokumen)
     # Kunci dihitung ulang: model bisa saja baru diganti di tengah panggilan (404).
     _tulis_cache(_kunci_cache(instruksi, dokumen), jawaban, meta)

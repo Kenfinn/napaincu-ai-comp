@@ -410,9 +410,11 @@ def periksa_sekarang(watchlist: list[str] | None = None) -> dict:
     wl = set(watchlist if watchlist is not None else baca_watchlist())
     ditarik = _sekarang()
     cap = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    proses_semua = (watchlist is None) and getattr(config, "PROSES_SEMUA", True)
     status = {"waktu": ditarik, "watchlist": sorted(wl), "sumber": {}, "baru": 0,
-              "cocok_watchlist": 0}
+              "cocok_watchlist": 0, "disimpan": 0}
     kumpul: list[dict] = []
+    total_cocok_wl = 0
 
     for nama in SUMBER:
         t0 = time.monotonic()
@@ -433,14 +435,19 @@ def periksa_sekarang(watchlist: list[str] | None = None) -> dict:
 
         rec = [normalkan(r, nama, ditarik) for r in data]
         cocok = [d for d in rec if d["code"] in wl]
-        kumpul += cocok
+        total_cocok_wl += len(cocok)
+        if proses_semua:
+            kumpul += rec
+        else:
+            kumpul += cocok
         status["sumber"][nama] = {
             "ok": True, "jumlah": len(rec), "cocok_watchlist": len(cocok),
             "tanggal_data": max((d["tanggal_terbit_data"] or "" for d in rec), default=None),
             "durasi_ms": int((time.monotonic() - t0) * 1000),
         }
 
-    status["cocok_watchlist"] = len(kumpul)
+    status["cocok_watchlist"] = total_cocok_wl
+    status["disimpan"] = len(kumpul)
     status["baru"] = gabung(kumpul) if kumpul else 0
     status["ok"] = any(s.get("ok") for s in status["sumber"].values())
     _tulis_atomik(STATUS_FILE, status)
