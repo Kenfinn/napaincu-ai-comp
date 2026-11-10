@@ -95,5 +95,29 @@ Laporan pelaksanaan tugas semalam P1 sampai P10 untuk FEAF (Agentic AI Investmen
   - Dibuat: `app/teks/antigravity.py`, `app/templates/kunci.html`
   - Diubah: `app/config.py`, `app/main.py`, `docs/deploy-dokploy.md`, `tests/test_putaran2.py`
 
+---
+
+### D-a: Proses Pengumuman Semua Emiten
+- Jam mulai: 00:55
+- Jam selesai: 01:06
+- Status: Selesai
+- Commit: `6e731fc`
+- Tes yang ditambah dan hasilnya:
+  - 4 tes baru di `tests/test_putaran2.py` (semua lulus):
+    - `test_da_semua_emiten_disimpan`: `periksa_sekarang()` tanpa argumen menyimpan seluruh rekaman (7 data sampel), menghitung `cocok_watchlist` sesuai emiten pantauan (1 data), dan eksekusi ulang menghasilkan 0 data baru.
+    - `test_da_argumen_eksplisit_tetap_watchlist`: `periksa_sekarang(["2420"])` hanya menyaring dan menyimpan kode yang diminta secara eksplisit.
+    - `test_da_jatah_model`: pembatasan kuota model berjalan dengan `mulai_jalan(2)`; dua panggilan model pertama dieksekusi, panggilan ketiga otomatis turun ke penalar aturan dengan `sebab_cadangan` berisi keterangan jatah habis.
+    - `test_da_halaman_lingkup`: `/` dan `/review` dengan parameter `?lingkup=semua` merespons status 200 di tiga bahasa tanpa ada penanda tak terterjemahkan `⟦`.
+  - Total tes lulus: 147 tes (naik dari 143 tes). Seluruh tes lama (`TestPenarikDinamis`, dll.) tetap lulus tanpa perubahan.
+- Angka QA manual:
+  - Eksekusi `python3 scripts/impor_arsip.py`: 0 berkas, 0 rekaman, 0 baru, 0 duplikat pada lingkungan awal.
+  - Jumlah pengumuman: 4 pengumuman (fixture mode).
+  - Rincian per state: 2 PUBLISHED (`terbit`), 1 HELD (`ditahan`), 1 ARCHIVED (`dilewati`).
+  - Durasi pemrosesan ulang `main.hasil(segarkan=True)`: 0.0058 detik. Pipeline berjalan di luar `_kunci_cache` dengan lock terpisah `_kunci_jalan` sehingga permintaan baca tidak tertahan selama penghitungan ulang.
+- Berkas yang diubah/dibuat:
+  - Dibuat: `scripts/impor_arsip.py`
+  - Diubah: `app/agent/llm.py`, `app/config.py`, `app/main.py`, `app/tarik.py`, `app/teks/antigravity.py`, `app/templates/feed.html`, `app/templates/review.html`, `tests/test_putaran2.py`
+
+
 
 
