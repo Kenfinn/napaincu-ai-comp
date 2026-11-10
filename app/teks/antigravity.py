@@ -25,5 +25,13 @@ T: dict[str, tuple[str, str, str]] = {
     ),
     "rv.lingkup.watchlist": ("Watchlist", "關注清單", "Watchlist"),
     "rv.lingkup.semua": ("All Issuers", "全部發行公司", "Semua Emiten"),
+
+    # --- D-c: Utang lancar ---
+    "va.warn.utang_lancar_tidak_tersedia": (
+        "Current portion of long-term debt is not published separately by FinMind; debt may be understated.",
+        "FinMind 未單獨揭露一年內到期長期負債；計入的負債可能偏低。",
+        "Bagian lancar utang jangka panjang tidak diterbitkan terpisah oleh FinMind; utang mungkin tercatat lebih rendah.",
+    ),
 }
+
 

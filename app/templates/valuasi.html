@@ -104,6 +104,18 @@
   <p style="font-size:12px; color:var(--abu-2); line-height:1.5; margin:12px 0 0;">{{ t('va.sens_isi') | safe }}</p>
 </div>
 
+{% if va and va.peringatan %}
+<h2>{{ t('va.peringatan_judul') }}</h2>
+<div class="kartu">
+  {% for pr in va.peringatan %}
+  <div class="cek ok">
+    <span class="tanda">i</span>
+    <span class="why">{{ tr(pr) }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 <h2>{{ t('va.sumber_input') }}</h2>
 <div class="kartu">
   {% for k, v in r.sources.items() %}

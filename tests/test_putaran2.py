@@ -421,3 +421,72 @@ class TestDaSemuaEmiten(unittest.TestCase):
             self.assertNotIn("⟦", r_rev.text, f"Unrendered i18n di review lang={lang}")
 
 
+class TestDcUtangLancar(unittest.TestCase):
+    """Pemeriksa untuk item D-c: pinjaman jangka pendek dan tanda utang lancar."""
+
+    def test_dc_pinjaman_jangka_pendek_masuk_utang(self):
+        """dcf.net_debt menghitung short_term_borrowings ke dalam utang total."""
+        import sys
+        from pathlib import Path
+        root = Path(__file__).resolve().parent.parent
+        if str(root / "scripts") not in sys.path:
+            sys.path.insert(0, str(root / "scripts"))
+        import dcf
+
+        bs_tanpa_stb = {
+            "current_portion_lt_debt": 50.0,
+            "long_term_debt": 200.0,
+            "cash_and_equivalents": 100.0,
+            "short_term_investments": 20.0,
+        }
+        debt1, cash1, net1 = dcf.net_debt(bs_tanpa_stb, include_leases=False)
+        self.assertEqual(debt1, 250.0)
+
+        bs_dengan_stb = {
+            "current_portion_lt_debt": 50.0,
+            "long_term_debt": 200.0,
+            "short_term_borrowings": 35.0,
+            "cash_and_equivalents": 100.0,
+            "short_term_investments": 20.0,
+        }
+        debt2, cash2, net2 = dcf.net_debt(bs_dengan_stb, include_leases=False)
+        self.assertEqual(debt2, 285.0)
+        self.assertEqual(debt2 - debt1, 35.0)
+
+    def test_dc_tanda_tidak_tersedia(self):
+        """Sampel tanpa bagian lancar -> tidak_tersedia memuat current_portion_lt_debt dan peringatan tampil di halaman 3 bahasa."""
+        # 1. Uji fungsi _cari_utang_lancar_neraca langsung
+        pos_kosong = {"BondsPayable": 500000.0}
+        total_cp, dipakai, ada_eksplisit = valuasi_otomatis._cari_utang_lancar_neraca(pos_kosong, [])
+        self.assertEqual(total_cp, 0.0)
+        self.assertFalse(ada_eksplisit)
+
+        # 2. Mock objek valuasi dengan tidak_tersedia dan peringatan
+        with open(os.path.join(ROOT, "valuation", "inputs", "2330.json"), encoding="utf-8") as f:
+            d_2330 = json.load(f)
+
+        d_mock = copy.deepcopy(d_2330)
+        d_mock["otomatis"] = True
+        d_mock["tidak_tersedia"] = ["current_portion_lt_debt"]
+        d_mock["balance_sheet"]["current_portion_lt_debt"] = 0.0
+        d_mock["balance_sheet"]["short_term_borrowings"] = 0.0
+        d_mock["peringatan"] = [i18n.pesan("va.warn.utang_lancar_tidak_tersedia")]
+
+        self.assertIn("current_portion_lt_debt", d_mock["tidak_tersedia"])
+
+        c = TestClient(main.app)
+        with mock.patch("app.store.muat_valuasi", return_value=d_mock):
+            with mock.patch("app.valuasi_otomatis.baca_cache", return_value=d_mock):
+                for lang in ("en", "zh", "id"):
+                    teks_harap = i18n.t("va.warn.utang_lancar_tidak_tersedia", lang)
+                    r = c.get(f"/saham/2330?tab=valuasi&lang={lang}")
+                    self.assertEqual(r.status_code, 200)
+                    self.assertIn(teks_harap, r.text, f"Peringatan tidak muncul di tab valuasi lang={lang}")
+                    self.assertNotIn("⟦", r.text)
+
+                    r_val = c.get(f"/valuasi/2330?lang={lang}")
+                    self.assertEqual(r_val.status_code, 200)
+                    self.assertIn(teks_harap, r_val.text, f"Peringatan tidak muncul di /valuasi/2330 lang={lang}")
+                    self.assertNotIn("⟦", r_val.text)
+
+

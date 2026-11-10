@@ -103,6 +103,13 @@ def bandingkan_dengan_manual(kode: str = "2330") -> tuple[str, dict]:
         "AmortizedCost + FVOCI (identik)",
     )
     tambah(
+        f"balance_sheet.short_term_borrowings ({bs_o['as_of']})",
+        bs_o.get("short_term_borrowings", 0.0),
+        bs_m.get("short_term_borrowings", 0.0),
+        "num1",
+        "ShorttermBorrowings FinMind (2330: 0)",
+    )
+    tambah(
         f"balance_sheet.current_portion_lt_debt ({bs_o['as_of']})",
         bs_o["current_portion_lt_debt"],
         bs_m["current_portion_lt_debt"],

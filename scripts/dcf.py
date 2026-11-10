@@ -46,7 +46,7 @@ def market_cap(price: float, shares_thousands: float) -> float:
 
 def net_debt(bs: dict, include_leases: bool) -> tuple[float, float, float]:
     """Mengembalikan (utang, kas, utang bersih). Kas mencakup investasi jangka pendek."""
-    debt = bs["current_portion_lt_debt"] + bs["long_term_debt"]
+    debt = bs["current_portion_lt_debt"] + bs["long_term_debt"] + bs.get("short_term_borrowings", 0.0)
     if include_leases:
         debt += bs.get("current_portion_leases", 0.0)
     cash = bs["cash_and_equivalents"] + bs["short_term_investments"]

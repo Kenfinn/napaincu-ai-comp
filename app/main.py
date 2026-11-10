@@ -564,7 +564,7 @@ def valuasi(request: Request, kode: str):
     g = d.get("assumptions", {}).get("terminal_growth_ceiling")
     return tpl.TemplateResponse(
         request=request, name="valuasi.html",
-        context=konteks(request, "valuasi", kode=kode, r=dcf.compute(d, forward_g=g)))
+        context=konteks(request, "valuasi", kode=kode, r=dcf.compute(d, forward_g=g), va=d))
 
 
 # --- API JSON — sekalian jadi dokumentasi antarmuka di /docs -------------

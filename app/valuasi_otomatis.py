@@ -281,20 +281,17 @@ def _kelompok_per_tanggal(
 
 
 def _cari_utang_lancar_neraca(pos_tgl: dict[str, float], baris_tgl: list[dict]) -> tuple[float, list[str], bool]:
-    """Cari bagian lancar utang jangka panjang & pinjaman jangka pendek dari neraca FinMind.
+    """Cari bagian lancar utang jangka panjang dari neraca FinMind.
 
     Mengembalikan (nilai_ntd, daftar_pos_dipakai, ada_bagian_lancar_eksplisit).
     Catatan: FinMind TaiwanStockBalanceSheet menggabungkan `一年內到期長期負債`
-    ke dalam `OtherCurrentLiabilities` (`其他流動負債`), namun beberapa emiten
-    melaporkan `ShorttermBorrowings` (`短期借款`) atau pos `LongtermLiabilitiesCurrentPortion`.
+    ke dalam `OtherCurrentLiabilities` (`其他流動負債`). Hanya sedikit emiten yang
+    melaporkan pos `LongtermLiabilitiesCurrentPortion` secara terpisah.
     """
     pos_utang_pendek = (
         "LongtermLiabilitiesCurrentPortion",
         "CurrentPortionOfLongtermLiabilities",
         "LongTermLiabilitiesCurrentPortion",
-        "ShorttermBorrowings",
-        "ShortTermBorrowings",
-        "ShorttermNotesAndBillsPayable",
     )
     dipakai: list[str] = []
     total = 0.0
@@ -302,9 +299,10 @@ def _cari_utang_lancar_neraca(pos_tgl: dict[str, float], baris_tgl: list[dict]) 
 
     for k in pos_utang_pendek:
         if k in pos_tgl and pos_tgl[k] is not None:
-            total += float(pos_tgl[k])
+            val = float(pos_tgl[k])
+            total += val
             dipakai.append(k)
-            if "Long" in k or "CurrentPortion" in k:
+            if val > 0:
                 ada_eksplisit = True
 
     for b in baris_tgl:
@@ -312,9 +310,11 @@ def _cari_utang_lancar_neraca(pos_tgl: dict[str, float], baris_tgl: list[dict]) 
         orig = b.get("origin_name") or ""
         if t not in dipakai and ("一年內到期" in orig or "一年或一營業週期內到期" in orig):
             try:
-                total += float(b.get("value") or 0.0)
+                val = float(b.get("value") or 0.0)
+                total += val
                 dipakai.append(f"{t}({orig})")
-                ada_eksplisit = True
+                if val > 0:
+                    ada_eksplisit = True
             except (TypeError, ValueError):
                 pass
 
@@ -334,6 +334,7 @@ def _status_tidak_berlaku(kode: str, nama: str, bursa: str, industri: str, diban
         "tidak_bisa_dihitung": False,
         "alasan": alasan["teks"],
         "alasan_i18n": alasan,
+        "tidak_tersedia": [],
         "peringatan": [],
         "sources": {
             "profile": f"TWSE/TPEx OpenAPI profile (industry code {industri or '17'}: financials & insurance)",
@@ -358,6 +359,7 @@ def _status_tidak_bisa(
         "dibangun": dibangun,
         "tidak_berlaku": False,
         "tidak_bisa_dihitung": True,
+        "tidak_tersedia": [],
         "alasan": alasan["teks"],
         "alasan_i18n": alasan,
         "peringatan": peringatan or [],
@@ -526,11 +528,22 @@ def bangun(kode: str) -> dict:
             lt_pos.append(k_lt)
     long_term_debt = round(lt_ntd / 1e6, 1)
 
-    # Bagian lancar utang jangka panjang / pinjaman jangka pendek
+    # Pinjaman jangka pendek: ShorttermBorrowings
+    stb_ntd = 0.0
+    stb_pos: list[str] = []
+    for k_stb in ("ShorttermBorrowings", "ShortTermBorrowings", "ShorttermNotesAndBillsPayable"):
+        if pos_n.get(k_stb) is not None:
+            stb_ntd += float(pos_n[k_stb])
+            stb_pos.append(k_stb)
+    short_term_borrowings = round(stb_ntd / 1e6, 1)
+
+    # Bagian lancar utang jangka panjang
     cp_ntd, cp_pos, ada_cp_eksplisit = _cari_utang_lancar_neraca(pos_n, baris_n)
     current_portion_lt_debt = round(cp_ntd / 1e6, 1)
-    if not ada_cp_eksplisit:
-        peringatan.append(i18n.pesan("va.warn.utang_lancar_gabung"))
+    tidak_tersedia: list[str] = []
+    if not ada_cp_eksplisit or current_portion_lt_debt <= 0.0:
+        tidak_tersedia.append("current_portion_lt_debt")
+        peringatan.append(i18n.pesan("va.warn.utang_lancar_tidak_tersedia"))
 
     # 6. Pajak: jumlah 4 kuartal tahun fiskal terakhir dari laporan laba rugi tunggal
     kuartal_lr = sorted(
@@ -568,7 +581,7 @@ def bangun(kode: str) -> dict:
 
     # 8. Penanganan emiten tanpa utang (agar dcf.py tidak ZeroDivisionError pada rd = interest / debt)
     bunga_terakhir = interest_by_year[str(tahun_fiskal)]
-    total_utang = current_portion_lt_debt + long_term_debt
+    total_utang = current_portion_lt_debt + long_term_debt + short_term_borrowings
     tanpa_utang = total_utang <= 0
     if tanpa_utang:
         long_term_debt_input = 1e-6  # 1 NTD dalam juta NTD → rd = 0%, wd ≈ 0%, we ≈ 100%
@@ -577,6 +590,7 @@ def bangun(kode: str) -> dict:
     else:
         long_term_debt_input = long_term_debt
         total_interest_input = bunga_terakhir
+
 
     # 9. Susun dict input sesuai skema valuation/inputs/2330.json
     catatan_beta = (
@@ -599,6 +613,7 @@ def bangun(kode: str) -> dict:
             f"FinMind TaiwanStockBalanceSheet ({pasar.FINMIND_URL}, stock_id={kode}, date={tgl_neraca}): "
             f"CashAndCashEquivalents={cash_and_equivalents:,.1f}M; "
             f"short_term_investments ({'+'.join(sti_pos) or 'none'})={short_term_investments:,.1f}M; "
+            f"short_term_borrowings ({'+'.join(stb_pos) or 'none'})={short_term_borrowings:,.1f}M; "
             f"long_term_debt ({'+'.join(lt_pos) or 'none'})={long_term_debt:,.1f}M; "
             f"current_portion_lt_debt ({'+'.join(cp_pos) or 'folded into OtherCurrentLiabilities in FinMind'})="
             f"{current_portion_lt_debt:,.1f}M"
@@ -632,6 +647,7 @@ def bangun(kode: str) -> dict:
         "dibangun": dibangun,
         "tidak_berlaku": False,
         "tidak_bisa_dihitung": False,
+        "tidak_tersedia": tidak_tersedia,
         "beta_cadangan": beta_cadangan,
         "alasan_beta": info_beta["alasan"],
         "alasan_beta_i18n": info_beta["alasan_i18n"],
@@ -645,6 +661,7 @@ def bangun(kode: str) -> dict:
             "as_of": tgl_neraca,
             "cash_and_equivalents": cash_and_equivalents,
             "short_term_investments": short_term_investments,
+            "short_term_borrowings": short_term_borrowings,
             "current_portion_lt_debt": current_portion_lt_debt,
             "current_portion_leases": 0.0,
             "long_term_debt": long_term_debt_input,
