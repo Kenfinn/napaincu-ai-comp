@@ -201,3 +201,11 @@ table.fin td.kosong-sel { color: var(--abu); }
 .daftar-saham .ch.naik { color: #F08A7E; }
 .daftar-saham .ch.turun { color: #6FD3A8; }
 .daftar-saham .kosong-kecil { color: #7E9BB8; font-size: 12px; }
+
+/* --- review --- */
+.nav .hit.kuning-hit { background: #C98A0B; }
+.form-review { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+.isian.lebar { width: auto; flex: 1; min-width: 220px; font-family: "Instrument Sans", sans-serif; font-size: 13px; }
+.state { font: 600 10px "IBM Plex Mono", monospace; letter-spacing: 0.06em; background: var(--navy); color: #fff;
+         padding: 2px 6px; border-radius: 3px; vertical-align: 1px; }
+.data-jejak summary { cursor: pointer; font: 500 11px "IBM Plex Mono", monospace; color: var(--abu); margin-top: 4px; }

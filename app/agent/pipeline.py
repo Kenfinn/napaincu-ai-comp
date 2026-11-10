@@ -23,9 +23,13 @@ import os
 import time
 from datetime import datetime, timezone
 
-from .. import config, store
+from .. import config, review, store
 from . import extract, recompute, screen, verify
 from ..i18n import pesan
+
+# Nama state di brief hal. 7. Status internal tetap berbahasa Indonesia supaya jejak
+# lama tetap terbaca; yang tampil ke pengguna dan juri adalah nama state brief.
+STATE = {"terbit": "PUBLISHED", "ditahan": "HELD", "dilewati": "ARCHIVED", "ditolak": "REJECTED"}
 
 
 def _sekarang() -> str:
@@ -42,9 +46,10 @@ class Jejak:
         self.mulai_iso = _sekarang()
 
     def catat(self, nama: str, status: str, masukan, keluaran, meta: dict | None = None,
-              t0: float | None = None, i18n: dict | None = None) -> None:
+              t0: float | None = None, i18n: dict | None = None, state: str | None = None) -> None:
         self.langkah.append({
             "tahap_i18n": i18n,
+            "state": state,
             "urutan": len(self.langkah),
             "tahap": nama,
             "status": status,
@@ -84,11 +89,22 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
         "pasal": detail.get("clause"), "sumber": detail.get("source_url"),
     }
 
+    # --- FETCHED · VALIDATED: terjadi di penarik, dicatat ulang di sini --------
+    # supaya satu jejak memuat seluruh perjalanan pengumuman, sejak diambil.
+    j.catat("Ambil dari sumber", "lolos",
+            {"sumber": detail.get("sumber_data") or "MOPS"},
+            {"ditarik": detail.get("fetched_at"), "sumber_url": detail.get("source_url")},
+            i18n=pesan("tahap.ambil"), state="FETCHED")
+    j.catat("Validasi bentuk", "lolos", {},
+            {"butir": len(detail.get("items") or []), "pasal": detail.get("clause_raw"),
+             "data_pribadi_dibuang": detail.get("dropped_pii", [])},
+            i18n=pesan("tahap.validasi"), state="VALIDATED")
+
     # --- tahap 0 -----------------------------------------------------------
     t0 = time.monotonic()
     hasil_saring = screen.saring(detail)
     j.catat("0 · Saringan pasal", "lolos" if hasil_saring["lolos"] else "berhenti",
-            ringkas_dok, hasil_saring, t0=t0, i18n=pesan("tahap.saring"))
+            ringkas_dok, hasil_saring, t0=t0, i18n=pesan("tahap.saring"), state="SCREENED")
 
     if not hasil_saring["lolos"]:
         return _selesai(j, "dilewati", detail, None, hasil_saring["alasan"],
@@ -104,7 +120,7 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
     j.catat("1–2 · Pemilah & penyari", status,
             {"kandidat_input": hasil_saring["input_mungkin"]},
             {"jumlah_temuan": len(temuan), "temuan": temuan}, meta, t0=t0,
-            i18n=pesan("tahap.pilah_sari"))
+            i18n=pesan("tahap.pilah_sari"), state="TRIAGED · EXTRACTED")
 
     if meta.get("injeksi_terdeteksi"):
         j.catat("· Penanda injeksi", "tercatat",
@@ -114,12 +130,14 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
                 i18n=pesan("tahap.injeksi"))
 
     if not temuan:
-        return _selesai(j, "ditahan", detail, None,
+        # Tidak ada yang bisa diterbitkan: manusia hanya bisa mengarsipkan.
+        return _selesai(j, "ditahan", detail, {"tahan": {"jenis": "tanpa_angka", "boleh_setujui": False}},
                         "Tidak ada angka yang bisa ditarik lengkap dengan kalimat sumbernya.",
                         pesan("akhir.tanpa_angka"))
 
     if d_valuasi is None:
-        return _selesai(j, "ditahan", detail, None,
+        return _selesai(j, "ditahan", detail,
+                        {"tahan": {"jenis": "tanpa_valuasi", "boleh_setujui": True}, "temuan": temuan},
                         f"Belum ada berkas valuasi untuk emiten {detail.get('code')}. "
                         f"Angka tertarik, tapi tidak ada model untuk menghitung ulang.",
                         pesan("akhir.tanpa_valuasi", kode=detail.get("code")))
@@ -133,18 +151,19 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
         j.catat(f"4a · Pemeriksa pra-hitung ({t['input']})",
                 "lolos" if v_awal["lolos"] else "tolak",
                 {"temuan": t}, {"cek": cek_awal, "vonis": v_awal}, t0=t0,
-                i18n=pesan("tahap.periksa_awal", input=t["input"]))
+                i18n=pesan("tahap.periksa_awal", input=t["input"]), state="VERIFIED · sumber")
 
         if not v_awal["lolos"]:
             ditolak.append({"temuan": t, "sebab": v_awal["sebab"],
-                            "sebab_i18n": v_awal["sebab_i18n"]})
+                            "sebab_i18n": v_awal["sebab_i18n"], "gagal_kode": _gagal_kode(cek_awal)})
             continue
 
         t0 = time.monotonic()
         hasil = recompute.hitung_ulang(d_valuasi, t["input"], t["nilai_juta_ntd"])
         j.catat(f"3 · Penghitung ({t['input']})", "lolos",
                 {"input": t["input"], "nilai_baru": t["nilai_juta_ntd"]},
-                _ringkas_hitung(hasil), t0=t0, i18n=pesan("tahap.hitung", input=t["input"]))
+                _ringkas_hitung(hasil), t0=t0, i18n=pesan("tahap.hitung", input=t["input"]),
+                state="VALUED")
 
         t0 = time.monotonic()
         cek_akhir = verify.periksa_hasil(hasil)
@@ -152,13 +171,13 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
         j.catat(f"4b · Pemeriksa pasca-hitung ({t['input']})",
                 "lolos" if v_akhir["lolos"] else "tolak",
                 {"input": t["input"]}, {"cek": cek_akhir, "vonis": v_akhir}, t0=t0,
-                i18n=pesan("tahap.periksa_akhir", input=t["input"]))
+                i18n=pesan("tahap.periksa_akhir", input=t["input"]), state="VERIFIED · hitungan")
 
         if v_akhir["lolos"]:
             diterima.append({"temuan": t, "hasil": hasil, "cek": cek_awal + cek_akhir})
         else:
             ditolak.append({"temuan": t, "sebab": v_akhir["sebab"],
-                            "sebab_i18n": v_akhir["sebab_i18n"]})
+                            "sebab_i18n": v_akhir["sebab_i18n"], "gagal_kode": _gagal_kode(cek_akhir)})
 
     if not diterima:
         # Dua temuan sering gagal dengan sebab yang sama persis (mis. satu mata uang
@@ -172,12 +191,21 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
                 if k not in lihat:
                     lihat.add(k)
                     unik_i18n.append(s)
-        return _selesai(j, "ditolak", detail, {"ditolak": ditolak}, "; ".join(unik), unik_i18n)
+        # Brief hal. 7: angka yang gagal verifikasi → HELD FOR REVIEW, manusia memutuskan.
+        # Boleh disetujui hanya bila semua kegagalannya berupa keraguan (lihat review.py).
+        boleh = all(review.boleh_setujui_temuan(d["gagal_kode"]) for d in ditolak)
+        return _selesai(j, "ditahan", detail,
+                        {"ditolak": ditolak, "tahan": {"jenis": "verifikasi", "boleh_setujui": boleh}},
+                        "; ".join(unik), unik_i18n)
 
     return _selesai(j, "terbit", detail,
                     {"diterima": diterima, "ditolak": ditolak},
                     f"{len(diterima)} temuan lolos seluruh pemeriksaan.",
                     pesan("akhir.terbit", n=len(diterima)))
+
+
+def _gagal_kode(cek: list[dict]) -> list[str]:
+    return [(c.get("nama_i18n") or {}).get("kode") or c["nama"] for c in cek if not c["lolos"]]
 
 
 def _ringkas_hitung(h: dict) -> dict:
@@ -196,10 +224,41 @@ def _ringkas_hitung(h: dict) -> dict:
     }
 
 
+def _terapkan_review(j: Jejak, status: str, muatan, alasan: str, alasan_i18n):
+    """Keputusan manusia atas kasus HELD diterapkan sebagai langkah terakhir."""
+    if status != "ditahan":
+        return status, muatan, alasan, alasan_i18n, None
+    kep = review.baca().get(j.pengenal)
+    if not kep:
+        return status, muatan, alasan, alasan_i18n, None
+    tahan = (muatan or {}).get("tahan") or {}
+    if kep["keputusan"] == "setujui" and tahan.get("boleh_setujui"):
+        disetujui = (muatan.get("temuan") or [d["temuan"] for d in muatan.get("ditolak", [])])
+        muatan = dict(muatan, disetujui=disetujui)
+        hasil = ("terbit", muatan, f"Disetujui manusia: {kep['catatan']}",
+                 pesan("akhir.disetujui", catatan=kep["catatan"]))
+    elif kep["keputusan"] == "arsipkan":
+        hasil = ("dilewati", muatan, f"Diarsipkan manusia: {kep['catatan']}",
+                 pesan("akhir.diarsipkan", catatan=kep["catatan"]))
+    else:
+        # Disetujui padahal tidak boleh (mis. data berubah sejak keputusan): diabaikan.
+        j.catat("· Tinjauan manusia", "berhenti", {"keputusan": kep},
+                {"tindakan": "Keputusan setujui diabaikan: kasus ini hanya boleh diarsipkan."},
+                i18n=pesan("tahap.review_abaikan"), state="HUMAN REVIEW")
+        return status, muatan, alasan, alasan_i18n, kep
+    j.catat("· Tinjauan manusia", "lolos", {"keputusan": kep},
+            {"status_baru": STATE[hasil[0]]}, i18n=pesan("tahap.review"), state="HUMAN REVIEW")
+    return (*hasil, kep)
+
+
 def _selesai(j: Jejak, status: str, detail: dict, muatan, alasan: str,
              alasan_i18n=None) -> dict:
-    j.catat("· Selesai", status, {}, {"alasan": alasan}, i18n=pesan("tahap.selesai"))
+    status, muatan, alasan, alasan_i18n, kep = _terapkan_review(j, status, muatan, alasan, alasan_i18n)
+    j.catat("· Selesai", status, {}, {"alasan": alasan}, i18n=pesan("tahap.selesai"),
+            state=STATE.get(status))
     hasil = {
+        "state": STATE.get(status),
+        "keputusan_manusia": kep,
         "id": j.pengenal,
         "contoh": bool(detail.get("_fixture")),
         "status": status,

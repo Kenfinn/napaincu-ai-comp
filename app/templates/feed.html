@@ -17,14 +17,12 @@
 </div>
 
 {% set terbit = daftar | selectattr('status','equalto','terbit') | list %}
-{% set ditolak = daftar | selectattr('status','equalto','ditolak') | list %}
 {% set ditahan = daftar | selectattr('status','equalto','ditahan') | list %}
 {% set dilewati = daftar | selectattr('status','equalto','dilewati') | list %}
 
 <div class="kartu rapat" style="display:flex; gap:28px;">
   <div><div class="kicker">{{ t('st.terbit') }}</div><b class="mono" style="font-size:19px;">{{ terbit|length }}</b></div>
-  <div><div class="kicker">{{ t('st.ditolak') }}</div><b class="mono" style="font-size:19px; color:var(--tolak);">{{ ditolak|length }}</b></div>
-  <div><div class="kicker">{{ t('st.ditahan') }}</div><b class="mono" style="font-size:19px; color:var(--amber);">{{ ditahan|length }}</b></div>
+  <div><div class="kicker">{{ t('st.ditahan') }}</div><a href="/review" class="mono" style="font-size:19px; font-weight:700; color:var(--amber);">{{ ditahan|length }}</a></div>
   <div><div class="kicker">{{ t('st.dilewati') }}</div><b class="mono" style="font-size:19px; color:var(--abu);">{{ dilewati|length }}</b></div>
   <div style="margin-left:auto; text-align:right; max-width:330px;">
     <div class="kicker">{{ t('feed.kenapa') }}</div>

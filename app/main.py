@@ -27,7 +27,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import config, i18n, pasar, ringkasan, store, tarik
+from . import config, i18n, pasar, review, ringkasan, store, tarik
 from .agent import llm, pipeline
 
 import sys
@@ -143,6 +143,7 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
         "pakai_model": llm.tersedia(),
         "sumber_data": sumber,
         "jml_terbit": sum(1 for h in hasil() if h["status"] == "terbit"),
+        "jml_review": sum(1 for h in hasil() if h["status"] == "ditahan"),
         "kode": None,
     }
     dasar.update(tambahan)
@@ -352,6 +353,48 @@ async def api_impor(request: Request):
     if baru:
         hasil(segarkan=True)
     return {"diterima": len(diterima), "baru": baru, "ditolak": len(tolak), "contoh_tolak": tolak[:5]}
+
+
+# --- antrean review manusia (HELD FOR REVIEW) -----------------------------
+@app.get("/review", response_class=HTMLResponse)
+def halaman_review(request: Request):
+    semua = hasil()
+    menunggu = [h for h in semua if h["status"] == "ditahan"]
+    kep = review.baca()
+    per_id = {h["id"]: h for h in semua}
+    riwayat = sorted(({"id": k, **v, "h": per_id.get(k)} for k, v in kep.items()),
+                     key=lambda x: x["waktu"], reverse=True)
+    return tpl.TemplateResponse(request=request, name="review.html",
+                                context=konteks(request, "review", menunggu=menunggu, riwayat=riwayat))
+
+
+@app.post("/review/{pengenal}")
+async def putuskan_review(request: Request, pengenal: str):
+    if not _boleh_ubah(request):
+        return _tolak_akses("/review")
+    f = await _form(request)
+    keputusan, catatan = f.get("keputusan", ""), (f.get("catatan") or "").strip()
+    h = next((x for x in hasil() if x["id"] == pengenal and x["status"] == "ditahan"), None)
+    if h is None or keputusan not in review.KEPUTUSAN_SAH:
+        raise HTTPException(404, "Kasus tidak ada di antrean review")
+    if len(catatan) < 3:
+        return _balik("/review", i18n.pesan("msg.review_catatan"), ok=False)
+    if keputusan == "setujui" and not ((h.get("muatan") or {}).get("tahan") or {}).get("boleh_setujui"):
+        return _balik("/review", i18n.pesan("msg.review_tidak_boleh"), ok=False)
+    review.simpan(pengenal, keputusan, catatan)
+    hasil(segarkan=True)
+    return _balik("/review", i18n.pesan("msg.review_ok", kode=h["emiten"]["kode"],
+                                        keputusan=keputusan))
+
+
+@app.get("/api/review", summary="Antrean HELD FOR REVIEW dan riwayat keputusan manusia")
+def api_review():
+    return JSONResponse({
+        "menunggu": [{"id": h["id"], "emiten": h["emiten"], "judul": h["judul"], "alasan": h["alasan"],
+                      "boleh_setujui": ((h.get("muatan") or {}).get("tahan") or {}).get("boleh_setujui")}
+                     for h in hasil() if h["status"] == "ditahan"],
+        "keputusan": review.baca(),
+    })
 
 
 @app.get("/api/watchlist", summary="Daftar kode saham yang dipantau")

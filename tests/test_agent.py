@@ -48,7 +48,7 @@ class TestHasilUjungKeUjung(unittest.TestCase):
         "kasus-1-capex-bersih": "terbit",
         "kasus-2-prompt-injection": "terbit",     # angka benar; injeksi diabaikan
         "kasus-3-rutin-tersaring": "dilewati",
-        "kasus-4-mata-uang-asing": "ditolak",
+        "kasus-4-mata-uang-asing": "ditahan",    # brief hal. 7: gagal verifikasi → HELD
     }
 
     def test_status_akhir(self):
@@ -745,6 +745,101 @@ class TestModelPengganti(unittest.TestCase):
         with self.assertRaises(self.llm.GagalModel):
             self.llm.tanya("i", "d")
         self.assertEqual(len(n), 1)
+
+
+class TestStateDanReview(unittest.TestCase):
+    """State sesuai brief hal. 7 dan gerbang manusia untuk kasus HELD FOR REVIEW."""
+
+    def setUp(self):
+        import tempfile
+        from fastapi.testclient import TestClient
+        from app import config, main, review, tarik
+        self.config, self.main, self.review, self.tarik = config, main, review, tarik
+        self._tmp = tempfile.TemporaryDirectory()
+        self._asli = (review.KEPUTUSAN_FILE, config.KODE_AKSES, config.PARSED_DIR, config.TRACE_DIR,
+                      tarik.WATCHLIST_FILE)
+        review.KEPUTUSAN_FILE = os.path.join(self._tmp.name, "keputusan.json")
+        config.PARSED_DIR = os.path.join(self._tmp.name, "parsed")       # → fixture
+        config.TRACE_DIR = os.path.join(self._tmp.name, "traces")
+        tarik.WATCHLIST_FILE = os.path.join(self._tmp.name, "watchlist.json")
+        config.KODE_AKSES = "kode-uji"
+        main._cache = None
+        self.c = TestClient(main.app)
+        self.c.get("/akses", params={"kode": "kode-uji"})
+
+    def tearDown(self):
+        (self.review.KEPUTUSAN_FILE, self.config.KODE_AKSES, self.config.PARSED_DIR, self.config.TRACE_DIR,
+         self.tarik.WATCHLIST_FILE) = self._asli
+        self.main._cache = None
+        self._tmp.cleanup()
+
+    def _usd(self):
+        d = detail("kasus-4-mata-uang-asing")
+        return d, pipeline.jalankan(d, valuasi())
+
+    def test_jejak_memakai_nama_state_brief(self):
+        h = pipeline.jalankan(detail("kasus-1-capex-bersih"), valuasi())
+        state = [l["state"] for l in h["jejak"] if l.get("state")]
+        self.assertEqual(state[:3], ["FETCHED", "VALIDATED", "SCREENED"])
+        self.assertIn("VALUED", state)
+        self.assertEqual(state[-1], "PUBLISHED")
+        self.assertEqual(h["state"], "PUBLISHED")
+        h3 = pipeline.jalankan(detail("kasus-3-rutin-tersaring"), valuasi())
+        self.assertEqual(h3["state"], "ARCHIVED")
+
+    def test_gagal_verifikasi_masuk_held_dan_boleh_disetujui_bila_ragu(self):
+        _, h = self._usd()
+        self.assertEqual(h["state"], "HELD")
+        self.assertTrue(h["muatan"]["tahan"]["boleh_setujui"])
+
+    def test_setujui_lewat_halaman_review(self):
+        _, h = self._usd()
+        r = self.c.post(f"/review/{h['id']}", data={"keputusan": "setujui", "catatan": "kurs dicek manual"},
+                        follow_redirects=False)
+        self.assertEqual(r.status_code, 303)
+        h2 = next(x for x in self.main.hasil() if x["id"] == h["id"])
+        self.assertEqual(h2["status"], "terbit")
+        self.assertEqual(h2["keputusan_manusia"]["catatan"], "kurs dicek manual")
+        self.assertEqual([l["state"] for l in h2["jejak"] if l.get("state")][-2:], ["HUMAN REVIEW", "PUBLISHED"])
+        self.assertTrue(h2["muatan"]["disetujui"])
+
+    def test_catatan_wajib_dan_akses_wajib(self):
+        _, h = self._usd()
+        r = self.c.post(f"/review/{h['id']}", data={"keputusan": "setujui", "catatan": ""}, follow_redirects=False)
+        self.assertIn("review_catatan", r.headers["location"])
+        from fastapi.testclient import TestClient
+        asing = TestClient(self.main.app)
+        r = asing.post(f"/review/{h['id']}", data={"keputusan": "setujui", "catatan": "coba"}, follow_redirects=False)
+        self.assertIn("perlu_akses", r.headers["location"])
+        self.assertEqual(self.review.baca(), {})
+
+    def test_angka_karangan_hanya_bisa_diarsipkan(self):
+        d = detail("kasus-1-capex-bersih")
+        asli = extract.sari
+        try:
+            extract.sari = lambda det, kand: ([{
+                "input": "capex", "nilai_mentah": "7,777,777", "satuan": "仟元", "pengali_ke_juta": 1e-3,
+                "mata_uang": None, "mata_uang_diasumsikan": True, "nilai_juta_ntd": 7777.777,
+                "kutipan": "資本支出預算金額: 新台幣 7,777,777 仟元", "butir_no": 3, "label": "資本支出預算金額",
+            }], {"penyedia": "uji", "model": "uji"})
+            h = pipeline.jalankan(d, valuasi())
+            self.assertEqual(h["state"], "HELD")
+            self.assertFalse(h["muatan"]["tahan"]["boleh_setujui"])
+            self.review.simpan(h["id"], "setujui", "dipaksa")          # dipaksa di luar halaman
+            h2 = pipeline.jalankan(d, valuasi())
+            self.assertEqual(h2["status"], "ditahan", "keputusan setujui harus diabaikan")
+            self.review.simpan(h["id"], "arsipkan", "angka tidak ada di dokumen")
+            h3 = pipeline.jalankan(d, valuasi())
+            self.assertEqual(h3["state"], "ARCHIVED")
+        finally:
+            extract.sari = asli
+
+    def test_halaman_review_tiga_bahasa(self):
+        for bhs in ("en", "zh", "id"):
+            r = self.c.get("/review", params={"lang": bhs})
+            self.assertEqual(r.status_code, 200)
+            self.assertNotIn("⟦", r.text)
+            self.assertIn("HELD", r.text)
 
 
 if __name__ == "__main__":

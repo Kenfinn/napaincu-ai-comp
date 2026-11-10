@@ -10,8 +10,11 @@
   <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
 </div>
 
-{% if h.status == 'ditolak' %}
-<div class="pita bahaya"><div>{{ t('al.ditolak') | safe }}</div></div>
+{% if h.status == 'ditahan' %}
+<div class="pita bahaya"><div>{{ t('al.ditahan', sebab=((tr(h.alasan_i18n) if h.alasan_i18n else h.alasan) | e)) | safe }}</div></div>
+{% endif %}
+{% if h.keputusan_manusia and h.status == 'terbit' %}
+<div class="pita nyata"><div>{{ t('al.disetujui_manusia', catatan=(h.keputusan_manusia.catatan | e)) | safe }}</div></div>
 {% endif %}
 
 {% if injeksi %}
@@ -79,6 +82,17 @@
   </div>
 {% endfor %}
 
+{% for tm in (h.muatan.disetujui if h.muatan and h.muatan.disetujui and h.status == 'terbit' else []) %}
+  <h2>{{ t('al.angka_disetujui') }} · {{ tm.input }}</h2>
+  <div class="kartu">
+    <div class="kutip">{{ tm.kutipan }}
+      <div style="margin-top:6px; color:var(--abu); font-size:11.5px;">
+        {{ t('al.butir', no=tm.butir_no) }} · {{ tm.nilai_mentah }} {{ tm.satuan or '' }} {{ tm.mata_uang or t('al.konvensi') }}
+        {% if tm.nilai_juta_ntd is not none %}→ {{ tm.nilai_juta_ntd | rb }} {{ t('al.juta_ntd') }}{% endif %}</div>
+    </div>
+  </div>
+{% endfor %}
+
 {% for d in (h.muatan.ditolak if h.muatan and h.muatan.ditolak else []) %}
   <h2>{{ t('al.ditolak_input', input=d.temuan.input) }}</h2>
   <div class="kartu">
@@ -89,7 +103,7 @@
   </div>
 {% endfor %}
 
-{% if h.status in ('dilewati', 'ditahan') %}
+{% if h.status in ('dilewati', 'ditahan') and not (h.muatan and h.muatan.ditolak) %}
 <div class="kartu">
   <div class="cek"><span class="tanda">—</span><span class="why">{{ tr(h.alasan_i18n) if h.alasan_i18n else h.alasan }}</span></div>
 </div>
