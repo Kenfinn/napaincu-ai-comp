@@ -44,6 +44,18 @@ T: dict[str, tuple[str, str, str]] = {
         "自團隊設定檔覆蓋：",
         "Ditimpa dari berkas tim:",
     ),
+
+    # --- B3: Sitasi MOPS ---
+    "sh.sumber_resmi_mops": (
+        "Data: FinMind (replicated from MOPS). Official source: MOPS, links per column.",
+        "資料來源：FinMind（轉載自 MOPS 公開資訊觀測站）。官方來源：MOPS，詳見各欄連結。",
+        "Data: FinMind (salinan dari MOPS). Sumber resmi: MOPS, tautan per kolom.",
+    ),
+    "sh.tautan_mops": (
+        "MOPS ↗",
+        "MOPS ↗",
+        "MOPS ↗",
+    ),
 }
 
 

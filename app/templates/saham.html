@@ -190,7 +190,14 @@
     <table class="fin">
       <tr>
         <th class="pos">{{ t('sh.satuan') if mode == 'nilai' else t('sh.satuan_yoy') }}</th>
-        {% for c in tb.kolom %}<th>{{ c.label }}</th>{% endfor %}
+        {% for c in tb.kolom %}
+        <th>
+          <div>{{ c.label }}</div>
+          <div style="font-size:11px; font-weight:normal; margin-top:2px;">
+            <a href="{{ mops_laporan(kode_saham, c.tgl, None, lap) }}" target="_blank" rel="noopener noreferrer">{{ t('sh.tautan_mops') }}</a>
+          </div>
+        </th>
+        {% endfor %}
       </tr>
       {% for b in tb.baris %}
       <tr class="{{ 'tebal' if b.tebal }}">
@@ -211,7 +218,7 @@
   {% else %}
   <div class="pita bahaya"><div>{{ t('sh.keu_kosong', galat=tb.info.galat or '—') }}</div></div>
   {% endif %}
-  <p class="catatan">{{ t('sh.sumber_keu') }}</p>
+  <p class="catatan">{{ t('sh.sumber_resmi_mops') }}</p>
 
 {# ----------------------------------------------------------------- VALUASI #}
 {% elif tab == 'valuasi' %}

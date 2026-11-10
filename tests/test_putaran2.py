@@ -624,3 +624,79 @@ class TestDbValuasiOtomatisManual(unittest.TestCase):
         )
 
 
+class TestB3SitasiMops(unittest.TestCase):
+    """Pemeriksa untuk item B3: sitasi MOPS untuk laporan keuangan."""
+
+    def test_b3_url_mops(self):
+        """2330, 2025, Q4, neraca -> URL memuat ajax_t164sb03, co_id=2330, year=114, season=04."""
+        from app import sitasi
+
+        url = sitasi.mops_laporan("2330", 2025, "Q4", "neraca")
+        self.assertIn("ajax_t164sb03", url)
+        self.assertIn("co_id=2330", url)
+        self.assertIn("year=114", url)
+        self.assertIn("season=04", url)
+
+        # Uji jenis lain (lr dan arus)
+        url_lr = sitasi.mops_laporan("2330", 2025, 4, "lr")
+        self.assertIn("ajax_t164sb04", url_lr)
+        url_cf = sitasi.mops_laporan("2330", 2025, 4, "arus")
+        self.assertIn("ajax_t164sb05", url_cf)
+
+    def test_b3_tautan_di_tab_keuangan(self):
+        """GET /saham/2330?tab=keu -> setiap kolom periode punya tautan mopsov; tiga bahasa tanpa '⟦'."""
+        c = TestClient(main.app)
+        for lang in ("en", "zh", "id"):
+            resp = c.get(f"/saham/2330?tab=keu&lang={lang}")
+            self.assertEqual(resp.status_code, 200, f"Status bukan 200 pada lang={lang}")
+            self.assertNotIn("⟦", resp.text, f"String tak terterjemahkan pada lang={lang}")
+            self.assertIn("mopsov.twse.com.tw", resp.text, f"Tautan mopsov tidak ada pada lang={lang}")
+            self.assertIn("ajax_t164sb04", resp.text, f"Program ajax_t164sb04 tidak ada pada lang={lang}")
+            self.assertIn(i18n.t("sh.sumber_resmi_mops", lang), resp.text)
+
+    def test_b3_cek_resmi_kumulatif(self):
+        """Sampel buatan t187ap06 kumulatif Q2 vs dua kuartal FinMind -> selisih 0%."""
+        import sys
+        if str(ROOT / "scripts") not in sys.path:
+            sys.path.insert(0, str(ROOT / "scripts"))
+        import cek_finmind_resmi
+
+        seri_fm_revenue = {
+            "2026-03-31": 100_000_000.0,
+            "2026-06-30": 150_000_000.0,
+            "2026-09-30": 200_000_000.0,
+        }
+        rec_twse_lr = {
+            "年度": "115",
+            "季別": "2",
+            "公司代號": "9999",
+            "公司名稱": "Uji",
+            "營業收入": "250000.00",
+            "稅前淨利（淨損）": "50000.00",
+        }
+        seri_fm_pbt = {
+            "2026-03-31": 20_000_000.0,
+            "2026-06-30": 30_000_000.0,
+        }
+
+        res = cek_finmind_resmi.bandingkan_angka(
+            kode="9999",
+            tahun_roc=115,
+            kuartal=2,
+            rec_lr=rec_twse_lr,
+            rec_nr=None,
+            seri_lr={"Revenue": seri_fm_revenue, "PreTaxIncome": seri_fm_pbt},
+            seri_nr={},
+        )
+
+        pos_rev = res["pos"]["營業收入"]
+        self.assertEqual(pos_rev["resmi"], 250000.00)
+        self.assertEqual(pos_rev["finmind"], 250000.00)
+        self.assertEqual(pos_rev["pct"], 0.0)
+
+        pos_pbt = res["pos"]["稅前淨利（淨損）"]
+        self.assertEqual(pos_pbt["resmi"], 50000.00)
+        self.assertEqual(pos_pbt["finmind"], 50000.00)
+        self.assertEqual(pos_pbt["pct"], 0.0)
+
+

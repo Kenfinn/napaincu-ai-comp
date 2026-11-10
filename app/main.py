@@ -27,7 +27,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import config, i18n, pasar, review, ringkasan, store, tarik, umpan_balik, valuasi_otomatis
+from . import config, i18n, pasar, review, ringkasan, sitasi, store, tarik, umpan_balik, valuasi_otomatis
 from .agent import llm, pipeline
 
 import sys
@@ -122,6 +122,8 @@ def pct(ctx, x, desimal: int = 2):
 
 tpl.env.filters["rb"] = rb
 tpl.env.filters["pct"] = pct
+tpl.env.globals["mops_laporan"] = sitasi.mops_laporan
+tpl.env.globals["mops_cadangan"] = sitasi.mops_cadangan
 
 
 def bahasa_dari(request: Request) -> str:

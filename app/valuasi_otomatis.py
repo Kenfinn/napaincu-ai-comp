@@ -31,7 +31,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from app import config, harga_resmi, i18n, pasar
+from app import config, harga_resmi, i18n, pasar, sitasi
 from scripts import dcf
 
 log = logging.getLogger(__name__)
@@ -616,18 +616,18 @@ def bangun(kode: str) -> dict:
             f"short_term_borrowings ({'+'.join(stb_pos) or 'none'})={short_term_borrowings:,.1f}M; "
             f"long_term_debt ({'+'.join(lt_pos) or 'none'})={long_term_debt:,.1f}M; "
             f"current_portion_lt_debt ({'+'.join(cp_pos) or 'folded into OtherCurrentLiabilities in FinMind'})="
-            f"{current_portion_lt_debt:,.1f}M"
+            f"{current_portion_lt_debt:,.1f}M. Sumber resmi MOPS: {sitasi.mops_laporan(kode, tgl_neraca, jenis='neraca')}"
         ),
         "cash_flow": (
             f"FinMind TaiwanStockCashFlowsStatement ({pasar.FINMIND_URL}, stock_id={kode}, "
             f"dates={', '.join(tiga_tgl)}, cumulative YTD as of Dec 31): "
             f"cfo=CashFlowsFromOperatingActivities, capex=abs(PropertyAndPlantAndEquipment), "
-            f"interest=({', '.join(pos_bunga_dipakai)})"
+            f"interest=({', '.join(pos_bunga_dipakai)}). Sumber resmi MOPS: {sitasi.mops_laporan(kode, tahun_fiskal, 4, jenis='arus')}"
         ),
         "tax": (
             f"FinMind TaiwanStockFinancialStatements ({pasar.FINMIND_URL}, stock_id={kode}, "
             f"sum of {len(kuartal_lr)} single quarters in FY{tahun_fiskal}: {', '.join(kuartal_lr)}): "
-            f"TAX={tax_raw_m:,.1f}M, PreTaxIncome={pretax_raw_m:,.1f}M"
+            f"TAX={tax_raw_m:,.1f}M, PreTaxIncome={pretax_raw_m:,.1f}M. Sumber resmi MOPS: {sitasi.mops_laporan(kode, tahun_fiskal, 4, jenis='lr')}"
         ),
         "risk_free_rate": SUMBER_RF,
         "beta": catatan_beta,
