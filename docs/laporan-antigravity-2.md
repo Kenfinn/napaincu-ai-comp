@@ -139,6 +139,84 @@ Laporan pelaksanaan tugas semalam P1 sampai P10 untuk FEAF (Agentic AI Investmen
 - Berkas yang diubah:
   - Diubah: `scripts/dcf.py` (tepat 1 baris di `net_debt`), `app/valuasi_otomatis.py`, `app/teks/antigravity.py`, `app/main.py`, `app/templates/valuasi.html`, `scripts/valuasi_otomatis.py`, `docs/valuasi-otomatis.md`, `tests/test_putaran2.py`
 
+---
+
+### D-b: 2330 Memakai Valuasi Otomatis dengan Asumsi Tim
+- Jam mulai: 01:19
+- Jam selesai: 01:28
+- Status: Selesai
+- Commit: `c04ddee`
+- Tes yang ditambah dan hasilnya:
+  - 3 tes baru di `tests/test_putaran2.py` (semua lulus):
+    - `test_db_otomatis_menang_asumsi_manual`: cache otomatis 2330 dipadukan dengan berkas manual; cfo dan capex memakai angka otomatis, tetapi parameter asumsi (`terminal_growth_ceiling`) dan `risk_free_rate` diambil dari berkas manual; `asumsi_dari` bernilai `"manual"`.
+    - `test_db_tanpa_cache_pakai_manual`: bila cache otomatis tidak ada di disk, `store.muat_valuasi` mengembalikan berkas manual apa adanya tanpa galat.
+    - `test_dc_manual_mengisi_yang_kosong`: field `current_portion_lt_debt` yang tidak tersedia di FinMind diisi oleh berkas manual, sehingga selisih utang total 2330 terhadap manual adalah 0,00% (jauh di bawah batas 1%).
+  - Penyesuaian `test_berkas_manual_selalu_menang_dan_store_tanpa_jaringan` di `tests/test_valuasi_otomatis.py` untuk menguji penggabungan D-b saat cache ada dan isolasi berkas manual saat cache kosong.
+  - Penambahan blok `setUpModule()` / `tearDownModule()` di `tests/test_agent.py` yang mengisolasi cache valuasi otomatis ke folder sementara selama pengujian agen.
+  - Total tes lulus: 155 tes.
+- Angka QA manual:
+  - WACC 2330:
+    - Manual murni: 8,09%
+    - Otomatis murni: 7,00%
+    - Gabungan (otomatis + asumsi tim): 6,98%
+  - Pertumbuhan tersirat ($g_{\text{tersirat}}$) 2330:
+    - Manual murni: 6,29%
+    - Otomatis murni: 5,09%
+    - Gabungan (otomatis + asumsi tim): 5,08%
+  - Total utang ($debt$) 2330:
+    - Otomatis murni (sebelum D-b): 896.062,0 juta NTD
+    - Gabungan (sesudah D-b): 1.032.988,5 juta NTD (selisih 0,00% dari manual)
+  - Tampilan UI: Lencana "Automatic + team assumptions" ("自動＋團隊假設" / "Otomatis + asumsi tim") tampil rapi di `/saham/2330?tab=valuasi` dan `/valuasi/2330` bersama daftar field yang ditimpa. Diuji dalam 3 bahasa (EN, ZH, ID) tanpa penanda `⟦`.
+  - Tabel perbandingan dari `python3 scripts/valuasi_otomatis.py 2330 --banding`:
+
+| Field | Otomatis | Manual | Selisih % | Catatan |
+|---|---:|---:|---:|---|
+| `market.price_per_share (NTD)` | 2.235,00 | 2.380,00 | -6,09% | oto 2026-11-09 vs manual 2026-09-14 |
+| `market.shares_issued_thousands` | 25.932.370,1 | 25.932.524,0 | -0,00% | TWSE OpenAPI t187ap03_L |
+| `balance_sheet.cash_and_equivalents (2025-12-31)` | 2.767.856,4 | 2.767.856,4 | +0,00% | CashAndCashEquivalents (identik) |
+| `balance_sheet.short_term_investments (2025-12-31)` | 300.638,2 | 300.638,2 | +0,00% | AmortizedCost + FVOCI (identik) |
+| `balance_sheet.short_term_borrowings (2025-12-31)` | 0,0 | 0,0 | 0,00% | ShorttermBorrowings FinMind (2330: 0) |
+| `balance_sheet.current_portion_lt_debt (2025-12-31)` | 0,0 | 136.926,5 | -100,00% | FinMind gabung ke OtherCurrentLiabilities |
+| `balance_sheet.long_term_debt (2025-12-31)` | 896.062,0 | 896.062,0 | +0,00% | BondsPayable + LongtermBorrowings (identik) |
+| `cash_flow.cfo_by_year[2023]` | 1.241.967,3 | 1.600.000,0 | -22,38% | Perkiraan di berkas manual |
+| `cash_flow.capex_by_year[2023]` | 949.816,8 | 1.313.000,0 | -27,66% | Perkiraan di berkas manual |
+| `cash_flow.interest_expense_by_year[2023]` | 11.999,4 | 12.000,0 | -0,01% | Perkiraan di berkas manual |
+| `cash_flow.cfo_by_year[2024]` | 1.826.177,1 | 2.000.000,0 | -8,69% | Perkiraan di berkas manual |
+| `cash_flow.capex_by_year[2024]` | 956.006,5 | 1.140.000,0 | -16,14% | Perkiraan di berkas manual |
+| `cash_flow.interest_expense_by_year[2024]` | 10.495,3 | 12.000,0 | -12,54% | Perkiraan di berkas manual |
+| `cash_flow.cfo_by_year[2025]` | 2.274.975,6 | 2.274.980,0 | -0,00% | Laporan tahunan penuh (31 Des) |
+| `cash_flow.capex_by_year[2025]` | 1.272.410,5 | 1.272.400,0 | +0,00% | Laporan tahunan penuh (31 Des) |
+| `cash_flow.interest_expense_by_year[2025]` | 12.370,4 | 12.300,0 | +0,57% | Laporan tahunan penuh (31 Des) |
+| `tax.income_tax_expense` | 326.266,1 | 346.500,0 | -5,84% | Jumlah 4 kuartal TAX FinMind vs pembulatan manual |
+| `tax.pretax_income` | 2.041.662,8 | 2.041.600,0 | +0,00% | Jumlah 4 kuartal PreTaxIncome FinMind |
+| `effective_tax_rate` | 15,98% | 16,97% | -5,84% | TAX / PreTaxIncome |
+| `wacc_inputs.risk_free_rate` | 1,94% | 1,94% | +0,00% | Obligasi pemerintah Taiwan 10Y |
+| `wacc_inputs.equity_risk_premium` | 5,01% | 5,01% | +0,00% | Damodaran ERP Taiwan |
+| `wacc_inputs.beta` | 1,0272 | 1,2500 | -17,82% | Regresi 2y mingguan bursa resmi (104 pekan) vs manual |
+| `wacc_inputs.total_interest_expense` | 12.370,4 | 19.980,0 | -38,09% | InterestExpense FY terakhir |
+| `DCF: market_cap` | 57.958.847,1 | 61.719.407,1 | -6,09% | Juta NTD |
+| `DCF: debt` | 896.062,0 | 1.032.988,5 | -13,26% | Juta NTD (setelah D-b menjadi 1.032.988,5) |
+| `DCF: cash` | 3.068.494,6 | 3.068.494,6 | +0,00% | Juta NTD |
+| `DCF: enterprise_value (EV)` | 55.786.414,5 | 59.683.901,0 | -6,53% | Juta NTD |
+| `DCF: FCFF 2025 (fcff0)` | 1.012.958,7 | 1.012.792,4 | +0,02% | Juta NTD |
+| `DCF: FCFF 3y average` | 731.393,2 | 726.573,1 | +0,66% | Juta NTD |
+| `DCF: cost_of_equity (ke)` | 7,09% | 8,20% | -13,61% |  |
+| `DCF: cost_of_debt (kd pre-tax)` | 1,38% | 1,93% | -28,63% |  |
+| `DCF: WACC` | 7,00% | 8,09% | -13,56% | Setelah D-b: 6,98% |
+| `DCF: implied_growth (g tersirat)` | 5,09% | 6,29% | -19,11% | Setelah D-b: 5,08% |
+- Berkas yang diubah:
+  - `app/main.py`
+  - `app/store.py`
+  - `app/teks/antigravity.py`
+  - `app/templates/saham.html`
+  - `app/templates/valuasi.html`
+  - `app/valuasi_otomatis.py`
+  - `tests/test_agent.py`
+  - `tests/test_putaran2.py`
+  - `tests/test_valuasi_otomatis.py`
+  - `valuation/inputs/2330.json`
+
+
 
 
 
