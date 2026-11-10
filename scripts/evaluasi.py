@@ -34,6 +34,23 @@ Jalankan:
 
 Data dibaca lewat app.store, jadi sama dengan yang dipakai aplikasi: data/parsed/ kalau
 ada, data/fixtures/ kalau tidak. Sumbernya tercetak di laporan.
+
+Dua mode tambahan yang tidak butuh gold set (D4):
+
+    --operasional   jalankan pipeline atas SEMUA pengumuman yang ada (tambah --arsip untuk
+                    arsip mentah server) dan laporkan metrik operasi Appendix 2: sebaran
+                    state, latensi rata-rata/median/p95/maks, token, panggilan model,
+                    jawaban cache, retry, jatuh ke penalar aturan beserta sebabnya,
+                    kategori error, tingkat intervensi manusia.
+    --chat          jalankan set pertanyaan uji Tanya FEAF (eval/chat_uji.csv): ketepatan
+                    menolak, jawaban bersumber, angka lolos pemeriksa, kata terlarang,
+                    latensi, panggilan alat/model.
+
+Biaya: free tier Gemini = 0. Untuk perkiraan tier berbayar beri --harga-token
+"<USD per 1 juta token masuk>,<USD per 1 juta token keluar>" sesuai daftar harga resmi.
+
+Ambang triase dan keputusan review memakai berkas sementara (ambang dasar, tanpa
+keputusan manusia), supaya hasil bisa diulang dan tidak bergantung pada isi server.
 """
 
 from __future__ import annotations
@@ -50,10 +67,12 @@ from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from app import config, store                              # noqa: E402
+from app import config, review, store, umpan_balik         # noqa: E402
 from app.agent import extract, pipeline, screen            # noqa: E402
+import collections                                         # noqa: E402
 
 GOLD_DEFAULT = os.path.join(ROOT, "eval", "gold.csv")
+CHAT_UJI_DEFAULT = os.path.join(ROOT, "eval", "chat_uji.csv")
 HASIL_DIR = os.path.join(ROOT, "eval", "hasil")
 
 # Selisih relatif yang masih dianggap angka yang sama. Kecil dengan sengaja: yang dicari
@@ -131,7 +150,38 @@ def _pipeline(detail: dict) -> dict:
         for d in (h.get("muatan") or {}).get("diterima", []):
             terbit.append((d["temuan"]["input"], d["temuan"]["nilai_juta_ntd"]))
     r = h["ringkasan"]
-    return {"status": h["status"], "terbit": terbit, "meta": r}
+    return {"status": h["status"], "terbit": terbit, "meta": r, "state": h.get("state"),
+            "kategori": kategori(h), "sebab_cadangan": _sebab_cadangan(h)}
+
+
+def kategori(h: dict) -> str:
+    """Satu kategori akhir per pengumuman, untuk tabel kategori error/terminasi."""
+    st = h.get("status")
+    muatan = h.get("muatan") or {}
+    if st == "terbit":
+        return "terbit.manusia" if h.get("keputusan_manusia") else "terbit"
+    if st == "dilewati":
+        if (h.get("alasan_i18n") or {}).get("kode") == "akhir.di_bawah_ambang":
+            return "arsip.di_bawah_ambang"
+        if h.get("keputusan_manusia"):
+            return "arsip.manusia"
+        return "arsip.saringan_pasal"
+    if st == "ditahan":
+        jenis = (muatan.get("tahan") or {}).get("jenis", "lain")
+        if jenis == "verifikasi":
+            kode = sorted({k for d in muatan.get("ditolak", []) for k in d.get("gagal_kode", [])})
+            return "tahan.verifikasi:" + "+".join(kode)
+        return f"tahan.{jenis}"
+    return st or "?"
+
+
+def _sebab_cadangan(h: dict) -> str | None:
+    for l in h.get("jejak", []):
+        m = l.get("meta") or {}
+        if m.get("cadangan"):
+            sebab = str(m.get("sebab_cadangan") or "")
+            return "tanpa kunci API" if "kunci" in sebab else (sebab.split(":")[0][:60] or "lain")
+    return None
 
 
 def jalankan_mode(mode: str, data: list[dict]) -> list[dict]:
@@ -157,6 +207,7 @@ def jalankan_mode(mode: str, data: list[dict]) -> list[dict]:
 def nilai(hasil: list[dict], gold: dict[str, dict]) -> dict:
     n = len(hasil)
     tepat = terbit_benar = salah_terbit = terlewat = ditahan = 0
+    input_benar = input_total = 0
     harus_ya = sum(1 for h in hasil if gold[h["source_url"]]["harus_terbit"])
     rincian = []
     for h in hasil:
@@ -168,6 +219,10 @@ def nilai(hasil: list[dict], gold: dict[str, dict]) -> dict:
         salah = [(i, v) for i, v in h["terbit"]
                  if v is None or not any(i == gi and _sama(v, gv) for gi, gv in g["angka"])]
         benar = [(i, v) for i, v in h["terbit"] if (i, v) not in salah]
+        for i, _v in h["terbit"]:
+            if g["angka"]:
+                input_total += 1
+                input_benar += any(i == gi for gi, _ in g["angka"])
         if salah:
             salah_terbit += 1
         if g["harus_terbit"]:
@@ -195,6 +250,12 @@ def nilai(hasil: list[dict], gold: dict[str, dict]) -> dict:
         "retry": sum(m.get("retry", 0) for m in meta),
         "jatuh_ke_cadangan": sum(1 for m in meta if m.get("pakai_cadangan") or m.get("cadangan")),
         "latensi_median_ms": int(statistics.median(latensi)) if latensi else 0,
+        "latensi_rata_ms": int(statistics.mean(latensi)) if latensi else 0,
+        "latensi_maks_ms": max(latensi) if latensi else 0,
+        "akurasi_input": [input_benar, input_total],
+        "akurasi_nilai": [sum(1 for r in rincian for i, v in r["terbit"] if (i, v) not in r["angka_salah"]),
+                          sum(len(r["terbit"]) for r in rincian)],
+        "kategori": dict(collections.Counter(h.get("kategori", h["status"]) for h in hasil)),
         "rincian": rincian,
     }
 
@@ -233,7 +294,10 @@ def laporan(m_per_mode: dict[str, dict], sumber: str, gold_path: str, label_mode
     row("Token masuk / keluar", lambda x: f"{x['token_masuk']} / {x['token_keluar']}")
     row("Retry", lambda x: str(x["retry"]))
     row("Jatuh ke penalar aturan", lambda x: str(x["jatuh_ke_cadangan"]))
-    row("Latensi median per dokumen", lambda x: f"{x['latensi_median_ms']} ms")
+    row("Latensi median / rata-rata / maks per dokumen",
+        lambda x: f"{x['latensi_median_ms']} / {x.get('latensi_rata_ms', 0)} / {x.get('latensi_maks_ms', 0)} ms")
+    row("Akurasi field: jenis input (capex/debt/cash)", lambda x: _persen(*x.get("akurasi_input", [0, 0])))
+    row("Akurasi field: nilai (±0,5%)", lambda x: _persen(*x.get("akurasi_nilai", [0, 0])))
     if menit_manual is not None:
         row(f"Waktu manual setara (@{menit_manual:g} menit/dokumen)",
             lambda x: f"{x['dokumen'] * menit_manual:g} menit")
@@ -252,6 +316,163 @@ def laporan(m_per_mode: dict[str, dict], sumber: str, gold_path: str, label_mode
     return "\n".join(baris) + "\n"
 
 
+# --------------------------------------------------------------------------- D4: operasional
+
+def _pct(xs: list[int], p: float) -> int:
+    if not xs:
+        return 0
+    xs = sorted(xs)
+    return xs[min(len(xs) - 1, int(round(p * (len(xs) - 1))))]
+
+
+def operasional(hasil: list[dict], harga_token: tuple[float, float] | None = None) -> dict:
+    """Metrik operasi Appendix 2 atas semua pengumuman, tanpa label."""
+    meta = [h["meta"] for h in hasil]
+    lat = [m.get("durasi_total_ms", 0) for m in meta]
+    tin = sum(m.get("token_masuk", 0) for m in meta)
+    tout = sum(m.get("token_keluar", 0) for m in meta)
+    n = len(hasil)
+    ditahan = sum(1 for h in hasil if h["status"] == "ditahan")
+    sampai_model = sum(1 for h in hasil if h.get("kategori") != "arsip.saringan_pasal")
+    biaya = None
+    if harga_token:
+        biaya = round(tin / 1e6 * harga_token[0] + tout / 1e6 * harga_token[1], 4)
+    return {
+        "dokumen": n,
+        "state": dict(collections.Counter(h.get("state") or h["status"] for h in hasil)),
+        "kategori": dict(collections.Counter(h.get("kategori", h["status"]) for h in hasil).most_common()),
+        "latensi_ms": {"rata": int(statistics.mean(lat)) if lat else 0,
+                       "median": int(statistics.median(lat)) if lat else 0,
+                       "p95": _pct(lat, 0.95), "maks": max(lat) if lat else 0},
+        "lolos_saringan": sampai_model,
+        "panggilan_model": sum(m.get("panggilan_model", 0) for m in meta),
+        "jawaban_cache": sum(m.get("jawaban_cache", 0) for m in meta),
+        "token_masuk": tin, "token_keluar": tout,
+        "biaya_usd_free_tier": round(sum(m.get("biaya_usd", 0.0) for m in meta), 4),
+        "biaya_usd_perkiraan_berbayar": biaya,
+        "retry": sum(m.get("retry", 0) for m in meta),
+        "jatuh_ke_cadangan": dict(collections.Counter(h["sebab_cadangan"] for h in hasil if h.get("sebab_cadangan"))),
+        "intervensi_manusia": {"ditahan": ditahan, "persen_dari_semua": round(100 * ditahan / n, 1) if n else 0,
+                               "persen_dari_lolos_saringan": round(100 * ditahan / sampai_model, 1) if sampai_model else 0},
+        "terbit": sum(1 for h in hasil if h["status"] == "terbit"),
+    }
+
+
+def laporan_operasional(m: dict, sumber: str, mode: str) -> str:
+    b = [
+        "# Evaluasi operasional (Appendix 2, tanpa gold set)", "",
+        f"- Waktu: {datetime.now(timezone.utc).isoformat(timespec='seconds')}",
+        f"- Sumber data: **{sumber}** · penyari: **{mode}**",
+        f"- Pengumuman: {m['dokumen']} · lolos saringan pasal: {m['lolos_saringan']}", "",
+        "| Metrik | Nilai |", "|---|---|",
+        f"| Terbit (PUBLISHED) | {m['terbit']} |",
+        f"| Sebaran state | {', '.join(f'{k} {v}' for k, v in sorted(m['state'].items()))} |",
+        f"| Latensi rata-rata / median / p95 / maks | {m['latensi_ms']['rata']} / {m['latensi_ms']['median']} / "
+        f"{m['latensi_ms']['p95']} / {m['latensi_ms']['maks']} ms |",
+        f"| Panggilan model / jawaban dari cache | {m['panggilan_model']} / {m['jawaban_cache']} |",
+        f"| Token masuk / keluar | {m['token_masuk']} / {m['token_keluar']} |",
+        f"| Biaya (free tier) | ${m['biaya_usd_free_tier']} |",
+        f"| Biaya perkiraan tier berbayar | {('$' + str(m['biaya_usd_perkiraan_berbayar'])) if m['biaya_usd_perkiraan_berbayar'] is not None else '— (beri --harga-token)'} |",
+        f"| Retry | {m['retry']} |",
+        f"| Jatuh ke penalar aturan (sebab) | {', '.join(f'{k}: {v}' for k, v in m['jatuh_ke_cadangan'].items()) or '0'} |",
+        f"| Intervensi manusia (HELD) | {m['intervensi_manusia']['ditahan']} = {m['intervensi_manusia']['persen_dari_semua']}% "
+        f"dari semua, {m['intervensi_manusia']['persen_dari_lolos_saringan']}% dari yang lolos saringan |",
+        "", "## Kategori akhir (terminasi dan jenis error)", "",
+        "| Kategori | Jumlah |", "|---|---|",
+    ]
+    b += [f"| `{k}` | {v} |" for k, v in m["kategori"].items()]
+    b += ["", "Arti kategori: `arsip.saringan_pasal` dilewati karena pasal di luar daftar; "
+          "`arsip.di_bawah_ambang` keyakinan triase di bawah ambang; `tahan.tanpa_angka` tidak ada angka "
+          "bersumber; `tahan.tanpa_valuasi` belum ada model valuasi; `tahan.keyakinan` keyakinan di zona ragu; "
+          "`tahan.verifikasi:<cek>` pemeriksa menolak, dengan kode cek yang gagal."]
+    return "\n".join(b) + "\n"
+
+
+# --------------------------------------------------------------------------- D4: chatbot
+
+def muat_chat_uji(path: str) -> list[dict]:
+    with open(path, encoding="utf-8", newline="") as f:
+        return [r for r in csv.DictReader(f) if (r.get("pertanyaan") or "").strip()]
+
+
+def nilai_chat(kasus: list[dict]) -> dict:
+    from app import chat
+    rinci = []
+    for k in kasus:
+        h = chat.tanya(k["pertanyaan"], (k.get("bahasa") or "en").strip())
+        harap = (k.get("harap") or "jawab").strip()
+        if harap.startswith("tolak"):
+            jenis = harap.split(":", 1)[1] if ":" in harap else None
+            tepat = h["jalur"] == "tolak" and (jenis is None or h["ditolak"] == jenis)
+        else:
+            tepat = h["jalur"] != "tolak" and bool(h["sumber"]) and bool((h.get("periksa") or {}).get("lolos"))
+        rinci.append({"pertanyaan": k["pertanyaan"], "bahasa": k.get("bahasa"), "harap": harap,
+                      "jalur": h["jalur"], "ditolak": h["ditolak"], "tepat": tepat, "id": h["id"],
+                      "durasi_ms": h["durasi_ms"], "panggilan_alat": h["panggilan_alat"],
+                      "panggilan_model": h["panggilan_model"],
+                      "kata_terlarang": (h.get("periksa") or {}).get("kata_terlarang", []) if h["jalur"] in ("model",) else [],
+                      "jawaban": h["jawaban"][:300]})
+    lat = [r["durasi_ms"] for r in rinci]
+    jawab = [r for r in rinci if not r["harap"].startswith("tolak")]
+    tolak = [r for r in rinci if r["harap"].startswith("tolak")]
+    return {
+        "kasus": len(rinci), "tepat": sum(r["tepat"] for r in rinci),
+        "jawab_tepat": [sum(r["tepat"] for r in jawab), len(jawab)],
+        "tolak_tepat": [sum(r["tepat"] for r in tolak), len(tolak)],
+        "jalur": dict(collections.Counter(r["jalur"] for r in rinci)),
+        "kata_terlarang_terbit": sum(len(r["kata_terlarang"]) for r in rinci),
+        "latensi_ms": {"rata": int(statistics.mean(lat)) if lat else 0, "maks": max(lat) if lat else 0},
+        "panggilan_alat": sum(r["panggilan_alat"] for r in rinci),
+        "panggilan_model": sum(r["panggilan_model"] for r in rinci),
+        "rincian": rinci,
+    }
+
+
+def laporan_chat(m: dict) -> str:
+    b = ["# Evaluasi Tanya FEAF (chatbot)", "",
+         f"- Waktu: {datetime.now(timezone.utc).isoformat(timespec='seconds')}",
+         f"- Model: **{config.MODEL if config.API_KEY else 'tanpa model (jalur aturan)'}**", "",
+         "| Metrik | Nilai |", "|---|---|",
+         f"| Tepat (semua kasus) | {_persen(m['tepat'], m['kasus'])} |",
+         f"| Pertanyaan data dijawab, bersumber, lolos pemeriksa | {_persen(*m['jawab_tepat'])} |",
+         f"| Pertanyaan di luar lingkup ditolak dengan benar | {_persen(*m['tolak_tepat'])} |",
+         f"| Kata rekomendasi yang lolos | {m['kata_terlarang_terbit']} |",
+         f"| Jalur jawaban | {', '.join(f'{k} {v}' for k, v in m['jalur'].items())} |",
+         f"| Latensi rata-rata / maks | {m['latensi_ms']['rata']} / {m['latensi_ms']['maks']} ms |",
+         f"| Panggilan alat / model | {m['panggilan_alat']} / {m['panggilan_model']} |",
+         "", "## Kasus yang tidak tepat", ""]
+    salah = [r for r in m["rincian"] if not r["tepat"]]
+    b += [f"- `{r['id']}` ({r['bahasa']}) \"{r['pertanyaan']}\": harap `{r['harap']}`, jalur `{r['jalur']}`"
+          for r in salah] or ["Tidak ada."]
+    return "\n".join(b) + "\n"
+
+
+def _simpan_laporan(nama: str, teks: str, data: dict) -> None:
+    os.makedirs(HASIL_DIR, exist_ok=True)
+    cap = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    with open(os.path.join(HASIL_DIR, f"{nama}-{cap}.md"), "w", encoding="utf-8") as f:
+        f.write(teks)
+    with open(os.path.join(HASIL_DIR, f"{nama}-{cap}.json"), "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2, default=str)
+    print(f"Tersimpan di {os.path.relpath(HASIL_DIR, ROOT)}/{nama}-{cap}.md", file=sys.stderr)
+
+
+class _Terisolasi:
+    """Jejak, ambang 👍/👎, dan keputusan review ke folder sementara selama evaluasi."""
+
+    def __enter__(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self._asli = (config.TRACE_DIR, umpan_balik.FILE, review.KEPUTUSAN_FILE)
+        config.TRACE_DIR = os.path.join(self._tmp.name, "traces")
+        umpan_balik.FILE = os.path.join(self._tmp.name, "umpan_balik.json")
+        review.KEPUTUSAN_FILE = os.path.join(self._tmp.name, "keputusan.json")
+        return self
+
+    def __exit__(self, *_):
+        config.TRACE_DIR, umpan_balik.FILE, review.KEPUTUSAN_FILE = self._asli
+        self._tmp.cleanup()
+
+
 # --------------------------------------------------------------------------- CLI
 
 def main(argv: list[str] | None = None) -> int:
@@ -263,7 +484,44 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--menit-manual", type=float, default=None,
                     help="menit per pengumuman secara manual, dari wawancara")
     ap.add_argument("--simpan", action="store_true", help="tulis laporan ke eval/hasil/")
+    ap.add_argument("--operasional", action="store_true", help="metrik operasi atas semua pengumuman, tanpa gold set")
+    ap.add_argument("--chat", nargs="?", const=CHAT_UJI_DEFAULT, default=None,
+                    help="evaluasi Tanya FEAF dengan set pertanyaan uji (bawaan eval/chat_uji.csv)")
+    ap.add_argument("--arsip-dir", default=None,
+                    help="folder arsip mentah OpenAPI selain DATA_DIR/raw/openapi (nama berkas memuat twse/tpex)")
+    ap.add_argument("--harga-token", default=None,
+                    help="'<USD/1jt token masuk>,<USD/1jt token keluar>' untuk perkiraan biaya berbayar")
     a = ap.parse_args(argv)
+    harga_token = tuple(float(x) for x in a.harga_token.split(",")) if a.harga_token else None
+
+    if a.chat:
+        with _Terisolasi():
+            m = nilai_chat(muat_chat_uji(a.chat))
+        teks = laporan_chat(m)
+        print(teks)
+        if a.simpan:
+            _simpan_laporan("chat", teks, m)
+        return 0
+
+    if a.operasional:
+        semua, sumber = store.muat_detail()
+        if a.arsip or a.arsip_dir:
+            from app import gold as _gold
+            ada = {d.get("source_url") for d in semua}
+            arsip = _gold.muat_arsip(a.arsip_dir) if a.arsip_dir else _gold.muat_arsip()
+            semua = [d for d in semua if not d.get("_fixture")] + [d for d in arsip if d["source_url"] not in ada]
+            sumber = f"{sumber} + arsip"
+        if not semua:
+            print("Tidak ada pengumuman.", file=sys.stderr)
+            return 1
+        penyari = config.MODEL if config.API_KEY else "penalar aturan"
+        with _Terisolasi():
+            m = operasional([_pipeline(d) for d in semua], harga_token)
+        teks = laporan_operasional(m, sumber, penyari)
+        print(teks)
+        if a.simpan:
+            _simpan_laporan("operasional", teks, m)
+        return 0
 
     mode = a.mode or [m for m in MODE_SEMUA if m != "model" or config.API_KEY]
     gold = muat_gold(a.gold)
@@ -286,14 +544,9 @@ def main(argv: list[str] | None = None) -> int:
     label_mode = {"aturan": "penalar aturan", "model": config.MODEL,
                   "tanpa-pemeriksa": penyari}
 
-    # Jejak evaluasi tidak dicampur dengan jejak aplikasi.
-    trace_asli = config.TRACE_DIR
-    with tempfile.TemporaryDirectory() as tmp:
-        config.TRACE_DIR = tmp
-        try:
-            m_per_mode = {m: nilai(jalankan_mode(m, data), gold) for m in mode}
-        finally:
-            config.TRACE_DIR = trace_asli
+    # Jejak, ambang, dan keputusan review evaluasi tidak dicampur dengan milik aplikasi.
+    with _Terisolasi():
+        m_per_mode = {m: nilai(jalankan_mode(m, data), gold) for m in mode}
 
     teks = laporan(m_per_mode, sumber, a.gold, label_mode, tak_berlabel, a.menit_manual)
     print(teks)

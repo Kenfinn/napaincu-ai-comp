@@ -25,7 +25,7 @@ Daftar ini berasal dari masukan tim setelah lolos finalis. Rinciannya ada di
 | D1 | Kandidat gold set dari arsip server | ✅ |
 | D2 | Gold set 30–50 pengumuman + baseline menit manual | ⏳ Ferry & Patrice |
 | D3 | Set uji serangan otomatis | ✅ (Antigravity) |
-| D4 | Skrip evaluasi lengkap (metrik Appendix 2) | ⬜ |
+| D4 | Skrip evaluasi lengkap dengan data asli | Claude | Latensi, biaya, retry, intervensi manusia, kategori error terisi angka asli | ✅ `--operasional` dan `--chat` (`eval/hasil/operasional-*`, `chat-*`). Akurasi menunggu gold set |
 | D5 | Laporan evaluasi, laporan keamanan, jejak audit asli | ⬜ |
 | E1 | README finalis | ⬜ dikerjakan paling akhir |
 | E2 | Deck, video, formulir | ⏳ Afinzaki |
@@ -86,6 +86,11 @@ koordinasinya di `docs/papan-agen.md`. Untuk kerja semalam tanpa pengawasan dipa
 | E1 | README finalis | Claude | ⬜ |
 | QA | Uji akhir di server, tiga bahasa | Claude + Afinzaki | ⬜ |
 | E2 | Kirim paket | Afinzaki | ⬜ |
+
+Temuan evaluasi operasional 10 Nov (578 pengumuman asli, penalar aturan): 0 terbit,
+96 ditahan (56 tanpa angka bersumber, 40 tanpa model valuasi), 7 diarsipkan triase,
+478 dilewati saringan pasal. Artinya pada data asli agent belum menerbitkan apa pun
+sampai B1 (pemetaan pasal) dan B2/D-b (valuasi otomatis di server) terpasang.
 
 ## 4. Menunggu orang lain
 
