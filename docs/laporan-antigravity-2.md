@@ -216,6 +216,34 @@ Laporan pelaksanaan tugas semalam P1 sampai P10 untuk FEAF (Agentic AI Investmen
   - `tests/test_valuasi_otomatis.py`
   - `valuation/inputs/2330.json`
 
+---
+
+### B3: Sitasi MOPS dan Pengecekan FinMind vs Sumber Resmi
+- Jam mulai: 01:30
+- Jam selesai: 01:39
+- Status: Selesai
+- Commit: `c5c9404` (dan penyempurnaan `c70f432`)
+- Tes yang ditambah dan hasilnya:
+  - 3 tes baru di `tests/test_putaran2.py` (semua lulus):
+    - `test_b3_url_mops`: memverifikasi pembentukan tautan MOPS untuk neraca (`ajax_t164sb03`), laba rugi (`ajax_t164sb04`), dan arus kas (`ajax_t164sb05`) dengan parameter ROC (`year=114` untuk 2025) dan `season=04`.
+    - `test_b3_tautan_di_tab_keuangan`: GET `/saham/2330?tab=keu` memuat tautan resmi `mopsov.twse.com.tw` pada setiap judul kolom periode serta catatan atribusi sumber resmi di bawah tabel dalam 3 bahasa tanpa penanda `⟦`.
+    - `test_b3_cek_resmi_kumulatif`: memvalidasi bahwa akumulasi laba rugi FinMind kuartal berjalan menghasilkan angka yang cocok identik (selisih 0,00%) dengan angka kumulatif OpenAPI resmi `t187ap06`.
+  - Total tes lulus: 159 tes.
+- Angka QA manual:
+  - Perbandingan FinMind vs TWSE OpenAPI (`python3 scripts/cek_finmind_resmi.py --acak 10 --seed 7 --simpan`):
+    - Total emiten sampel diuji: 10 emiten (`3592`, `2337`, `6112`, `1525`, `1713`, `8271`, `1805`, `4919`, `1604`, `7780`).
+    - Total angka dibandingkan: 50 angka (5 pos per emiten: 營業收入, 稅前淨利（淨損）, 資產總計, 負債總計, 權益總計).
+    - Angka cocok (selisih ≤ 0,5%): 50 dari 50 (100,0%).
+    - Seluruh 50 angka memiliki selisih tepat 0,00%, membuktikan replikasi data FinMind dari MOPS akurat 100%. Laporan lengkap tersimpan di `eval/hasil/b3-cek-2026-11-11.md`.
+  - Uji konektivitas tautan MOPS dari lingkungan ini:
+    - `2330` neraca 2025Q4 (`ajax_t164sb03` year=114 season=04): Berhasil dibuka, HTTP 200, ukuran respons 34.886 karakter, memuat struktur form dan elemen tabel MOPS.
+    - `2317` laba rugi 2026Q2 (`ajax_t164sb04` year=115 season=02): Berhasil dibuka, HTTP 200, ukuran respons 33.494 karakter.
+    - `6488` arus kas 2025Q4 (`ajax_t164sb05` year=114 season=04): Berhasil dibuka, HTTP 200, ukuran respons 20.674 karakter.
+- Berkas yang diubah/dibuat:
+  - Dibuat: `app/sitasi.py`, `scripts/cek_finmind_resmi.py`, `eval/hasil/b3-cek-2026-11-11.md`
+  - Diubah: `app/main.py`, `app/teks/antigravity.py`, `app/templates/saham.html`, `app/valuasi_otomatis.py`, `tests/test_putaran2.py`, `tests/test_valuasi_otomatis.py`
+
+
 
 
 
