@@ -48,7 +48,7 @@ terbaru; daftar kerja rinci ada di [`rencana-finalis.md`](./rencana-finalis.md).
 | Server | Dokploy milik Afinzaki, domain **https://feaf.afinzaki.my.id**, container port **8000**, volume **`/data`** |
 | Env server | `SENTINEL_KODE_AKSES`, `SENTINEL_TARIK_OTOMATIS_DETIK=600`, `SENTINEL_SERTAKAN_CONTOH=1`, `GEMINI_API_KEY`, `FINMIND_TOKEN` (opsional). Awalan `SENTINEL_` sengaja dipertahankan walau nama produk FEAF |
 | Deploy | Push ke `main` lalu tekan **Deploy** di Dokploy. Panduan: [`deploy-dokploy.md`](./deploy-dokploy.md) |
-| Tes | `python3 -m unittest discover -s tests` → **107 tes, semua lulus**, ±3 detik, **tanpa jaringan** (tes yang menyentuh pasar/penarik memutus jaringan) |
+| Tes | `python3 -m unittest discover -s tests` → **131 tes, semua lulus** (11 Nov dini hari), ±3 detik, **tanpa jaringan** (tes yang menyentuh pasar/penarik memutus jaringan) |
 | Sesi cloud Claude | Bisa: OpenAPI TWSE/TPEx, FinMind, Yahoo. **Tidak bisa: MOPS** (diblokir di luar Taiwan). Build Docker butuh CA proxy sesi (lihat `/root/.ccr/README.md`); Dockerfile di repo tidak perlu diubah |
 | Laptop Taiwan | Satu-satunya jalan ke MOPS: riwayat pengumuman ([`tarik-riwayat.md`](./tarik-riwayat.md)), uji tautan MOPS |
 
@@ -119,10 +119,11 @@ dengan profil risiko, cache jawaban model, impor riwayat, Docker/Dokploy, tiga b
 
 **Pembagian berkas Claude ↔ Antigravity** (keduanya di `main`): Antigravity memiliki
 `app/valuasi_otomatis.py`, `scripts/valuasi_otomatis.py`, `scripts/uji_serangan.py`,
-`tests/test_valuasi_otomatis.py`, `tests/test_serangan.py`, blok tab Valuation, dan
-menambah kunci i18n di **awal** `_T`. Claude memegang `app/agent/`, `app/pasar.py`,
-`app/umpan_balik.py`, `app/review.py`, `tests/test_agent.py`, dan menambah kunci i18n
-di **akhir** `_T`. Rinciannya di `prompt-antigravity.md`.
+`tests/test_valuasi_otomatis.py`, `tests/test_serangan.py`, dan blok tab Valuation.
+Claude memegang `app/agent/`, `app/pasar.py`, `app/umpan_balik.py`, `app/review.py`,
+`app/chat.py`, `tests/test_agent.py`, `scripts/evaluasi.py`. Kunci i18n BARU tidak lagi
+ditulis di `app/i18n.py`, melainkan di `app/teks/<nama>.py` (dimuat otomatis). Rincian
+putaran 2 di `prompt-antigravity-2.md` bagian 2.
 
 ## 7. Menunggu orang lain
 

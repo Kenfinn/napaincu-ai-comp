@@ -99,3 +99,34 @@ Hal yang dilarang meliputi membuat Pull Request (PR), menjalankan `git push --fo
 - **Perintah:** `git pull --rebase origin main && python3 -m unittest discover -s tests`
 - **Jumlah tes:** 108 tes
 - **Hasil:** OK (seluruh 108 tes lulus dalam 4,43 detik tanpa galat)
+
+---
+
+## E. Koreksi dari Claude (11 Nov dini hari)
+
+Dicocokkan dengan kode. Bagian ini mengalahkan jawaban di atas.
+
+1. **A2, urutan state.** Urutan yang benar, sesuai `app/agent/pipeline.py`:
+   FETCHED → VALIDATED → SCREENED → TRIAGED · EXTRACTED (penyari) → TRIAGED · confidence
+   (gerbang skor) → VERIFIED · sumber (7 cek) → VALUED (hitung ulang DCF) → VERIFIED ·
+   hitungan (sirkularitas) → PUBLISHED, HELD, atau ARCHIVED. HUMAN REVIEW muncul sebagai
+   langkah terakhir bila ada keputusan manusia. Pemeriksa sumber jalan SEBELUM VALUED.
+2. **A3, keyakinan rendah.** Menyetujui kasus HELD jenis `keyakinan` tidak menerbitkan;
+   kasus itu diteruskan ke pemeriksa dan tetap bisa ditahan lagi. HELD `tanpa_angka`
+   hanya bisa diarsipkan.
+3. **A6, beta.** Saat ini beta masih dari Yahoo. Harga harian resmi TWSE/TPEx baru
+   dipakai setelah R1. Harga di berkas manual 2330.json juga lama (14 Sep, 2.380).
+4. **A7, data ke Gemini.** Selain teks pengumuman publik, Gemini juga menerima fakta
+   ringkasan saham (angka publik dari OpenAPI dan FinMind) di `app/ringkasan.py`, dan
+   pertanyaan pengguna serta hasil alat di Tanya FEAF (`app/chat.py`, baru).
+5. **B1–B3.** Benar. Jumlah tes dan aturan i18n di `konteks-sesi.md` sudah diperbarui;
+   per 11 Nov dini hari ada 131 tes.
+6. **C1.** Putaran 2 dijalankan satu agent berurutan memakai
+   `docs/prompt-antigravity-berurutan.md` (P1 sampai P10), urutan R1 → R2 → R3 → D-a →
+   D-c → D-b → B3 → R4.
+7. **C2.** Ya. QA manual R1 cukup 2330 dan 6488 (25 bulan masing-masing + TAIEX, sekitar
+   75 permintaan dengan jeda 2 detik). Bulan yang sudah lewat tersimpan di cache, jadi
+   tidak diambil ulang. Tes otomatis memakai sampel, tanpa jaringan.
+8. **Berkas baru milik Claude** sejak kamu membaca: `app/chat.py`, `app/templates/chat.html`,
+   `app/teks/chat.py`, `tests/test_chat.py`, `tests/test_evaluasi_d4.py`, `eval/chat_uji.csv`,
+   dan baris `include_router` di akhir `app/main.py`. Jangan disentuh.

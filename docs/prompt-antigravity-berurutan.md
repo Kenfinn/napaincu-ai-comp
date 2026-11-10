@@ -53,8 +53,8 @@ ATURAN UNTUK SEMUA PROMPT P1–P10 (baca sekali, berlaku sampai P10):
 Langkah P1:
 1. git pull --rebase origin main
 2. python3 -m unittest discover -s tests → catat jumlah dan hasil (harus OK).
-3. Pastikan docs/pemahaman-antigravity.md ada (hasil prompt baca dokumen). Kalau belum ada,
-   tulis dulu sesuai prompt baca dokumen, commit, push.
+3. Pastikan docs/pemahaman-antigravity.md ada (hasil prompt baca dokumen), lalu baca bagian
+   "E. Koreksi dari Claude" di berkas itu. Koreksi itu mengalahkan jawabanmu sebelumnya.
 4. Pasang skill: anti-slop (`agy plugin install https://github.com/miqdadbadjuber/anti-slop`,
    mode "during") dan humanizer (`npx skills add blader/humanizer`, atau salin SKILL.md
    dari https://github.com/blader/humanizer ke folder skill). Gagal? Catat, lanjut tanpa.
@@ -269,7 +269,7 @@ Aturan P1 berlaku.
 ## Pagi hari: cara mengecek
 
 1. `git pull origin main`, lalu `python3 -m unittest discover -s tests`. Hasilnya harus OK,
-   dengan jumlah tes lebih dari 108.
+   dengan jumlah tes lebih dari 131.
 2. Buka `docs/laporan-antigravity-2.md`. Lihat tabel item dan bagian "Keputusan yang saya
    ambil sendiri".
 3. Kalau rantai berhenti di tengah (laporan tidak punya bagian P10), lihat item terakhir

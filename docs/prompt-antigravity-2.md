@@ -31,7 +31,8 @@ SYSTEX). Claude juga bekerja di repo ini, di branch `main`, pada waktu yang sama
 0.3 Jalankan:
         git pull --rebase origin main
         python3 -m unittest discover -s tests
-    Hasil harus "OK" dengan 107 tes. Kalau tidak, BERHENTI dan tulis di laporan.
+    Hasil harus "OK" (per 11 Nov dini hari: 131 tes; jumlah bisa bertambah karena Claude
+    juga bekerja). Kalau ada yang GAGAL, BERHENTI dan tulis di laporan.
 
 # 1. Aturan kerja
 
@@ -295,7 +296,7 @@ Pemeriksa D-b:
   `assumptions.terminal_growth_ceiling` dan `risk_free_rate` dari berkas manual;
   `asumsi_dari` = "manual".
 - Tes `test_db_tanpa_cache_pakai_manual`: tanpa cache → hasil sama dengan berkas manual.
-- Semua 107 tes lama tetap lulus.
+- Semua tes lama tetap lulus.
 - QA manual: buka /saham/2330?tab=valuasi dalam tiga bahasa; tulis di laporan g tersirat
   dan WACC sebelum dan sesudah D-b.
 
@@ -402,7 +403,7 @@ Pemeriksa R4:
 
 # 4. Pemeriksaan akhir (sebelum laporan)
 
-1. `python3 -m unittest discover -s tests` → OK, catat jumlah tes (107 + tes barumu).
+1. `python3 -m unittest discover -s tests` → OK, catat jumlah tes (tes lama + tes barumu).
 2. Ulangi dengan Wi-Fi mati → tetap OK.
 3. `git grep -nE "AIza|FINMIND_TOKEN=|發言人電話|yahoo"` → kosong (kecuali kata "yahoo" di
    docs/pengungkapan-pihak-ketiga.md bila menjelaskan bahwa Yahoo tidak dipakai lagi).
@@ -437,7 +438,7 @@ Jangan menulis "semua lulus" bila ada pemeriksa yang gagal atau dilewati.
 
 ## Cara Afinzaki mengecek hasilnya
 
-1. Ambil kode terbaru dan jalankan tes. Harus "OK", jumlahnya lebih dari 107.
+1. Ambil kode terbaru dan jalankan tes. Harus "OK", jumlahnya lebih dari 131.
 
    ```bash
    git pull origin main
