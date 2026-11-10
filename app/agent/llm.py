@@ -56,12 +56,65 @@ def tersedia() -> bool:
     return bool(config.API_KEY)
 
 
+# Model yang benar-benar dipakai. Bisa berbeda dari config.MODEL bila nama itu sudah
+# tidak tersedia (Google memensiunkan model secara berkala; 404 di generateContent).
+_model_aktif: str | None = None
+
+
+def model_dipakai() -> str:
+    return _model_aktif or config.MODEL
+
+
 def nama_model() -> str:
-    return config.MODEL if tersedia() else "penalar-aturan"
+    return model_dipakai() if tersedia() else "penalar-aturan"
+
+
+def _versi(nama: str) -> tuple:
+    angka = re.findall(r"\d+(?:\.\d+)?", nama)
+    return tuple(float(a) for a in angka[:1]) or (0.0,)
+
+
+def pilih_model(daftar: list[str], diminta: str) -> str | None:
+    """Pilih pengganti dari daftar model yang mendukung generateContent.
+
+    Urutan: nama yang diminta bila ada → flash stabil versi tertinggi → alias
+    flash-latest → flash apa pun. Varian lite/image/tts/live/thinking/preview/exp
+    dihindari selama ada pilihan stabil, karena perilakunya berbeda dan bisa hilang.
+    """
+    if diminta in daftar:
+        return diminta
+    flash = [m for m in daftar if "flash" in m]
+    hindari = ("lite", "image", "tts", "live", "audio", "thinking", "preview", "exp", "8b")
+    stabil = [m for m in flash if not any(h in m for h in hindari) and "latest" not in m]
+    if stabil:
+        return sorted(stabil, key=_versi, reverse=True)[0]
+    alias = [m for m in flash if "latest" in m and "lite" not in m]
+    if alias:
+        return alias[0]
+    return flash[0] if flash else None
+
+
+def _daftar_model() -> list[str]:
+    url = f"{config.GEMINI_URL}?key={config.API_KEY}&pageSize=200"
+    with urllib.request.urlopen(url, timeout=config.TIMEOUT) as r:
+        isi = json.loads(r.read().decode("utf-8"))
+    return [m["name"].split("/", 1)[-1] for m in isi.get("models", [])
+            if "generateContent" in m.get("supportedGenerationMethods", [])]
+
+
+def _cari_pengganti() -> str | None:
+    global _model_aktif
+    try:
+        pilihan = pilih_model(_daftar_model(), config.MODEL)
+    except (urllib.error.URLError, ValueError, KeyError):
+        return None
+    if pilihan:
+        _model_aktif = pilihan
+    return pilihan
 
 
 def _panggil_gemini(instruksi: str, dokumen: str) -> tuple[dict, dict]:
-    url = f"{config.GEMINI_URL}/{config.MODEL}:generateContent?key={config.API_KEY}"
+    url = f"{config.GEMINI_URL}/{model_dipakai()}:generateContent?key={config.API_KEY}"
     badan = {
         "systemInstruction": {"parts": [{"text": SISTEM}]},
         "contents": [{"parts": [{"text": f"{instruksi}\n\n<dokumen>\n{dokumen}\n</dokumen>"}]}],
@@ -114,7 +167,7 @@ CACHE_DIR = os.path.join(config.DATA_DIR, "cache_model")
 def _kunci_cache(instruksi: str, dokumen: str) -> str:
     """Pengumuman yang sama + prompt yang sama + model yang sama → jawaban yang sama
     (suhu 0). Versi prompt ikut di kunci, jadi mengubah prompt otomatis memanggil ulang."""
-    bahan = "\u0000".join((config.PENYEDIA, config.MODEL, VERSI_PROMPT, SISTEM, instruksi, dokumen))
+    bahan = "\u0000".join((config.PENYEDIA, model_dipakai(), VERSI_PROMPT, SISTEM, instruksi, dokumen))
     return hashlib.sha256(bahan.encode("utf-8")).hexdigest()
 
 
@@ -152,14 +205,15 @@ def tanya(instruksi: str, dokumen: str) -> tuple[dict, dict]:
     if lama is not None:
         asli = lama.get("meta_asli") or {}
         return lama["jawaban"], {
-            "penyedia": config.PENYEDIA, "model": config.MODEL, "versi_prompt": VERSI_PROMPT,
-            "retry": 0, "cadangan": False, "cache": True,
+            "penyedia": config.PENYEDIA, "model": model_dipakai(), "model_diminta": config.MODEL,
+            "versi_prompt": VERSI_PROMPT, "retry": 0, "cadangan": False, "cache": True,
             "token_masuk": 0, "token_keluar": 0, "biaya_usd": 0.0, "latensi_ms": 0,
             "token_masuk_asli": asli.get("token_masuk", 0),
             "token_keluar_asli": asli.get("token_keluar", 0),
         }
     jawaban, meta = _tanya_model(instruksi, dokumen)
-    _tulis_cache(kunci, jawaban, meta)
+    # Kunci dihitung ulang: model bisa saja baru diganti di tengah panggilan (404).
+    _tulis_cache(_kunci_cache(instruksi, dokumen), jawaban, meta)
     return jawaban, meta
 
 
@@ -175,22 +229,39 @@ def _tanya_model(instruksi: str, dokumen: str) -> tuple[dict, dict]:
 
     mulai = time.monotonic()
     galat: list[str] = []
-    for percobaan in range(config.RETRY_MAKS + 1):
+    sudah_ganti = False
+    percobaan = 0
+    while percobaan <= config.RETRY_MAKS:
         try:
             hasil, meta = _panggil_gemini(instruksi, dokumen)
             meta.update({
                 "penyedia": config.PENYEDIA,
-                "model": config.MODEL,
+                "model": model_dipakai(),
+                "model_diminta": config.MODEL,
                 "versi_prompt": VERSI_PROMPT,
                 "retry": percobaan,
                 "cadangan": False,
                 "latensi_ms": int((time.monotonic() - mulai) * 1000),
             })
             return hasil, meta
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, GagalModel) as e:
+        except urllib.error.HTTPError as e:
+            galat.append(f"percobaan {percobaan + 1} ({model_dipakai()}): {e}")
+            if e.code == 404 and not sudah_ganti:
+                # Model tidak ditemukan — mengulang dengan nama yang sama sia-sia.
+                # Cari pengganti sekali, lalu coba lagi tanpa memakan jatah retry.
+                sudah_ganti = True
+                pengganti = _cari_pengganti()
+                if pengganti and pengganti != config.MODEL:
+                    galat.append(f"model {config.MODEL} tidak tersedia, diganti {pengganti}")
+                    continue
+                raise GagalModel("; ".join(galat + ["tidak ada model flash pengganti"])) from e
+            if e.code in (400, 401, 403):
+                raise GagalModel("; ".join(galat + ["kunci API ditolak atau tidak berizin"])) from e
+        except (urllib.error.URLError, TimeoutError, GagalModel) as e:
             galat.append(f"percobaan {percobaan + 1}: {e}")
-            if percobaan < config.RETRY_MAKS:
-                time.sleep(1.5 * (percobaan + 1))
+        if percobaan < config.RETRY_MAKS:
+            time.sleep(1.5 * (percobaan + 1))
+        percobaan += 1
 
     raise GagalModel("; ".join(galat))
 

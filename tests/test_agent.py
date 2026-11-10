@@ -374,10 +374,16 @@ class TestDeploy(unittest.TestCase):
     def setUp(self):
         import tempfile
         from fastapi.testclient import TestClient
-        from app import config, main, tarik
-        self.config, self.tarik, self.main = config, tarik, main
+        from app import config, main, pasar, tarik
+        self.config, self.tarik, self.main, self.pasar = config, tarik, main, pasar
         self._tmp = tempfile.TemporaryDirectory()
         self._asli = (config.KODE_AKSES, tarik.WATCHLIST_FILE, config.PARSED_DIR, config.TRACE_DIR)
+        self._asli_pasar = (pasar.CACHE_DIR, pasar._ambil_json)
+        pasar.CACHE_DIR = os.path.join(self._tmp.name, "pasar")
+
+        def tanpa_jaringan(*_a, **_k):
+            raise ConnectionError("tes tanpa jaringan")
+        pasar._ambil_json = tanpa_jaringan
         config.KODE_AKSES = "uji-rahasia"
         tarik.WATCHLIST_FILE = os.path.join(self._tmp.name, "watchlist.json")
         config.PARSED_DIR = os.path.join(self._tmp.name, "parsed")
@@ -388,6 +394,7 @@ class TestDeploy(unittest.TestCase):
     def tearDown(self):
         (self.config.KODE_AKSES, self.tarik.WATCHLIST_FILE,
          self.config.PARSED_DIR, self.config.TRACE_DIR) = self._asli
+        self.pasar.CACHE_DIR, self.pasar._ambil_json = self._asli_pasar
         self.main._cache = None
         self._tmp.cleanup()
 
@@ -676,6 +683,68 @@ class TestRingkasanAnalisis(TestHalamanSaham):
                     r = self.c.get(f"/saham/2330?lang={bhs}&risiko={risiko}")
                     self.assertEqual(r.status_code, 200)
                     self.assertNotIn("⟦", r.text)
+
+
+class TestModelPengganti(unittest.TestCase):
+    """Nama model yang dipensiunkan (404) tidak boleh membuat agent diam-diam jatuh ke aturan."""
+
+    def setUp(self):
+        import tempfile
+        from app import config
+        from app.agent import llm
+        self.config, self.llm = config, llm
+        self._tmp = tempfile.TemporaryDirectory()
+        self._asli = (llm.CACHE_DIR, llm._panggil_gemini, llm._daftar_model, llm._model_aktif,
+                      config.API_KEY, config.MODEL, config.RETRY_MAKS)
+        llm.CACHE_DIR = self._tmp.name
+        llm._model_aktif = None
+        config.API_KEY, config.MODEL, config.RETRY_MAKS = "uji", "gemini-2.5-flash", 0
+
+    def tearDown(self):
+        (self.llm.CACHE_DIR, self.llm._panggil_gemini, self.llm._daftar_model, self.llm._model_aktif,
+         self.config.API_KEY, self.config.MODEL, self.config.RETRY_MAKS) = self._asli
+        self._tmp.cleanup()
+
+    def test_pilih_model(self):
+        daftar = ["gemini-3.0-flash", "gemini-3.0-flash-lite", "gemini-flash-latest",
+                  "gemini-3.1-flash-preview", "gemini-3.0-pro", "gemini-2.0-flash-image"]
+        self.assertEqual(self.llm.pilih_model(daftar, "gemini-2.5-flash"), "gemini-3.0-flash")
+        self.assertEqual(self.llm.pilih_model(daftar + ["gemini-2.5-flash"], "gemini-2.5-flash"),
+                         "gemini-2.5-flash")
+        self.assertEqual(self.llm.pilih_model(["gemini-flash-latest", "gemini-x-pro"], "a"), "gemini-flash-latest")
+        self.assertIsNone(self.llm.pilih_model(["gemini-3.0-pro"], "a"))
+
+    def test_404_diganti_lalu_berhasil(self):
+        import io
+        import urllib.error
+        dipakai = []
+
+        def panggil(instruksi, dokumen):
+            dipakai.append(self.llm.model_dipakai())
+            if self.llm.model_dipakai() == "gemini-2.5-flash":
+                raise urllib.error.HTTPError("u", 404, "Not Found", {}, io.BytesIO(b""))
+            return {"temuan": []}, {"token_masuk": 1, "token_keluar": 1, "biaya_usd": 0.0}
+        self.llm._panggil_gemini = panggil
+        self.llm._daftar_model = lambda: ["gemini-3.0-flash", "gemini-3.0-pro"]
+        jawab, meta = self.llm.tanya("i", "d")
+        self.assertEqual(dipakai, ["gemini-2.5-flash", "gemini-3.0-flash"])
+        self.assertEqual(meta["model"], "gemini-3.0-flash")
+        self.assertEqual(meta["model_diminta"], "gemini-2.5-flash")
+        self.assertEqual(self.llm.nama_model(), "gemini-3.0-flash")
+
+    def test_kunci_ditolak_tidak_diulang(self):
+        import io
+        import urllib.error
+        n = []
+
+        def panggil(i, d):
+            n.append(1)
+            raise urllib.error.HTTPError("u", 403, "Forbidden", {}, io.BytesIO(b""))
+        self.llm._panggil_gemini = panggil
+        self.config.RETRY_MAKS = 2
+        with self.assertRaises(self.llm.GagalModel):
+            self.llm.tanya("i", "d")
+        self.assertEqual(len(n), 1)
 
 
 if __name__ == "__main__":
