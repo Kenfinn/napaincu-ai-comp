@@ -67,6 +67,7 @@ SENTINEL_TARIK_OTOMATIS_DETIK=600
 | Variabel | Gunanya |
 |---|---|
 | `SENTINEL_KODE_AKSES` | Tanpa kode ini, pengunjung hanya bisa melihat. Tombol tambah/hapus watchlist dan *Check now* hanya jalan setelah membuka `/akses?kode=...` sekali |
+| `SENTINEL_KUNCI_BACA` | `1` = kunci seluruh halaman baca (termasuk feed, saham, valuasi, docs). Hanya aktif bila `SENTINEL_KODE_AKSES` terisi. Pengunjung tanpa kode melihat halaman 401. Tautan yang dibagikan ke juri: `https://<domain>/akses?kode=<kode>` |
 | `SENTINEL_SERTAKAN_CONTOH` | `1` = empat kasus contoh (terbit, injeksi, USD, dilewati) tetap tampil di samping data asli, berlabel "sample" |
 | `SENTINEL_TARIK_OTOMATIS_DETIK` | Periksa pengumuman tiap N detik (minimal 300). `600` = tiap 10 menit, 24 jam, supaya riwayat terkumpul sendiri |
 | `FINMIND_TOKEN` | **Opsional, disarankan.** Token gratis dari finmindtrade.com untuk tab Keuangan di halaman saham. Tanpa token, kuotanya 300 permintaan per jam (cukup untuk ±100 saham karena di-cache 12 jam) |

@@ -207,3 +207,84 @@ class TestR2Penafian(unittest.TestCase):
                         f"Kata terlarang '{kt}' ditemukan di kunci '{k}' bahasa '{lang}': {teks}",
                     )
 
+
+class TestR3KunciBaca(unittest.TestCase):
+    """Pemeriksa untuk item R3: kunci akses untuk halaman baca."""
+
+    def setUp(self):
+        self._asli_kunci_baca = config.KUNCI_BACA
+        self._asli_kode_akses = config.KODE_AKSES
+
+    def tearDown(self):
+        config.KUNCI_BACA = self._asli_kunci_baca
+        config.KODE_AKSES = self._asli_kode_akses
+
+    def test_r3_mati_secara_bawaan(self):
+        """Tanpa setelan KUNCI_BACA, GET / menghasilkan 200."""
+        config.KUNCI_BACA = False
+        config.KODE_AKSES = ""
+        c = TestClient(main.app)
+        r = c.get("/")
+        self.assertEqual(r.status_code, 200)
+
+    def test_r3_terkunci_tanpa_kode(self):
+        """KUNCI_BACA aktif + KODE_AKSES 'uji': / 401 & form, /api/* 401 JSON, /docs 401, /sehat 200, /static/* 200."""
+        config.KUNCI_BACA = True
+        config.KODE_AKSES = "uji"
+        c = TestClient(main.app)
+
+        # GET / -> 401 dan memuat form kode
+        r_feed = c.get("/")
+        self.assertEqual(r_feed.status_code, 401)
+        self.assertIn("<form", r_feed.text)
+        self.assertIn('name="kode"', r_feed.text)
+
+        # GET /api/peringatan -> 401 JSON
+        r_api = c.get("/api/peringatan")
+        self.assertEqual(r_api.status_code, 401)
+        self.assertEqual(r_api.json(), {"galat": "perlu kode akses"})
+
+        # GET /docs -> 401
+        r_docs = c.get("/docs")
+        self.assertEqual(r_docs.status_code, 401)
+
+        # GET /sehat -> 200
+        r_sehat = c.get("/sehat")
+        self.assertEqual(r_sehat.status_code, 200)
+
+        # GET /static/app.css -> 200
+        r_css = c.get("/static/app.css")
+        self.assertEqual(r_css.status_code, 200)
+
+    def test_r3_terbuka_dengan_kode(self):
+        """GET /akses?kode=uji lalu GET / menghasilkan 200."""
+        config.KUNCI_BACA = True
+        config.KODE_AKSES = "uji"
+        c = TestClient(main.app)
+
+        r_akses = c.get("/akses?kode=uji")
+        self.assertEqual(r_akses.status_code, 200)
+
+        r_feed = c.get("/")
+        self.assertEqual(r_feed.status_code, 200)
+
+    def test_r3_abaikan_bila_kode_kosong(self):
+        """KUNCI_BACA aktif + KODE_AKSES '' menghasilkan GET / 200 (diabaikan karena kode kosong)."""
+        config.KUNCI_BACA = True
+        config.KODE_AKSES = ""
+        c = TestClient(main.app)
+        r = c.get("/")
+        self.assertEqual(r.status_code, 200)
+
+    def test_r3_halaman_kunci_tiga_bahasa(self):
+        """/?lang=zh, /?lang=en, /?lang=id saat terkunci menghasilkan 401 dan tidak ada penanda tak terterjemahkan '⟦'."""
+        config.KUNCI_BACA = True
+        config.KODE_AKSES = "uji"
+        c = TestClient(main.app)
+
+        for lang in ("en", "zh", "id"):
+            r = c.get(f"/?lang={lang}")
+            self.assertEqual(r.status_code, 401)
+            self.assertNotIn("⟦", r.text, f"Penanda tak terterjemahkan ditemukan di bahasa {lang}")
+
+

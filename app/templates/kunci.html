@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block judul %}{{ t('kunci.judul') }} · FEAF{% endblock %}
+{% block isi %}
+
+<div class="kepala">
+  <div>
+    <div class="kicker">{{ t('kunci.kicker') }}</div>
+    <h1>{{ t('kunci.judul') }}</h1>
+  </div>
+</div>
+
+<div class="kartu" style="max-width:480px; margin-top:20px;">
+  <p style="margin-top:0; color:var(--abu-2); font-size:13.5px; line-height:1.5;">
+    {{ t('kunci.penjelasan') }}
+  </p>
+  <form method="get" action="/akses">
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <label for="input-kode" style="font-size:12px; font-weight:600; color:var(--teks);">
+        {{ t('kunci.label_kode') }}
+      </label>
+      <input
+        id="input-kode"
+        type="text"
+        name="kode"
+        placeholder="{{ t('kunci.placeholder') }}"
+        autocomplete="off"
+        autofocus
+        required
+        class="mono"
+        style="padding:10px 12px; border:1px solid var(--garis); border-radius:6px; font-size:14px;"
+      >
+      <div style="margin-top:10px;">
+        <button class="tombol" type="submit">{{ t('kunci.tombol') }}</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

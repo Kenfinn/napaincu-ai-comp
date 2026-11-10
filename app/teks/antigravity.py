@@ -1,0 +1,17 @@
+"""Kunci terjemahan tambahan untuk pekerjaan Antigravity (Putaran 2: R3, D-a, dll.)."""
+
+from __future__ import annotations
+
+T: dict[str, tuple[str, str, str]] = {
+    # --- R3: Kunci baca ---
+    "kunci.judul": ("Access Code Required", "需要存取碼", "Perlu Kode Akses"),
+    "kunci.kicker": ("Restricted Access", "存取限制", "Akses Terbatas"),
+    "kunci.penjelasan": (
+        "Enter the access code to access FEAF research and analysis pages.",
+        "請輸入存取碼以瀏覽 FEAF 研究與分析頁面。",
+        "Masukkan kode akses untuk membuka halaman riset dan analisis FEAF.",
+    ),
+    "kunci.label_kode": ("Access code", "存取碼", "Kode akses"),
+    "kunci.tombol": ("Unlock", "解鎖", "Buka Akses"),
+    "kunci.placeholder": ("Enter access code...", "請輸入存取碼...", "Masukkan kode akses..."),
+}

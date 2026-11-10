@@ -199,11 +199,35 @@ def _tolak_akses(ke: str) -> RedirectResponse:
     return _balik(ke, i18n.pesan("msg.perlu_akses"), ok=False)
 
 
+@app.middleware("http")
+async def kunci_baca_middleware(request: Request, call_next):
+    kunci_aktif = getattr(config, "KUNCI_BACA", False) and bool(getattr(config, "KODE_AKSES", ""))
+    if kunci_aktif:
+        path = request.url.path
+        jalur_terbuka = (
+            path == "/akses"
+            or path == "/sehat"
+            or path.startswith("/static/")
+            or path.startswith("/bahasa/")
+            or path == "/api/impor"
+        )
+        if not jalur_terbuka and not _boleh_ubah(request):
+            if path.startswith("/api/"):
+                return JSONResponse({"galat": "perlu kode akses"}, status_code=401)
+            return tpl.TemplateResponse(
+                request=request,
+                name="kunci.html",
+                context=konteks(request, "kunci"),
+                status_code=401,
+            )
+    return await call_next(request)
+
+
 @app.get("/akses", include_in_schema=False)
 def akses(kode: str = ""):
     """Buka tombol ubah untuk browser ini: /akses?kode=<SENTINEL_KODE_AKSES>."""
     if config.KODE_AKSES and hmac.compare_digest(kode, config.KODE_AKSES):
-        r = _balik("/watchlist", i18n.pesan("msg.akses_ok"))
+        r = _balik("/", i18n.pesan("msg.akses_ok"))
         r.set_cookie("akses", kode, max_age=60 * 60 * 24 * 30, httponly=True, samesite="lax")
         return r
     return _balik("/", i18n.pesan("msg.akses_salah"), ok=False)

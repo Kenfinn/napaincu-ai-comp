@@ -50,6 +50,19 @@ TARIK_OTOMATIS_DETIK = int(os.environ.get("SENTINEL_TARIK_OTOMATIS_DETIK", "0") 
 # hanya jalan setelah membuka /akses?kode=<isi ini> sekali. Halaman baca tetap terbuka.
 KODE_AKSES = os.environ.get("SENTINEL_KODE_AKSES", "")
 
+# Kunci baca: minta kode akses untuk semua halaman baca (untuk dinyalakan saat lomba).
+# Bawaan mati (0). Hanya berlaku bila KODE_AKSES tidak kosong.
+_raw_kunci_baca = os.environ.get("SENTINEL_KUNCI_BACA", "0") == "1"
+if _raw_kunci_baca and not KODE_AKSES:
+    import sys
+    print(
+        "[config] PERINGATAN: SENTINEL_KUNCI_BACA aktif tetapi SENTINEL_KODE_AKSES kosong. Kunci baca diabaikan.",
+        file=sys.stderr,
+    )
+    KUNCI_BACA = False
+else:
+    KUNCI_BACA = _raw_kunci_baca
+
 # Tampilkan empat kasus contoh berdampingan dengan data asli (ditandai "contoh"),
 # supaya kasus injeksi, mata uang asing, dan terbit tetap bisa ditunjukkan.
 SERTAKAN_CONTOH = os.environ.get("SENTINEL_SERTAKAN_CONTOH", "0") == "1"
