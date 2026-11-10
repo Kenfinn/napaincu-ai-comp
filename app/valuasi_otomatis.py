@@ -750,7 +750,7 @@ def bangun(kode: str) -> dict:
 
 
 def _jalur_cache(kode: str) -> Path:
-    return CACHE_DIR / f"{kode}.json"
+    return Path(CACHE_DIR) / f"{kode}.json"
 
 
 def baca_cache(kode: str, terima_basi: bool = True) -> dict | None:
@@ -770,7 +770,7 @@ def baca_cache(kode: str, terima_basi: bool = True) -> dict | None:
 
 def simpan_cache(kode: str, data: dict) -> Path:
     """Simpan hasil `bangun(kode)` ke `DATA_DIR/valuasi_otomatis/{kode}.json`."""
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    Path(CACHE_DIR).mkdir(parents=True, exist_ok=True)
     f = _jalur_cache(kode)
     f.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     return f

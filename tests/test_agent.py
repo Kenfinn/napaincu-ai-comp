@@ -24,6 +24,29 @@ sys.path.insert(0, ROOT)
 from app import store                                    # noqa: E402
 from app.agent import extract, pipeline, recompute, screen, verify   # noqa: E402
 
+# --- D-b (Antigravity): isolasi cache valuasi otomatis selama tes agent ---
+_tmp_valuasi_otomatis = None
+_asli_cache_valuasi = None
+
+
+def setUpModule():
+    global _tmp_valuasi_otomatis, _asli_cache_valuasi
+    from pathlib import Path
+    import tempfile
+    from app import valuasi_otomatis
+    _tmp_valuasi_otomatis = tempfile.TemporaryDirectory()
+    _asli_cache_valuasi = valuasi_otomatis.CACHE_DIR
+    valuasi_otomatis.CACHE_DIR = Path(_tmp_valuasi_otomatis.name)
+
+
+def tearDownModule():
+    global _tmp_valuasi_otomatis, _asli_cache_valuasi
+    from app import valuasi_otomatis
+    if _asli_cache_valuasi is not None:
+        valuasi_otomatis.CACHE_DIR = _asli_cache_valuasi
+    if _tmp_valuasi_otomatis is not None:
+        _tmp_valuasi_otomatis.cleanup()
+
 
 def _baca_json(*bagian: str):
     with open(os.path.join(ROOT, *bagian), encoding="utf-8") as f:

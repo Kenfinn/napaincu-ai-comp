@@ -16,6 +16,7 @@ tercepat kehilangan kepercayaan juri.
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 
@@ -71,13 +72,55 @@ def id_pengumuman(rec: dict) -> str:
 
 
 def muat_valuasi(kode: str) -> dict | None:
-    path = os.path.join(config.VALUATION_DIR, f"{kode}.json")
-    if os.path.exists(path):
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
     from . import valuasi_otomatis
 
-    return valuasi_otomatis.dari_cache_untuk_pipeline(kode)
+    path = os.path.join(config.VALUATION_DIR, f"{kode}.json")
+    manual: dict | None = None
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                manual = json.load(f)
+        except (OSError, ValueError):
+            manual = None
+
+    auto = valuasi_otomatis.dari_cache_untuk_pipeline(kode)
+
+    if auto is not None and valuasi_otomatis.layak_dcf(auto) and manual is not None:
+        gabung = copy.deepcopy(auto)
+        ditimpa: list[str] = []
+
+        if "assumptions" in manual:
+            gabung["assumptions"] = copy.deepcopy(manual["assumptions"])
+            ditimpa.append("assumptions")
+
+        if "wacc_inputs" in manual:
+            if "wacc_inputs" not in gabung:
+                gabung["wacc_inputs"] = {}
+            for k in ("risk_free_rate", "equity_risk_premium"):
+                if k in manual["wacc_inputs"]:
+                    gabung["wacc_inputs"][k] = manual["wacc_inputs"][k]
+                    ditimpa.append(f"wacc_inputs.{k}")
+
+        tidak_ada = list(auto.get("tidak_tersedia", []))
+        bs_manual = manual.get("balance_sheet", {})
+        bs_gabung = gabung.setdefault("balance_sheet", {})
+        sisa_tidak_ada = []
+        for fld in tidak_ada:
+            if fld in bs_manual:
+                bs_gabung[fld] = bs_manual[fld]
+                ditimpa.append(f"balance_sheet.{fld}")
+            else:
+                sisa_tidak_ada.append(fld)
+        gabung["tidak_tersedia"] = sisa_tidak_ada
+
+        gabung["asumsi_dari"] = "manual"
+        gabung["ditimpa_manual"] = ditimpa
+        return gabung
+
+    if manual is not None:
+        return manual
+
+    return auto
 
 
 def emiten_tervaluasi() -> list[str]:

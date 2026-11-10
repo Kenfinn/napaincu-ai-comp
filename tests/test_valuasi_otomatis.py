@@ -266,15 +266,27 @@ class TestValuasiOtomatis(_LingkunganOfflineMixin, unittest.TestCase):
         self.assertEqual(d["alasan_i18n"]["kode"], "va.otomatis.kurang_3_tahun")
 
     def test_berkas_manual_selalu_menang_dan_store_tanpa_jaringan(self):
-        """store.muat_valuasi mengutamakan berkas manual dan tidak pernah memanggil bangun()."""
+        """store.muat_valuasi memadukan otomatis + asumsi manual bila ada cache, manual murni bila tanpa cache, dan tidak pernah memanggil bangun()."""
         oto_2330 = valuasi_otomatis.bangun("2330")
         valuasi_otomatis.simpan_cache("2330", oto_2330)
 
-        # Berkas manual 2330 ada → harus mengembalikan berkas manual (otomatis tidak True)
+        # Ada cache + ada manual → otomatis dengan asumsi manual (D-b)
         hasil_2330 = store.muat_valuasi("2330")
         self.assertIsNotNone(hasil_2330)
-        self.assertFalse(hasil_2330.get("otomatis", False))
-        self.assertEqual(hasil_2330["market"]["price_per_share"], MANUAL_2330["market"]["price_per_share"])
+        self.assertEqual(hasil_2330.get("asumsi_dari"), "manual")
+        self.assertEqual(hasil_2330["assumptions"]["terminal_growth_ceiling"], MANUAL_2330["assumptions"]["terminal_growth_ceiling"])
+
+        # Tanpa cache otomatis → berkas manual apa adanya
+        with tempfile.TemporaryDirectory() as tmp_kosong:
+            asli = valuasi_otomatis.CACHE_DIR
+            try:
+                valuasi_otomatis.CACHE_DIR = Path(tmp_kosong)
+                murni = store.muat_valuasi("2330")
+                self.assertIsNotNone(murni)
+                self.assertFalse(murni.get("otomatis", False))
+                self.assertEqual(murni["market"]["price_per_share"], MANUAL_2330["market"]["price_per_share"])
+            finally:
+                valuasi_otomatis.CACHE_DIR = asli
 
         # Untuk emiten yang belum ada di cache otomatis, store.muat_valuasi harus mengembalikan None
         # tanpa memanggil valuasi_otomatis.bangun

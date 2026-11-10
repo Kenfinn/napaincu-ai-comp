@@ -6,7 +6,10 @@
   <div>
     <div class="kicker">
       {{ r.code }} · {{ t('va.per', tgl=r.as_of) }} · {{ t('va.satuan') }}
-      {% if r.wacc_inputs.otomatis %}
+      {% if va and va.asumsi_dari == 'manual' %}
+        · <span class="lencana l-ditahan">{{ t('va.mode.otomatis_asumsi') }}</span>
+        {% if va.ditimpa_manual %} · <span class="kecil abu">{{ t('va.ditimpa_label') }} {{ va.ditimpa_manual | join(', ') }}</span>{% endif %}
+      {% elif r.wacc_inputs.otomatis %}
         · <span class="lencana l-ditahan">{{ t('va.mode.otomatis') }}</span>
         {% if r.wacc_inputs.dibangun %} · {{ t('va.dibangun_pada', waktu=r.wacc_inputs.dibangun) }}{% endif %}
       {% else %}

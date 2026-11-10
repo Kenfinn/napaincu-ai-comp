@@ -490,3 +490,137 @@ class TestDcUtangLancar(unittest.TestCase):
                     self.assertNotIn("⟦", r_val.text)
 
 
+class TestDbValuasiOtomatisManual(unittest.TestCase):
+    """Pemeriksa untuk item D-b: valuasi otomatis digabung asumsi manual."""
+
+    def test_db_otomatis_menang_asumsi_manual(self):
+        """Siapkan cache otomatis 2330 buatan di folder sementara -> muat_valuasi("2330") memakai cfo/capex otomatis, tetapi assumptions.terminal_growth_ceiling dan risk_free_rate dari berkas manual; asumsi_dari = "manual"."""
+        import sys
+        if str(ROOT / "scripts") not in sys.path:
+            sys.path.insert(0, str(ROOT / "scripts"))
+        from app import store
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            asli_cache = valuasi_otomatis.CACHE_DIR
+            try:
+                valuasi_otomatis.CACHE_DIR = tmpdir
+
+                with open(os.path.join(ROOT, "valuation", "inputs", "2330.json"), encoding="utf-8") as f:
+                    manual_asli = json.load(f)
+
+                auto_palsu = {
+                    "code": "2330",
+                    "name": "TSMC Auto",
+                    "as_of": "2026-11-10",
+                    "otomatis": True,
+                    "market": {
+                        "price_per_share": 2200.0,
+                        "shares_issued_thousands": 25932000.0,
+                    },
+                    "balance_sheet": {
+                        "cash_and_equivalents": 2000000.0,
+                        "short_term_investments": 100000.0,
+                        "current_portion_lt_debt": 0.0,
+                        "long_term_debt": 800000.0,
+                        "short_term_borrowings": 0.0,
+                    },
+                    "tidak_tersedia": ["current_portion_lt_debt"],
+                    "cash_flow": {
+                        "cfo_by_year": {"2023": 1111111.0, "2024": 2222222.0, "2025": 3333333.0},
+                        "capex_by_year": {"2023": 555555.0, "2024": 666666.0, "2025": 777777.0},
+                        "interest_expense_by_year": {"2023": 10000.0, "2024": 10000.0, "2025": 10000.0},
+                    },
+                    "tax": {
+                        "income_tax_expense": 300000.0,
+                        "pretax_income": 2000000.0,
+                    },
+                    "wacc_inputs": {
+                        "risk_free_rate": 0.05,
+                        "beta": 1.10,
+                        "equity_risk_premium": 0.08,
+                        "total_interest_expense": 10000.0,
+                    },
+                    "assumptions": {
+                        "include_leases_in_debt": True,
+                        "terminal_growth_ceiling": 0.015,
+                    },
+                }
+                with open(os.path.join(tmpdir, "2330.json"), "w", encoding="utf-8") as f:
+                    json.dump(auto_palsu, f)
+
+                hasil = store.muat_valuasi("2330")
+                self.assertIsNotNone(hasil)
+                self.assertEqual(hasil.get("asumsi_dari"), "manual")
+                self.assertIn("assumptions", hasil.get("ditimpa_manual", []))
+
+                # cfo dan capex harus dari otomatis
+                self.assertEqual(hasil["cash_flow"]["cfo_by_year"]["2025"], 3333333.0)
+                self.assertEqual(hasil["cash_flow"]["capex_by_year"]["2025"], 777777.0)
+
+                # Asumsi dan wacc_inputs dari manual
+                self.assertEqual(
+                    hasil["assumptions"]["terminal_growth_ceiling"],
+                    manual_asli["assumptions"]["terminal_growth_ceiling"],
+                )
+                self.assertEqual(
+                    hasil["wacc_inputs"]["risk_free_rate"],
+                    manual_asli["wacc_inputs"]["risk_free_rate"],
+                )
+                self.assertEqual(
+                    hasil["wacc_inputs"]["equity_risk_premium"],
+                    manual_asli["wacc_inputs"]["equity_risk_premium"],
+                )
+
+                # Beta tetap dari otomatis
+                self.assertEqual(hasil["wacc_inputs"]["beta"], 1.10)
+
+                # current_portion_lt_debt yang di auto ada di tidak_tersedia diisi dari manual
+                self.assertEqual(
+                    hasil["balance_sheet"]["current_portion_lt_debt"],
+                    manual_asli["balance_sheet"]["current_portion_lt_debt"],
+                )
+                self.assertNotIn("current_portion_lt_debt", hasil.get("tidak_tersedia", []))
+            finally:
+                valuasi_otomatis.CACHE_DIR = asli_cache
+
+    def test_db_tanpa_cache_pakai_manual(self):
+        """Tanpa cache otomatis -> muat_valuasi menghasilkan berkas manual apa adanya."""
+        from app import store
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            asli_cache = valuasi_otomatis.CACHE_DIR
+            try:
+                valuasi_otomatis.CACHE_DIR = tmpdir
+                hasil = store.muat_valuasi("2330")
+                with open(os.path.join(ROOT, "valuation", "inputs", "2330.json"), encoding="utf-8") as f:
+                    manual_asli = json.load(f)
+                self.assertEqual(hasil, manual_asli)
+                self.assertNotIn("asumsi_dari", hasil)
+            finally:
+                valuasi_otomatis.CACHE_DIR = asli_cache
+
+    def test_dc_manual_mengisi_yang_kosong(self):
+        """Dengan D-b, utang total 2330 = otomatis + 136.926,5 (selisih dari berkas manual < 1%)."""
+        import sys
+        if str(ROOT / "scripts") not in sys.path:
+            sys.path.insert(0, str(ROOT / "scripts"))
+        import dcf
+        from app import store
+
+        with open(os.path.join(ROOT, "valuation", "inputs", "2330.json"), encoding="utf-8") as f:
+            manual_asli = json.load(f)
+        debt_manual, _, _ = dcf.net_debt(manual_asli["balance_sheet"], include_leases=False)
+
+        # Muat via muat_valuasi("2330")
+        gabung = store.muat_valuasi("2330")
+        self.assertIsNotNone(gabung)
+        debt_gabung, _, _ = dcf.net_debt(gabung["balance_sheet"], include_leases=False)
+
+        selisih_rel = abs(debt_gabung - debt_manual) / debt_manual
+        self.assertLess(
+            selisih_rel,
+            0.01,
+            f"Selisih utang gabungan ({debt_gabung}) vs manual ({debt_manual}) melebihi 1%: {selisih_rel:.4%}",
+        )
+
+

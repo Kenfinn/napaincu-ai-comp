@@ -32,6 +32,18 @@ T: dict[str, tuple[str, str, str]] = {
         "FinMind 未單獨揭露一年內到期長期負債；計入的負債可能偏低。",
         "Bagian lancar utang jangka panjang tidak diterbitkan terpisah oleh FinMind; utang mungkin tercatat lebih rendah.",
     ),
+
+    # --- D-b: Mode valuasi otomatis + asumsi ---
+    "va.mode.otomatis_asumsi": (
+        "Automatic + team assumptions",
+        "自動＋團隊假設",
+        "Otomatis + asumsi tim",
+    ),
+    "va.ditimpa_label": (
+        "Overridden from team file:",
+        "自團隊設定檔覆蓋：",
+        "Ditimpa dari berkas tim:",
+    ),
 }
 
 

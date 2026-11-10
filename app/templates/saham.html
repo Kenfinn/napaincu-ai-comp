@@ -218,7 +218,12 @@
   {% if r %}
   <div class="kartu">
     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-      {% if va and va.otomatis %}
+      {% if va and va.asumsi_dari == 'manual' %}
+        <span class="lencana l-ditahan">{{ t('va.mode.otomatis_asumsi') }}</span>
+        {% if va.ditimpa_manual %}
+          <span class="kicker">{{ t('va.ditimpa_label') }} {{ va.ditimpa_manual | join(', ') }}</span>
+        {% endif %}
+      {% elif va and va.otomatis %}
         <span class="lencana l-ditahan">{{ t('va.mode.otomatis') }}</span>
         {% if va.dibangun %}<span class="kicker">{{ t('va.dibangun_pada', waktu=va.dibangun) }}</span>{% endif %}
       {% else %}
