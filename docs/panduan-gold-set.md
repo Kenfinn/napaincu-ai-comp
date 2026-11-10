@@ -37,7 +37,8 @@ tambahkan baris kalian di bawahnya.
 dengan `source_url` yang sama.
 
 **Jumlah dalam mata uang asing (USD, JPY, …):** isi `harus_terbit = tidak`, dengan catatan
-"mata uang asing". Agent sengaja menolaknya karena model valuasi kita tidak memuat kurs.
+"mata uang asing". Agent sengaja tidak menerbitkannya sendiri (model valuasi tidak memuat
+kurs) dan menahannya untuk review manusia.
 
 **Ragu?** Tulis tebakan terbaik di kolom yang ada, lalu tulis "RAGU: …" di `catatan`.
 Jangan dilewati. Kasus yang sulit justru paling berguna.

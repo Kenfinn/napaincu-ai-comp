@@ -3,7 +3,8 @@
 Per 28 September 2026. Satu berkas ini cukup untuk melanjutkan tanpa membaca riwayat
 percakapan. Rencana awal (14 Sep) ada di [`rencana-kerja.md`](./rencana-kerja.md), dan
 aturan lomba lengkapnya di [`aaic-2026-ringkasan.md`](./aaic-2026-ringkasan.md).
-**Status terbaru ada di berkas ini.**
+> **Berkas ini sudah tidak menjadi status terbaru.** Baca [`konteks-sesi.md`](./konteks-sesi.md)
+> lebih dulu, lalu [`rencana-finalis.md`](./rencana-finalis.md) untuk daftar kerja.
 
 ---
 
