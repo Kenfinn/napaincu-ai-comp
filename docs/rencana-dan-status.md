@@ -106,6 +106,13 @@ sampai B1 (pemetaan pasal) dan B2/D-b (valuasi otomatis di server) terpasang.
 | Afinzaki | Isi formulir pihak ketiga dan self-assessment, termasuk catatan cache profil TPEx yang sempat menyimpan nama | E2 |
 | Belum dijawab | Format test case resmi panitia, cara menyerahkan repo privat ke juri, field liaison | E2 |
 
+Catatan tinjauan Claude untuk putaran 2 (11 Nov dini hari): `tests/test_putaran2.py`
+`test_dc_manual_mengisi_yang_kosong` memakai cache valuasi otomatis asli di `data/` dan
+gagal bila ada cache 2330 yang dibuat sebelum D-c. Masalah yang sama terjadi di server:
+cache lama tidak punya tanda `tidak_tersedia`, dan pipeline menerima cache basi, jadi utang
+2330 tetap kurang 13% sampai cache dibangun ulang. Perlu versi skema di cache (cache tanpa
+versi terbaru dianggap tidak ada) dan tes yang memakai folder cache sementara.
+
 ## 5. Backlog (setelah 13 Nov atau bila sempat)
 
 - Bahasa dasar sistem jadi Inggris. Tampilan bawaan sudah Inggris, tetapi bagian dalam
