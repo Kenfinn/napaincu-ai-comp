@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block judul %}{{ t('ch.judul') }} · FEAF{% endblock %}
+{% block isi %}
+
+<div class="kepala">
+  <div>
+    <div class="kicker">{{ t('ch.kicker') }}</div>
+    <h1>{{ t('ch.judul') }}</h1>
+  </div>
+</div>
+<div class="pita fixture"><div>{{ t('rk.disclaimer') }}</div></div>
+<p class="catatan" style="margin:8px 2px 14px;">{{ t('ch.isi') }}</p>
+
+<div class="kartu">
+  <form method="post" action="/tanya" class="form-review" style="margin-top:0;">
+    <input class="isian lebar" name="pertanyaan" maxlength="500" required
+           placeholder="{{ t('ch.placeholder') }}"
+           value="{{ (jw.pertanyaan if jw else (kode_awal ~ ' ' if kode_awal else '')) }}">
+    <button class="tombol" type="submit">{{ t('ch.kirim') }}</button>
+  </form>
+  <div style="margin-top:10px; font-size:12px; color:var(--abu-2);">{{ t('ch.contoh') }}:
+    {% for i in (1, 2, 3) %}
+    <form method="post" action="/tanya" style="display:inline;">
+      <input type="hidden" name="pertanyaan" value="{{ t('ch.contoh.' ~ i) }}">
+      <button class="tombol abu" type="submit" style="margin:2px;">{{ t('ch.contoh.' ~ i) }}</button>
+    </form>
+    {% endfor %}
+  </div>
+</div>
+
+{% if jw %}
+<h2>{{ t('ch.jawaban') }}</h2>
+<div class="kartu">
+  <div class="kicker">{{ t('ch.pertanyaan') }}</div>
+  <div style="margin-bottom:10px;">{{ jw.pertanyaan }}</div>
+  <div style="font-size:14px; line-height:1.6; white-space:pre-line;">{{ jw.jawaban }}</div>
+
+  {% if jw.jalur == 'template_setelah_tolak' %}
+  <div class="pita fixture" style="margin-top:12px;"><div>{{ t('ch.jalur.template_setelah_tolak', alasan=tr(jw.periksa.alasan)) }}</div></div>
+  {% else %}
+  <p class="catatan">{{ t('ch.jalur.' ~ (jw.jalur or 'template')) }}</p>
+  {% endif %}
+
+  {% if jw.sumber %}
+  <div class="kv" style="margin-top:8px;"><span class="k">{{ t('ch.sumber') }}</span>
+    <span class="v" style="font-weight:500; text-align:right; max-width:75%;">
+    {% for s in jw.sumber %}
+      {% if s.startswith('http') or s.startswith('/') %}<a href="{{ s }}" target="_blank" rel="noopener">{{ s }}</a>{% else %}{{ s }}{% endif %}<br>
+    {% endfor %}</span></div>
+  {% endif %}
+  <div class="kv"><span class="k"><a href="/api/tanya/jejak/{{ jw.id }}">{{ t('ch.jejak') }}</a></span>
+    <span class="v">{{ t('ch.ringkas', alat=jw.panggilan_alat, model=jw.panggilan_model, ms=jw.durasi_ms) }}</span></div>
+</div>
+{% endif %}
+{% endblock %}

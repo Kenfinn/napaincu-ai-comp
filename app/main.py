@@ -538,3 +538,9 @@ def api_valuasi(kode: str):
     if d is None:
         raise HTTPException(404, f"Belum ada berkas valuasi untuk {kode}")
     return JSONResponse(dcf.compute(d, forward_g=d.get("assumptions", {}).get("terminal_growth_ceiling")))
+
+
+# --- Ask FEAF (app/chat.py, milik Claude) ---------------------------------
+from . import chat as _chat  # noqa: E402
+
+app.include_router(_chat.router)

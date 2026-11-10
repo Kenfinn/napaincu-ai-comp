@@ -21,7 +21,7 @@ Daftar ini berasal dari masukan tim setelah lolos finalis. Rinciannya ada di
 | B1 | Pemetaan pasal dari data asli | ✅ draf, ⏳ jawaban Ferry & Patrice |
 | B2 | DCF otomatis untuk semua emiten non-keuangan | ✅ (Antigravity) |
 | B3 | Sitasi angka laporan keuangan ke MOPS | ⬜ |
-| C1 | Chatbot "Tanya FEAF" | ⬜ |
+| C1 | Chatbot "Tanya FEAF" versi awal di atas data asli | Claude | Angka di jawaban selalu ada di hasil tool, bersumber, tanpa kata beli/jual | ✅ versi awal di `/tanya` (18 tes). Tautan di menu menunggu Antigravity selesai dengan `base.html` |
 | D1 | Kandidat gold set dari arsip server | ✅ |
 | D2 | Gold set 30–50 pengumuman + baseline menit manual | ⏳ Ferry & Patrice |
 | D3 | Set uji serangan otomatis | ✅ (Antigravity) |
