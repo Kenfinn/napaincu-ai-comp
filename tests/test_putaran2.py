@@ -700,3 +700,37 @@ class TestB3SitasiMops(unittest.TestCase):
         self.assertEqual(pos_pbt["pct"], 0.0)
 
 
+class TestR4PengungkapanPihakKetiga(unittest.TestCase):
+    """Pemeriksa untuk item R4: pengungkapan pihak ketiga dan alat AI."""
+
+    def test_r4_semua_pustaka_tercantum(self):
+        """Setiap nama paket di requirements.txt muncul di docs/pengungkapan-pihak-ketiga.md."""
+        doc = (ROOT / "docs" / "pengungkapan-pihak-ketiga.md").read_text(encoding="utf-8")
+        reqs = (ROOT / "requirements.txt").read_text(encoding="utf-8")
+
+        for line in reqs.splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            pkg = re.split(r"[=<>\[]", line)[0].strip()
+            self.assertIn(
+                pkg,
+                doc,
+                f"Paket '{pkg}' dari requirements.txt belum tercantum di docs/pengungkapan-pihak-ketiga.md",
+            )
+
+    def test_r4_tabel_tim_kosong(self):
+        """Bagian 'Pembagian kerja tim' ada dan baris isinya kosong."""
+        doc = (ROOT / "docs" / "pengungkapan-pihak-ketiga.md").read_text(encoding="utf-8")
+        self.assertIn("pembagian kerja tim", doc.lower())
+
+        bagian_tim = doc.lower().split("pembagian kerja tim")[1]
+        lines = [l.strip() for l in bagian_tim.splitlines() if l.strip()]
+        table_lines = [l for l in lines if l.startswith("|")]
+        self.assertEqual(
+            len(table_lines),
+            2,
+            f"Tabel pembagian kerja tim harus kosong (hanya header dan pemisah), ditemukan {len(table_lines)} baris: {table_lines}",
+        )
+
+
