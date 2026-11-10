@@ -60,20 +60,20 @@ koordinasinya di `docs/papan-agen.md`. Untuk kerja semalam tanpa pengawasan dipa
 
 | ID | Pekerjaan | Siapa | Selesai bila | Status |
 |---|---|---|---|---|
-| R1 | Beta dihitung dari harga harian resmi TWSE/TPEx dan indeks TAIEX. Yahoo tidak dipakai lagi | Antigravity | Beta 2330 dari sekitar 100 minggu data; data kurang memberi 1,0 bertanda | ⬜ |
-| R2 | Penafian "bukan rekomendasi" di semua halaman analisis; kalimat profil risiko dilunakkan | Antigravity | Penafian tampil di tiga bahasa di setiap halaman analisis | ⬜ |
-| R3 | Pilihan kunci akses untuk halaman baca (`SENTINEL_KUNCI_BACA`) | Antigravity | Tanpa kode muncul halaman kode; `/sehat` tetap terbuka | ⬜ |
-| D-a | Agent memproses pengumuman semua emiten, tidak hanya watchlist | Antigravity | Server memproses ratusan pengumuman asli; halaman tetap cepat saat memproses | ⬜ |
-| D-b | 2330 memakai valuasi otomatis; berkas manual hanya menyimpan asumsi tim | Antigravity | Angka keuangan 2330 sama dengan FinMind | ⬜ |
-| D-c | Utang jangka panjang yang jatuh tempo setahun terbaca di valuasi otomatis | Antigravity | Utang 2330 otomatis selisih kurang dari 1% dari manual | ⬜ |
+| R1 | Beta dihitung dari harga harian resmi TWSE/TPEx dan indeks TAIEX. Yahoo tidak dipakai lagi | Antigravity | Beta 2330 dari sekitar 100 minggu data; data kurang memberi 1,0 bertanda | ✅ Selesai (`88e5770`, beta 2330 = 1,03 dari 104 pekan, Yahoo bersih) |
+| R2 | Penafian "bukan rekomendasi" di semua halaman analisis; kalimat profil risiko dilunakkan | Antigravity | Penafian tampil di tiga bahasa di setiap halaman analisis | ✅ Selesai (`0849027`, `_penafian.html` tepat 1x per halaman) |
+| R3 | Pilihan kunci akses untuk halaman baca (`SENTINEL_KUNCI_BACA`) | Antigravity | Tanpa kode muncul halaman kode; `/sehat` tetap terbuka | ✅ Selesai (`e0b2c0d`, middleware 401 + halaman kunci) |
+| D-a | Agent memproses pengumuman semua emiten, tidak hanya watchlist | Antigravity | Server memproses ratusan pengumuman asli; halaman tetap cepat saat memproses | ✅ Selesai (`6e731fc`, lock terpisah, `?lingkup=semua`) |
+| D-b | 2330 memakai valuasi otomatis; berkas manual hanya menyimpan asumsi tim | Antigravity | Angka keuangan 2330 sama dengan FinMind | ✅ Selesai (`c04ddee` & `c70f432`, panaskan semua emiten) |
+| D-c | Utang jangka panjang yang jatuh tempo setahun terbaca di valuasi otomatis | Antigravity | Utang 2330 otomatis selisih kurang dari 1% dari manual | ✅ Selesai (`fb49d77`, utang total 2330 selisih 0,00%) |
 | C1 | Chatbot "Tanya FEAF" versi awal di atas data asli | Claude | Angka di jawaban selalu ada di hasil tool, bersumber, tanpa kata beli/jual | ⬜ |
 
 ### Kamis 12 Nov
 
 | ID | Pekerjaan | Siapa | Selesai bila | Status |
 |---|---|---|---|---|
-| B3 | Tautan MOPS untuk angka laporan keuangan dan valuasi | Antigravity | Setiap kolom periode di tab Financials punya tautan MOPS | ⬜ |
-| R4 | Draf pengungkapan pihak ketiga dan alat AI untuk formulir panitia | Antigravity | Daftar lengkap: nama, tujuan, lingkup, lisensi | ⬜ |
+| B3 | Tautan MOPS untuk angka laporan keuangan dan valuasi | Antigravity | Setiap kolom periode di tab Financials punya tautan MOPS | ✅ Selesai (`c5c9404`, sitasi MOPS + cek FinMind 100% cocok) |
+| R4 | Draf pengungkapan pihak ketiga dan alat AI untuk formulir panitia | Antigravity | Daftar lengkap: nama, tujuan, lingkup, lisensi | ✅ Selesai (`b9fa8fd`, `docs/pengungkapan-pihak-ketiga.md`) |
 | D4 | Skrip evaluasi lengkap dengan data asli | Claude | Latensi, biaya, retry, intervensi manusia, kategori error terisi angka asli | ⬜ |
 | — | Diagram alur diperbarui (triase, ambang, review, valuasi otomatis) | Claude | PNG baru di `docs/diagram/` | ✅ `docs/diagram-alur.md` + PNG/SVG |
 
