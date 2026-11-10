@@ -46,7 +46,7 @@ terbaru; daftar kerja rinci ada di [`rencana-finalis.md`](./rencana-finalis.md).
 | Server | Dokploy milik Afinzaki, domain **https://feaf.afinzaki.my.id**, container port **8000**, volume **`/data`** |
 | Env server | `SENTINEL_KODE_AKSES`, `SENTINEL_TARIK_OTOMATIS_DETIK=600`, `SENTINEL_SERTAKAN_CONTOH=1`, `GEMINI_API_KEY`, `FINMIND_TOKEN` (opsional). Awalan `SENTINEL_` sengaja dipertahankan walau nama produk FEAF |
 | Deploy | Push ke `main` lalu tekan **Deploy** di Dokploy. Panduan: [`deploy-dokploy.md`](./deploy-dokploy.md) |
-| Tes | `python3 -m unittest discover -s tests` → **96 tes, semua lulus**, ±3 detik, **tanpa jaringan** (tes yang menyentuh pasar/penarik memutus jaringan) |
+| Tes | `python3 -m unittest discover -s tests` → **107 tes, semua lulus**, ±3 detik, **tanpa jaringan** (tes yang menyentuh pasar/penarik memutus jaringan) |
 | Sesi cloud Claude | Bisa: OpenAPI TWSE/TPEx, FinMind, Yahoo. **Tidak bisa: MOPS** (diblokir di luar Taiwan). Build Docker butuh CA proxy sesi (lihat `/root/.ccr/README.md`); Dockerfile di repo tidak perlu diubah |
 | Laptop Taiwan | Satu-satunya jalan ke MOPS: riwayat pengumuman ([`tarik-riwayat.md`](./tarik-riwayat.md)), uji tautan MOPS |
 
@@ -101,12 +101,12 @@ terbaru; daftar kerja rinci ada di [`rencana-finalis.md`](./rencana-finalis.md).
 | A1 State + review | ✅ Selesai, teruji |
 | A2 Triase keyakinan + 👍/👎 → ambang | ✅ Selesai, teruji (halaman `/ambang`, kartu triase di peringatan) |
 | B1 Draf pasal | ✅ Draf · ⏳ **verifikasi Ferry & Patrice**, lalu pasang ke `screen.py` + `LABEL_SAH` + jalur "laporan" (31) dan "sinyal risiko" (22/23/1/3/40) |
-| B2 DCF otomatis semua emiten | ✅ Selesai, teruji (`app/valuasi_otomatis.py`, `docs/valuasi-otomatis.md`, `eval/hasil/b2-2026-11-10.md`) |
+| B2 DCF otomatis semua emiten | ✅ Antigravity (`app/valuasi_otomatis.py`), ditinjau Claude 10 Nov. **Catatan:** `current_portion_lt_debt` = 0 di otomatis (FinMind menggabungkannya ke OtherCurrentLiabilities) → utang 2330 kurang 13%; beta jatuh ke 1,0 bila Yahoo menolak (HTTP 429 dari sesi cloud). Pasal 31 → hitung ulang: menunggu B1b |
 | B3 Sitasi MOPS + uji dari laptop | ⬜ |
 | C1 Chatbot | ⬜ (versi awal 13 Nov) |
 | D1 Kandidat gold set | ✅ `/ekspor/kandidat-gold.csv` |
 | D2 Gold set + baseline menit | ⏳ Ferry & Patrice |
-| D3 Set uji serangan | ✅ Selesai, teruji (`scripts/uji_serangan.py`, `docs/laporan-serangan.md`, `eval/hasil/serangan-2026-11-10.md`, Terbit-Salah = 0) |
+| D3 Set uji serangan | ✅ Antigravity (`scripts/uji_serangan.py`, `docs/laporan-serangan.md`): 72 skenario, **0 angka penyerang terbit**; diulang Claude. Celah cek satuan yang dilaporkannya sudah ditutup (`cek.satuan.beda`) |
 | D4–D5 Evaluasi lengkap + laporan | ⬜ |
 | E1 README finalis | ⬜ |
 | E2 Deck, video, formulir | ⏳ Afinzaki + tim |

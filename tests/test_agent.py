@@ -1124,6 +1124,15 @@ class TestEkstraksiPengumumanAsli(unittest.TestCase):
         from app import tarik
         self.assertEqual(tarik.bersihkan_teks("使&#12132;權資產&#12198;額：11,241千元"), "使用權資產金額：11,241千元")
 
+    def test_satuan_klaim_harus_tertulis_di_sumber(self):
+        d = detail("kasus-1-capex-bersih")
+        t = extract._sari_aturan(d, ["capex"])[0]
+        self.assertTrue(all(c["lolos"] for c in verify.periksa(t, d, valuasi())))
+        palsu = dict(t, satuan="百萬元", pengali_ke_juta=1.0, nilai_juta_ntd=1_480_000_000.0)
+        cek = {c["nama_i18n"]["kode"]: c for c in verify.periksa(palsu, d, valuasi())}
+        self.assertFalse(cek["cek.satuan"]["lolos"])
+        self.assertEqual(cek["cek.satuan"]["alasan_i18n"]["kode"], "cek.satuan.beda")
+
     def test_profil_tpex_tanpa_data_pribadi(self):
         from app import pasar
         baris = {"SecuritiesCompanyCode": "1240", "CompanyAbbreviation": "茂生農經", "Chairman": "X",

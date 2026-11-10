@@ -53,6 +53,25 @@ def _cek(nama: str, lolos: bool, alasan: str, kunci: str | None = None,
     return c
 
 
+_SATUAN_RE = re.compile("|".join(re.escape(k) for k in sorted(extract.SATUAN, key=len, reverse=True)))
+
+
+def _satuan_tertulis(teks: str) -> set[str]:
+    """Token satuan di teks, dicocokkan dari yang terpanjang (仟元 tidak terhitung 元)."""
+    return set(_SATUAN_RE.findall(teks or ""))
+
+
+def _label_butir(detail: dict, temuan: dict) -> str:
+    """Label lengkap butir yang dikutip (satuan sering hanya di label, mis. 餘額(仟元))."""
+    for it in detail.get("items", []):
+        for b in [it] + it.get("sub", []):
+            if b.get("no") == temuan.get("butir_no") or (
+                    temuan.get("label") and b.get("label") == temuan.get("label")):
+                if extract.label_sah(b.get("label", ""), temuan.get("input")) or b.get("label") == temuan.get("label"):
+                    return b.get("label_lengkap") or b.get("label", "")
+    return ""
+
+
 def sumber_terbukti(temuan: dict, detail: dict, dokumen: str | None = None) -> bool:
     """Tiga cek sumber pertama saja (label sah, kutipan ada, digit ada) — tanpa valuasi.
 
@@ -121,15 +140,23 @@ def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
               f"jadi angka ini tidak boleh dikonversi diam-diam."),
         "cek.mu", "cek.mu.asumsi" if mu is None else ("cek.mu.ok" if mu_ok else "cek.mu.x"), mu=mu))
 
-    # 5 — satuan harus dikenali, karena selisihnya seribu kali lipat.
+    # 5 — satuan harus dikenali, DAN benar-benar tertulis di kutipan atau di label butir
+    # yang dikutip. Tanpa syarat kedua, penyari yang tertipu bisa mengklaim 仟元 untuk
+    # angka yang di dokumen tertulis 元 (selisih seribu kali) dan lolos cek ini.
     tok = temuan.get("satuan")
+    tertulis = _satuan_tertulis(isi_kutipan) | _satuan_tertulis(_label_butir(detail, temuan))
+    dikenali = tok in extract.SATUAN
+    sat_ok = dikenali and tok in tertulis
     cek.append(_cek(
         "Satuan dikenali",
-        tok in extract.SATUAN,
-        f"Satuan '{tok}' dikenali (pengali {extract.SATUAN.get(tok)} ke juta NTD)"
-        if tok in extract.SATUAN
-        else f"Satuan '{tok}' tidak dikenali — tidak bisa dikonversi dengan aman",
-        "cek.satuan", satuan=tok, pengali=str(extract.SATUAN.get(tok))))
+        sat_ok,
+        f"Satuan '{tok}' dikenali (pengali {extract.SATUAN.get(tok)} ke juta NTD) dan tertulis di sumber"
+        if sat_ok
+        else (f"Satuan '{tok}' tidak tertulis di kutipan maupun label butir (tertulis: "
+              f"{', '.join(sorted(tertulis)) or '—'})" if dikenali
+              else f"Satuan '{tok}' tidak dikenali — tidak bisa dikonversi dengan aman"),
+        "cek.satuan", "cek.satuan.ok" if sat_ok else ("cek.satuan.beda" if dikenali else "cek.satuan.x"),
+        satuan=tok, pengali=str(extract.SATUAN.get(tok)), tertulis=", ".join(sorted(tertulis)) or "—"))
 
     # 6 — hasil konversi harus ada. Kalau None, salah satu di atas menggagalkannya.
     nilai = temuan.get("nilai_juta_ntd")

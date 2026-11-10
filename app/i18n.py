@@ -819,6 +819,9 @@ _T: dict[str, tuple[str, str, str]] = {
                          "此公告未進入分類階段，投票無法調整門檻。",
                          "Pengumuman ini tidak sampai ke triase, jadi suara tidak bisa menyetel ambang."),
     "rv.lanjut": ("✔ Approve and send to the verifier", "✔ 核准並送驗證", "✔ Setujui, teruskan ke pemeriksa"),
+    "cek.satuan.beda": ("Unit '{satuan}' is not written in the quote or the item label (written: {tertulis})",
+                        "引文及項目標題中未出現單位「{satuan}」（實際：{tertulis}）",
+                        "Satuan '{satuan}' tidak tertulis di kutipan maupun label butir (tertulis: {tertulis})"),
     "rv.keyakinan_info": (
         "Approving does not publish it directly: the figures still have to pass every verifier check.",
         "核准不會直接發布：數字仍須通過所有驗證檢查。",
