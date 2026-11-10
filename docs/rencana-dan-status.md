@@ -53,7 +53,8 @@ Kolom "Siapa" menunjukkan pembagian kerja. Antigravity dan Claude bekerja di `ma
 bersamaan, dengan berkas yang dibagi supaya tidak saling menimpa. Spesifikasi untuk
 Antigravity ada di [`prompt-antigravity-2.md`](./prompt-antigravity-2.md). Versi tiga agent
 paralel (DATA, WEB, QA) ada di [`prompt-antigravity-multiagen.md`](./prompt-antigravity-multiagen.md);
-koordinasinya di `docs/papan-agen.md`.
+koordinasinya di `docs/papan-agen.md`. Untuk kerja semalam tanpa pengawasan dipakai
+[`prompt-antigravity-berurutan.md`](./prompt-antigravity-berurutan.md) (P1–P10).
 
 ### Rabu 11 Nov
 

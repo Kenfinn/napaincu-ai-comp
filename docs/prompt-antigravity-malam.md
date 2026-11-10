@@ -1,5 +1,7 @@
 # Prompt induk Antigravity: kerja semalam tanpa pengawasan
 
+> Digantikan oleh [`prompt-antigravity-berurutan.md`](./prompt-antigravity-berurutan.md) (P1–P10, satu prompt per task, rantai otomatis). Berkas ini disimpan sebagai arsip.
+
 Untuk Afinzaki, sebelum tidur:
 
 1. Laptop dicolok ke listrik, mode tidur (sleep) dimatikan, Wi-Fi tetap tersambung.
