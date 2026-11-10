@@ -655,6 +655,20 @@ class TestRingkasanAnalisis(TestHalamanSaham):
         self.assertIn('href="/saham/2454" class="on"', r.text.replace("\n", "").replace("  ", " "))
         self.assertNotIn("Valuation 2330", r.text)
 
+    def test_kode_yang_tidak_ada_ditolak(self):
+        self.tarik.simpan_watchlist([])
+        dikenal = self.pasar.emiten_dikenal()
+        self.assertIn("2330", dikenal)
+        ok, p = self.tarik.tambah_ke_watchlist("1000", dikenal)
+        self.assertFalse(ok)
+        self.assertEqual(p["kode"], "msg.tidak_dikenal")
+        ok, p = self.tarik.tambah_ke_watchlist("2454", dikenal)
+        self.assertTrue(ok)
+        self.assertEqual(p["param"]["nama"], "聯發科")
+        ok, p = self.tarik.tambah_ke_watchlist("9999", None)          # bursa tak terjangkau
+        self.assertTrue(ok)
+        self.assertEqual(p["kode"], "msg.ditambah_belum_pasti")
+
     def test_tab_ringkasan_tiga_bahasa(self):
         for bhs in ("en", "zh", "id"):
             for risiko in ("konservatif", "agresif"):

@@ -92,16 +92,25 @@ def simpan_watchlist(kode: list[str]) -> list[str]:
 KODE_SAH = re.compile(r"^[0-9A-Z]{4,6}$")
 
 
-def tambah_ke_watchlist(kode: str) -> tuple[bool, dict]:
-    """Mengembalikan (berhasil, pesan) — pesan berupa kode i18n supaya tampil tiga bahasa."""
+def tambah_ke_watchlist(kode: str, dikenal: dict[str, str] | None = None) -> tuple[bool, dict]:
+    """Mengembalikan (berhasil, pesan) — pesan berupa kode i18n supaya tampil tiga bahasa.
+
+    `dikenal`: daftar kode yang diperdagangkan di bursa (pasar.emiten_dikenal). Bila
+    diberikan, kode di luar daftar ditolak. Bila None (bursa tidak terjangkau), kode
+    tetap ditambahkan dengan pesan bahwa keberadaannya belum bisa dipastikan.
+    """
     kode = (kode or "").strip().upper()
     if not KODE_SAH.match(kode):
         return False, pesan("msg.kode_salah", kode=kode[:12])
     sekarang = baca_watchlist()
     if kode in sekarang:
         return False, pesan("msg.sudah_ada", kode=kode)
+    if dikenal is not None and kode not in dikenal:
+        return False, pesan("msg.tidak_dikenal", kode=kode)
     simpan_watchlist(sekarang + [kode])
-    return True, pesan("msg.ditambah", kode=kode)
+    if dikenal is None:
+        return True, pesan("msg.ditambah_belum_pasti", kode=kode)
+    return True, pesan("msg.ditambah_nama", kode=kode, nama=dikenal.get(kode) or "")
 
 
 def hapus_dari_watchlist(kode: str) -> list[str]:

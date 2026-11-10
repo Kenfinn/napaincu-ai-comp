@@ -235,7 +235,8 @@ def watchlist(request: Request):
         punya = [d for d in detail if d.get("code") == k]
         baris.append({
             "kode": k,
-            "nama": next((d.get("name") for d in punya if d.get("name")), None),
+            "nama": (pasar.harga_dari_cache(k) or {}).get("nama")
+                    or next((d.get("name") for d in punya if d.get("name")), None),
             "valuasi": k in tervaluasi,
             "jumlah": len(punya),
             "terakhir": max((f"{d.get('date')} {d.get('time')}" for d in punya), default=None),
@@ -250,7 +251,7 @@ async def watchlist_tambah(request: Request):
     if not _boleh_ubah(request):
         return _tolak_akses("/watchlist")
     f = await _form(request)
-    ok, pesan = tarik.tambah_ke_watchlist(f.get("kode", ""))
+    ok, pesan = tarik.tambah_ke_watchlist(f.get("kode", ""), pasar.emiten_dikenal())
     ke = f.get("kembali") or "/watchlist"
     return _balik(ke if ke.startswith("/") and not ke.startswith("//") else "/watchlist", pesan, ok)
 

@@ -173,6 +173,23 @@ def _harga(kode, nama, bursa, tgl, tutup, ubah, buka, tinggi, rendah, vol) -> di
             "buka": buka, "tinggi": tinggi, "rendah": rendah, "volume": vol}
 
 
+def emiten_dikenal() -> dict[str, str] | None:
+    """Semua kode yang diperdagangkan di TWSE dan TPEx → nama singkat.
+
+    Dipakai untuk menolak kode yang tidak ada (mis. salah ketik '1000') saat menambah
+    watchlist. Mengembalikan None bila kedua daftar tidak bisa diambil, supaya pemanggil
+    tahu bahwa validasi tidak bisa dilakukan, bukan menganggap semua kode salah.
+    """
+    tw = _daftar("harga_twse", "harga")
+    tp = _daftar("harga_tpex", "harga")
+    if not tw and not tp:
+        return None
+    hasil = {str(r.get("Code", "")).strip(): r.get("Name") for r in tw}
+    hasil.update({str(r.get("SecuritiesCompanyCode", "")).strip(): r.get("CompanyName") for r in tp})
+    hasil.pop("", None)
+    return hasil
+
+
 def harga_dari_cache(kode: str) -> dict | None:
     """Seperti `harga`, tapi tidak pernah menembak jaringan — untuk menu samping, yang
     dirender di setiap halaman dan tidak boleh ikut lambat saat bursa sulit dijangkau."""
