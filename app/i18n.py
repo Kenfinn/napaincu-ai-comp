@@ -829,6 +829,28 @@ _T: dict[str, tuple[str, str, str]] = {
 }
 
 
+_DIMUAT: set[str] = set()
+
+
+def _muat_tambahan() -> None:
+    """Gabungkan kunci dari app/teks/*.py (lihat app/teks/__init__.py). Aman dipanggil ulang."""
+    import importlib
+    import pkgutil
+    from . import teks
+    for m in sorted(pkgutil.iter_modules(teks.__path__), key=lambda x: x.name):
+        if m.name in _DIMUAT:
+            continue
+        tambahan = getattr(importlib.import_module(f"{teks.__name__}.{m.name}"), "T", {})
+        bentrok = set(tambahan) & set(_T)
+        if bentrok:
+            raise ValueError(f"app/teks/{m.name}.py menimpa kunci yang sudah ada: {sorted(bentrok)[:5]}")
+        _T.update(tambahan)
+        _DIMUAT.add(m.name)
+
+
+_muat_tambahan()
+
+
 def normal(kode: str | None) -> str:
     return kode if kode in BAHASA else BAWAAN
 

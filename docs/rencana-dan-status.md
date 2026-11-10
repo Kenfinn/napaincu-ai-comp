@@ -51,7 +51,9 @@ Tes otomatis: 107, semua lulus.
 
 Kolom "Siapa" menunjukkan pembagian kerja. Antigravity dan Claude bekerja di `main`
 bersamaan, dengan berkas yang dibagi supaya tidak saling menimpa. Spesifikasi untuk
-Antigravity ada di [`prompt-antigravity-2.md`](./prompt-antigravity-2.md).
+Antigravity ada di [`prompt-antigravity-2.md`](./prompt-antigravity-2.md). Versi tiga agent
+paralel (DATA, WEB, QA) ada di [`prompt-antigravity-multiagen.md`](./prompt-antigravity-multiagen.md);
+koordinasinya di `docs/papan-agen.md`.
 
 ### Rabu 11 Nov
 
@@ -99,6 +101,19 @@ Antigravity ada di [`prompt-antigravity-2.md`](./prompt-antigravity-2.md).
 | Belum dijawab | Format test case resmi panitia, cara menyerahkan repo privat ke juri, field liaison | E2 |
 
 ## 5. Backlog (setelah 13 Nov atau bila sempat)
+
+- Bahasa dasar sistem jadi Inggris. Tampilan bawaan sudah Inggris, tetapi bagian dalam
+  masih Indonesia. Urutan yang diusulkan, dari dampak terbesar:
+  1. Prompt ke model (`SISTEM` dan `INSTRUKSI` di `app/agent/llm.py`, `extract.py`,
+     `ringkasan.py`). Model umumnya lebih konsisten dengan prompt Inggris. Perlu naikkan
+     `VERSI_PROMPT` dan jalankan ulang evaluasi, karena jawaban cache lama tidak terpakai.
+  2. Teks yang tersimpan di jejak audit dan JSON API (`alasan`, `nama`, `tahap`, dan teks
+     cadangan di `i18n.pesan`). Juri membaca JSON mentah.
+  3. Komentar dan docstring di kode.
+  4. Nama fungsi, variabel, status internal (`terbit`, `ditahan`, `dilewati`), dan nama
+     berkas. Ini refactor besar yang menyentuh semua tes, jadi dikerjakan setelah 21 Nov
+     atau dalam satu putaran khusus dengan tes sebagai pengaman.
+  Dokumen untuk tim (docs/) tetap boleh Indonesia.
 
 - Chatbot versi lengkap untuk demo 21 Nov.
 - Relay real-time dari laptop Taiwan ke `/api/impor`. OpenAPI bursa tertinggal sekitar satu hari.

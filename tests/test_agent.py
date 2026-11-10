@@ -1133,6 +1133,25 @@ class TestEkstraksiPengumumanAsli(unittest.TestCase):
         self.assertFalse(cek["cek.satuan"]["lolos"])
         self.assertEqual(cek["cek.satuan"]["alasan_i18n"]["kode"], "cek.satuan.beda")
 
+    def test_teks_tambahan_dimuat_dan_tidak_menimpa(self):
+        import tempfile, importlib
+        from app import i18n, teks
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "zz_uji.py"), "w", encoding="utf-8") as f:
+                f.write('T = {"zz.uji": ("Test", "測試", "Uji")}\n')
+            teks.__path__.append(d)
+            try:
+                i18n._muat_tambahan()
+                self.assertEqual(i18n.t("zz.uji", "zh"), "測試")
+                with open(os.path.join(d, "zz_bentrok.py"), "w", encoding="utf-8") as f:
+                    f.write('T = {"nav.feed": ("X", "X", "X")}\n')
+                with self.assertRaisesRegex(ValueError, "zz_bentrok"):
+                    i18n._muat_tambahan()
+            finally:
+                teks.__path__.remove(d)
+                i18n._T.pop("zz.uji", None)
+                i18n._DIMUAT.discard("zz_uji")
+
     def test_profil_tpex_tanpa_data_pribadi(self):
         from app import pasar
         baris = {"SecuritiesCompanyCode": "1240", "CompanyAbbreviation": "茂生農經", "Chairman": "X",

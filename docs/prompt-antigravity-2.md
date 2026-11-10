@@ -50,8 +50,11 @@ SYSTEX). Claude juga bekerja di repo ini, di branch `main`, pada waktu yang sama
 - Tes tidak boleh menyentuh jaringan. Simpan sampel kecil di tests/data/ dan patch fungsi
   ambil. Cek dengan menjalankan tes saat Wi-Fi mati.
 - Semua teks yang tampil wajib tiga bahasa lewat app/i18n.py (English, 繁體中文,
-  Bahasa Indonesia), placeholder sama di ketiganya. Kunci baru ditaruh di AWAL dict `_T`,
-  di blok berkomentar `# --- putaran 2 (Antigravity) ---`. Claude menambah di AKHIR.
+  Bahasa Indonesia), placeholder sama di ketiganya. Kunci BARU jangan ditulis di
+  app/i18n.py: taruh di berkas sendiri app/teks/<nama>.py berisi
+  `T = {"kunci": ("English", "中文", "Indonesia"), ...}` (dimuat otomatis, lihat
+  app/teks/__init__.py). Satu-satunya perubahan di app/i18n.py adalah mengganti teks
+  kunci rk.p.hati dan rk.p.aman (R2).
 - Tidak ada label beli/jual. Merah = naik, hijau = turun.
 - Jeda antar-permintaan ke situs bursa minimal 2 detik (TWSE memblokir IP yang terlalu
   sering). Jangan diturunkan.
@@ -64,7 +67,8 @@ periksa_sekarang), app/agent/llm.py (hanya jatah panggilan per jalan, lihat D-a)
 baris di D-c),
 app/main.py (bagian yang disebut di item), semua template KECUALI app/templates/chat.html,
 app/static/app.css (hanya menambah di akhir), scripts/impor_arsip.py (baru),
-scripts/cek_finmind_resmi.py (baru), tests/test_putaran2.py (baru), tests/data/* (sampel
+scripts/cek_finmind_resmi.py (baru), app/teks/antigravity.py (baru, teks tiga bahasa),
+tests/test_putaran2.py (baru), tests/data/* (sampel
 baru), docs/pengungkapan-pihak-ketiga.md (baru), docs/laporan-antigravity-2.md (baru),
 baris status R1, R2, R3, D-a, D-b, D-c, B3, R4 di docs/rencana-dan-status.md.
 
