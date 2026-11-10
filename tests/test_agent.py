@@ -798,6 +798,24 @@ class TestModelPengganti(unittest.TestCase):
         self.assertTrue(meta["model_cadangan"])
         self.assertEqual(self.llm.model_dipakai(), "gemini-3.8-flash", "cadangan tidak lengket")
 
+    def test_pemutus_setelah_tiga_gagal_beruntun(self):
+        import io
+        import urllib.error
+        n = []
+
+        def panggil(instruksi, dokumen):
+            n.append(1)
+            raise urllib.error.HTTPError("u", 503, "busy", {}, io.BytesIO(b""))
+        self.llm._panggil_gemini = panggil
+        self.llm.mulai_jalan(40)
+        try:
+            for i in range(6):
+                with self.assertRaises(self.llm.GagalModel):
+                    self.llm.tanya("i", f"d{i}")
+            self.assertEqual(len(n), 3, "setelah 3 gagal beruntun model tidak dipanggil lagi")
+        finally:
+            self.llm._jatah_sisa = None
+
     def test_sebab_listmodels_gagal_tercatat(self):
         import io
         import urllib.error

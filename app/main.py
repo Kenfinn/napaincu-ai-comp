@@ -47,8 +47,24 @@ def _pemantau() -> None:
         time.sleep(jeda)
 
 
+def _hasil_awal_tanpa_model() -> None:
+    """Saat server menyala: susun hasil dulu tanpa panggilan model baru (jawaban cache tetap
+    dipakai), supaya halaman langsung terbuka. Pemakaian model menyusul di jalan berikutnya."""
+    global _cache
+    with _kunci_jalan:
+        if _cache is None:
+            llm.mulai_jalan(0)
+            baru = pipeline.jalankan_semua()
+            with _kunci_cache:
+                _cache = baru
+
+
 @asynccontextmanager
 async def lifespan(_app):
+    try:
+        _hasil_awal_tanpa_model()
+    except Exception as e:                            # noqa: BLE001 — server tetap menyala
+        print(f"[awal] gagal menyusun hasil awal: {type(e).__name__}: {e}", flush=True)
     if config.TARIK_OTOMATIS_DETIK > 0:
         threading.Thread(target=_pemantau, name="pemantau", daemon=True).start()
     yield

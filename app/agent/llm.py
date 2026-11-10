@@ -225,10 +225,21 @@ def _tulis_cache(kunci: str, jawaban: dict, meta: dict) -> None:
 
 _jatah_sisa: int | None = None
 
+# Pemutus per jalan: model yang sibuk atau mati tidak boleh membuat satu kali proses
+# berjalan bermenit-menit (halaman menunggu hasilnya). Setelah GAGAL_BERUNTUN_MAKS
+# kegagalan berturut-turut, atau lewat BATAS_DETIK_PER_JALAN, sisa pengumuman di jalan
+# itu memakai penalar aturan. Jalan berikutnya mencoba model lagi.
+GAGAL_BERUNTUN_MAKS = 3
+BATAS_DETIK_PER_JALAN = 90.0
+_gagal_beruntun = 0
+_mulai_jalan_t: float | None = None
+
 
 def mulai_jalan(maks: int) -> None:
-    global _jatah_sisa
+    global _jatah_sisa, _gagal_beruntun, _mulai_jalan_t
     _jatah_sisa = maks
+    _gagal_beruntun = 0
+    _mulai_jalan_t = time.monotonic()
 
 
 def tanya(instruksi: str, dokumen: str) -> tuple[dict, dict]:
@@ -252,12 +263,21 @@ def tanya(instruksi: str, dokumen: str) -> tuple[dict, dict]:
             "token_masuk_asli": asli.get("token_masuk", 0),
             "token_keluar_asli": asli.get("token_keluar", 0),
         }
-    global _jatah_sisa
+    global _jatah_sisa, _gagal_beruntun
     if _jatah_sisa is not None:
         if _jatah_sisa <= 0:
             raise GagalModel("jatah panggilan model per jalan habis")
+        if _gagal_beruntun >= GAGAL_BERUNTUN_MAKS:
+            raise GagalModel(f"pemutus: {_gagal_beruntun} kegagalan model berturut-turut di jalan ini")
+        if _mulai_jalan_t is not None and time.monotonic() - _mulai_jalan_t > BATAS_DETIK_PER_JALAN:
+            raise GagalModel(f"pemutus: batas waktu model per jalan ({BATAS_DETIK_PER_JALAN:.0f} detik) habis")
         _jatah_sisa -= 1
-    jawaban, meta = _tanya_model(instruksi, dokumen)
+    try:
+        jawaban, meta = _tanya_model(instruksi, dokumen)
+    except GagalModel:
+        _gagal_beruntun += 1
+        raise
+    _gagal_beruntun = 0
     # Kunci dihitung ulang: model bisa saja baru diganti di tengah panggilan (404).
     _tulis_cache(_kunci_cache(instruksi, dokumen), jawaban, meta)
     return jawaban, meta
