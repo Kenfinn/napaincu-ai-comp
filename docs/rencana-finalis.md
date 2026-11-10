@@ -32,13 +32,13 @@ Disusun 10 Nov 2026. Berkas ini menggantikan Bagian 0 di `rekap.md` sebagai daft
 | A2 | Triase dengan skor keyakinan + 👍/👎 → ambang per pasal (0,40–0,90, riwayat, reset, kunci) | Claude | A1 |
 | B1 | Draf pemetaan pasal dari data asli + regulasi | Claude | — |
 | B1b | **Verifikasi pemetaan pasal** + ambang ringkasan (`app/ringkasan.py`, `AMBANG`) | Ferry & Patrice | B1 |
-| B2 | DCF otomatis untuk semua emiten non-keuangan; pasal 31 memicu hitung ulang | Claude | — |
+| B2 | DCF otomatis untuk semua emiten non-keuangan; pasal 31 memicu hitung ulang | **Antigravity** (hitung ulang pasal 31: Claude, setelah B1b) | — |
 | B3 | Sitasi angka laporan keuangan ke halaman MOPS | Claude | — |
 | B3b | Uji tautan MOPS dari laptop Taiwan; cocokkan 10 angka FinMind vs MOPS | Afinzaki | B3 |
 | C1 | Chatbot "Tanya FEAF" | Claude | 0, B2, B3 |
 | D1 | Ekspor kandidat gold set dari arsip mentah server (semua emiten sejak 8 Nov) | Claude | — |
 | D2 | **Gold set 30–50** + baseline menit manual | Ferry & Patrice | D1, B1b |
-| D3 | Set uji serangan otomatis dari pengumuman asli | Claude | — |
+| D3 | Set uji serangan otomatis dari pengumuman asli | **Antigravity** | — |
 | D4 | Skrip evaluasi lengkap (semua metrik Appendix 2) | Claude | A1, A2 |
 | D5 | Laporan evaluasi + laporan keamanan + operation trace asli dengan model | Claude | 0, D2, D3, D4 |
 | E1 | README finalis | Claude | semua |

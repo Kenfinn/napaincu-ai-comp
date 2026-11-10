@@ -70,6 +70,14 @@ Jawab langsung di dokumen ini atau di chat tim. Cukup "setuju" atau koreksinya.
    《對有價證券上市公司重大訊息之查證暨公開處理程序》 第4條 (TWSE) dan versi TPEx.
    Dokumen resmi tidak bisa diunduh dari luar Taiwan, jadi kolom "Isi" di atas disusun
    dari judul pengumuman asli.
+8. **Pasal 20, angka transaksi tunggal** (mis. mesin 108 juta NTD): saat ini angka itu
+   *mengganti* belanja modal setahun di DCF (cocok untuk anggaran capex direksi, tidak
+   cocok untuk satu transaksi), sehingga hampir selalu ditahan pemeriksa besaran.
+   Usulan: transaksi tunggal *ditambahkan* ke capex tahun berjalan. Setuju?
+9. **Materialitas triase** (`app/agent/triase.py`): jumlah ÷ kapitalisasi pasar —
+   ≥ 2% material, ≥ 0,5% cukup, ≥ 0,05% kecil, di bawahnya remeh (diarsipkan). Pada
+   data 10 Nov, 7 dari 55 pengumuman pasal 20 jatuh ke "remeh" (sewa ruang beberapa
+   juta NTD). Batas ini wajar menurut kalian?
 
 ## Bukti: statistik pengumuman asli 9 Nov
 
