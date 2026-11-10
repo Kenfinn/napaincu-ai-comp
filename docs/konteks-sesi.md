@@ -1,5 +1,7 @@
 # Konteks kerja — BACA INI DULU
 
+Status harian tim ada di [`rencana-dan-status.md`](./rencana-dan-status.md).
+
 Pegangan untuk melanjutkan tanpa riwayat percakapan (untuk sesi Claude berikutnya,
 Antigravity, dan tim). Per **10 Nov 2026 malam** (diperbarui setelah A2). Berkas ini menggantikan `rekap.md` sebagai status
 terbaru; daftar kerja rinci ada di [`rencana-finalis.md`](./rencana-finalis.md).
