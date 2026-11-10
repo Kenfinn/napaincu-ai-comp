@@ -75,7 +75,7 @@ koordinasinya di `docs/papan-agen.md`. Untuk kerja semalam tanpa pengawasan dipa
 | B3 | Tautan MOPS untuk angka laporan keuangan dan valuasi | Antigravity | Setiap kolom periode di tab Financials punya tautan MOPS | ⬜ |
 | R4 | Draf pengungkapan pihak ketiga dan alat AI untuk formulir panitia | Antigravity | Daftar lengkap: nama, tujuan, lingkup, lisensi | ⬜ |
 | D4 | Skrip evaluasi lengkap dengan data asli | Claude | Latensi, biaya, retry, intervensi manusia, kategori error terisi angka asli | ⬜ |
-| — | Diagram alur diperbarui (triase, ambang, review, valuasi otomatis) | Claude | PNG baru di `docs/diagram/` | ⬜ |
+| — | Diagram alur diperbarui (triase, ambang, review, valuasi otomatis) | Claude | PNG baru di `docs/diagram/` | ✅ `docs/diagram-alur.md` + PNG/SVG |
 
 ### Jumat 13 Nov
 
