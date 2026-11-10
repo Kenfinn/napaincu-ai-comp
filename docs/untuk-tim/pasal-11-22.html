@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<title>Pertanyaan Pasal 11 dan 22 — FEAF</title>
+<style>
+@page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+body { font-family: "Noto Sans", "DejaVu Sans", "WenQuanYi Zen Hei", sans-serif; font-size: 10.2pt; color: #1b2433; line-height: 1.45; }
+.zh { font-family: "WenQuanYi Zen Hei", sans-serif; }
+h1 { font-size: 17pt; margin: 0 0 2px; color: #13284a; }
+h2 { font-size: 13pt; margin: 18px 0 6px; color: #13284a; border-bottom: 2px solid #13284a; padding-bottom: 3px; }
+h3 { font-size: 11pt; margin: 12px 0 4px; }
+.sub { color: #5b6577; font-size: 9.5pt; margin-bottom: 10px; }
+.kotak { background: #f3f5f9; border-left: 4px solid #13284a; padding: 8px 11px; margin: 8px 0; }
+.kotak.kuning { background: #fbf2e3; border-color: #c98a12; }
+table { border-collapse: collapse; width: 100%; margin: 6px 0 8px; font-size: 9.3pt; }
+th, td { border: 1px solid #cdd3dd; padding: 4px 6px; vertical-align: top; text-align: left; }
+th { background: #e8ecf3; }
+td.n { text-align: right; font-family: "DejaVu Sans Mono", monospace; white-space: nowrap; }
+.q { border: 1px solid #13284a; border-radius: 4px; padding: 7px 10px; margin: 7px 0; page-break-inside: avoid; }
+.q b.no { color: #13284a; }
+.jawab { margin-top: 6px; border-top: 1px dashed #9aa4b5; padding-top: 4px; color: #5b6577; font-size: 9pt; min-height: 26px; }
+.pecah { page-break-before: always; }
+small { color: #5b6577; }
+</style></head><body>
+
+<h1>Pertanyaan untuk Ferry &amp; Patrice: Pasal 11 dan Pasal 22</h1>
+<div class="sub">FEAF · Agentic AI Investment Assistant · NAPAI AAIC 2026 · disusun 10 Nov 2026 · mohon dijawab <b>Rabu 11 Nov, siang</b></div>
+
+<div class="kotak">
+<b>Kenapa ini penting.</b> Dari pengumuman asli 9 Nov, agent <b>belum mengenali satu pun label angka</b> di
+<b>29 pengumuman pasal 11</b> dan <b>19 pengumuman pasal 22</b>. Akibatnya semua berakhir
+<i>"Ditahan: tidak ada angka bersumber"</i> dan hanya bisa diarsipkan. Label yang dicari agent ditebak
+sebelum ada data asli; sekarang data asli sudah ada, dan kami butuh keputusan kalian:
+<b>angka mana yang dipakai, untuk apa, dan kapan layak jadi peringatan.</b>
+</div>
+<div class="kotak kuning">
+<b>Cara menjawab:</b> cukup tulis <b>"setuju"</b> atau koreksinya per nomor pertanyaan (Q1–Q9), langsung di
+PDF ini atau di chat LINE ke Afinzaki. Kalau ragu, tulis tebakan terbaik + "RAGU". Penjelasan lengkap
+semua pasal ada di <span class="mono">docs/pemetaan-pasal.md</span> di repo.
+</div>
+
+<h2>Pasal 22: Penjaminan (<span class="zh">背書保證</span>)</h2>
+<p>Perusahaan menjamin utang pihak lain, hampir selalu anak usahanya. Wajib diumumkan bila penjaminan baru
+mencapai ≥ NT$30 juta dan ≥ 5% ekuitas, atau saldonya ≥ 50% ekuitas (judul pengumuman asli menyebut batas ini).
+Ini <b>bukan utang perusahaan sendiri</b>, sehingga kami mengusulkan diperlakukan sebagai <b>sinyal risiko</b>,
+bukan input utang di DCF.</p>
+
+<h3>Contoh asli: 2347 聯強 (Synnex), 9 Nov 2026</h3>
+<table>
+<tr><th>Butir</th><th>Label asli</th><th>Isi</th><th>Arti</th></tr>
+<tr><td>2.(3)</td><td class="zh">背書保證之限額(仟元)</td><td class="n">92,783,319</td><td>Batas penjaminan untuk 1 pihak</td></tr>
+<tr><td>2.(4)</td><td class="zh">原背書保證之餘額(仟元)</td><td class="n">28,638,600</td><td>Saldo sebelum transaksi ini</td></tr>
+<tr><td>2.(5)</td><td class="zh">本次新增背書保證之金額(仟元)</td><td class="n">1,152,025</td><td>Penjaminan <b>baru</b> kali ini</td></tr>
+<tr><td>2.(6)</td><td class="zh">迄事實發生日止背書保證餘額(仟元)</td><td class="n">29,790,625</td><td>Saldo sesudahnya (pihak ini)</td></tr>
+<tr><td>2.(7)</td><td class="zh">被背書保證公司實際動支金額(仟元)</td><td class="n">14,754,401</td><td>Yang benar-benar dipakai</td></tr>
+<tr><td>6</td><td class="zh">背書保證之總限額(仟元)</td><td class="n">185,566,638</td><td>Batas total semua pihak</td></tr>
+<tr><td>7</td><td class="zh">迄事實發生日為止，背書保證餘額(仟元)</td><td class="n">100,663,762</td><td>Saldo total semua pihak</td></tr>
+<tr><td>8</td><td class="zh">…背書保證餘額占…淨值之比率</td><td class="n">108.49</td><td>Saldo total = <b>108% ekuitas</b></td></tr>
+<tr><td>9</td><td class="zh">…背書保證、長期投資及資金貸與餘額合計數…淨值之比率</td><td class="n">296.60</td><td>Penjaminan + investasi + pinjaman = 297% ekuitas</td></tr>
+</table>
+<small>Satuan 仟元 (ribu NTD) hanya tertulis di label. Semua 19 pengumuman pasal 22 memakai label yang sama persis.</small>
+
+<p><b>Usulan kami:</b> terbitkan sebagai <b>peringatan risiko</b> berisi saldo total (butir 7), penjaminan baru (2.(5)), dan
+rasio terhadap ekuitas (butir 8 dan 9). DCF tidak diubah. Peringatan dinaikkan ke "perlu ditinjau manusia" bila rasio butir 8 ≥ 50%.</p>
+
+<div class="q"><b class="no">Q1.</b> Setuju pasal 22 diperlakukan sebagai <b>sinyal risiko</b> (tidak mengubah utang di DCF)?
+<div class="jawab">Jawaban:</div></div>
+<div class="q"><b class="no">Q2.</b> Angka utama yang ditampilkan: saldo total (butir 7), penjaminan baru (2.(5)), rasio (butir 8 dan 9). Ada yang perlu ditambah atau dibuang (mis. 實際動支金額)?
+<div class="jawab">Jawaban:</div></div>
+<div class="q"><b class="no">Q3.</b> Mulai rasio berapa (butir 8) peringatan dianggap serius dan ditahan untuk manusia? Usulan <b>≥ 50% ekuitas</b>. Contoh 2347 = 108%.
+<div class="jawab">Jawaban:</div></div>
+<div class="q"><b class="no">Q4.</b> Penjaminan untuk anak usaha <b>100%</b> (seperti contoh) dibedakan dari penjaminan untuk pihak luar? Usulan: pihak luar diberi bobot risiko lebih tinggi.
+<div class="jawab">Jawaban:</div></div>
+<div class="q"><b class="no">Q5.</b> Pasal 23 (pinjaman dana ke pihak lain, <span class="zh">資金貸與</span>) diperlakukan sama seperti pasal 22?
+<div class="jawab">Jawaban:</div></div>
+
+<h2 class="pecah">Pasal 11: Perubahan modal dan surat utang</h2>
+<p>Ternyata pasal 11 <b>bukan belanja modal</b> seperti dugaan awal. Isinya tiga jenis kejadian:</p>
+<table>
+<tr><th>Jenis</th><th>Contoh judul asli</th><th>Label angka yang ada</th><th>Dampak yang kami usulkan</th></tr>
+<tr><td>A. Pengurangan modal / pembatalan saham treasuri</td><td class="zh">庫藏股註銷減資、收回限制員工權利新股註銷減資</td>
+  <td class="zh">減資金額, 消除股份, 減資比率, 減資後股本</td><td>Jumlah saham <b>turun</b> → nilai per lembar naik</td></tr>
+<tr><td>B. Penerbitan obligasi / obligasi konversi</td><td class="zh">發行國內第四次無擔保轉換公司債</td>
+  <td class="zh">發行總額, 每張面額, 發行利率</td><td>Utang <b>naik</b> di DCF; konversi = potensi dilusi</td></tr>
+<tr><td>C. Saham baru dari konversi / opsi karyawan</td><td class="zh">轉換公司債轉換普通股之增資基準日、員工認股權憑證轉換</td>
+  <td class="zh">全案發行總金額及股數, 發行價格, 每股面額</td><td>Jumlah saham <b>naik</b> (dilusi)</td></tr>
+</table>
+
+<h3>Contoh A: 5546 永固-KY, 9 Nov 2026 (pembatalan saham treasuri)</h3>
+<table>
+<tr><th>Butir</th><th>Label</th><th>Isi</th></tr>
+<tr><td>3</td><td class="zh">減資金額</td><td class="n">3,260,000元</td></tr>
+<tr><td>4</td><td class="zh">消除股份</td><td class="n">326,000股</td></tr>
+<tr><td>5</td><td class="zh">減資比率</td><td class="n">0.40%</td></tr>
+<tr><td>6</td><td class="zh">減資後股本</td><td class="n">820,274,020</td></tr>
+</table>
+<h3>Contoh B: 6184 大豐電, 9 Nov 2026 (obligasi konversi)</h3>
+<table>
+<tr><th>Butir</th><th>Label</th><th>Isi</th></tr>
+<tr><td>4</td><td class="zh">發行總額</td><td class="zh">發行總面額上限為新台幣13億元整 <small>(batas atas NT$1,3 miliar, ditulis 13億)</small></td></tr>
+<tr><td>8</td><td class="zh">發行利率</td><td>0%</td></tr>
+<tr><td>10</td><td class="zh">募得價款之用途及運用計畫</td><td class="zh">償還銀行借款 <small>(untuk melunasi pinjaman bank)</small></td></tr>
+</table>
+
+<div class="q"><b class="no">Q6.</b> Setuju pembagian dampak per jenis di tabel atas (A: saham turun, B: utang naik, C: saham naik)?
+<div class="jawab">Jawaban:</div></div>
+<div class="q"><b class="no">Q7.</b> Jenis B dipakai untuk melunasi pinjaman bank (contoh 6184): utang bersih sebenarnya <b>tidak bertambah</b>. Tetap dicatat sebagai utang naik, atau hanya sinyal (tanpa mengubah DCF)?
+<div class="jawab">Jawaban:</div></div>
+<div class="q"><b class="no">Q8.</b> "<span class="zh">發行總額上限</span>" adalah <b>batas atas</b>, bukan jumlah pasti. Pakai angka batas atas itu, atau tunggu pengumuman realisasinya?
+<div class="jawab">Jawaban:</div></div>
+<div class="q"><b class="no">Q9.</b> Kapan layak jadi peringatan? Contoh 5546 hanya mengubah saham 0,40%. Usulan: perubahan saham <b>≥ 1%</b>, atau jumlah uang <b>≥ 2% kapitalisasi pasar</b>. Di bawah itu diarsipkan dengan alasan.
+<div class="jawab">Jawaban:</div></div>
+
+<div class="kotak" style="margin-top:14px;">
+<b>Setelah kalian menjawab:</b> Claude memasang label-label di atas ke penyari dan pemeriksa angka, lalu menjalankan ulang
+semua pengumuman asli. Hasilnya langsung terlihat di <b>feaf.afinzaki.my.id</b>: pengumuman pasal 11/22 tidak lagi
+"tanpa angka". Jawaban ini juga dipakai saat kalian melabeli gold set (kolom <i>harus_terbit</i> dan <i>input</i>).
+</div>
+</body></html>
