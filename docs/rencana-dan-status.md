@@ -112,6 +112,9 @@ gagal bila ada cache 2330 yang dibuat sebelum D-c. Masalah yang sama terjadi di 
 cache lama tidak punya tanda `tidak_tersedia`, dan pipeline menerima cache basi, jadi utang
 2330 tetap kurang 13% sampai cache dibangun ulang. Perlu versi skema di cache (cache tanpa
 versi terbaru dianggap tidak ada) dan tes yang memakai folder cache sementara.
+Temuan kedua: `valuasi_otomatis.panaskan` melewati emiten yang punya berkas manual, jadi
+cache otomatis 2330 tidak pernah dibangun di server dan D-b (2330 otomatis + asumsi tim)
+tidak pernah aktif di sana. Perlu: panaskan tetap membangun cache untuk emiten berkas manual.
 
 ## 5. Backlog (setelah 13 Nov atau bila sempat)
 
