@@ -833,10 +833,8 @@ def panaskan(daftar_kode: list[str], jeda: float = 0.3) -> dict[str, str]:
         kode = (kode or "").strip()
         if not kode:
             continue
-        # Lewati bila berkas manual ada (berkas manual selalu menang)
-        if (Path(config.VALUATION_DIR) / f"{kode}.json").exists():
-            ringkasan[kode] = "manual"
-            continue
+        # Emiten dengan berkas manual (seperti 2330) tetap dipanaskan agar D-b aktif
+        # (otomatis + asumsi tim). Cache segar tetap dihormati di bawah.
         segar = baca_cache(kode, terima_basi=False)
         if segar is not None:
             if segar.get("tidak_berlaku"):

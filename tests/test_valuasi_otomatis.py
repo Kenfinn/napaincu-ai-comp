@@ -341,14 +341,14 @@ class TestValuasiOtomatis(_LingkunganOfflineMixin, unittest.TestCase):
         valuasi_otomatis.panaskan(["2330", "2454", "2881"], jeda=0)
 
         klien = TestClient(main.app)
-        for bhs, label_oto, label_man, label_na in (
-            ("en", "Automatic", "Manual", "Not applicable"),
-            ("zh", "自動計算", "手動工作表", "不適用"),
-            ("id", "Otomatis", "Manual", "Tidak berlaku"),
+        for bhs, label_oto, label_oto_asumsi, label_na in (
+            ("en", "Automatic", "Automatic + team assumptions", "Not applicable"),
+            ("zh", "自動計算", "自動＋團隊假設", "不適用"),
+            ("id", "Otomatis", "Otomatis + asumsi tim", "Tidak berlaku"),
         ):
             r_man = klien.get(f"/saham/2330?tab=valuasi&lang={bhs}")
             self.assertEqual(r_man.status_code, 200)
-            self.assertIn(label_man, r_man.text)
+            self.assertIn(label_oto_asumsi, r_man.text)
             self.assertNotIn("⟦", r_man.text)
 
             r_oto = klien.get(f"/saham/2454?tab=valuasi&lang={bhs}")
