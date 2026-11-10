@@ -26,6 +26,8 @@ _T: dict[str, tuple[str, str, str]] = {
     "nav.feed": ("Alerts", "警示", "Peringatan"),
     "nav.valuasi": ("Valuation {kode}", "評價 {kode}", "Valuasi {kode}"),
     "nav.api": ("API", "API", "API"),
+    "nav.saham": ("My stocks", "我的自選股", "Saham saya"),
+    "nav.saham_kosong": ("Add stocks in Watchlist →", "請至自選股新增 →", "Tambah saham di Watchlist →"),
     "nav.bahasa": ("Language", "語言", "Bahasa"),
     "status.mesin": ("Reasoning engine", "推理引擎", "Mesin penalar"),
     "status.aturan": ("rule-based reasoner", "規則式推理", "penalar-aturan"),

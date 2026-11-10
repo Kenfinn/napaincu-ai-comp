@@ -648,6 +648,13 @@ class TestRingkasanAnalisis(TestHalamanSaham):
         finally:
             config.API_KEY, llm.tanya = asli
 
+    def test_menu_samping_berisi_watchlist(self):
+        self.tarik.simpan_watchlist(["2330", "2454"])
+        r = self.c.get("/saham/2454?lang=en&tab=stats")
+        self.assertIn('href="/saham/2330"', r.text)
+        self.assertIn('href="/saham/2454" class="on"', r.text.replace("\n", "").replace("  ", " "))
+        self.assertNotIn("Valuation 2330", r.text)
+
     def test_tab_ringkasan_tiga_bahasa(self):
         for bhs in ("en", "zh", "id"):
             for risiko in ("konservatif", "agresif"):

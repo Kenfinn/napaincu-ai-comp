@@ -21,10 +21,21 @@
       <span class="hit abu">{{ jml_watchlist }}</span></a>
     <a href="/" class="{{ 'on' if halaman == 'feed' }}">{{ t('nav.feed') }}
       {% if jml_terbit %}<span class="hit">{{ jml_terbit }}</span>{% endif %}</a>
-    {% for k in emiten %}
-    <a href="/valuasi/{{ k }}" class="{{ 'on' if halaman == 'valuasi' and kode == k }}">{{ t('nav.valuasi', kode=k) }}</a>
-    {% endfor %}
     <a href="/docs">{{ t('nav.api') }}</a>
+  </div>
+  <div class="daftar-saham">
+    <span class="lbl">{{ t('nav.saham') }}</span>
+    {% for s in saham_samping %}
+    <a href="/saham/{{ s.kode }}" class="{{ 'on' if halaman == 'saham' and kode_saham == s.kode }}">
+      <span class="mono kd">{{ s.kode }}</span>
+      <span class="nm">{{ s.nama or '' }}</span>
+      {% if s.ubah_pct is not none %}
+      <span class="mono ch {{ 'naik' if s.ubah_pct > 0 else ('turun' if s.ubah_pct < 0 else '') }}">{{ '+' if s.ubah_pct > 0 }}{{ s.ubah_pct | pct(1) }}</span>
+      {% endif %}
+    </a>
+    {% else %}
+    <a href="/watchlist" class="kosong-kecil">{{ t('nav.saham_kosong') }}</a>
+    {% endfor %}
   </div>
   <div class="bahasa">
     <span class="lbl">{{ t('nav.bahasa') }}</span>

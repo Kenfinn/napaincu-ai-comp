@@ -173,6 +173,21 @@ def _harga(kode, nama, bursa, tgl, tutup, ubah, buka, tinggi, rendah, vol) -> di
             "buka": buka, "tinggi": tinggi, "rendah": rendah, "volume": vol}
 
 
+def harga_dari_cache(kode: str) -> dict | None:
+    """Seperti `harga`, tapi tidak pernah menembak jaringan — untuk menu samping, yang
+    dirender di setiap halaman dan tidak boleh ikut lambat saat bursa sulit dijangkau."""
+    for nama, kunci in (("harga_twse", "Code"), ("harga_tpex", "SecuritiesCompanyCode")):
+        data, _ = _baca_cache(nama)
+        for r in data or []:
+            if r.get(kunci) == kode:
+                if nama == "harga_twse":
+                    return _harga(kode, r.get("Name"), "TWSE", _roc(r.get("Date")), _f(r.get("ClosingPrice")),
+                                  _f(r.get("Change")), None, None, None, None)
+                return _harga(kode, r.get("CompanyName"), "TPEx", _roc(r.get("Date")), _f(r.get("Close")),
+                              _f(r.get("Change")), None, None, None, None)
+    return None
+
+
 def rasio(kode: str) -> dict | None:
     for r in _daftar("rasio_twse", "rasio"):
         if r.get("Code") == kode:

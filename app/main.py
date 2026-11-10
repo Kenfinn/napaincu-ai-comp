@@ -104,6 +104,18 @@ def hasil(segarkan: bool = False) -> list[dict]:
         return _cache
 
 
+def _saham_samping() -> list[dict]:
+    """Daftar watchlist untuk menu samping: kode, nama, perubahan harga (dari cache saja)."""
+    detail, _ = store.muat_detail()
+    nama_dari_data = {d.get("code"): d.get("name") for d in detail if d.get("name")}
+    keluar = []
+    for k in tarik.baca_watchlist():
+        h = pasar.harga_dari_cache(k) or {}
+        keluar.append({"kode": k, "nama": h.get("nama") or nama_dari_data.get(k),
+                       "ubah_pct": h.get("ubah_pct")})
+    return keluar
+
+
 def konteks(request: Request, halaman: str, **tambahan) -> dict:
     _, sumber = store.muat_detail()
     bhs = bahasa_dari(request)
@@ -126,7 +138,7 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
         "pesan": pesan_kilat,
         "request": request,
         "halaman": halaman,
-        "emiten": store.emiten_tervaluasi(),
+        "saham_samping": _saham_samping(),
         "model": llm.nama_model(),
         "pakai_model": llm.tersedia(),
         "sumber_data": sumber,

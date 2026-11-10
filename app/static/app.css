@@ -185,3 +185,19 @@ table.fin td.kosong-sel { color: var(--abu); }
 .kartu.kesimpulan { border-left: 4px solid var(--navy); }
 .kartu.kesimpulan p { margin: 6px 0; font-size: 13.5px; line-height: 1.55; }
 .kartu.kesimpulan p.besar { font-size: 16px; font-weight: 600; }
+
+/* --- daftar saham di menu samping --- */
+.daftar-saham { margin-top: 16px; display: flex; flex-direction: column; gap: 1px; overflow-y: auto; min-height: 0; flex: 1; }
+.daftar-saham .lbl { font-family: "IBM Plex Mono", monospace; font-size: 9.5px; letter-spacing: 0.09em;
+                     color: #7E9BB8; text-transform: uppercase; padding: 0 8px 6px; }
+.daftar-saham a { display: flex; align-items: baseline; gap: 8px; padding: 7px 8px; border-radius: 5px;
+                  color: #C9D6E3; text-decoration: none; font-size: 12.5px; }
+.daftar-saham a:hover { background: #1D3E60; }
+.daftar-saham a.on { background: var(--navy-3); color: #fff; }
+.daftar-saham .kd { font-weight: 600; font-size: 12px; flex: none; }
+.daftar-saham .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #A9BDD1; }
+.daftar-saham a.on .nm { color: #DCE7F0; }
+.daftar-saham .ch { font-size: 11px; flex: none; }
+.daftar-saham .ch.naik { color: #F08A7E; }
+.daftar-saham .ch.turun { color: #6FD3A8; }
+.daftar-saham .kosong-kecil { color: #7E9BB8; font-size: 12px; }
