@@ -21,9 +21,11 @@ karena jalur lainnya yang dipakai saat uji.
 
 from __future__ import annotations
 
+import html
 import json
 import os
 import re
+import unicodedata
 import time
 import urllib.error
 import urllib.request
@@ -284,6 +286,22 @@ def _pasal(raw: str) -> int | None:
     return int(m.group(1)) if m else None
 
 
+# Sebagian pengumuman memuat entitas HTML (&#12198;) yang menunjuk ke karakter Radikal
+# Kangxi (⾦ U+2FA6), bukan aksara biasa (金 U+91D1) — artefak salin-tempel dari Word.
+# Tanpa dipulihkan, label "使用權資產金額" tidak cocok dengan apa pun. Hanya blok radikal
+# yang dinormalkan; tanda baca lebar penuh (：，（）) dibiarkan apa adanya, supaya teks
+# tetap sama dengan halaman MOPS saat dicocokkan juri.
+_RADIKAL = re.compile("[\u2e80-\u2fdf]")
+
+
+def bersihkan_teks(s: str) -> str:
+    if not s:
+        return s or ""
+    if "&" in s:
+        s = html.unescape(s)
+    return _RADIKAL.sub(lambda m: unicodedata.normalize("NFKC", m.group(0)), s)
+
+
 def normalkan(rec: dict, sumber: str, ditarik: str) -> dict:
     """Satu baris OpenAPI → bentuk detail yang dipakai pipeline (sama dengan fetch_details.py)."""
     # Nama kolom TWSE kadang berspasi ('主旨 '), TPEx sebagian berbahasa Inggris.
@@ -294,9 +312,9 @@ def normalkan(rec: dict, sumber: str, ditarik: str) -> dict:
     jam_raw = str(r.get("發言時間") or "")
     tanggal = _roc_ke_iso(tgl_roc)
     jam = _jam(jam_raw)
-    subjek = " ".join(str(r.get("主旨") or "").split())
+    subjek = " ".join(bersihkan_teks(str(r.get("主旨") or "")).split())
     klausa_raw = str(r.get("符合條款") or "").strip()
-    isi = str(r.get("說明") or "")
+    isi = bersihkan_teks(str(r.get("說明") or ""))
     kunci = f"{kode}-{tanggal}-{jam.replace(':', '')}"
     return {
         "code": kode,

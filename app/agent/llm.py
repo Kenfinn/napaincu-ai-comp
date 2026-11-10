@@ -30,7 +30,7 @@ from .. import config
 
 # Instruksi sistem dipisah sebagai konstanta supaya bisa diversikan — Appendix 2
 # meminta metode version management untuk prompt dan strategi utama.
-VERSI_PROMPT = "2026-09-24.1"
+VERSI_PROMPT = "2026-11-10.1"
 
 SISTEM = """Anda membantu menganalisis pengumuman resmi bursa Taiwan (MOPS 重大訊息).
 

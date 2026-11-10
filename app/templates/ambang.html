@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block judul %}{{ t('amb.judul') }} · FEAF{% endblock %}
+{% block isi %}
+
+<div class="kepala">
+  <div>
+    <div class="kicker">{{ t('amb.kicker') }}</div>
+    <h1>{{ t('amb.judul') }}</h1>
+  </div>
+</div>
+<p class="catatan" style="margin:-6px 2px 14px;">{{ t('amb.isi') }} {{ t('tb.cara') }}</p>
+
+<div class="kartu">
+  {% if data.ambang %}
+  <table class="wl">
+    <tr><th>{{ t('amb.k_pasal') }}</th><th>{{ t('amb.k_nilai') }}</th><th>👎</th><th>👍</th>
+        <th>{{ t('amb.k_status') }}</th><th></th></tr>
+    {% for a in data.ambang %}
+    <tr>
+      <td class="mono">{{ a.pasal }}</td>
+      <td class="mono"><b>{{ a.nilai | rb(2) }}</b>{% if a.nilai != a.dasar %} <span style="color:var(--abu);">({{ a.dasar | rb(2) }})</span>{% endif %}</td>
+      <td class="mono">{{ a.bawah }}</td>
+      <td class="mono">{{ a.atas }}</td>
+      <td>{{ t('tb.terkunci') if a.terkunci else t('amb.bebas') }}</td>
+      <td style="text-align:right; white-space:nowrap;">
+        <form method="post" action="/ambang/{{ a.pasal }}/{{ 'buka' if a.terkunci else 'kunci' }}" style="display:inline;">
+          <button class="tombol abu" type="submit">{{ t('amb.buka') if a.terkunci else t('amb.kunci') }}</button></form>
+        <form method="post" action="/ambang/{{ a.pasal }}/reset" style="display:inline;">
+          <button class="tombol tipis" type="submit">{{ t('amb.reset') }}</button></form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="kosong">{{ t('amb.kosong', dasar=(data.aturan.dasar | rb(2))) }}</div>
+  {% endif %}
+</div>
+
+{% if data.riwayat %}
+<h2>{{ t('amb.riwayat') }}</h2>
+<div class="kartu">
+  <table class="wl">
+    <tr><th>{{ t('rv.k_waktu') }}</th><th>{{ t('amb.k_pasal') }}</th><th>{{ t('amb.k_peristiwa') }}</th>
+        <th>{{ t('amb.k_dari_ke') }}</th></tr>
+    {% for r in data.riwayat %}
+    <tr>
+      <td class="mono" style="font-size:12px;">{{ r.waktu[:16] | replace('T',' ') }}</td>
+      <td class="mono">{{ r.pasal }}</td>
+      <td>{{ t('amb.p.' ~ r.peristiwa) }}
+        {% if r.peristiwa == 'suara' %}
+          {{ '👍' if r.suara == 'atas' else ('👎' if r.suara == 'bawah' else '—') }}
+          {% if r.h %}<a href="/peringatan/{{ r.id }}" class="mono">{{ r.h.emiten.kode }}</a>{% endif %}
+        {% endif %}</td>
+      <td class="mono">{{ r.dari | rb(2) }} → {{ r.ke | rb(2) }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endif %}
+{% endblock %}

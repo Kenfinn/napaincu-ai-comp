@@ -32,13 +32,16 @@
       <a href="/peringatan/{{ h.id }}">{{ t('al.jejak') }} / detail →</a>
       {% if h.mops_url %} · <a href="{{ h.mops_url }}" target="_blank" rel="noopener">{{ t('al.cocokkan') }}</a>{% endif %}
     </p>
+    {% if tahan.jenis == 'keyakinan' %}
+      <div class="pita nyata" style="margin:6px 0;"><div>{{ t('rv.keyakinan_info') }}</div></div>
+    {% endif %}
     {% if not tahan.boleh_setujui %}
       <div class="pita fixture" style="margin:6px 0;"><div>{{ t('rv.tanpa_angka') if tahan.jenis == 'tanpa_angka' else t('rv.hanya_arsip') }}</div></div>
     {% endif %}
     <form method="post" action="/review/{{ h.id }}" class="form-review">
       <input class="isian lebar" name="catatan" placeholder="{{ t('rv.catatan') }}" maxlength="500" required>
       {% if tahan.boleh_setujui %}
-      <button class="tombol" type="submit" name="keputusan" value="setujui">{{ t('rv.setujui') }}</button>
+      <button class="tombol" type="submit" name="keputusan" value="setujui">{{ t('rv.lanjut') if tahan.jenis == 'keyakinan' else t('rv.setujui') }}</button>
       {% endif %}
       <button class="tombol tipis" type="submit" name="keputusan" value="arsipkan">{{ t('rv.arsipkan') }}</button>
     </form>

@@ -40,6 +40,36 @@
     <span class="v"><a href="/jejak/{{ h.id }}">{{ t('al.lihat_langkah', n=h.ringkasan.langkah) }}</a></span></div>
 </div>
 
+{% if h.triase %}
+{% set tri = h.triase %}
+<h2>{{ t('tb.judul') }}</h2>
+<div class="kartu">
+  <div class="triase-atas">
+    <div><div class="kicker">{{ t('tb.judul') }}</div><b class="mono angka-besar">{{ tri.skor | rb(2) }}</b></div>
+    <div><div class="kicker">{{ t('tb.ambang', k=tri.pasal) }}</div>
+      <b class="mono angka-besar">{{ tri.ambang | rb(2) }}</b>
+      {% if tri.terkunci %}<span class="lencana l-dilewati">{{ t('tb.terkunci') }}</span>{% endif %}
+      <div class="mono" style="font-size:11px; color:var(--abu);">{{ t('tb.asal', bawah=tri.bawah, atas=tri.atas, dasar=((tri.dasar or 0.55) | rb(2))) }}</div></div>
+  </div>
+  {% for k in tri.komponen %}
+  <div class="cek {{ 'ok' if k.nilai > 0 else ('x' if k.nilai < 0 else '') }}">
+    <span class="tanda">{{ '+' if k.nilai > 0 else ('−' if k.nilai < 0 else '·') }}</span>
+    <span class="nama mono">{{ (k.nilai | abs) | rb(2) }}</span>
+    <span class="why">{{ tr(k.pesan) }}</span>
+  </div>
+  {% endfor %}
+  <form method="post" action="/umpan-balik/{{ h.id }}" class="form-review">
+    <span style="font-size:12.5px; font-weight:600;">{{ t('tb.tanya') }}</span>
+    <input type="hidden" name="kembali" value="/peringatan/{{ h.id }}">
+    <button class="tombol {{ '' if suara == 'atas' else 'abu' }}" type="submit" name="suara" value="atas">{{ t('tb.atas') }}</button>
+    <button class="tombol {{ '' if suara == 'bawah' else 'abu' }}" type="submit" name="suara" value="bawah">{{ t('tb.bawah') }}</button>
+    {% if suara %}<button class="tombol tipis" type="submit" name="suara" value="hapus">{{ t('tb.hapus') }}</button>{% endif %}
+    <a href="/ambang" style="font-size:12px; margin-left:auto;">{{ t('tb.semua') }}</a>
+  </form>
+  <p class="catatan" style="margin:8px 0 0;">{{ t('tb.cara') }}</p>
+</div>
+{% endif %}
+
 {% for d in (h.muatan.diterima if h.muatan and h.muatan.diterima else []) %}
   {% set r = d.hasil %}
   <h2>{{ t('al.hitung_ulang', input=r.input) }}</h2>

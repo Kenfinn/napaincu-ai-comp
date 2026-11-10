@@ -209,3 +209,10 @@ table.fin td.kosong-sel { color: var(--abu); }
 .state { font: 600 10px "IBM Plex Mono", monospace; letter-spacing: 0.06em; background: var(--navy); color: #fff;
          padding: 2px 6px; border-radius: 3px; vertical-align: 1px; }
 .data-jejak summary { cursor: pointer; font: 500 11px "IBM Plex Mono", monospace; color: var(--abu); margin-top: 4px; }
+
+/* --- triase keyakinan + 👍/👎 (A2) --- */
+.triase-atas { display: flex; gap: 34px; align-items: flex-end; padding-bottom: 10px; border-bottom: 1px solid var(--garis); margin-bottom: 4px; }
+.angka-besar { font-size: 22px; }
+.tombol.abu { background: #EEF0F4; color: var(--navy); }
+.tombol.abu:hover { background: #E1E5EC; }
+.cek .nama.mono { width: 46px; }

@@ -86,10 +86,24 @@ INDUSTRI = {
 }
 INDUSTRI_KEUANGAN = {"17"}
 
-# Kolom profil yang TIDAK disimpan: nama orang dan kontak pribadi.
+# Kolom profil yang BOLEH disimpan (daftar izin, bukan daftar larangan). TWSE dan TPEx
+# menamai kolom berbeda (董事長 vs Chairman, 發言人職稱 vs TitleOfSpokesman), dan daftar
+# larangan terbukti bocor: kolom TPEx yang tidak terdaftar ikut tersimpan. Dengan daftar
+# izin, kolom baru apa pun dari bursa otomatis dibuang. Tidak ada nama orang di sini.
+PROFIL_DISIMPAN = frozenset((
+    "出表日期", "公司代號", "公司名稱", "公司簡稱", "英文簡稱", "產業別", "住址", "網址",
+    "成立日期", "上市日期", "普通股每股面額", "實收資本額", "已發行普通股數或TDR原股發行股數",
+    "Date", "SecuritiesCompanyCode", "CompanyName", "CompanyAbbreviation", "Symbol",
+    "SymbolEnglish", "SecuritiesIndustryCode", "Address", "WebAddress", "DateOfIncorporation",
+    "DateOfListing", "ParValueOfCommonStock", "Paidin.Capital.NTDollars", "IssueShares",
+))
+# Contoh kolom yang dibuang (untuk tes dan dokumentasi): nama ketua, direktur utama,
+# juru bicara, akuntan, dan kontak pribadinya, dalam penamaan kedua bursa.
 PROFIL_DIBUANG = ("董事長", "總經理", "發言人", "發言人職稱", "代理發言人", "簽證會計師1",
-                  "簽證會計師2", "電子郵件信箱", "ChairmanOfTheBoard", "GeneralManager",
-                  "Spokesman", "SpokesmanTitle", "DeputySpokesman")
+                  "簽證會計師2", "電子郵件信箱", "Chairman", "ChairmanOfTheBoard", "GeneralManager",
+                  "Spokesman", "TitleOfSpokesman", "SpokesmanTitle", "DeputySpokesperson",
+                  "DeputySpokesman", "CPA.CharteredPublicAccountant.First",
+                  "CPA.CharteredPublicAccountant.Second", "EmailAddress")
 
 
 # --------------------------------------------------------------------------- cache
@@ -205,6 +219,30 @@ def harga_dari_cache(kode: str) -> dict | None:
     return None
 
 
+def kapitalisasi_dari_cache(kode: str) -> dict | None:
+    """Kapitalisasi pasar (juta NTD) dari cache harga + cache profil, tanpa jaringan.
+
+    Dipakai pipeline untuk menilai materialitas sebuah pengumuman. Pipeline tidak boleh
+    menunggu bursa, jadi bila salah satu cache kosong hasilnya None (materialitas tidak
+    dinilai, dan itu tercatat di jejak).
+    """
+    h = harga_dari_cache(kode)
+    if not h or not h.get("tutup"):
+        return None
+    for nama in ("profil_twse", "profil_tpex"):
+        data, _ = _baca_cache(nama)
+        for r in data or []:
+            if str(r.get("公司代號") or r.get("SecuritiesCompanyCode") or "").strip() == kode:
+                lembar = _f(r.get("已發行普通股數或TDR原股發行股數") or r.get("IssueShares"))
+                if not lembar:
+                    modal = _f(r.get("實收資本額") or r.get("Paidin.Capital.NTDollars"))
+                    lembar = modal / 10 if modal else None      # nominal NT$10 per lembar
+                if lembar:
+                    return {"juta_ntd": h["tutup"] * lembar / 1e6, "harga": h["tutup"],
+                            "lembar": lembar, "tanggal": h.get("tanggal"), "sumber": h.get("bursa")}
+    return None
+
+
 def rasio(kode: str) -> dict | None:
     for r in _daftar("rasio_twse", "rasio"):
         if r.get("Code") == kode:
@@ -218,12 +256,17 @@ def rasio(kode: str) -> dict | None:
 
 
 def _bersihkan_profil(rows: list[dict]) -> list[dict]:
-    return [{k: v for k, v in r.items() if k.strip() not in PROFIL_DIBUANG} for r in rows]
+    return [{k.strip(): v for k, v in r.items() if k.strip() in PROFIL_DISIMPAN}
+            for r in rows if isinstance(r, dict)]
 
 
 def daftar_profil(nama: str = "profil_twse") -> list[dict]:
     data, _ = _dengan_cache(nama, TTL["profil"],
                             lambda: _bersihkan_profil(_ambil_json(SUMBER_PASAR[nama])))
+    if data and any(set(r) - PROFIL_DISIMPAN for r in data[:50] if isinstance(r, dict)):
+        # Cache lama (sebelum daftar izin) masih memuat kolom pribadi: bersihkan di tempat.
+        data = _bersihkan_profil(data)
+        _tulis_cache(nama, data)
     return data or []
 
 
@@ -254,21 +297,20 @@ def per_industri(kode: str) -> dict | None:
 
 def profil(kode: str) -> dict | None:
     for nama in ("profil_twse", "profil_tpex"):
-        data, _ = _dengan_cache(nama, TTL["profil"],
-                                lambda n=nama: _bersihkan_profil(_ambil_json(SUMBER_PASAR[n])))
-        for r in data or []:
+        for r in daftar_profil(nama):
             if str(r.get("公司代號") or r.get("SecuritiesCompanyCode") or "").strip() == kode:
                 ind = str(r.get("產業別") or r.get("SecuritiesIndustryCode") or "").strip()
                 return {
                     "nama_lengkap": r.get("公司名稱") or r.get("CompanyName"),
                     "nama": r.get("公司簡稱") or r.get("CompanyAbbreviation"),
-                    "nama_en": r.get("英文簡稱") or r.get("SymbolEnglish"),
+                    "nama_en": (r.get("英文簡稱") or r.get("SymbolEnglish") or r.get("Symbol") or "").strip() or None,
                     "industri_kode": ind,
                     "industri": INDUSTRI.get(ind, ind or None),
                     "keuangan": ind in INDUSTRI_KEUANGAN,
                     "berdiri": _tgl8(r.get("成立日期") or r.get("DateOfIncorporation")),
                     "tercatat": _tgl8(r.get("上市日期") or r.get("DateOfListing")),
                     "modal": _f(r.get("實收資本額") or r.get("Paidin.Capital.NTDollars")),
+                    "lembar": _f(r.get("已發行普通股數或TDR原股發行股數") or r.get("IssueShares")),
                     "alamat": r.get("住址") or r.get("Address"),
                     "situs": r.get("網址") or r.get("WebAddress"),
                     "bursa": "TWSE" if nama == "profil_twse" else "TPEx",

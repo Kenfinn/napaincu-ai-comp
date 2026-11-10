@@ -27,7 +27,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import config, i18n, pasar, review, ringkasan, store, tarik
+from . import config, i18n, pasar, review, ringkasan, store, tarik, umpan_balik
 from .agent import llm, pipeline
 
 import sys
@@ -129,7 +129,8 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
     dasar = {
         "bahasa": bhs,
         "daftar_bahasa": i18n.BAHASA,
-        "t": lambda k, **p: i18n.t(k, bhs, **p),
+        # Posisional saja: kunci terjemahan boleh memakai parameter bernama {k} (pasal).
+        "t": lambda *a, **p: i18n.t(a[0], bhs, **p),
         "tr": lambda o, cadangan="": i18n.tr(o, bhs, cadangan),
         "path_sekarang": request.url.path,
         "pesan_ok": pesan_ok,
@@ -362,7 +363,8 @@ def halaman_review(request: Request):
     menunggu = [h for h in semua if h["status"] == "ditahan"]
     kep = review.baca()
     per_id = {h["id"]: h for h in semua}
-    riwayat = sorted(({"id": k, **v, "h": per_id.get(k)} for k, v in kep.items()),
+    riwayat = sorted(({**v, "id": v.get("id") or k.split("#")[0],
+                       "h": per_id.get(v.get("id") or k.split("#")[0])} for k, v in kep.items()),
                      key=lambda x: x["waktu"], reverse=True)
     return tpl.TemplateResponse(request=request, name="review.html",
                                 context=konteks(request, "review", menunggu=menunggu, riwayat=riwayat))
@@ -379,9 +381,10 @@ async def putuskan_review(request: Request, pengenal: str):
         raise HTTPException(404, "Kasus tidak ada di antrean review")
     if len(catatan) < 3:
         return _balik("/review", i18n.pesan("msg.review_catatan"), ok=False)
-    if keputusan == "setujui" and not ((h.get("muatan") or {}).get("tahan") or {}).get("boleh_setujui"):
+    tahan = (h.get("muatan") or {}).get("tahan") or {}
+    if keputusan == "setujui" and not tahan.get("boleh_setujui"):
         return _balik("/review", i18n.pesan("msg.review_tidak_boleh"), ok=False)
-    review.simpan(pengenal, keputusan, catatan)
+    review.simpan(pengenal, keputusan, catatan, tahan.get("jenis"))
     hasil(segarkan=True)
     return _balik("/review", i18n.pesan("msg.review_ok", kode=h["emiten"]["kode"],
                                         keputusan=keputusan))
@@ -395,6 +398,61 @@ def api_review():
                      for h in hasil() if h["status"] == "ditahan"],
         "keputusan": review.baca(),
     })
+
+
+# --- umpan balik 👍/👎 → ambang triase per pasal (A2) ----------------------
+def _aman(ke: str | None, cadangan: str) -> str:
+    return ke if ke and ke.startswith("/") and not ke.startswith("//") else cadangan
+
+
+@app.post("/umpan-balik/{pengenal}")
+async def beri_umpan_balik(request: Request, pengenal: str):
+    f = await _form(request)
+    ke = _aman(f.get("kembali"), f"/peringatan/{pengenal}")
+    if not _boleh_ubah(request):
+        return _tolak_akses(ke)
+    h = next((x for x in hasil() if x["id"] == pengenal), None)
+    if h is None:
+        raise HTTPException(404, "Peringatan tidak ditemukan")
+    suara = f.get("suara", "")
+    if suara not in umpan_balik.SUARA_SAH + ("hapus",):
+        raise HTTPException(400, "Suara tidak dikenal")
+    tri = h.get("triase")
+    if not tri:
+        return _balik(ke, i18n.pesan("msg.tanpa_triase"), ok=False)
+    ubah = umpan_balik.beri_suara(pengenal, tri["pasal"], suara, tri.get("skor"), h["emiten"]["kode"])
+    hasil(segarkan=True)
+    return _balik(ke, i18n.pesan("msg.suara_ok", k=tri["pasal"], dari=ubah["dari"], ke=ubah["ke"]))
+
+
+def _pasal_terlihat() -> list[str]:
+    return sorted({h["triase"]["pasal"] for h in hasil() if h.get("triase")})
+
+
+@app.get("/ambang", response_class=HTMLResponse)
+def halaman_ambang(request: Request):
+    data = umpan_balik.semua(_pasal_terlihat())
+    per_id = {h["id"]: h for h in hasil()}
+    for r in data["riwayat"]:
+        r["h"] = per_id.get(r.get("id"))
+    return tpl.TemplateResponse(request=request, name="ambang.html",
+                                context=konteks(request, "ambang", data=data))
+
+
+@app.post("/ambang/{pasal}/{aksi}")
+async def ubah_ambang(request: Request, pasal: str, aksi: str):
+    if not _boleh_ubah(request):
+        return _tolak_akses("/ambang")
+    if not (pasal.isdigit() or pasal == "?") or aksi not in ("reset", "kunci", "buka"):
+        raise HTTPException(404, "Aksi tidak dikenal")
+    ubah = umpan_balik.reset(pasal) if aksi == "reset" else umpan_balik.kunci(pasal, aksi == "kunci")
+    hasil(segarkan=True)
+    return _balik("/ambang", i18n.pesan("msg.ambang_ok", k=pasal, dari=ubah["dari"], ke=ubah["ke"]))
+
+
+@app.get("/api/ambang", summary="Ambang triase per pasal, asal-usulnya (👍/👎), dan riwayat perubahan")
+def api_ambang():
+    return JSONResponse(umpan_balik.semua(_pasal_terlihat()))
 
 
 @app.get("/ekspor/kandidat-gold.csv", include_in_schema=False)
@@ -425,7 +483,8 @@ def peringatan(request: Request, pengenal: str):
     injeksi = next((l for l in h["jejak"] if "injeksi" in l["tahap"].lower()), None)
     return tpl.TemplateResponse(
         request=request, name="peringatan.html",
-        context=konteks(request, "feed", h=h, injeksi=injeksi))
+        context=konteks(request, "feed", h=h, injeksi=injeksi,
+                        suara=umpan_balik.suara_untuk(pengenal)))
 
 
 @app.get("/jejak/{pengenal}", response_class=HTMLResponse)

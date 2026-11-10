@@ -924,5 +924,214 @@ class TestKandidatGold(unittest.TestCase):
         self.assertNotIn("發言人", open(p, encoding="utf-8").read())
 
 
+class TestTriaseDanUmpanBalik(unittest.TestCase):
+    """A2: skor keyakinan yang bisa dijelaskan, dan 👍/👎 yang menyetel ambang per pasal."""
+
+    def setUp(self):
+        import tempfile
+        from fastapi.testclient import TestClient
+        from app import config, main, review, tarik, umpan_balik
+        self.config, self.main, self.review, self.ub, self.tarik = config, main, review, umpan_balik, tarik
+        self._tmp = tempfile.TemporaryDirectory()
+        self._asli = (review.KEPUTUSAN_FILE, umpan_balik.FILE, config.KODE_AKSES, config.PARSED_DIR,
+                      config.TRACE_DIR, tarik.WATCHLIST_FILE)
+        review.KEPUTUSAN_FILE = os.path.join(self._tmp.name, "keputusan.json")
+        umpan_balik.FILE = os.path.join(self._tmp.name, "umpan_balik.json")
+        config.PARSED_DIR = os.path.join(self._tmp.name, "parsed")       # → fixture
+        config.TRACE_DIR = os.path.join(self._tmp.name, "traces")
+        tarik.WATCHLIST_FILE = os.path.join(self._tmp.name, "watchlist.json")
+        config.KODE_AKSES = "kode-uji"
+        main._cache = None
+        self.c = TestClient(main.app)
+        self.c.get("/akses", params={"kode": "kode-uji"})
+
+    def tearDown(self):
+        (self.review.KEPUTUSAN_FILE, self.ub.FILE, self.config.KODE_AKSES, self.config.PARSED_DIR,
+         self.config.TRACE_DIR, self.tarik.WATCHLIST_FILE) = self._asli
+        self.main._cache = None
+        self._tmp.cleanup()
+
+    @staticmethod
+    def _varian(nilai: str, jam: str) -> dict:
+        """Kasus 1 dengan jumlah lain: 2330, pasal 11, kapitalisasi dari berkas valuasi."""
+        d = copy.deepcopy(detail("kasus-1-capex-bersih"))
+        d["seq_no"], d["time"] = jam.replace(":", ""), jam
+        d["items"][2]["value"] = nilai
+        return d
+
+    def _jalan(self, d):
+        return pipeline.jalankan(d, valuasi())
+
+    def _bawah(self, n, pasal="11"):
+        for i in range(n):
+            self.ub.beri_suara(f"uji-{pasal}-{i}", pasal, "bawah", 0.8, "2330")
+
+    def test_skor_terdiri_dari_komponen_yang_bisa_dijelaskan(self):
+        h = self._jalan(detail("kasus-1-capex-bersih"))
+        tri = h["triase"]
+        self.assertEqual([k["kode"] for k in tri["komponen"]], ["tri.dasar", "tri.angka", "tri.mat_besar"])
+        self.assertAlmostEqual(tri["skor"], 0.85)
+        self.assertEqual((tri["ambang"], tri["putusan"]), (0.55, "lanjut"))
+        self.assertIn("TRIAGED · confidence", [l["state"] for l in h["jejak"]])
+
+    def test_angka_remeh_diarsipkan_dengan_alasan(self):
+        h = self._jalan(self._varian("新台幣 1,000 仟元", "17:40:00"))   # 1 juta NTD dari ±62 triliun
+        self.assertEqual(h["state"], "ARCHIVED")
+        self.assertEqual(h["alasan_i18n"]["kode"], "akhir.di_bawah_ambang")
+        self.assertIn("tri.mat_remeh", [k["kode"] for k in h["triase"]["komponen"]])
+
+    def test_angka_karangan_tidak_dipakai_menilai_materialitas(self):
+        asli = extract.sari
+        try:
+            extract.sari = lambda det, kand: ([{
+                "input": "capex", "nilai_mentah": "1,000", "satuan": "仟元", "pengali_ke_juta": 1e-3,
+                "mata_uang": None, "mata_uang_diasumsikan": True, "nilai_juta_ntd": 1.0,
+                "kutipan": "資本支出預算金額: 新台幣 1,000 仟元", "butir_no": 3, "label": "資本支出預算金額",
+            }], {"penyedia": "uji", "model": "uji"})
+            h = self._jalan(detail("kasus-1-capex-bersih"))
+        finally:
+            extract.sari = asli
+        self.assertIn("tri.mat_na", [k["kode"] for k in h["triase"]["komponen"]])
+        self.assertEqual(h["state"], "HELD", "angka karangan harus sampai ke pemeriksa, bukan diarsipkan triase")
+        self.assertFalse(h["muatan"]["tahan"]["boleh_setujui"])
+
+    def test_jempol_bawah_berulang_menaikkan_ambang_dan_mengarsipkan_sejenis(self):
+        kecil = self._varian("新台幣 100,000,000 仟元", "17:41:00")   # ±0,16% kapitalisasi → 0,60
+        self.assertAlmostEqual(self._jalan(kecil)["triase"]["skor"], 0.60)
+        self.assertEqual(self._jalan(kecil)["triase"]["putusan"], "lanjut")
+        self._bawah(2)                                            # 0,55 → 0,65
+        h = self._jalan(kecil)
+        self.assertEqual((h["state"], h["muatan"]["tahan"]["jenis"]), ("HELD", "keyakinan"))
+        self._bawah(3)                                            # → 0,70
+        h = self._jalan(kecil)
+        self.assertEqual(h["state"], "ARCHIVED")
+        self.assertEqual(h["alasan_i18n"]["param"]["bawah"], 3)
+        self.assertEqual(self._jalan(detail("kasus-1-capex-bersih"))["state"], "PUBLISHED",
+                         "pengumuman material tetap terbit")
+        self.assertEqual(self.ub.ambang("20")["nilai"], 0.55, "pasal lain tidak ikut bergeser")
+
+    def test_ambang_selalu_di_040_sampai_090(self):
+        self._bawah(30)
+        self.assertEqual(self.ub.ambang("11")["nilai"], 0.90)
+        for i in range(30):
+            self.ub.beri_suara(f"uji-11-{i}", "11", "atas")
+        self.assertEqual(self.ub.ambang("11")["nilai"], 0.40)
+        h = self._jalan(detail("kasus-1-capex-bersih"))
+        self.assertEqual(h["state"], "PUBLISHED")
+
+    def test_material_tidak_pernah_dibungkam_umpan_balik(self):
+        self._bawah(30)                                           # ambang 0,90
+        h = self._jalan(detail("kasus-1-capex-bersih"))           # skor 0,85 → zona ragu
+        self.assertEqual(h["state"], "HELD")
+        self.assertEqual(h["muatan"]["tahan"]["jenis"], "keyakinan")
+
+    def test_reset_dan_kunci(self):
+        self._bawah(2)
+        self.assertEqual(self.ub.kunci("11", True)["ke"], 0.65)
+        self._bawah(4)                                            # suara tercatat, ambang beku
+        a = self.ub.ambang("11")
+        self.assertEqual((a["nilai"], a["terkunci"], a["bawah"]), (0.65, True, 4))
+        self.ub.kunci("11", False)
+        self.assertEqual(self.ub.ambang("11")["nilai"], 0.75)
+        r = self.ub.reset("11")
+        self.assertEqual((r["ke"], r["dihapus"]), (0.55, 4))
+        self.assertEqual([x["peristiwa"] for x in self.ub.baca()["riwayat"] if x["peristiwa"] != "suara"],
+                         ["kunci", "buka", "reset"])
+
+    def test_setujui_keyakinan_rendah_meneruskan_ke_pemeriksa_bukan_menerbitkan(self):
+        sedang = self._varian("新台幣 100,000,000 仟元", "17:42:00")
+        self._bawah(2)
+        h = self._jalan(sedang)
+        self.assertEqual(h["muatan"]["tahan"]["jenis"], "keyakinan")
+        self.main._cache = None
+        r = self.c.post(f"/review/{h['id']}", data={"keputusan": "setujui", "catatan": "relevan untuk saya"},
+                        follow_redirects=False)
+        self.assertEqual(r.status_code, 404, "kasus varian tidak ada di daftar aplikasi")
+        self.review.simpan(h["id"], "setujui", "relevan untuk saya", "keyakinan")
+        h2 = self._jalan(sedang)
+        self.assertIn("HUMAN REVIEW", [l["state"] for l in h2["jejak"]])
+        self.assertEqual(h2["triase"]["putusan"], "lanjut_manusia")
+        # 100.000 vs capex 1.272.400 = 0,08× → di luar pita: tetap ditahan pemeriksa.
+        self.assertEqual((h2["state"], h2["muatan"]["tahan"]["jenis"]), ("HELD", "verifikasi"))
+        self.assertIsNone(h2["keputusan_manusia"], "persetujuan triase tidak menyetujui hold pemeriksa")
+
+    def test_suara_lewat_http_butuh_akses_dan_menggeser_ambang(self):
+        h = next(x for x in self.main.hasil() if x["status"] == "terbit")
+        asing = __import__("fastapi.testclient", fromlist=["TestClient"]).TestClient(self.main.app)
+        r = asing.post(f"/umpan-balik/{h['id']}", data={"suara": "bawah"}, follow_redirects=False)
+        self.assertIn("perlu_akses", r.headers["location"])
+        self.assertEqual(self.ub.ambang("11")["bawah"], 0)
+        r = self.c.post(f"/umpan-balik/{h['id']}", data={"suara": "bawah"}, follow_redirects=False)
+        self.assertIn("suara_ok", r.headers["location"])
+        self.assertEqual(self.ub.ambang("11")["nilai"], 0.60)
+        self.c.post(f"/umpan-balik/{h['id']}", data={"suara": "atas"})      # ganti suara
+        self.assertEqual((self.ub.ambang("11")["bawah"], self.ub.ambang("11")["atas"]), (0, 1))
+        self.c.post(f"/umpan-balik/{h['id']}", data={"suara": "hapus"})
+        self.assertEqual(self.ub.ambang("11")["nilai"], 0.55)
+
+    def test_suara_pada_pengumuman_tanpa_triase_ditolak(self):
+        h = next(x for x in self.main.hasil() if x["status"] == "dilewati")
+        r = self.c.post(f"/umpan-balik/{h['id']}", data={"suara": "bawah"}, follow_redirects=False)
+        self.assertIn("tanpa_triase", r.headers["location"])
+
+    def test_halaman_tiga_bahasa(self):
+        h = next(x for x in self.main.hasil() if x["status"] == "terbit")
+        self._bawah(1)
+        for bhs in ("en", "zh", "id"):
+            for url in ("/ambang", f"/peringatan/{h['id']}"):
+                r = self.c.get(url, params={"lang": bhs})
+                self.assertEqual(r.status_code, 200, url)
+                self.assertNotIn("⟦", r.text, f"{url} {bhs}")
+        self.assertIn("0.85", self.c.get(f"/peringatan/{h['id']}", params={"lang": "en"}).text)
+        self.assertEqual(self.c.get("/api/ambang").json()["aturan"]["batas"], [0.40, 0.90])
+
+
+class TestEkstraksiPengumumanAsli(unittest.TestCase):
+    """Bentuk isi butir pasal 20 yang nyata (9–10 Nov): total, satuan dalam kurung, 萬, angka Mandarin."""
+
+    def _ambil(self, nilai, label="交易數量、每單位價格及交易總金額"):
+        return extract._sari_satu({"no": 5, "label": label, "label_lengkap": label, "value": nilai}, "capex")
+
+    def test_total_diutamakan_atas_jumlah_unit(self):
+        t = self._ambil("3台；每單位平均價格：新台幣36,187,653元，交易總金額為新台幣108,562,960元")
+        self.assertEqual((t["nilai_mentah"], t["satuan"], t["mata_uang"]), ("108,562,960", "元", "TWD"))
+
+    def test_satuan_dalam_kurung_sebelum_angka(self):
+        t = self._ambil("交易數量（仟股）：910 每單位價格（元）：350.52 交易總金額（元）：318,974,231")
+        self.assertEqual((t["nilai_mentah"], t["satuan"]), ("318,974,231", "元"))
+        self.assertAlmostEqual(t["nilai_juta_ntd"], 318.974231)
+
+    def test_satuan_wan(self):
+        self.assertAlmostEqual(self._ambil("預計投資金額新台幣165萬")["nilai_juta_ntd"], 1.65)
+
+    def test_angka_mandarin_tidak_ditebak(self):
+        self.assertIsNone(self._ambil("交易單位數量：1,880單位 交易總金額：新臺幣壹佰捌拾捌億元整"))
+
+    def test_kode_mata_uang_asing_tidak_dikonversi(self):
+        t = self._ambil("不適用 不適用 USD 17,000,000")
+        self.assertEqual(t["mata_uang"], "USD")
+        self.assertIsNone(t["nilai_juta_ntd"])
+
+    def test_label_asli_pasal_20_sah(self):
+        self.assertTrue(extract.label_sah("交易單位數量（如ＸＸ平方公尺，折合ＸＸ坪）、每單位價格及交易總金額", "capex"))
+
+    def test_satu_butir_hanya_untuk_satu_input(self):
+        d = {"subject": "公告本公司處分營業用機器設備", "items": [
+            {"no": 5, "label": "交易數量、每單位價格及交易總金額", "value": "交易總金額為新台幣108,562,960元"}]}
+        self.assertEqual([t["input"] for t in extract._sari_aturan(d, ["capex", "cash"])], ["cash"])
+
+    def test_entitas_html_dan_radikal_kangxi_dipulihkan(self):
+        from app import tarik
+        self.assertEqual(tarik.bersihkan_teks("使&#12132;權資產&#12198;額：11,241千元"), "使用權資產金額：11,241千元")
+
+    def test_profil_tpex_tanpa_data_pribadi(self):
+        from app import pasar
+        baris = {"SecuritiesCompanyCode": "1240", "CompanyAbbreviation": "茂生農經", "Chairman": "X",
+                 "TitleOfSpokesman": "X", "DeputySpokesperson": "X", "EmailAddress": "a@b.c",
+                 "CPA.CharteredPublicAccountant.First": "X", "IssueShares": "46443992"}
+        bersih = pasar._bersihkan_profil([baris])[0]
+        self.assertEqual(set(bersih), {"SecuritiesCompanyCode", "CompanyAbbreviation", "IssueShares"})
+
+
 if __name__ == "__main__":
     unittest.main()

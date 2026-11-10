@@ -23,8 +23,8 @@ import os
 import time
 from datetime import datetime, timezone
 
-from .. import config, review, store
-from . import extract, recompute, screen, verify
+from .. import config, pasar, review, store, umpan_balik
+from . import extract, llm, recompute, screen, triase, verify
 from ..i18n import pesan
 
 # Nama state di brief hal. 7. Status internal tetap berbahasa Indonesia supaya jejak
@@ -44,6 +44,7 @@ class Jejak:
         self.langkah: list[dict] = []
         self.mulai = time.monotonic()
         self.mulai_iso = _sekarang()
+        self.triase: dict | None = None
 
     def catat(self, nama: str, status: str, masukan, keluaran, meta: dict | None = None,
               t0: float | None = None, i18n: dict | None = None, state: str | None = None) -> None:
@@ -135,6 +136,45 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
                         "Tidak ada angka yang bisa ditarik lengkap dengan kalimat sumbernya.",
                         pesan("akhir.tanpa_angka"))
 
+    # --- TRIAGED: skor keyakinan vs ambang pasal (digeser umpan balik 👍/👎) --
+    t0 = time.monotonic()
+    pasal = umpan_balik.kunci_pasal(detail.get("clause"))
+    dok = llm.dokumen_teks(detail)
+    tri = triase.skor(hasil_saring, temuan, _skala(detail, d_valuasi),
+                      [verify.sumber_terbukti(t, detail, dok) for t in temuan])
+    amb = umpan_balik.ambang(pasal)
+    putusan = triase.putuskan(tri["skor"], amb["nilai"])
+    j.triase = {"skor": tri["skor"], "ambang": amb["nilai"], "pasal": pasal, "putusan": putusan,
+                "atas": amb["atas"], "bawah": amb["bawah"], "terkunci": amb["terkunci"],
+                "komponen": tri["komponen"], "dasar": amb["dasar"]}
+    j.catat("Triase keyakinan", "lolos" if putusan == "lanjut" else "berhenti",
+            {"pasal": pasal, "ambang": amb},
+            {"skor": tri["skor"], "komponen": tri["komponen"], "putusan": putusan,
+             "rasio_kapitalisasi": tri["rasio_kapitalisasi"], "skala": tri["skala"]},
+            t0=t0, i18n=pesan("tahap.triase", skor=tri["skor"], ambang=amb["nilai"]),
+            state="TRIAGED · confidence")
+
+    if putusan == "ragu":
+        kep = review.untuk(j.pengenal, "keyakinan")
+        if kep and kep["keputusan"] == "setujui":
+            # Persetujuan hanya meneruskan ke pemeriksa. Angka tetap harus lolos semua cek.
+            j.catat("· Tinjauan manusia", "lolos", {"keputusan": kep},
+                    {"tindakan": "Diteruskan ke pemeriksa atas persetujuan manusia."},
+                    i18n=pesan("tahap.review_lanjut"), state="HUMAN REVIEW")
+            j.triase["putusan"] = "lanjut_manusia"
+        else:
+            return _selesai(j, "ditahan", detail,
+                            {"tahan": {"jenis": "keyakinan", "boleh_setujui": True}, "temuan": temuan},
+                            f"Keyakinan {tri['skor']:.2f} sedikit di bawah ambang {amb['nilai']:.2f} "
+                            f"untuk pasal {pasal}. Ditahan untuk diputuskan manusia.",
+                            pesan("akhir.keyakinan_rendah", skor=tri["skor"], ambang=amb["nilai"], k=pasal))
+    elif putusan == "arsip":
+        return _selesai(j, "dilewati", detail, {"temuan": temuan},
+                        f"Keyakinan {tri['skor']:.2f} di bawah ambang {amb['nilai']:.2f} untuk pasal "
+                        f"{pasal} ({amb['bawah']} 👎, {amb['atas']} 👍). Diarsipkan.",
+                        pesan("akhir.di_bawah_ambang", skor=tri["skor"], ambang=amb["nilai"], k=pasal,
+                              bawah=amb["bawah"], atas=amb["atas"]))
+
     if d_valuasi is None:
         return _selesai(j, "ditahan", detail,
                         {"tahan": {"jenis": "tanpa_valuasi", "boleh_setujui": True}, "temuan": temuan},
@@ -204,6 +244,19 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
                     pesan("akhir.terbit", n=len(diterima)))
 
 
+def _skala(detail: dict, d_valuasi: dict | None) -> dict | None:
+    """Kapitalisasi pasar (juta NTD) untuk menilai materialitas. Tidak pernah ke jaringan."""
+    m = (d_valuasi or {}).get("market") or {}
+    if m.get("price_per_share") and m.get("shares_issued_thousands"):
+        return {"juta_ntd": m["price_per_share"] * m["shares_issued_thousands"] / 1000,
+                "sumber": "valuasi", "tanggal": (d_valuasi or {}).get("as_of")}
+    try:
+        k = pasar.kapitalisasi_dari_cache(detail.get("code") or "")
+    except (OSError, ValueError):
+        k = None
+    return dict(k, sumber="bursa") if k else None
+
+
 def _gagal_kode(cek: list[dict]) -> list[str]:
     return [(c.get("nama_i18n") or {}).get("kode") or c["nama"] for c in cek if not c["lolos"]]
 
@@ -228,11 +281,13 @@ def _terapkan_review(j: Jejak, status: str, muatan, alasan: str, alasan_i18n):
     """Keputusan manusia atas kasus HELD diterapkan sebagai langkah terakhir."""
     if status != "ditahan":
         return status, muatan, alasan, alasan_i18n, None
-    kep = review.baca().get(j.pengenal)
+    tahan = (muatan or {}).get("tahan") or {}
+    kep = review.untuk(j.pengenal, tahan.get("jenis"))
     if not kep:
         return status, muatan, alasan, alasan_i18n, None
-    tahan = (muatan or {}).get("tahan") or {}
-    if kep["keputusan"] == "setujui" and tahan.get("boleh_setujui"):
+    # Keyakinan rendah yang disetujui sudah diteruskan di gerbang triase; di sini
+    # persetujuan semacam itu tidak boleh menjadi jalan pintas menerbitkan angka mentah.
+    if kep["keputusan"] == "setujui" and tahan.get("boleh_setujui") and tahan.get("jenis") != "keyakinan":
         disetujui = (muatan.get("temuan") or [d["temuan"] for d in muatan.get("ditolak", [])])
         muatan = dict(muatan, disetujui=disetujui)
         hasil = ("terbit", muatan, f"Disetujui manusia: {kep['catatan']}",
@@ -259,6 +314,7 @@ def _selesai(j: Jejak, status: str, detail: dict, muatan, alasan: str,
     hasil = {
         "state": STATE.get(status),
         "keputusan_manusia": kep,
+        "triase": j.triase,
         "id": j.pengenal,
         "contoh": bool(detail.get("_fixture")),
         "status": status,

@@ -53,6 +53,22 @@ def _cek(nama: str, lolos: bool, alasan: str, kunci: str | None = None,
     return c
 
 
+def sumber_terbukti(temuan: dict, detail: dict, dokumen: str | None = None) -> bool:
+    """Tiga cek sumber pertama saja (label sah, kutipan ada, digit ada) — tanpa valuasi.
+
+    Dipakai triase: materialitas hanya boleh dinilai dari angka yang bisa ditelusuri ke
+    dokumen. Kalau tidak, angka karangan yang kecil akan mengarsipkan pengumuman penting
+    sebelum pemeriksa sempat menolaknya, dan jejaknya menyebut sebab yang salah.
+    """
+    dokumen = dokumen if dokumen is not None else llm.dokumen_teks(detail)
+    if not extract.label_sah((temuan.get("label") or "").strip(), temuan.get("input")):
+        return False
+    kutipan = (temuan.get("kutipan") or "").strip()
+    isi = kutipan.split(":", 1)[-1].strip() if ":" in kutipan else kutipan
+    digit = _angka_saja(temuan.get("nilai_mentah", ""))
+    return bool(isi) and isi in dokumen and bool(digit) and digit in _angka_saja(dokumen)
+
+
 def periksa(temuan: dict, detail: dict, d_valuasi: dict) -> list[dict]:
     """Pemeriksaan sebelum angka boleh menyentuh kalkulator."""
     dokumen = llm.dokumen_teks(detail)
