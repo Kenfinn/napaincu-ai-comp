@@ -30,6 +30,9 @@ TRACE_DIR = os.path.join(DATA_DIR, "traces")
 # kehilangan kepercayaan juri.
 PENYEDIA = os.environ.get("SENTINEL_PENYEDIA", "gemini")
 MODEL = os.environ.get("SENTINEL_MODEL", "gemini-2.5-flash")
+# Model cadangan, dipisah koma, dicoba berurutan bila model utama sibuk (429/5xx) setelah
+# percobaan ulang habis. Contoh: "gemini-3.5-flash,gemini-flash-latest".
+MODEL_CADANGAN = [m.strip() for m in os.environ.get("SENTINEL_MODEL_CADANGAN", "").split(",") if m.strip()]
 API_KEY = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY") or ""
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models"
 

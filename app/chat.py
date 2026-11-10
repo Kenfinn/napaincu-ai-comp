@@ -331,8 +331,11 @@ def _gemini(contents: list[dict], bahasa: str) -> tuple[dict, dict]:
         "tools": [{"functionDeclarations": _deklarasi()}],
         "generationConfig": {"temperature": 0},
     }
-    for percobaan in range(2):
-        url = f"{config.GEMINI_URL}/{llm.model_dipakai()}:generateContent?key={config.API_KEY}"
+    model = llm.model_dipakai()
+    kandidat = [model] + [m for m in config.MODEL_CADANGAN if m != model]
+    jawab, galat = None, []
+    for percobaan, model in enumerate(kandidat[:4]):
+        url = f"{config.GEMINI_URL}/{model}:generateContent?key={config.API_KEY}"
         req = urllib.request.Request(url, data=json.dumps(badan).encode("utf-8"),
                                      headers={"Content-Type": "application/json"}, method="POST")
         try:
@@ -340,22 +343,27 @@ def _gemini(contents: list[dict], bahasa: str) -> tuple[dict, dict]:
                 jawab = json.loads(r.read().decode("utf-8"))
             break
         except urllib.error.HTTPError as e:
-            if e.code == 404 and percobaan == 0:
-                llm._gagal_404.add(llm.model_dipakai())
-                if llm._cari_pengganti():
-                    continue
-            raise llm.GagalModel(f"HTTP {e.code}") from e
-        except (urllib.error.URLError, TimeoutError) as e:
-            if percobaan == 0:
-                time.sleep(1.5)
+            galat.append(f"{model}: HTTP {e.code}")
+            if e.code == 404:
+                llm._gagal_404.add(model)
+                if percobaan == 0 and llm._cari_pengganti() and llm.model_dipakai() not in kandidat:
+                    kandidat.insert(1, llm.model_dipakai())
                 continue
-            raise llm.GagalModel(str(e)) from e
+            if e.code in llm.KODE_SIBUK:
+                time.sleep(1.0)
+                continue
+            raise llm.GagalModel("; ".join(galat)) from e
+        except (urllib.error.URLError, TimeoutError) as e:
+            galat.append(f"{model}: {e}")
+            continue
+    if jawab is None:
+        raise llm.GagalModel("; ".join(galat) or "tidak ada model")
     try:
         isi = jawab["candidates"][0]["content"]
     except (KeyError, IndexError) as e:
         raise llm.GagalModel("unexpected response shape") from e
     pakai = jawab.get("usageMetadata", {})
-    return isi, {"model": llm.model_dipakai(), "token_masuk": pakai.get("promptTokenCount", 0),
+    return isi, {"model": model, "token_masuk": pakai.get("promptTokenCount", 0),
                  "token_keluar": pakai.get("candidatesTokenCount", 0)}
 
 

@@ -754,6 +754,27 @@ class TestModelPengganti(unittest.TestCase):
         self.assertEqual(dipakai, ["gemini-2.5-flash", "gemini-3.8-flash", "gemini-3.7-flash"])
         self.assertEqual(meta["model"], "gemini-3.7-flash")
 
+    def test_model_utama_sibuk_pindah_ke_cadangan_sekali_jalan(self):
+        import io
+        import urllib.error
+        dipakai = []
+
+        def panggil(instruksi, dokumen):
+            dipakai.append(self.llm.model_dipakai())
+            if self.llm.model_dipakai() == "gemini-3.8-flash":
+                raise urllib.error.HTTPError("u", 503, "high demand", {}, io.BytesIO(b""))
+            return {"temuan": []}, {"token_masuk": 1, "token_keluar": 1, "biaya_usd": 0.0}
+        self.llm._panggil_gemini = panggil
+        asli = self.config.MODEL_CADANGAN
+        self.config.MODEL, self.config.MODEL_CADANGAN = "gemini-3.8-flash", ["gemini-3.5-flash"]
+        try:
+            _, meta = self.llm.tanya("i", "d")
+        finally:
+            self.config.MODEL_CADANGAN = asli
+        self.assertEqual(dipakai, ["gemini-3.8-flash", "gemini-3.5-flash"])
+        self.assertTrue(meta["model_cadangan"])
+        self.assertEqual(self.llm.model_dipakai(), "gemini-3.8-flash", "cadangan tidak lengket")
+
     def test_sebab_listmodels_gagal_tercatat(self):
         import io
         import urllib.error

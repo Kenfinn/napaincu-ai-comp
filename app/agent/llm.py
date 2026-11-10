@@ -61,8 +61,14 @@ def tersedia() -> bool:
 _model_aktif: str | None = None
 
 
+# Model untuk SATU panggilan saat model utama sibuk (lihat _tanya_model). Tidak lengket:
+# panggilan berikutnya kembali ke model utama.
+_model_sementara: str | None = None
+KODE_SIBUK = (429, 500, 502, 503, 504)
+
+
 def model_dipakai() -> str:
-    return _model_aktif or config.MODEL
+    return _model_sementara or _model_aktif or config.MODEL
 
 
 def nama_model() -> str:
@@ -307,6 +313,31 @@ def _tanya_model(instruksi: str, dokumen: str) -> tuple[dict, dict]:
         if percobaan < config.RETRY_MAKS:
             time.sleep(1.5 * (percobaan + 1))
         percobaan += 1
+
+    # Model utama sibuk terus: coba tiap model cadangan sekali sebelum menyerah.
+    global _model_sementara
+    utama = model_dipakai()
+    for cad in config.MODEL_CADANGAN:
+        if cad == utama or cad in _gagal_404:
+            continue
+        _model_sementara = cad
+        try:
+            hasil, meta = _panggil_gemini(instruksi, dokumen)
+            meta.update({
+                "penyedia": config.PENYEDIA, "model": cad, "model_diminta": config.MODEL,
+                "versi_prompt": VERSI_PROMPT, "retry": percobaan, "cadangan": False,
+                "model_cadangan": True, "sebab_ganti": f"{utama} sibuk",
+                "latensi_ms": int((time.monotonic() - mulai) * 1000),
+            })
+            return hasil, meta
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                _gagal_404.add(cad)
+            galat.append(f"cadangan {cad}: {e}")
+        except (urllib.error.URLError, TimeoutError, GagalModel) as e:
+            galat.append(f"cadangan {cad}: {e}")
+        finally:
+            _model_sementara = None
 
     raise GagalModel("; ".join(galat))
 

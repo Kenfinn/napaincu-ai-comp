@@ -46,7 +46,7 @@ terbaru; daftar kerja rinci ada di [`rencana-finalis.md`](./rencana-finalis.md).
 |---|---|
 | Repo | `Kenfinn/napaincu-ai-comp`, branch `main` |
 | Server | Dokploy milik Afinzaki, domain **https://feaf.afinzaki.my.id**, container port **8000**, volume **`/data`** |
-| Env server | `SENTINEL_KODE_AKSES`, `SENTINEL_TARIK_OTOMATIS_DETIK=600`, `SENTINEL_SERTAKAN_CONTOH=1`, `GEMINI_API_KEY`, `FINMIND_TOKEN` (opsional). Awalan `SENTINEL_` sengaja dipertahankan walau nama produk FEAF |
+| Env server | `SENTINEL_KODE_AKSES`, `SENTINEL_TARIK_OTOMATIS_DETIK=600`, `SENTINEL_SERTAKAN_CONTOH=1`, `GEMINI_API_KEY`, `SENTINEL_MODEL` (model utama), `SENTINEL_MODEL_CADANGAN` (dipisah koma, dipakai bila model utama sibuk 429/5xx), `FINMIND_TOKEN` (opsional). Awalan `SENTINEL_` sengaja dipertahankan walau nama produk FEAF |
 | Deploy | Push ke `main` lalu tekan **Deploy** di Dokploy. Panduan: [`deploy-dokploy.md`](./deploy-dokploy.md) |
 | Tes | `python3 -m unittest discover -s tests` → **131 tes, semua lulus** (11 Nov dini hari), ±3 detik, **tanpa jaringan** (tes yang menyentuh pasar/penarik memutus jaringan) |
 | Sesi cloud Claude | Bisa: OpenAPI TWSE/TPEx, FinMind, Yahoo. **Tidak bisa: MOPS** (diblokir di luar Taiwan). Build Docker butuh CA proxy sesi (lihat `/root/.ccr/README.md`); Dockerfile di repo tidak perlu diubah |
