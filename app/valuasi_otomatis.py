@@ -753,6 +753,12 @@ def _jalur_cache(kode: str) -> Path:
     return Path(CACHE_DIR) / f"{kode}.json"
 
 
+# Naikkan bila bentuk keluaran bangun() berubah (mis. D-c menambah "tidak_tersedia").
+# Cache dengan versi lain dianggap tidak ada, sehingga dibangun ulang alih-alih dipakai
+# diam-diam dengan field yang kurang (terjadi di server: utang 2330 kurang 13%).
+VERSI_SKEMA = 2
+
+
 def baca_cache(kode: str, terima_basi: bool = True) -> dict | None:
     """Baca cache valuasi otomatis dari disk TANPA menyentuh jaringan."""
     f = _jalur_cache(kode)
@@ -763,15 +769,19 @@ def baca_cache(kode: str, terima_basi: bool = True) -> dict | None:
         if umur >= TTL_VALUASI:
             return None
     try:
-        return json.loads(f.read_text(encoding="utf-8"))
+        data = json.loads(f.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return None
+    if not isinstance(data, dict) or data.get("versi_skema") != VERSI_SKEMA:
+        return None
+    return data
 
 
 def simpan_cache(kode: str, data: dict) -> Path:
     """Simpan hasil `bangun(kode)` ke `DATA_DIR/valuasi_otomatis/{kode}.json`."""
     Path(CACHE_DIR).mkdir(parents=True, exist_ok=True)
     f = _jalur_cache(kode)
+    data = dict(data, versi_skema=VERSI_SKEMA)
     f.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     return f
 

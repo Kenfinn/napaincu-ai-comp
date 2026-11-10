@@ -110,11 +110,11 @@ Catatan tinjauan Claude untuk putaran 2 (11 Nov dini hari): `tests/test_putaran2
 `test_dc_manual_mengisi_yang_kosong` memakai cache valuasi otomatis asli di `data/` dan
 gagal bila ada cache 2330 yang dibuat sebelum D-c. Masalah yang sama terjadi di server:
 cache lama tidak punya tanda `tidak_tersedia`, dan pipeline menerima cache basi, jadi utang
-2330 tetap kurang 13% sampai cache dibangun ulang. Perlu versi skema di cache (cache tanpa
-versi terbaru dianggap tidak ada) dan tes yang memakai folder cache sementara.
+2330 tetap kurang 13% sampai cache dibangun ulang. Diperbaiki Claude 11 Nov: `VERSI_SKEMA` di cache valuasi
+otomatis; cache tanpa versi terbaru dianggap tidak ada dan dibangun ulang.
 Temuan kedua: `valuasi_otomatis.panaskan` melewati emiten yang punya berkas manual, jadi
 cache otomatis 2330 tidak pernah dibangun di server dan D-b (2330 otomatis + asumsi tim)
-tidak pernah aktif di sana. Perlu: panaskan tetap membangun cache untuk emiten berkas manual.
+tidak pernah aktif di sana. Diperbaiki Antigravity (`c70f432`).
 
 ## 5. Backlog (setelah 13 Nov atau bila sempat)
 

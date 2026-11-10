@@ -493,6 +493,19 @@ class TestDcUtangLancar(unittest.TestCase):
 class TestDbValuasiOtomatisManual(unittest.TestCase):
     """Pemeriksa untuk item D-b: valuasi otomatis digabung asumsi manual."""
 
+    def test_cache_skema_lama_dianggap_tidak_ada(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            asli_cache = valuasi_otomatis.CACHE_DIR
+            try:
+                valuasi_otomatis.CACHE_DIR = tmpdir
+                with open(os.path.join(tmpdir, "2330.json"), "w", encoding="utf-8") as f:
+                    json.dump({"code": "2330", "otomatis": True}, f)        # tanpa versi_skema
+                self.assertIsNone(valuasi_otomatis.baca_cache("2330"))
+                valuasi_otomatis.simpan_cache("2330", {"code": "2330", "otomatis": True})
+                self.assertEqual(valuasi_otomatis.baca_cache("2330")["versi_skema"], valuasi_otomatis.VERSI_SKEMA)
+            finally:
+                valuasi_otomatis.CACHE_DIR = asli_cache
+
     def test_db_otomatis_menang_asumsi_manual(self):
         """Siapkan cache otomatis 2330 buatan di folder sementara -> muat_valuasi("2330") memakai cfo/capex otomatis, tetapi assumptions.terminal_growth_ceiling dan risk_free_rate dari berkas manual; asumsi_dari = "manual"."""
         import sys
@@ -545,8 +558,7 @@ class TestDbValuasiOtomatisManual(unittest.TestCase):
                         "terminal_growth_ceiling": 0.015,
                     },
                 }
-                with open(os.path.join(tmpdir, "2330.json"), "w", encoding="utf-8") as f:
-                    json.dump(auto_palsu, f)
+                valuasi_otomatis.simpan_cache("2330", auto_palsu)   # menulis versi_skema
 
                 hasil = store.muat_valuasi("2330")
                 self.assertIsNotNone(hasil)

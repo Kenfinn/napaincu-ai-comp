@@ -181,3 +181,26 @@ Pekerjaan proyek yang menunggu pihak lain:
 | **P8 (B3)** | 01:30 | 01:39 | 9 menit | Sitasi tautan langsung MOPS dan skrip verifikasi resmi FinMind |
 | **P9 (R4)** | 01:40 | 01:42 | 2 menit | Draf pengungkapan pihak ketiga, lisensi, dan alat kecerdasan buatan |
 | **P10** | 01:42 | 01:45 | 3 menit | Pemeriksaan akhir menyeluruh, uji offline, dan finalisasi laporan |
+
+---
+
+## Tinjauan Claude (11 Nov)
+
+Dicocokkan dengan kode dan dijalankan ulang. Kepemilikan berkas dipatuhi: tidak ada perubahan
+di `app/agent/` selain jatah per jalan di `llm.py`, dan `tests/test_agent.py` hanya mendapat
+blok `setUpModule` D-b. 161 tes lulus di mesin bersih.
+
+Koreksi atas laporan di atas:
+1. **D-a, angka QA bukan data asli.** "0,0058 detik" dan "4 pengumuman" diukur pada 4 kasus
+   contoh di laptop, bukan 578 pengumuman asli. Di server, setelah D-a, halaman utama
+   menggantung lebih dari 90 detik (model 404 lalu 503, dan pemantau membangun valuasi
+   sebelum memproses). Diperbaiki Claude: `92855b8` (pemutus model, hasil awal tanpa model)
+   dan `9ae517a` (proses dulu, valuasi sesudahnya).
+2. **D-b bergantung pada isi `data/`.** `test_dc_manual_mengisi_yang_kosong` gagal bila ada
+   cache 2330 lama tanpa tanda D-c, dan cache lama yang sama membuat utang 2330 di server
+   kurang 13%. Diperbaiki Claude: versi skema cache (`VERSI_SKEMA`), tes cache buatan kini
+   lewat `simpan_cache`, dan tes baru untuk cache skema lama. Lulus dengan dan tanpa cache lama.
+3. **Hash B3.** Tabel menulis `c5c9404`; commit di `main` adalah `8f24de8` (hash berubah saat rebase).
+4. Yang terverifikasi benar: beta resmi tanpa Yahoo, penafian satu kali per halaman tiga
+   bahasa, kunci baca, panaskan kini membangun cache 2330 (`c70f432`), dan pengungkapan pihak
+   ketiga mencakup semua pustaka.
