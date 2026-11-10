@@ -40,11 +40,34 @@ def _pemantau() -> None:
     while True:
         try:
             tarik.periksa_sekarang()
-            valuasi_otomatis.panaskan(tarik.baca_watchlist())
+            # Pengumuman diproses dulu supaya halaman segera memuat data terbaru. Valuasi
+            # otomatis (beta: 25 bulan harga harian, jeda 2 detik) bisa makan menit, jadi
+            # dibangun sesudahnya, lalu hasil diproses ulang sekali lagi.
             hasil(segarkan=True)
+            if valuasi_otomatis.panaskan(tarik.baca_watchlist()):
+                hasil(segarkan=True)
         except Exception as e:                        # noqa: BLE001
             print(f"[pemantau] gagal: {type(e).__name__}: {e}", flush=True)
         time.sleep(jeda)
+
+
+def _panaskan_latar() -> None:
+    """Bangun valuasi watchlist di latar belakang, lalu proses ulang. Satu saja sekaligus."""
+    if not _kunci_panaskan.acquire(blocking=False):
+        return
+
+    def kerja():
+        try:
+            if valuasi_otomatis.panaskan(tarik.baca_watchlist()):
+                hasil(segarkan=True)
+        except Exception as e:                        # noqa: BLE001
+            print(f"[panaskan] gagal: {type(e).__name__}: {e}", flush=True)
+        finally:
+            _kunci_panaskan.release()
+    threading.Thread(target=kerja, name="panaskan", daemon=True).start()
+
+
+_kunci_panaskan = threading.Lock()
 
 
 def _hasil_awal_tanpa_model() -> None:
@@ -285,8 +308,8 @@ async def periksa(request: Request):
     if not _boleh_ubah(request):
         return _tolak_akses("/")
     st = tarik.periksa_sekarang()
-    valuasi_otomatis.panaskan(tarik.baca_watchlist())
     hasil(segarkan=True)
+    _panaskan_latar()            # valuasi bisa makan menit: jangan tahan permintaan ini
     ke = f.get("kembali") or "/"
     pesan, ok = _ringkas_status(st)
     return _balik(ke if ke.startswith("/") and not ke.startswith("//") else "/", pesan, ok)
