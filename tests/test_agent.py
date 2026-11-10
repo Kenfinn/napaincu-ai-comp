@@ -619,8 +619,8 @@ class TestRingkasanAnalisis(TestHalamanSaham):
     def test_profil_konservatif_lebih_hati_hati(self):
         ringkasan, kons = self._r(risiko="konservatif")
         _, agr = self._r(risiko="agresif")
-        self.assertIn("caution", kons["kecocokan"])
-        self.assertNotIn("deserve extra caution", agr["kecocokan"])
+        self.assertIn("Points to watch", kons["kecocokan"])
+        self.assertNotIn("Points to watch", agr["kecocokan"])
 
     def test_tidak_ada_kata_beli_jual_di_tiga_bahasa(self):
         from app import ringkasan

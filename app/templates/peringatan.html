@@ -10,6 +10,8 @@
   <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
 </div>
 
+{% include "_penafian.html" %}
+
 {% if h.status == 'ditahan' %}
 <div class="pita bahaya"><div>{{ t('al.ditahan', sebab=((tr(h.alasan_i18n) if h.alasan_i18n else h.alasan) | e)) | safe }}</div></div>
 {% endif %}

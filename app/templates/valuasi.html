@@ -21,6 +21,8 @@
   </div>
 </div>
 
+{% include "_penafian.html" %}
+
 {% if r.incomplete_sources %}
 <div class="pita bahaya">
   <div>{{ t('va.sumber_kurang', n=(r.incomplete_sources | length), daftar='<span class="mono">' ~ (r.incomplete_sources | join(', ') | e) ~ '</span>') | safe }}</div>

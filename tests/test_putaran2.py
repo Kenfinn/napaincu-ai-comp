@@ -5,6 +5,8 @@ Seluruh tes berjalan tanpa akses jaringan luar.
 
 from __future__ import annotations
 
+import copy
+import html
 import json
 import random
 import re
@@ -13,7 +15,9 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from app import config, harga_resmi, valuasi_otomatis
+from fastapi.testclient import TestClient
+
+from app import config, harga_resmi, i18n, main, pasar, valuasi_otomatis
 
 DATA_TES = Path(__file__).resolve().parent / "data"
 HARGA_RESMI_SAMPEL = json.loads((DATA_TES / "harga_resmi_sampel.json").read_text(encoding="utf-8"))
@@ -114,3 +118,92 @@ class TestR1BetaHargaResmi(unittest.TestCase):
             [],
             f"Ketergantungan/kata 'yahoo' masih ditemukan di berkas: {pelanggaran}",
         )
+
+
+class TestR2Penafian(unittest.TestCase):
+    """Pemeriksa untuk item R2: penafian di semua halaman analisis."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.tmp_path = Path(self._tmp.name)
+        self.pasar_cache = self.tmp_path / "pasar"
+        self.pasar_cache.mkdir(parents=True, exist_ok=True)
+        self.val_dir = self.tmp_path / "valuation"
+        self.val_dir.mkdir(parents=True, exist_ok=True)
+        self.trace_dir = self.tmp_path / "traces"
+        self.trace_dir.mkdir(parents=True, exist_ok=True)
+        self.parsed_dir = self.tmp_path / "parsed"
+        self.parsed_dir.mkdir(parents=True, exist_ok=True)
+
+        # Salin manual 2330
+        manual = json.loads((Path(config.VALUATION_DIR) / "2330.json").read_text(encoding="utf-8"))
+        (self.val_dir / "2330.json").write_text(json.dumps(manual), encoding="utf-8")
+
+        self._patches = [
+            mock.patch.object(pasar, "CACHE_DIR", str(self.pasar_cache)),
+            mock.patch.object(config, "VALUATION_DIR", str(self.val_dir)),
+            mock.patch.object(config, "TRACE_DIR", str(self.trace_dir)),
+            mock.patch.object(config, "PARSED_DIR", str(self.parsed_dir)),
+            mock.patch.object(pasar, "_ambil_json", side_effect=AssertionError("tanpa jaringan")),
+            mock.patch.object(pasar, "_finmind", side_effect=AssertionError("tanpa jaringan")),
+            mock.patch.object(harga_resmi, "_ambil_json", side_effect=AssertionError("tanpa jaringan")),
+        ]
+        for p in self._patches:
+            p.start()
+
+        pasar_sampel = json.loads((DATA_TES / "pasar_sampel.json").read_text(encoding="utf-8"))
+        for k, v in pasar_sampel.items():
+            pasar._tulis_cache(k, copy.deepcopy(v))
+
+        main._cache = None
+        self.c = TestClient(main.app)
+
+    def tearDown(self):
+        main._cache = None
+        for p in reversed(self._patches):
+            p.stop()
+        self._tmp.cleanup()
+
+    def test_r2_penafian_di_semua_halaman_analisis(self):
+        """Untuk lang en, zh, id: /, /peringatan/{id}, /saham/2330?tab=X (semua tab), /valuasi/2330 memuat penafian tepat 1x tanpa '⟦'."""
+        daftar = main.hasil()
+        self.assertGreater(len(daftar), 0)
+        id_pertama = daftar[0]["id"]
+
+        urls = [
+            "/",
+            f"/peringatan/{id_pertama}",
+            "/saham/2330?tab=ringkasan",
+            "/saham/2330?tab=stream",
+            "/saham/2330?tab=stats",
+            "/saham/2330?tab=keu",
+            "/saham/2330?tab=valuasi",
+            "/saham/2330?tab=profil",
+            "/valuasi/2330",
+        ]
+
+        for lang in ("en", "zh", "id"):
+            teks_penafian = i18n.t("rk.disclaimer", lang)
+            for u in urls:
+                sep = "&" if "?" in u else "?"
+                target = f"{u}{sep}lang={lang}"
+                resp = self.c.get(target)
+                self.assertEqual(resp.status_code, 200, f"Status bukan 200 untuk {target}")
+                unescaped = html.unescape(resp.text)
+                cnt = unescaped.count(teks_penafian)
+                self.assertEqual(cnt, 1, f"Penafian tidak muncul tepat 1x (muncul {cnt}x) di {target}")
+                self.assertNotIn("⟦", resp.text, f"Ada string tak terterjemahkan di {target}")
+
+    def test_r2_tanpa_kata_kesesuaian(self):
+        """Teks rk.p.hati dan rk.p.aman ketiga bahasa tidak memuat kata penilaian kesesuaian."""
+        kata_terlarang = ("aman", "safe", "安全", "cocok", "suitable", "適合")
+        for k in ("rk.p.hati", "rk.p.aman"):
+            for lang in ("en", "zh", "id"):
+                teks = i18n.t(k, lang).lower()
+                for kt in kata_terlarang:
+                    self.assertNotIn(
+                        kt.lower(),
+                        teks,
+                        f"Kata terlarang '{kt}' ditemukan di kunci '{k}' bahasa '{lang}': {teks}",
+                    )
+

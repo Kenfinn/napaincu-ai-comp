@@ -43,6 +43,8 @@
   {% endfor %}
 </nav>
 
+{% include "_penafian.html" %}
+
 {# --------------------------------------------------------------- RINGKASAN #}
 {% if tab == 'ringkasan' %}
   <div class="kontrol" style="align-items:center;">
@@ -108,7 +110,6 @@
   {% else %}
   <div class="kartu kosong">{{ t('rk.kosong') }}</div>
   {% endif %}
-  <div class="pita fixture" style="margin-top:14px;"><div>{{ t('rk.disclaimer') }}</div></div>
 
 {# ------------------------------------------------------------------ STREAM #}
 {% elif tab == 'stream' %}
