@@ -145,6 +145,7 @@ Kirim dua tautan:
 | 8 | Buka **Valuation 2330** | Reverse DCF, WACC, sensitivitas |
 | 9 | Ketik `2330` di kotak pencarian menu samping | Halaman saham: harga, tab Stream / Key Stats / Financials / Valuation / Profile |
 | 10 | Tab **Financials** → Annual → YoY growth | Tabel pertumbuhan berwarna (merah = naik, hijau = turun) |
+| 11 | Halaman saham → tab **Summary**, ganti profil risiko konservatif → agresif | Kekuatan, hal yang perlu diperhatikan, kesimpulan, dan pertanyaan yang perlu dicek. **Tidak ada** kata beli/jual |
 
 ### Yang memang belum ada (jangan dilaporkan sebagai bug)
 

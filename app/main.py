@@ -27,7 +27,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import config, i18n, pasar, store, tarik
+from . import config, i18n, pasar, ringkasan, store, tarik
 from .agent import llm, pipeline
 
 import sys
@@ -261,7 +261,7 @@ def ganti_bahasa(kode: str, ke: str = "/"):
 
 
 # --- halaman saham (Stream · Key Stats · Financials · Valuation · Profile) ---
-TAB_SAHAM = ("stream", "stats", "keu", "valuasi", "profil")
+TAB_SAHAM = ("ringkasan", "stream", "stats", "keu", "valuasi", "profil")
 
 
 @app.get("/saham", include_in_schema=False)
@@ -271,21 +271,25 @@ def cari_saham(kode: str = ""):
 
 
 @app.get("/saham/{kode}", response_class=HTMLResponse)
-def saham(request: Request, kode: str, tab: str = "stream", lap: str = "lr",
-          per: str = "q", mode: str = "nilai"):
+def saham(request: Request, kode: str, tab: str = "ringkasan", lap: str = "lr",
+          per: str = "q", mode: str = "nilai", risiko: str = ""):
     kode = kode.strip().upper()
     if not tarik.KODE_SAH.match(kode):
         raise HTTPException(404, "Kode saham tidak dikenal")
-    tab = tab if tab in TAB_SAHAM else "stream"
+    tab = tab if tab in TAB_SAHAM else "ringkasan"
+    risiko = risiko if risiko in ringkasan.PROFIL_RISIKO else (
+        request.cookies.get("risiko") if request.cookies.get("risiko") in ringkasan.PROFIL_RISIKO else "moderat")
     lap = lap if lap in pasar.LAPORAN else "lr"
     per = per if per in ("q", "y") else "q"
     mode = mode if mode in ("nilai", "yoy") else "nilai"
 
     detail, _ = store.muat_detail()
     nama = next((d.get("name") for d in detail if d.get("code") == kode and d.get("name")), None)
-    ctx = {"kode_saham": kode, "tab": tab, "lap": lap, "per": per, "mode": mode,
+    ctx = {"kode_saham": kode, "tab": tab, "lap": lap, "per": per, "mode": mode, "risiko": risiko,
            "harga": pasar.harga(kode), "di_watchlist": kode in tarik.baca_watchlist()}
-    if tab == "stream":
+    if tab == "ringkasan":
+        ctx["rk"] = ringkasan.susun(kode, bahasa_dari(request), risiko, hasil())
+    elif tab == "stream":
         ctx["daftar"] = [h for h in hasil() if (h.get("emiten") or {}).get("kode") == kode]
     elif tab == "stats":
         ctx["s"] = pasar.statistik(kode)
@@ -298,8 +302,11 @@ def saham(request: Request, kode: str, tab: str = "stream", lap: str = "lr",
     elif tab == "profil":
         ctx["p"] = pasar.profil(kode)
     ctx["nama_saham"] = (ctx["harga"] or {}).get("nama") or nama
-    return tpl.TemplateResponse(request=request, name="saham.html",
-                                context=konteks(request, "saham", **ctx))
+    r = tpl.TemplateResponse(request=request, name="saham.html",
+                             context=konteks(request, "saham", **ctx))
+    if request.query_params.get("risiko") in ringkasan.PROFIL_RISIKO:
+        r.set_cookie("risiko", risiko, max_age=60 * 60 * 24 * 365, samesite="lax")
+    return r
 
 
 @app.get("/api/saham/{kode}/keuangan", summary="Tabel laporan keuangan (lr | neraca | arus)")

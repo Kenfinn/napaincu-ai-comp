@@ -180,3 +180,8 @@ table.fin td.sel-turun { background: #E1F2E8; color: #12604A; }
 table.fin td.kosong-sel { color: var(--abu); }
 .catatan { font-size: 11.5px; color: var(--abu-2); line-height: 1.5; margin: 10px 2px 0; }
 .tab-saham a, .segmen a, .bahasa a, .nav a { text-decoration: none; }
+
+/* --- ringkasan analisis --- */
+.kartu.kesimpulan { border-left: 4px solid var(--navy); }
+.kartu.kesimpulan p { margin: 6px 0; font-size: 13.5px; line-height: 1.55; }
+.kartu.kesimpulan p.besar { font-size: 16px; font-weight: 600; }

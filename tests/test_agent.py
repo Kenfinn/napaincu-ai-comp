@@ -580,5 +580,82 @@ class TestCacheModelDanImpor(unittest.TestCase):
         self.assertEqual(r.json()["baru"], 0)                      # kirim ulang aman
 
 
+class TestRingkasanAnalisis(TestHalamanSaham):
+    """Kesimpulan tanpa beli/jual; narasi model hanya boleh memakai angka dari fakta."""
+
+    def _r(self, bahasa="en", risiko="moderat"):
+        from app import ringkasan
+        return ringkasan, ringkasan.susun("2330", bahasa, risiko, [])
+
+    def test_penilaian_dari_data_asli(self):
+        _, r = self._r()
+        aspek = {f["aspek"]: f["arah"] for f in r["fakta"]}
+        self.assertEqual(aspek["pertumbuhan"], 1)          # pendapatan 2025 +31,6 %
+        self.assertEqual(aspek["profitabilitas"], 1)       # ROE ≈ 34,8 %
+        self.assertEqual(aspek["utang"], 1)                # liabilitas ≈ 31 % aset
+        self.assertEqual(aspek["valuasi"], -1)             # g tersirat > batas 3,5 %
+        # Sampel uji hanya memuat 2 emiten: di bawah 5 pembanding, median industri
+        # sengaja tidak dipakai daripada membandingkan dengan sampel yang terlalu kecil.
+        self.assertNotIn("valuasi_relatif", aspek)
+
+    def test_median_per_industri(self):
+        profil = [{"公司代號": f"9{i:03d}", "產業別": "24"} for i in range(6)] + [{"公司代號": "2330", "產業別": "24"},
+                                                                         {"公司代號": "1101", "產業別": "01"}]
+        rasio = ([{"Code": f"9{i:03d}", "PEratio": str(v)} for i, v in enumerate([10, 20, 30, 40, 50, -5])]
+                 + [{"Code": "2330", "PEratio": "25"}, {"Code": "1101", "PEratio": "99"}])
+        self.pasar._tulis_cache("profil_twse", profil)
+        self.pasar._tulis_cache("rasio_twse", rasio)
+        m = self.pasar.per_industri("2330")
+        self.assertEqual(m["jumlah"], 6)                   # PER negatif & industri lain tidak ikut
+        self.assertEqual(m["median"], 27.5)                # median dari 10,20,25,30,40,50
+
+    def test_profil_konservatif_lebih_hati_hati(self):
+        ringkasan, kons = self._r(risiko="konservatif")
+        _, agr = self._r(risiko="agresif")
+        self.assertIn("caution", kons["kecocokan"])
+        self.assertNotIn("deserve extra caution", agr["kecocokan"])
+
+    def test_tidak_ada_kata_beli_jual_di_tiga_bahasa(self):
+        from app import ringkasan
+        for bhs in ("en", "zh", "id"):
+            _, r = self._r(bhs)
+            teks = " ".join([f["teks"] for f in r["fakta"]] + [r["kesimpulan"], r["kecocokan"]] + r["cek"])
+            for k in ringkasan.KATA_TERLARANG:
+                self.assertNotIn(k.lower(), teks.lower(), f"{bhs}: {k}")
+
+    def test_pemeriksa_narasi(self):
+        ringkasan, r = self._r()
+        baik = "Revenue grew 31.6% in 2025, and return on equity is 34.8%. The investor decides."
+        self.assertTrue(ringkasan.periksa_narasi(baik, r)[0])
+        self.assertFalse(ringkasan.periksa_narasi("Revenue grew 45% in 2025.", r)[0])      # angka karangan
+        self.assertFalse(ringkasan.periksa_narasi("A good time to buy.", r)[0])             # saran beli
+        self.assertFalse(ringkasan.periksa_narasi("建議買進。", r)[0])
+
+    def test_narasi_model_ditolak_jatuh_ke_template(self):
+        from app import config
+        from app.agent import llm
+        asli = (config.API_KEY, llm.tanya)
+        try:
+            config.API_KEY = "uji"
+            llm.tanya = lambda i, d: ({"ringkasan": "Strong buy: revenue +99%."}, {"model": "uji"})
+            _, r = self._r()
+            self.assertEqual(r["narasi"]["sumber"], "template")
+            self.assertEqual(r["narasi"]["alasan_kode"], "rk.alasan.ditolak")
+            llm.tanya = lambda i, d: ({"ringkasan": "Revenue grew 31.6% in 2025. The investor decides."},
+                                      {"model": "uji"})
+            _, r = self._r()
+            self.assertEqual(r["narasi"]["sumber"], "model")
+        finally:
+            config.API_KEY, llm.tanya = asli
+
+    def test_tab_ringkasan_tiga_bahasa(self):
+        for bhs in ("en", "zh", "id"):
+            for risiko in ("konservatif", "agresif"):
+                with self.subTest(bahasa=bhs, risiko=risiko):
+                    r = self.c.get(f"/saham/2330?lang={bhs}&risiko={risiko}")
+                    self.assertEqual(r.status_code, 200)
+                    self.assertNotIn("⟦", r.text)
+
+
 if __name__ == "__main__":
     unittest.main()

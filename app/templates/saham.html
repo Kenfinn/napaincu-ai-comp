@@ -2,8 +2,8 @@
 {% block judul %}{{ kode_saham }} {{ nama_saham or '' }} · FEAF{% endblock %}
 {% block isi %}
 
-{% macro url(tab_=tab, lap_=lap, per_=per, mode_=mode) -%}
-/saham/{{ kode_saham }}?tab={{ tab_ }}&lap={{ lap_ }}&per={{ per_ }}&mode={{ mode_ }}
+{% macro url(tab_=tab, lap_=lap, per_=per, mode_=mode, risiko_=risiko) -%}
+/saham/{{ kode_saham }}?tab={{ tab_ }}&lap={{ lap_ }}&per={{ per_ }}&mode={{ mode_ }}&risiko={{ risiko_ }}
 {%- endmacro %}
 
 <div class="kepala-saham">
@@ -38,13 +38,80 @@
 </div>
 
 <nav class="tab-saham">
-  {% for k in ['stream', 'stats', 'keu', 'valuasi', 'profil'] %}
+  {% for k in ['ringkasan', 'stream', 'stats', 'keu', 'valuasi', 'profil'] %}
   <a href="{{ url(tab_=k) }}" class="{{ 'on' if tab == k }}">{{ t('sh.tab.' ~ k) }}</a>
   {% endfor %}
 </nav>
 
+{# --------------------------------------------------------------- RINGKASAN #}
+{% if tab == 'ringkasan' %}
+  <div class="kontrol" style="align-items:center;">
+    <span style="font-size:12.5px; color:var(--abu-2);">{{ t('rk.profil_label') }}</span>
+    <div class="segmen">
+      {% for k in ['konservatif', 'moderat', 'agresif'] %}<a href="{{ url(risiko_=k) }}" class="{{ 'on' if risiko == k }}">{{ t('rk.risiko.' ~ k) }}</a>{% endfor %}
+    </div>
+  </div>
+
+  {% if rk.ada_data %}
+  <div class="kartu kesimpulan">
+    <div class="kicker">{{ t('rk.kesimpulan_judul') }}</div>
+    <p class="besar">{{ rk.kesimpulan }}</p>
+    <p>{{ rk.kecocokan }}</p>
+  </div>
+
+  {% if rk.narasi.teks %}
+  <div class="kartu">
+    <div class="kicker">{{ t('rk.narasi_judul') }}</div>
+    <p style="font-size:14px; line-height:1.6; margin:6px 0 8px;">{{ rk.narasi.teks }}</p>
+    <small style="color:var(--abu);">{{ t('rk.narasi_model', model=rk.narasi.model) }}</small>
+  </div>
+  {% endif %}
+
+  <div style="display:flex; gap:12px; align-items:flex-start;">
+    <div style="flex:1;">
+      <h2>{{ t('rk.kuat_judul') }}</h2>
+      <div class="kartu">
+        {% for f in rk.kuat %}<div class="cek ok"><span class="tanda">+</span><span class="why">{{ f.teks }}</span></div>
+        {% else %}<div class="cek"><span class="tanda">—</span><span class="why">—</span></div>{% endfor %}
+      </div>
+    </div>
+    <div style="flex:1;">
+      <h2>{{ t('rk.awas_judul') }}</h2>
+      <div class="kartu">
+        {% for f in rk.awas %}<div class="cek x"><span class="tanda">!</span><span class="why">{{ f.teks }}</span></div>
+        {% else %}<div class="cek"><span class="tanda">—</span><span class="why">—</span></div>{% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {% if rk.cek %}
+  <h2>{{ t('rk.cek_judul') }}</h2>
+  <div class="kartu">
+    {% for c in rk.cek %}<div class="cek"><span class="tanda">?</span><span class="why">{{ c }}</span></div>{% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>{{ t('rk.hasil') }}</h2>
+  <div class="kartu">
+    {% for f in rk.fakta %}
+    <div class="cek {{ 'ok' if f.arah > 0 else ('x' if f.arah < 0 else '') }}">
+      <span class="tanda">{{ '+' if f.arah > 0 else ('!' if f.arah < 0 else '·') }}</span>
+      <span class="nama">{{ t('rk.aspek.' ~ f.aspek) }}</span>
+      <span class="why">{{ f.teks }} <a href="{{ url(tab_=f.tab) }}" style="white-space:nowrap;">{{ t('rk.sumber') }} →</a></span>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if not rk.narasi.teks %}
+  <p class="catatan">{{ t('rk.narasi_template', alasan=t(rk.narasi.alasan_kode)) }}{% if rk.narasi.alasan %} ({{ rk.narasi.alasan }}){% endif %}</p>
+  {% endif %}
+  {% else %}
+  <div class="kartu kosong">{{ t('rk.kosong') }}</div>
+  {% endif %}
+  <div class="pita fixture" style="margin-top:14px;"><div>{{ t('rk.disclaimer') }}</div></div>
+
 {# ------------------------------------------------------------------ STREAM #}
-{% if tab == 'stream' %}
+{% elif tab == 'stream' %}
   {% for h in daftar %}
   <a class="baris" href="/peringatan/{{ h.id }}">
     <div class="kiri">
@@ -166,7 +233,7 @@
   <div class="kartu">
     <div class="kv"><span class="k">{{ t('pf.nama') }}</span><span class="v">{{ p.nama_lengkap or '—' }}</span></div>
     <div class="kv"><span class="k">{{ t('pf.en') }}</span><span class="v">{{ p.nama_en or '—' }}</span></div>
-    <div class="kv"><span class="k">{{ t('pf.industri') }}</span><span class="v">{{ p.industri or '—' }}</span></div>
+    <div class="kv"><span class="k">{{ t('pf.industri') }}</span><span class="v">{{ t('ind.' ~ p.industri_kode) if p.industri_kode and not t('ind.' ~ p.industri_kode).startswith('⟦') else (p.industri or '—') }}</span></div>
     <div class="kv"><span class="k">{{ t('pf.bursa') }}</span><span class="v">{{ p.bursa }}</span></div>
     <div class="kv"><span class="k">{{ t('pf.berdiri') }}</span><span class="v">{{ p.berdiri or '—' }}</span></div>
     <div class="kv"><span class="k">{{ t('pf.tercatat') }}</span><span class="v">{{ p.tercatat or '—' }}</span></div>

@@ -189,6 +189,37 @@ def _bersihkan_profil(rows: list[dict]) -> list[dict]:
     return [{k: v for k, v in r.items() if k.strip() not in PROFIL_DIBUANG} for r in rows]
 
 
+def daftar_profil(nama: str = "profil_twse") -> list[dict]:
+    data, _ = _dengan_cache(nama, TTL["profil"],
+                            lambda: _bersihkan_profil(_ambil_json(SUMBER_PASAR[nama])))
+    return data or []
+
+
+def per_industri(kode: str) -> dict | None:
+    """Median PER emiten satu industri di TWSE — pembanding yang bersumber dari bursa sendiri.
+
+    Hanya PER positif yang dihitung (PER negatif/kosong berarti rugi atau tidak tersedia).
+    """
+    ind = {str(r.get("公司代號", "")).strip(): str(r.get("產業別", "")).strip()
+           for r in daftar_profil("profil_twse")}
+    sendiri = ind.get(kode)
+    if not sendiri:
+        return None
+    nilai = []
+    for r in _daftar("rasio_twse", "rasio"):
+        k = str(r.get("Code", "")).strip()
+        v = _f(r.get("PEratio"))
+        if ind.get(k) == sendiri and v and v > 0:
+            nilai.append(v)
+    if len(nilai) < 5:
+        return None
+    nilai.sort()
+    n = len(nilai)
+    median = nilai[n // 2] if n % 2 else (nilai[n // 2 - 1] + nilai[n // 2]) / 2
+    return {"industri_kode": sendiri, "industri": INDUSTRI.get(sendiri, sendiri),
+            "median": median, "jumlah": n}
+
+
 def profil(kode: str) -> dict | None:
     for nama in ("profil_twse", "profil_tpex"):
         data, _ = _dengan_cache(nama, TTL["profil"],
