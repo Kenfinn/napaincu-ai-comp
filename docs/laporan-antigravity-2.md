@@ -47,3 +47,26 @@ Laporan pelaksanaan tugas semalam P1 sampai P10 untuk FEAF (Agentic AI Investmen
   - Diubah: `app/valuasi_otomatis.py`, `app/i18n.py`, `scripts/valuasi_otomatis.py`, `tests/test_valuasi_otomatis.py`
   - Dihapus: `tests/data/yahoo_sampel.json`
 
+---
+
+## P3. R2: Penafian di Semua Halaman Analisis
+- ID: R2
+- Status: ✅ Selesai
+- Commit: `0849027`
+- Jam mulai: 00:40
+- Jam selesai: 00:48
+- Tes yang ditambah dan hasilnya:
+  - 2 tes baru di `tests/test_putaran2.py` (keduanya lulus):
+    - `test_r2_penafian_di_semua_halaman_analisis`: 9 halaman analisis diuji di 3 bahasa (`en`, `zh`, `id`). Penafian muncul tepat 1 kali pada masing-masing halaman dan tidak ada penanda teks tak terterjemahkan `⟦`.
+    - `test_r2_tanpa_kata_kesesuaian`: teks `rk.p.hati` dan `rk.p.aman` pada ketiga bahasa dipastikan bersih dari kata penilaian kesesuaian (`aman`, `safe`, `安全`, `cocok`, `suitable`, `適合`).
+  - Penyesuaian tes lama di `tests/test_agent.py::test_profil_konservatif_lebih_hati_hati`.
+  - Total tes lulus: 138 tes (naik dari 136 tes).
+- Angka QA manual:
+  - 18 kombinasi `/saham/2330?tab=X&lang=Y` (6 tab x 3 bahasa) diverifikasi langsung lewat HTTP client: status 200 OK dan teks penafian muncul tepat 1 kali per halaman.
+- Berkas yang diubah/dibuat:
+  - Dibuat: `app/templates/_penafian.html`
+  - Diubah: `app/templates/saham.html`, `app/templates/peringatan.html`, `app/templates/valuasi.html`, `app/templates/feed.html`, `app/i18n.py`, `tests/test_agent.py`, `tests/test_putaran2.py`
+- Keputusan yang saya ambil sendiri:
+  - Menyesuaikan kata kunci penegasan di `tests/test_agent.py::test_profil_konservatif_lebih_hati_hati` dari `"caution"` menjadi `"Points to watch"` agar selaras dengan redaksi baru `rk.p.hati` dari spesifikasi R2.
+
+
