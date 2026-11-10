@@ -101,12 +101,12 @@ terbaru; daftar kerja rinci ada di [`rencana-finalis.md`](./rencana-finalis.md).
 | A1 State + review | ✅ Selesai, teruji |
 | A2 Triase keyakinan + 👍/👎 → ambang | ✅ Selesai, teruji (halaman `/ambang`, kartu triase di peringatan) |
 | B1 Draf pasal | ✅ Draf · ⏳ **verifikasi Ferry & Patrice**, lalu pasang ke `screen.py` + `LABEL_SAH` + jalur "laporan" (31) dan "sinyal risiko" (22/23/1/3/40) |
-| B2 DCF otomatis semua emiten | ⏳ **Antigravity** (prompt: [`prompt-antigravity.md`](./prompt-antigravity.md)) |
+| B2 DCF otomatis semua emiten | ✅ Selesai, teruji (`app/valuasi_otomatis.py`, `docs/valuasi-otomatis.md`, `eval/hasil/b2-2026-11-10.md`) |
 | B3 Sitasi MOPS + uji dari laptop | ⬜ |
 | C1 Chatbot | ⬜ (versi awal 13 Nov) |
 | D1 Kandidat gold set | ✅ `/ekspor/kandidat-gold.csv` |
 | D2 Gold set + baseline menit | ⏳ Ferry & Patrice |
-| D3 Set uji serangan | ⏳ **Antigravity** (prompt yang sama) |
+| D3 Set uji serangan | ✅ Selesai, teruji (`scripts/uji_serangan.py`, `docs/laporan-serangan.md`, `eval/hasil/serangan-2026-11-10.md`, Terbit-Salah = 0) |
 | D4–D5 Evaluasi lengkap + laporan | ⬜ |
 | E1 README finalis | ⬜ |
 | E2 Deck, video, formulir | ⏳ Afinzaki + tim |
