@@ -69,4 +69,31 @@ Laporan pelaksanaan tugas semalam P1 sampai P10 untuk FEAF (Agentic AI Investmen
 - Keputusan yang saya ambil sendiri:
   - Menyesuaikan kata kunci penegasan di `tests/test_agent.py::test_profil_konservatif_lebih_hati_hati` dari `"caution"` menjadi `"Points to watch"` agar selaras dengan redaksi baru `rk.p.hati` dari spesifikasi R2.
 
+---
+
+## P4. R3: Kunci Akses untuk Halaman Baca
+- ID: R3
+- Status: ✅ Selesai
+- Commit: `e0b2c0d`
+- Jam mulai: 00:48
+- Jam selesai: 00:54
+- Tes yang ditambah dan hasilnya:
+  - 5 tes baru di `tests/test_putaran2.py` (semua lulus):
+    - `test_r3_mati_secara_bawaan`: tanpa konfigurasi, akses baca bebas seperti semula (status 200).
+    - `test_r3_terkunci_tanpa_kode`: KUNCI_BACA aktif mengunci `/` (401 form), `/docs` (401), dan `/api/*` (401 JSON galat), sementara `/sehat` dan `/static/*` tetap terbuka (200).
+    - `test_r3_terbuka_dengan_kode`: cookie akses dari `/akses?kode=...` membuka seluruh halaman baca (200).
+    - `test_r3_abaikan_bila_kode_kosong`: KUNCI_BACA aktif namun KODE_AKSES kosong diabaikan dengan aman (200).
+    - `test_r3_halaman_kunci_tiga_bahasa`: halaman 401 tampil utuh dalam bahasa `en`, `zh`, dan `id` tanpa penanda tak terterjemahkan `⟦`.
+  - Total tes lulus: 143 tes (naik dari 138 tes).
+- Angka QA manual:
+  - Eksekusi server dengan `SENTINEL_KUNCI_BACA=1 SENTINEL_KODE_AKSES=uji`:
+    - GET `/` -> 401 (terkunci, form isian kode ditampilkan)
+    - GET `/sehat` -> 200 (health check dokploy tetap berfungsi)
+    - GET `/akses?kode=uji` -> 200 (diarahkan ke `/` dengan cookie akses)
+    - GET `/` setelah auth -> 200 (halaman feed terbuka penuh)
+- Berkas yang diubah/dibuat:
+  - Dibuat: `app/teks/antigravity.py`, `app/templates/kunci.html`
+  - Diubah: `app/config.py`, `app/main.py`, `docs/deploy-dokploy.md`, `tests/test_putaran2.py`
+
+
 
