@@ -4,7 +4,15 @@
 
 <div class="kepala">
   <div>
-    <div class="kicker">{{ r.code }} · {{ t('va.per', tgl=r.as_of) }} · {{ t('va.satuan') }}</div>
+    <div class="kicker">
+      {{ r.code }} · {{ t('va.per', tgl=r.as_of) }} · {{ t('va.satuan') }}
+      {% if r.wacc_inputs.otomatis %}
+        · <span class="lencana l-ditahan">{{ t('va.mode.otomatis') }}</span>
+        {% if r.wacc_inputs.dibangun %} · {{ t('va.dibangun_pada', waktu=r.wacc_inputs.dibangun) }}{% endif %}
+      {% else %}
+        · <span class="lencana l-terbit">{{ t('va.mode.manual') }}</span>
+      {% endif %}
+    </div>
     <h1>{{ r.name }}</h1>
   </div>
   <div style="text-align:right;">
@@ -36,6 +44,18 @@
       <div class="kv"><span class="k">{{ t('va.we') }}</span><span class="v">{{ r.equity_weight | pct }}</span></div>
       <div class="kv"><span class="k"><b>WACC</b></span><span class="v">{{ r.wacc | pct }}</span></div>
       <div class="kv"><span class="k">{{ t('va.pajak') }}</span><span class="v">{{ r.tax_rate | pct }}</span></div>
+      <div class="kv">
+        <span class="k">{{ t('va.beta_label') }}</span>
+        <span class="v">
+          {% if r.wacc_inputs.beta_cadangan %}
+            {{ t('va.beta_cadangan_label', alasan=tr(r.wacc_inputs.alasan_beta_i18n, r.wacc_inputs.alasan_beta)) }}
+          {% elif r.wacc_inputs.jumlah_pekan_beta %}
+            {{ t('va.beta_terhitung_label', beta=(r.wacc_inputs.beta | rb(2)), n=r.wacc_inputs.jumlah_pekan_beta) }}
+          {% else %}
+            {{ r.wacc_inputs.beta | rb(2) }}
+          {% endif %}
+        </span>
+      </div>
     </div>
   </div>
 

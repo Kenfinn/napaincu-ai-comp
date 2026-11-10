@@ -20,6 +20,100 @@ URUTAN = ("en", "zh", "id")
 
 # kunci: (English, 繁體中文, Bahasa Indonesia)
 _T: dict[str, tuple[str, str, str]] = {
+    # --- B2/D3 (Antigravity) ---
+    "va.mode.otomatis": ("Automatic", "自動計算", "Otomatis"),
+    "va.mode.manual": ("Manual", "手動工作表", "Manual"),
+    "va.mode.tidak_berlaku": ("Not applicable", "不適用", "Tidak berlaku"),
+    "va.mode.tidak_bisa": ("Cannot be computed", "無法計算", "Tidak bisa dihitung"),
+    "va.dibangun_pada": ("Built {waktu}", "建立於 {waktu}", "Dibangun {waktu}"),
+    "va.beta_label": ("Beta (2y weekly vs TAIEX)", "Beta（2 年週報酬對加權指數）", "Beta (mingguan 2 tahun vs TAIEX)"),
+    "va.beta_cadangan_label": ("Fallback beta 1.0 ({alasan})", "備用 Beta 1.0（{alasan}）", "Beta cadangan 1,0 ({alasan})"),
+    "va.beta_terhitung_label": (
+        "Beta {beta} ({n} weekly pairs vs TAIEX)",
+        "Beta {beta}（與加權指數共 {n} 週配對）",
+        "Beta {beta} ({n} pasangan minggu vs TAIEX)",
+    ),
+    "va.otomatis.keuangan": (
+        "Financial-sector issuer ({industri}): a free-cash-flow (FCFF) DCF model does not apply because debt and deposits are operating raw materials rather than financing.",
+        "金融保險業公司（{industri}）：自由現金流量（FCFF）折現模型不適用，因其負債與存款屬於營運原料而非單純籌資。",
+        "Emiten sektor keuangan ({industri}): model DCF berbasis arus kas bebas (FCFF) tidak berlaku karena utang dan simpanan merupakan bahan baku operasi, bukan pendanaan biasa.",
+    ),
+    "va.otomatis.tanpa_harga": (
+        "Market closing price for {kode} is not available from TWSE/TPEx OpenAPI.",
+        "無法自 TWSE/TPEx OpenAPI 取得 {kode} 的收盤價。",
+        "Harga penutupan pasar untuk {kode} belum tersedia dari OpenAPI TWSE/TPEx.",
+    ),
+    "va.otomatis.tanpa_saham": (
+        "Issued share count for {kode} is zero or unavailable in both exchange profile and balance sheet.",
+        "交易所基本資料與資產負債表中皆無 {kode} 的已發行股數（或為零）。",
+        "Jumlah saham beredar untuk {kode} nol atau tidak tersedia baik di profil bursa maupun neraca.",
+    ),
+    "va.otomatis.kurang_3_tahun": (
+        "Fewer than 3 full fiscal years of operating cash flow and capital expenditure data are available ({n} year(s) found; 3 required).",
+        "完整會計年度的營業現金流與資本支出資料少於 3 年（僅找到 {n} 年，需滿 3 年）。",
+        "Data arus kas operasi dan belanja modal tahun fiskal penuh kurang dari 3 tahun (ditemukan {n} tahun; wajib minimal 3 tahun).",
+    ),
+    "va.otomatis.tanpa_neraca": (
+        "Balance sheet data (cash and debt) for {kode} is unavailable.",
+        "無法取得 {kode} 的資產負債表（現金與負債）資料。",
+        "Data neraca (kas dan utang) untuk {kode} belum tersedia.",
+    ),
+    "va.otomatis.fcff_negatif": (
+        "Latest free cash flow to the firm (FCFF {tahun}) is non-positive ({fcff} NT$ million), so an implied perpetual growth rate cannot be meaningfully solved.",
+        "最近一期企業自由現金流量（{tahun} 年 FCFF = {fcff} 百萬新台幣）為零或負值，無法求解有意義的隱含永續成長率。",
+        "Arus kas bebas perusahaan terakhir (FCFF {tahun} = {fcff} juta NTD) bernilai nol atau negatif, sehingga tingkat pertumbuhan abadi tersirat tidak bermakna.",
+    ),
+    "va.otomatis.ev_negatif": (
+        "Enterprise value is non-positive ({ev} NT$ million: cash exceeds market cap plus debt), so reverse DCF does not apply.",
+        "企業價值為零或負值（{ev} 百萬新台幣：現金高於市值加負債），不適用反向 DCF。",
+        "Nilai perusahaan bernilai nol atau negatif ({ev} juta NTD: kas melebihi kapitalisasi pasar ditambah utang), sehingga reverse DCF tidak berlaku.",
+    ),
+    "va.beta.kurang_data": (
+        "fewer than 52 weekly return pairs ({n} week(s))",
+        "週報酬配對少於 52 週（僅 {n} 週）",
+        "pasangan return mingguan kurang dari 52 minggu ({n} minggu)",
+    ),
+    "va.beta.gagal_ambil": (
+        "price history unavailable from Yahoo Finance",
+        "無法自 Yahoo Finance 取得歷史股價",
+        "riwayat harga dari Yahoo Finance tidak tersedia",
+    ),
+    "va.beta.varians_nol": (
+        "market index variance is zero",
+        "市場指數變異數為零",
+        "varians indeks pasar bernilai nol",
+    ),
+    "va.warn.bunga_pakai_bayar": (
+        "InterestExpense was absent in cash flow statement; used PayTheInterest (cash interest paid) instead.",
+        "現金流量表缺少利息費用（InterestExpense），改用支付之利息（PayTheInterest）。",
+        "Pos InterestExpense tidak ada di laporan arus kas; menggunakan PayTheInterest (bunga kas yang dibayar).",
+    ),
+    "va.warn.bunga_nol": (
+        "Both InterestExpense and PayTheInterest were absent; interest expense defaulted to 0.",
+        "現金流量表同時缺少利息費用與支付之利息，利息費用設為 0。",
+        "Pos InterestExpense maupun PayTheInterest tidak tersedia; beban bunga diisi 0.",
+    ),
+    "va.warn.saham_neraca": (
+        "Issued share count derived from balance sheet CapitalStock (par NT$10) because exchange profile share count was unavailable.",
+        "因交易所基本資料無已發行股數，改由資產負債表股本（每股面額 10 元）推算股數。",
+        "Jumlah saham beredar dihitung dari CapitalStock neraca (nominal NT$10) karena data lembar profil bursa tidak tersedia.",
+    ),
+    "va.warn.tanpa_utang": (
+        "Issuer has zero interest-bearing debt on the balance sheet; cost of debt is 0% and WACC equals cost of equity.",
+        "資產負債表上無付息負債；負債資金成本為 0%，WACC 等於權益資金成本。",
+        "Emiten tidak memiliki utang berbunga di neraca; biaya utang 0% dan WACC sama dengan biaya ekuitas.",
+    ),
+    "va.warn.pajak_tidak_normal": (
+        "Pre-tax income or tax expense in fiscal year {tahun} was negative or abnormal; effective tax shield set to 0%.",
+        "{tahun} 會計年度稅前淨利或所得稅費用為負值或異常，有效稅盾設為 0%。",
+        "Laba sebelum pajak atau beban pajak tahun fiskal {tahun} negatif atau tidak normal; perisai pajak efektif disetel 0%.",
+    ),
+    "va.warn.utang_lancar_gabung": (
+        "FinMind TaiwanStockBalanceSheet folds current portion of long-term debt into OtherCurrentLiabilities; current_portion_lt_debt records ShorttermBorrowings when reported separately.",
+        "FinMind 資產負債表將一年內到期長期負債併入其他流動負債；流動付息負債欄位記錄單獨揭露之短期借款。",
+        "Dataset neraca FinMind menggabungkan bagian lancar utang jangka panjang ke OtherCurrentLiabilities; current_portion_lt_debt mencatat ShorttermBorrowings bila dilaporkan terpisah.",
+    ),
+    "va.peringatan_judul": ("Data notes & adjustments", "資料說明與調整", "Catatan & penyesuaian data"),
     # --- umum / menu -----------------------------------------------------------
     "merek.sub": ("Investment Assistant", "投資助理", "Asisten Investasi"),
     "nav.watchlist": ("Watchlist", "自選股", "Watchlist"),

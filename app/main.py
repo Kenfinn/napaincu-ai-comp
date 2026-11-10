@@ -27,7 +27,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import config, i18n, pasar, review, ringkasan, store, tarik, umpan_balik
+from . import config, i18n, pasar, review, ringkasan, store, tarik, umpan_balik, valuasi_otomatis
 from .agent import llm, pipeline
 
 import sys
@@ -40,6 +40,7 @@ def _pemantau() -> None:
     while True:
         try:
             tarik.periksa_sekarang()
+            valuasi_otomatis.panaskan(tarik.baca_watchlist())
             hasil(segarkan=True)
         except Exception as e:                        # noqa: BLE001
             print(f"[pemantau] gagal: {type(e).__name__}: {e}", flush=True)
@@ -222,6 +223,7 @@ async def periksa(request: Request):
     if not _boleh_ubah(request):
         return _tolak_akses("/")
     st = tarik.periksa_sekarang()
+    valuasi_otomatis.panaskan(tarik.baca_watchlist())
     hasil(segarkan=True)
     ke = f.get("kembali") or "/"
     pesan, ok = _ringkas_status(st)
@@ -312,7 +314,10 @@ def saham(request: Request, kode: str, tab: str = "ringkasan", lap: str = "lr",
         ctx["tb"] = pasar.tabel(kode, lap, per, mode)
     elif tab == "valuasi":
         d = store.muat_valuasi(kode)
-        if d is not None:
+        if d is None or (d.get("otomatis") and valuasi_otomatis.baca_cache(kode, terima_basi=False) is None):
+            d = valuasi_otomatis.ambil(kode)
+        ctx["va"] = d
+        if valuasi_otomatis.layak_dcf(d):
             ctx["r"] = dcf.compute(d, forward_g=d.get("assumptions", {}).get("terminal_growth_ceiling"))
     elif tab == "profil":
         ctx["p"] = pasar.profil(kode)

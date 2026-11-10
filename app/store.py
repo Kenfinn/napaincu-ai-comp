@@ -72,10 +72,12 @@ def id_pengumuman(rec: dict) -> str:
 
 def muat_valuasi(kode: str) -> dict | None:
     path = os.path.join(config.VALUATION_DIR, f"{kode}.json")
-    if not os.path.exists(path):
-        return None
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    from . import valuasi_otomatis
+
+    return valuasi_otomatis.dari_cache_untuk_pipeline(kode)
 
 
 def emiten_tervaluasi() -> list[str]:

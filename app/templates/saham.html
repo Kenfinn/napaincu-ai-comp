@@ -216,13 +216,96 @@
 {% elif tab == 'valuasi' %}
   {% if r %}
   <div class="kartu">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+      {% if va and va.otomatis %}
+        <span class="lencana l-ditahan">{{ t('va.mode.otomatis') }}</span>
+        {% if va.dibangun %}<span class="kicker">{{ t('va.dibangun_pada', waktu=va.dibangun) }}</span>{% endif %}
+      {% else %}
+        <span class="lencana l-terbit">{{ t('va.mode.manual') }}</span>
+      {% endif %}
+      {% if va and va.beta_cadangan %}
+        <span class="lencana l-dilewati">{{ t('va.beta_cadangan_label', alasan=tr(va.alasan_beta_i18n, va.alasan_beta)) }}</span>
+      {% endif %}
+    </div>
     <div class="kv"><span class="k">{{ t('va.harga') }}</span><span class="v">{{ r.price_per_share | rb }} NTD · {{ t('va.per', tgl=r.as_of) }}</span></div>
+    <div class="kv"><span class="k">{{ t('va.kapitalisasi') }}</span><span class="v">{{ r.market_cap | rb(1) }} {{ t('al.juta_ntd') }}</span></div>
+    <div class="kv"><span class="k">FCFF {{ r.latest_year }}</span><span class="v">{{ r.fcff0 | rb(1) }} {{ t('al.juta_ntd') }}</span></div>
     <div class="kv"><span class="k">{{ t('va.g_pasar') }}</span><span class="v">{{ r.implied_growth | pct }}</span></div>
     <div class="kv"><span class="k">{{ t('va.batas_g') }}</span><span class="v">{{ r.terminal_growth_ceiling | pct }}</span></div>
     <div class="kv"><span class="k">WACC</span><span class="v">{{ r.wacc | pct }}</span></div>
+    <div class="kv">
+      <span class="k">{{ t('va.beta_label') }}</span>
+      <span class="v">
+        {% if va and va.beta_cadangan %}
+          {{ t('va.beta_cadangan_label', alasan=tr(va.alasan_beta_i18n, va.alasan_beta)) }}
+        {% elif va and va.jumlah_pekan_beta %}
+          {{ t('va.beta_terhitung_label', beta=(r.wacc_inputs.beta | rb(2)), n=va.jumlah_pekan_beta) }}
+        {% else %}
+          {{ r.wacc_inputs.beta | rb(2) }}
+        {% endif %}
+      </span>
+    </div>
     {% if r.exceeds_ceiling %}<div class="pita fixture" style="margin:12px 0 0;"><div>{{ t('va.melampaui') }}</div></div>{% endif %}
     <p style="margin:12px 0 0;"><a href="/valuasi/{{ kode_saham }}">{{ t('va.buka') }}</a></p>
   </div>
+
+  {% if va and va.peringatan %}
+  <h2>{{ t('va.peringatan_judul') }}</h2>
+  <div class="kartu">
+    {% for pr in va.peringatan %}
+    <div class="cek ok">
+      <span class="tanda">i</span>
+      <span class="why">{{ tr(pr) }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if r.sources %}
+  <h2>{{ t('va.sumber_input') }}</h2>
+  <div class="kartu">
+    {% for k, v in r.sources.items() %}
+    <div class="cek {{ 'x' if k in r.incomplete_sources else 'ok' }}">
+      <span class="tanda">{{ '✕' if k in r.incomplete_sources else '✓' }}</span>
+      <span class="nama mono" style="font-size:11.5px;">{{ k }}</span>
+      <span class="why">{{ v }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% elif va and va.tidak_berlaku %}
+  <div class="kartu">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+      <span class="lencana l-dilewati">{{ t('va.mode.tidak_berlaku') }}</span>
+      <span class="lencana l-ditahan">{{ t('va.mode.otomatis') }}</span>
+      {% if va.dibangun %}<span class="kicker">{{ t('va.dibangun_pada', waktu=va.dibangun) }}</span>{% endif %}
+    </div>
+    <p style="margin:0; line-height:1.55;">{{ tr(va.alasan_i18n, va.alasan) }}</p>
+  </div>
+
+  {% elif va and va.tidak_bisa_dihitung %}
+  <div class="kartu">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+      <span class="lencana l-ditolak">{{ t('va.mode.tidak_bisa') }}</span>
+      <span class="lencana l-ditahan">{{ t('va.mode.otomatis') }}</span>
+      {% if va.dibangun %}<span class="kicker">{{ t('va.dibangun_pada', waktu=va.dibangun) }}</span>{% endif %}
+    </div>
+    <p style="margin:0; line-height:1.55;">{{ tr(va.alasan_i18n, va.alasan) }}</p>
+  </div>
+  {% if va.sources %}
+  <h2>{{ t('va.sumber_input') }}</h2>
+  <div class="kartu">
+    {% for k, v in va.sources.items() %}
+    <div class="cek ok">
+      <span class="tanda">✓</span>
+      <span class="nama mono" style="font-size:11.5px;">{{ k }}</span>
+      <span class="why">{{ v }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   {% else %}
   <div class="kartu kosong">{{ t('va.belum') }}</div>
   {% endif %}
