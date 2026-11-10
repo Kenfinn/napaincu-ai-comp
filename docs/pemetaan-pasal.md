@@ -79,6 +79,47 @@ Jawab langsung di dokumen ini atau di chat tim. Cukup "setuju" atau koreksinya.
    data 10 Nov, 7 dari 55 pengumuman pasal 20 jatuh ke "remeh" (sewa ruang beberapa
    juta NTD). Batas ini wajar menurut kalian?
 
+## Keputusan tim (jawaban Patrice, 11 Nov)
+
+Sumber: jawaban Patrice atas PDF `docs/untuk-tim/Pertanyaan-Pasal-11-22-FEAF.pdf`
+(Q1–Q9) dan pertanyaan susulannya. Bagian ini menjadi spesifikasi B1. Bila bertentangan
+dengan tabel "Usulan" di atas, bagian ini yang berlaku.
+
+### Prinsip umum: DCF berbasis kas
+
+DCF hanya bergerak bila kas benar-benar bergerak. Pengumuman rencana, persetujuan direksi,
+atau batas atas penerbitan tidak mengubah DCF; yang mengubah DCF adalah laporan keuangan
+kuartal (pasal 31) yang memuat realisasinya. **Berlaku juga untuk pasal 20** (rencana capex
+dan akuisisi). Akibatnya: pengumuman semacam itu menjadi sinyal, dan perhitungan ulang yang
+sekarang ada ditampilkan sebagai skenario "bila terealisasi", tidak sebagai valuasi baru.
+
+### Pasal 22 (penjaminan, 背書保證) dan 23 (pinjaman dana, 資金貸與)
+
+| Hal | Keputusan |
+|---|---|
+| Jenis | Sinyal risiko. Tidak mengubah DCF (Q1). Pasal 23 diperlakukan sama (Q5) |
+| Angka yang ditampilkan | Saldo total (butir 7), penjaminan baru (2.(5)), rasio saldo terhadap ekuitas (butir 8), rasio gabungan penjaminan + investasi + pinjaman (butir 9), dan **rasio pemakaian limit = butir 7 ÷ butir 6** (Q2). Contoh 2347: 100.663.762 ÷ 185.566.638 = 54%, sisa 46% menuju limit |
+| Beberapa penerima dalam satu pengumuman | Ditampilkan **per penerima**, tidak dijumlah (susulan Q2) |
+| Ambang | Rasio butir 8 **≥ 80%** atau rasio pemakaian limit **≥ 80%** → sinyal ditandai serius dan ditahan untuk manusia. Di bawah ambang → terbit sebagai info (susulan Q3) |
+| Pihak dalam vs luar | Penerima yang termasuk **related parties** (anak usaha, induk, afiliasi, sebagaimana di catatan laporan keuangan) dibedakan dari pihak luar; pihak luar diberi bobot risiko lebih tinggi (Q4). Di data, dibaca dari butir 與提供背書保證公司之關係 |
+
+### Pasal 11 (perubahan modal dan surat utang) dan 35 (pembelian kembali)
+
+| Jenis | Keputusan |
+|---|---|
+| Pembatalan saham treasuri (庫藏股註銷) | Tidak mengubah saham beredar, karena saham treasuri sudah tidak dihitung beredar sejak dibeli kembali. Tidak mengubah DCF (koreksi Q6-A) |
+| Pengurangan modal untuk menutup rugi (彌補虧損減資) | Info atau sinyal **tergantung profil risiko**: konservatif dan moderat → sinyal, agresif → info (susulan Q6) |
+| Penerbitan obligasi, termasuk obligasi konversi | Sinyal. Untuk melunasi utang, utang bersih tidak berubah; konversi = potensi dilusi tanpa angka karena harga konversi diumumkan kemudian (Q6-B, Q7) |
+| Batas atas penerbitan (發行總額上限) | Tidak dipakai sebagai angka DCF; tunggu realisasi (Q8) |
+| Saham baru dari konversi / opsi karyawan (增資基準日) | Jumlah saham naik (dilusi) (Q6-C) |
+| Materialitas | Peringatan bila perubahan saham **≥ 1%** atau jumlah uang **≥ 2% kapitalisasi**; di bawahnya diarsipkan dengan alasan (Q9) |
+
+### Masih terbuka
+
+- Pengurangan modal tunai (現金減資): saham turun sekaligus kas keluar ke pemegang saham. Belum ditanyakan secara khusus.
+- Pasal 23: setahu Claude regulasi membatasi total pinjaman dana sekitar 40% ekuitas (jauh di bawah penjaminan). Perlu dicek dengan teks resmi sebelum ambang 80% dipakai untuk pasal 23.
+- Pertanyaan 1, 4–9 di bagian "Pertanyaan untuk Ferry & Patrice" di atas (pasal 31, 1/3/40, 51/53, 6/7/8, teks regulasi, semantik transaksi pasal 20, batas materialitas triase). Pertanyaan 8 sebagian terjawab oleh prinsip berbasis kas.
+
 ## Bukti: statistik pengumuman asli 9 Nov
 
 Dihasilkan `scripts/statistik_pasal.py`. Di server, skrip yang sama membaca seluruh
