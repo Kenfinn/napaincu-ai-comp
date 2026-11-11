@@ -1,0 +1,6706 @@
+{
+ "catatan": "Salinan pengumuman gold set (butir nama dibuang) dan kapitalisasi pasar saat evaluasi resmi, supaya hasil bisa diulang tanpa data server.",
+ "kapitalisasi": {
+  "1319": {
+   "juta_ntd": 41166.803932799994,
+   "harga": 69.6,
+   "lembar": 591477068.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "1440": {
+   "juta_ntd": 20958.720591049998,
+   "harga": 12.65,
+   "lembar": 1656815857.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "1464": {
+   "juta_ntd": 3962.11007423,
+   "harga": 9.31,
+   "lembar": 425575733.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "1799": {
+   "juta_ntd": 6107.4481977,
+   "harga": 24.55,
+   "lembar": 248775894.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "1808": {
+   "juta_ntd": 22075.7446437,
+   "harga": 30.9,
+   "lembar": 714425393.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "2067": {
+   "juta_ntd": 142.2043434,
+   "harga": 4.2,
+   "lembar": 33858177.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "2072": {
+   "juta_ntd": 19872.0,
+   "harga": 103.5,
+   "lembar": 192000000.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "2258": {
+   "juta_ntd": 49473.301225,
+   "harga": 28.25,
+   "lembar": 1751267300.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "2347": {
+   "juta_ntd": 131934.6051688,
+   "harga": 79.1,
+   "lembar": 1667946968.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "2454": {
+   "juta_ntd": 6146968.50779,
+   "harga": 3830.0,
+   "lembar": 1604952613.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "2540": {
+   "juta_ntd": 41290.9922705,
+   "harga": 43.7,
+   "lembar": 944873965.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "2707": {
+   "juta_ntd": 21722.252079,
+   "harga": 170.5,
+   "lembar": 127403238.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "2884": {
+   "juta_ntd": 832118.8166134501,
+   "harga": 46.95,
+   "lembar": 17723510471.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "3015": {
+   "juta_ntd": 8024.1745575,
+   "harga": 42.85,
+   "lembar": 187261950.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "3293": {
+   "juta_ntd": 218396.209,
+   "harga": 775.0,
+   "lembar": 281801560.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "3354": {
+   "juta_ntd": 3228.6772173,
+   "harga": 46.05,
+   "lembar": 70112426.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "3540": {
+   "juta_ntd": 1773.629508,
+   "harga": 21.0,
+   "lembar": 84458548.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "3666": {
+   "juta_ntd": 3647.4335625,
+   "harga": 26.25,
+   "lembar": 138949850.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "4305": {
+   "juta_ntd": 2214.3135,
+   "harga": 40.25,
+   "lembar": 55014000.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "4503": {
+   "juta_ntd": 1464.4591962,
+   "harga": 18.7,
+   "lembar": 78313326.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "4590": {
+   "juta_ntd": 3893.5264,
+   "harga": 71.0,
+   "lembar": 54838400.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "4726": {
+   "juta_ntd": 4637.73632,
+   "harga": 22.4,
+   "lembar": 207041800.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "4749": {
+   "juta_ntd": 66597.204095,
+   "harga": 703.0,
+   "lembar": 94732865.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "4903": {
+   "juta_ntd": 5351.4606711999995,
+   "harga": 50.8,
+   "lembar": 105343714.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "4977": {
+   "juta_ntd": 17015.100267,
+   "harga": 187.0,
+   "lembar": 90989841.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "5398": {
+   "juta_ntd": 885.4317339999999,
+   "harga": 17.9,
+   "lembar": 49465460.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "6443": {
+   "juta_ntd": 13691.672691,
+   "harga": 26.7,
+   "lembar": 512796730.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "6446": {
+   "juta_ntd": 540716.33408,
+   "harga": 1280.0,
+   "lembar": 422434636.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "6515": {
+   "juta_ntd": 135574.58904,
+   "harga": 3720.0,
+   "lembar": 36444782.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "6535": {
+   "juta_ntd": 13561.53866,
+   "harga": 80.8,
+   "lembar": 167840825.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "6584": {
+   "juta_ntd": 23162.748345,
+   "harga": 324.5,
+   "lembar": 71379810.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "6655": {
+   "juta_ntd": 10675.7657525,
+   "harga": 132.5,
+   "lembar": 80571817.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "6667": {
+   "juta_ntd": 13316.240622,
+   "harga": 249.0,
+   "lembar": 53478878.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "6830": {
+   "juta_ntd": 25329.5377825,
+   "harga": 465.5,
+   "lembar": 54413615.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "6955": {
+   "juta_ntd": 2612.76256,
+   "harga": 86.0,
+   "lembar": 30380960.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "7718": {
+   "juta_ntd": 2109.220022,
+   "harga": 45.5,
+   "lembar": 46356484.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "7740": {
+   "juta_ntd": 5820.0,
+   "harga": 97.0,
+   "lembar": 60000000.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  },
+  "8107": {
+   "juta_ntd": 832.5,
+   "harga": 11.1,
+   "lembar": 75000000.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "8240": {
+   "juta_ntd": 4560.201278400001,
+   "harga": 45.6,
+   "lembar": 100004414.0,
+   "tanggal": "2026-11-11",
+   "sumber": "TPEx"
+  },
+  "8466": {
+   "juta_ntd": 1068.5436966,
+   "harga": 13.45,
+   "lembar": 79445628.0,
+   "tanggal": "2026-11-10",
+   "sumber": "TWSE"
+  }
+ },
+ "pengumuman": [
+  {
+   "code": "1319",
+   "name": "東陽",
+   "date": "2026-11-09",
+   "time": "15:00:54",
+   "seq_no": "150054",
+   "subject": "公告本公司董事會通過設置永續發展委員會及 委任第一屆永續發展委員會委員",
+   "clause_raw": "第6款",
+   "clause": 6,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "15:00:54",
+   "items": [
+    {
+     "no": 1,
+     "label": "發生變動日期",
+     "label_lengkap": "發生變動日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "異動情形",
+     "label_lengkap": "異動情形（請輸入「辭職」、「解任」、「任期屆滿」、「逝世」或「新任」）",
+     "satuan_label": null,
+     "value": "新任",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "新任生效日期",
+     "label_lengkap": "新任生效日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    }
+   ],
+   "body_chars": 268,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#1319-2026-11-09-150054",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "1440",
+   "name": "南紡",
+   "date": "2026-11-09",
+   "time": "17:12:55",
+   "seq_no": "171255",
+   "subject": "公告本公司太子廠部份產線暫時停產事宜。",
+   "clause_raw": "第3款",
+   "clause": 3,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:12:55",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "事件緣由",
+     "label_lengkap": "事件緣由",
+     "satuan_label": null,
+     "value": "近年來面臨下游加工絲廠紛紛停機，需求急速萎縮，以及國內外市場 全面遭遇中國大陸與東南亞產能大舉傾銷、嚴重削價競爭，需求持續低迷，產銷 嚴重失衡。在下游停機或外移、進口產品傾銷加劇與未來前景不明朗等整體考量 下，為使公司減少虧損，永績經營，經董事會決議暫停太子廠直紡原絲暨瓶用酯 粒設備產能，待市況恢復後再擬生產事宜。太子廠粒紡原絲產線及加工絲則繼續 維持開車。",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "最近三年度與減產後之產能比較",
+     "label_lengkap": "最近三年度與減產後之產能比較",
+     "satuan_label": null,
+     "value": "112年度直紡原絲產能36,000公噸 瓶用酯粒產能86,400公噸 113年度直紡原絲產能36,000公噸 瓶用酯粒產能86,400公噸 114年度直紡原絲產能36,000公噸 瓶用酯粒產能86,400公噸 暫時停產後，產能仍維持不變。",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "最近三年度與減產後之產量比較",
+     "label_lengkap": "最近三年度與減產後之產量比較",
+     "satuan_label": null,
+     "value": "112年度直紡原絲產量37,181公噸 瓶用酯粒產量81,027公噸 113年度直紡原絲產量33,032公噸 瓶用酯粒產量74,300公噸 114年度直紡原絲產量25,910公噸 瓶用酯粒產量58,003公噸 暫時停產後，直紡原絲產量逐步降至0公噸；瓶用酯粒產量逐步降至0公噸。",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "全部或部分停工項目之產能",
+     "label_lengkap": "全部或部分停工項目之產能",
+     "satuan_label": null,
+     "value": "直紡原絲36,000公噸 瓶用酯粒86,400公噸。",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "全部或部分停工項目之產量",
+     "label_lengkap": "全部或部分停工項目之產量",
+     "satuan_label": null,
+     "value": "直紡原絲14,658公噸 瓶用酯粒51,844公噸。(115年1~9月)",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "全部或部分停工項目占公司營收比例",
+     "label_lengkap": "全部或部分停工項目占公司營收比例",
+     "satuan_label": null,
+     "value": "太子廠暫時停產項目佔本公司115年度1~9月合併營收約27%。",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "出租之公司廠房或主要設備明細",
+     "label_lengkap": "出租之公司廠房或主要設備明細",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "出租之公司廠房或主要設備占總資產比例",
+     "label_lengkap": "出租之公司廠房或主要設備占總資產比例",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "質押之資產明細",
+     "label_lengkap": "質押之資產明細",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "質押之資產占總資產之比例",
+     "label_lengkap": "質押之資產占總資產之比例",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "決策過程",
+     "label_lengkap": "決策過程",
+     "satuan_label": null,
+     "value": "經本公司115年11月9日董事會決議通過。",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項(若事件發生或決議之主體係屬公開發行以上公司，本則重大訊息同時 符合證券交易法施行細則第7條第3款所定對股東權益或證券價格有重大影響之事項)",
+     "satuan_label": null,
+     "value": "暫時停產雖然減少本公司部分營收，但亦相對降低原絲、瓶用酯粒產品虧損， 對財務業務不致造成不利影響。",
+     "sub": []
+    }
+   ],
+   "body_chars": 900,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#1440-2026-11-09-171255",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "1464",
+   "name": "得力",
+   "date": "2026-11-09",
+   "time": "16:58:58",
+   "seq_no": "165858",
+   "subject": "代子公司南通得力紡織科技有限公司公告：新增背書 保證金額達新臺幣三千萬元以上且達該公開發行公司 最近期財務報表淨值百分之五以上者。",
+   "clause_raw": "第22款",
+   "clause": 22,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:58:58",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "被背書保證之",
+     "label_lengkap": "被背書保證之",
+     "satuan_label": null,
+     "value": "(1)公司名稱:南通得力紡織科技有限公司 (2)與提供背書保證公司之關係: 得力實業股份有限公司--間接持股100%子公司 (3)背書保證之限額(仟元):2,695,558 (4)原背書保證之餘額(仟元):147,440 (5)本次新增背書保證之金額(仟元):142,440 (6)迄事實發生日止背書保證餘額(仟元):289,880 (7)被背書保證公司實際動支金額(仟元):5,000 (8)本次新增背書保證之原因: 融資背書保證 (1)公司名稱:南通得力紡織科技有限公司 (2)與提供背書保證公司之關係: 得力實業股份有限公司--間接持股100%子公司 (3)背書保證之限額(仟元):2,695,558 (4)原背書保證之餘額(仟元):289,880 (5)本次新增背書保證之金額(仟元):237,400 (6)迄事實發生日止背書保證餘額(仟元):527,280 (7)被背書保證公司實際動支金額(仟元):123,700 (8)本次新增背書保證之原因: 融資背書保證 (1)公司名稱:南通得力紡織科技有限公司 (2)與提供背書保證公司之關係: 得力實業股份有限公司--間接持股100%子公司 (3)背書保證之限額(仟元):2,695,558 (4)原背書保證之餘額(仟元):527,280 (5)本次新增背書保證之金額(仟元):142,440 (6)迄事實發生日止背書保證餘額(仟元):669,720 (7)被背書保證公司實際動支金額(仟元):171,180 (8)本次新增背書保證之原因: 融資背書保證",
+     "sub": [
+      {
+       "no": 1,
+       "label": "公司名稱",
+       "label_lengkap": "公司名稱",
+       "satuan_label": null,
+       "value": "南通得力紡織科技有限公司"
+      },
+      {
+       "no": 2,
+       "label": "與提供背書保證公司之關係",
+       "label_lengkap": "與提供背書保證公司之關係",
+       "satuan_label": null,
+       "value": "得力實業股份有限公司--間接持股100%子公司"
+      },
+      {
+       "no": 3,
+       "label": "背書保證之限額",
+       "label_lengkap": "背書保證之限額(仟元)",
+       "satuan_label": "仟元",
+       "value": "2,695,558"
+      },
+      {
+       "no": 4,
+       "label": "原背書保證之餘額",
+       "label_lengkap": "原背書保證之餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "147,440"
+      },
+      {
+       "no": 5,
+       "label": "本次新增背書保證之金額",
+       "label_lengkap": "本次新增背書保證之金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "142,440"
+      },
+      {
+       "no": 6,
+       "label": "迄事實發生日止背書保證餘額",
+       "label_lengkap": "迄事實發生日止背書保證餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "289,880"
+      },
+      {
+       "no": 7,
+       "label": "被背書保證公司實際動支金額",
+       "label_lengkap": "被背書保證公司實際動支金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "5,000"
+      },
+      {
+       "no": 8,
+       "label": "本次新增背書保證之原因",
+       "label_lengkap": "本次新增背書保證之原因",
+       "satuan_label": null,
+       "value": "融資背書保證 (1)公司名稱:南通得力紡織科技有限公司 (2)與提供背書保證公司之關係: 得力實業股份有限公司--間接持股100%子公司 (3)背書保證之限額(仟元):2,695,558 (4)原背書保證之餘額(仟元):289,880 (5)本次新增背書保證之金額(仟元):237,400 (6)迄事實發生日止背書保證餘額(仟元):527,280 (7)被背書保證公司實際動支金額(仟元):123,700 (8)本次新增背書保證之原因: 融資背書保證 (1)公司名稱:南通得力紡織科技有限公司 (2)與提供背書保證公司之關係: 得力實業股份有限公司--間接持股100%子公司 (3)背書保證之限額(仟元):2,695,558 (4)原背書保證之餘額(仟元):527,280 (5)本次新增背書保證之金額(仟元):142,440 (6)迄事實發生日止背書保證餘額(仟元):669,720 (7)被背書保證公司實際動支金額(仟元):171,180 (8)本次新增背書保證之原因: 融資背書保證"
+      }
+     ]
+    },
+    {
+     "no": 3,
+     "label": "被背書保證公司提供擔保品之",
+     "label_lengkap": "被背書保證公司提供擔保品之",
+     "satuan_label": null,
+     "value": "(1)內容: 無 (2)價值(仟元):0",
+     "sub": [
+      {
+       "no": 1,
+       "label": "內容",
+       "label_lengkap": "內容",
+       "satuan_label": null,
+       "value": "無"
+      },
+      {
+       "no": 2,
+       "label": "價值",
+       "label_lengkap": "價值(仟元)",
+       "satuan_label": "仟元",
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "no": 4,
+     "label": "被背書保證公司最近期財務報表之",
+     "label_lengkap": "被背書保證公司最近期財務報表之",
+     "satuan_label": null,
+     "value": "(1)資本(仟元):1,212,380 (2)累積盈虧金額(仟元):36,690",
+     "sub": [
+      {
+       "no": 1,
+       "label": "資本",
+       "label_lengkap": "資本(仟元)",
+       "satuan_label": "仟元",
+       "value": "1,212,380"
+      },
+      {
+       "no": 2,
+       "label": "累積盈虧金額",
+       "label_lengkap": "累積盈虧金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "36,690"
+      }
+     ]
+    },
+    {
+     "no": 5,
+     "label": "解除背書保證責任之",
+     "label_lengkap": "解除背書保證責任之",
+     "satuan_label": null,
+     "value": "(1)條件: 清償銀行借款 (2)日期: 116.11.08",
+     "sub": [
+      {
+       "no": 1,
+       "label": "條件",
+       "label_lengkap": "條件",
+       "satuan_label": null,
+       "value": "清償銀行借款"
+      },
+      {
+       "no": 2,
+       "label": "日期",
+       "label_lengkap": "日期",
+       "satuan_label": null,
+       "value": "116.11.08"
+      }
+     ]
+    },
+    {
+     "no": 6,
+     "label": "背書保證之總限額",
+     "label_lengkap": "背書保證之總限額(仟元)",
+     "satuan_label": "仟元",
+     "value": "10,174,782",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "迄事實發生日為止，背書保證餘額",
+     "label_lengkap": "迄事實發生日為止，背書保證餘額(仟元)",
+     "satuan_label": "仟元",
+     "value": "4,578,528",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "迄事實發生日為止，A提供背書保證餘額占公開發行公司最近期財務報表淨值之 比率",
+     "label_lengkap": "迄事實發生日為止，A提供背書保證餘額占公開發行公司最近期財務報表淨值之 比率",
+     "satuan_label": null,
+     "value": "84.93",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "迄事實發生日為止，背書保證、長期投資及資金貸與餘額合計數達該公開發行公 司最近期財務報表淨值之比率",
+     "label_lengkap": "迄事實發生日為止，背書保證、長期投資及資金貸與餘額合計數達該公開發行公 司最近期財務報表淨值之比率",
+     "satuan_label": null,
+     "value": "145.33",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 1061,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#1464-2026-11-09-165858",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "1589",
+   "name": "永冠-KY",
+   "date": "2026-11-09",
+   "time": "16:21:14",
+   "seq_no": "162114",
+   "subject": "公告說明本公司民國115年2月23日公司債到期尚未償還，本月 現金預算表及前月現金預算執行情形",
+   "clause_raw": "第1款",
+   "clause": 1,
+   "fact_date": "2026-02-23",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:21:14",
+   "items": [
+    {
+     "no": 4,
+     "label": "喪失債信之日期",
+     "label_lengkap": "喪失債信之日期",
+     "satuan_label": null,
+     "value": "115/02/23",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "喪失債信之金額",
+     "label_lengkap": "喪失債信之金額",
+     "satuan_label": null,
+     "value": "1,035,605,020",
+     "sub": []
+    }
+   ],
+   "body_chars": 793,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#1589-2026-11-09-162114",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "1808",
+   "name": "潤隆",
+   "date": "2026-11-09",
+   "time": "15:37:32",
+   "seq_no": "153732",
+   "subject": "代重要子公司金駿營造股份有限公司依公開發行公司 資金貸與及背書保證處理準則第二十五條第一項第四 款規定公告",
+   "clause_raw": "第22款",
+   "clause": 22,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "15:37:32",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "被背書保證之",
+     "label_lengkap": "被背書保證之",
+     "satuan_label": null,
+     "value": "(1)公司名稱:潤隆建設股份有限公司 (2)與提供背書保證公司之關係: 本公司之母公司，該公司100%持有本公司 (3)背書保證之限額(仟元):3,399,000 (4)原背書保證之餘額(仟元):1,000,000 (5)本次新增背書保證之金額(仟元):1,000,000 (6)迄事實發生日止背書保證餘額(仟元):2,000,000 (7)被背書保證公司實際動支金額(仟元):0 (8)本次新增背書保證之原因: 為母公司授信額度提供擔保",
+     "sub": [
+      {
+       "no": 1,
+       "label": "公司名稱",
+       "label_lengkap": "公司名稱",
+       "satuan_label": null,
+       "value": "潤隆建設股份有限公司"
+      },
+      {
+       "no": 2,
+       "label": "與提供背書保證公司之關係",
+       "label_lengkap": "與提供背書保證公司之關係",
+       "satuan_label": null,
+       "value": "本公司之母公司，該公司100%持有本公司"
+      },
+      {
+       "no": 3,
+       "label": "背書保證之限額",
+       "label_lengkap": "背書保證之限額(仟元)",
+       "satuan_label": "仟元",
+       "value": "3,399,000"
+      },
+      {
+       "no": 4,
+       "label": "原背書保證之餘額",
+       "label_lengkap": "原背書保證之餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "1,000,000"
+      },
+      {
+       "no": 5,
+       "label": "本次新增背書保證之金額",
+       "label_lengkap": "本次新增背書保證之金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "1,000,000"
+      },
+      {
+       "no": 6,
+       "label": "迄事實發生日止背書保證餘額",
+       "label_lengkap": "迄事實發生日止背書保證餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "2,000,000"
+      },
+      {
+       "no": 7,
+       "label": "被背書保證公司實際動支金額",
+       "label_lengkap": "被背書保證公司實際動支金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "0"
+      },
+      {
+       "no": 8,
+       "label": "本次新增背書保證之原因",
+       "label_lengkap": "本次新增背書保證之原因",
+       "satuan_label": null,
+       "value": "為母公司授信額度提供擔保"
+      }
+     ]
+    },
+    {
+     "no": 3,
+     "label": "被背書保證公司提供擔保品之",
+     "label_lengkap": "被背書保證公司提供擔保品之",
+     "satuan_label": null,
+     "value": "(1)內容: 無 (2)價值(仟元):0",
+     "sub": [
+      {
+       "no": 1,
+       "label": "內容",
+       "label_lengkap": "內容",
+       "satuan_label": null,
+       "value": "無"
+      },
+      {
+       "no": 2,
+       "label": "價值",
+       "label_lengkap": "價值(仟元)",
+       "satuan_label": "仟元",
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "no": 4,
+     "label": "被背書保證公司最近期財務報表之",
+     "label_lengkap": "被背書保證公司最近期財務報表之",
+     "satuan_label": null,
+     "value": "(1)資本(仟元):7,144,254 (2)累積盈虧金額(仟元):2,793,439",
+     "sub": [
+      {
+       "no": 1,
+       "label": "資本",
+       "label_lengkap": "資本(仟元)",
+       "satuan_label": "仟元",
+       "value": "7,144,254"
+      },
+      {
+       "no": 2,
+       "label": "累積盈虧金額",
+       "label_lengkap": "累積盈虧金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "2,793,439"
+      }
+     ]
+    },
+    {
+     "no": 5,
+     "label": "解除背書保證責任之",
+     "label_lengkap": "解除背書保證責任之",
+     "satuan_label": null,
+     "value": "(1)條件: 母公司銀行額度合約到期或清償該借款額度時即自動解除背書保證責任 (2)日期: 母公司銀行額度合約到期或清償該借款額度時即自動解除背書保證責任",
+     "sub": [
+      {
+       "no": 1,
+       "label": "條件",
+       "label_lengkap": "條件",
+       "satuan_label": null,
+       "value": "母公司銀行額度合約到期或清償該借款額度時即自動解除背書保證責任"
+      },
+      {
+       "no": 2,
+       "label": "日期",
+       "label_lengkap": "日期",
+       "satuan_label": null,
+       "value": "母公司銀行額度合約到期或清償該借款額度時即自動解除背書保證責任"
+      }
+     ]
+    },
+    {
+     "no": 6,
+     "label": "背書保證之總限額",
+     "label_lengkap": "背書保證之總限額(仟元)",
+     "satuan_label": "仟元",
+     "value": "24,867,402",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "迄事實發生日為止，背書保證餘額",
+     "label_lengkap": "迄事實發生日為止，背書保證餘額(仟元)",
+     "satuan_label": "仟元",
+     "value": "2,700,000",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "迄事實發生日為止，A提供背書保證餘額占公開發行公司最近期財務報表淨值之 比率",
+     "label_lengkap": "迄事實發生日為止，A提供背書保證餘額占公開發行公司最近期財務報表淨值之 比率",
+     "satuan_label": null,
+     "value": "21.72",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "迄事實發生日為止，背書保證、長期投資及資金貸與餘額合計數達該公開發行公 司最近期財務報表淨值之比率",
+     "label_lengkap": "迄事實發生日為止，背書保證、長期投資及資金貸與餘額合計數達該公開發行公 司最近期財務報表淨值之比率",
+     "satuan_label": null,
+     "value": "21.72",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 655,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#1808-2026-11-09-153732",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2072",
+   "name": "世紀能源",
+   "date": "2026-11-09",
+   "time": "16:08:05",
+   "seq_no": "160805",
+   "subject": "本公司向關係人處分使用權資產(提前終止租約)",
+   "clause_raw": "第20款",
+   "clause": 20,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:08:05",
+   "items": [
+    {
+     "no": 1,
+     "label": "原公告日期",
+     "label_lengkap": "原公告日期",
+     "satuan_label": null,
+     "value": "114/07/11",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "簡述原公告申報內容",
+     "label_lengkap": "簡述原公告申報內容",
+     "satuan_label": null,
+     "value": "向關係人世紀鋼鐵結構(股)公司承租桃園市觀音區房屋作為外籍銲工宿舍使用 大觀路A棟宿舍：桃園市觀音區廣興里11鄰大觀路四段113號、115號(215.68坪) /每月租金新台幣200,000元(未稅) 大觀路B棟宿舍：桃園市觀音區廣興里11鄰大觀路四段111巷166號、168號(348.05坪) /每月租金新台幣320,000元(未稅) 交易總金額：使用權資產 19,276,026元",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "變動緣由及主要內容",
+     "label_lengkap": "變動緣由及主要內容",
+     "satuan_label": null,
+     "value": "提前終止租約，使用權資產金額調整為12,990,544元。",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "變動後對公司財務業務之影響",
+     "label_lengkap": "變動後對公司財務業務之影響",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 319,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#2072-2026-11-09-160805",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2258",
+   "name": "鴻華先進-創",
+   "date": "2026-11-09",
+   "time": "16:03:58",
+   "seq_no": "160358",
+   "subject": "公告本公司董事會通過115年第3季合併財務報告",
+   "clause_raw": "第31款",
+   "clause": 31,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:03:58",
+   "items": [
+    {
+     "no": 1,
+     "label": "提報董事會或經董事會決議日期",
+     "label_lengkap": "提報董事會或經董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "審計委員會通過日期",
+     "label_lengkap": "審計委員會通過日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "財務報告或年度自結財務資訊報導期間 起訖日期",
+     "label_lengkap": "財務報告或年度自結財務資訊報導期間 起訖日期(XXX/XX/XX~XXX/XX/XX)",
+     "satuan_label": null,
+     "value": "115/01/01~115/09/30",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "1月1日累計至本期止營業收入",
+     "label_lengkap": "1月1日累計至本期止營業收入(仟元)",
+     "satuan_label": "仟元",
+     "value": "4,885,756",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "1月1日累計至本期止營業毛利",
+     "label_lengkap": "1月1日累計至本期止營業毛利(毛損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "644,756",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "1月1日累計至本期止營業利益",
+     "label_lengkap": "1月1日累計至本期止營業利益(損失) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(2,979,195)",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "1月1日累計至本期止稅前淨利",
+     "label_lengkap": "1月1日累計至本期止稅前淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(3,025,660)",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "1月1日累計至本期止本期淨利",
+     "label_lengkap": "1月1日累計至本期止本期淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(3,026,011)",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "1月1日累計至本期止歸屬於母公司業主淨利",
+     "label_lengkap": "1月1日累計至本期止歸屬於母公司業主淨利(損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(3,026,011)",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "1月1日累計至本期止基本每股盈餘",
+     "label_lengkap": "1月1日累計至本期止基本每股盈餘(損失) (元)",
+     "satuan_label": "元",
+     "value": "(1.73)",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "期末總資產",
+     "label_lengkap": "期末總資產(仟元)",
+     "satuan_label": "仟元",
+     "value": "23,024,848",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "期末總負債",
+     "label_lengkap": "期末總負債(仟元)",
+     "satuan_label": "仟元",
+     "value": "12,639,099",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "期末歸屬於母公司業主之權益",
+     "label_lengkap": "期末歸屬於母公司業主之權益(仟元)",
+     "satuan_label": "仟元",
+     "value": "10,385,749",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 464,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#2258-2026-11-09-160358",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2314",
+   "name": "台揚",
+   "date": "2026-11-09",
+   "time": "18:34:01",
+   "seq_no": "183401",
+   "subject": "本公司因有重大訊息待公布，經證交所同意自115年11月10日 起暫停交易",
+   "clause_raw": "第40款",
+   "clause": 40,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "18:34:01",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "本公司因有重大訊息待公布，經證交所同意暫停交易日期",
+     "label_lengkap": "本公司因有重大訊息待公布，經證交所同意暫停交易日期",
+     "satuan_label": null,
+     "value": "115/11/10",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "本公司已完整說明暫停交易事由之相關訊息或已無暫停交易之必要， 經證交所同意恢復交易日期",
+     "label_lengkap": "本公司已完整說明暫停交易事由之相關訊息或已無暫停交易之必要， 經證交所同意恢復交易日期",
+     "satuan_label": null,
+     "value": "NA",
+     "sub": []
+    }
+   ],
+   "body_chars": 104,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#2314-2026-11-09-183401",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2347",
+   "name": "聯強",
+   "date": "2026-11-09",
+   "time": "17:40:15",
+   "seq_no": "174015",
+   "subject": "公告本公司董事會決議辦理現金增資發行新股",
+   "clause_raw": "第11款",
+   "clause": 11,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:40:15",
+   "items": [
+    {
+     "no": 1,
+     "label": "董事會決議日期",
+     "label_lengkap": "董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "增資資金來源",
+     "label_lengkap": "增資資金來源",
+     "satuan_label": null,
+     "value": "現金增資發行新股",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "是否採總括申報發行新股",
+     "label_lengkap": "是否採總括申報發行新股(是，請併敘明預定發行期間/否)",
+     "satuan_label": null,
+     "value": "否",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "全案發行總金額及股數",
+     "label_lengkap": "全案發行總金額及股數(如屬盈餘或公積轉增資，發行股數則不含配發給員工部分)",
+     "satuan_label": null,
+     "value": "本公司擬發行普通股(上限)120,000仟股，發行總金額視發行價格而定",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "採總括申報發行新股案件，本次發行金額及股數",
+     "label_lengkap": "採總括申報發行新股案件，本次發行金額及股數",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "採總括申報發行新股案件，本次發行後，剩餘之金額及股數餘額",
+     "label_lengkap": "採總括申報發行新股案件，本次發行後，剩餘之金額及股數餘額",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "每股面額",
+     "label_lengkap": "每股面額",
+     "satuan_label": null,
+     "value": "新台幣10元",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "發行價格",
+     "label_lengkap": "發行價格",
+     "satuan_label": null,
+     "value": "實際發行價格俟向金管會申報生效後，擬授權董事長依承銷商 自律規則第六條規定訂定",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "員工認購股數或配發金額",
+     "label_lengkap": "員工認購股數或配發金額",
+     "satuan_label": null,
+     "value": "依公司法第267條規定，保留發行新股總額10%， 計12,000仟股由本公司及從屬公司員工認購",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "公開銷售股數",
+     "label_lengkap": "公開銷售股數",
+     "satuan_label": null,
+     "value": "依證券交易法第28條之1規定，提撥發行新股總額10% 計12,000仟股對外公開承銷",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "原股東認購或無償配發比例",
+     "label_lengkap": "原股東認購或無償配發比例",
+     "satuan_label": null,
+     "value": "80%，計96,000,000股，由原股東按照認股基準日 股東名簿記載之持股比例認購。",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "畸零股及逾期未認購股份之處理方式",
+     "label_lengkap": "畸零股及逾期未認購股份之處理方式",
+     "satuan_label": null,
+     "value": "原股東認購不足一股之畸零股， 由股東自停止過戶起五日內自行向本公司股務代理機構辦理拼湊成整股認購， 原股東及員工放棄認購或拼湊後仍不足一股之畸零股部份，授權董事長洽 特定人認購之。",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "本次發行新股之權利義務",
+     "label_lengkap": "本次發行新股之權利義務",
+     "satuan_label": null,
+     "value": "與原已發行之普通股股份相同",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "本次增資資金用途",
+     "label_lengkap": "本次增資資金用途",
+     "satuan_label": null,
+     "value": "償還銀行借款",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "現金減資後再行募資之合理性及必要性",
+     "label_lengkap": "現金減資後再行募資之合理性及必要性 (募資當年度及前一年度有辦理現金減資者適用)",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 16,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "(1)本次增資案奉主管機關申報生效後，由授權董事長另訂發行價格、發行條件、 募集金額及增資認股基準日等相關事項等相關事項。 (2)本次現金增資計劃之重要內容，包括但不限於發行股數、發行價格、發行條件、 募集金額、資金來源、計劃項目、預定資金運用進度及預計可能產生之效益 等相關事項，未來如因主管機關修正及基於營運評估或因客觀環境需要變更時， 擬由董事會授權董事長全權處理之。",
+     "sub": []
+    }
+   ],
+   "body_chars": 852,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#2347-2026-11-09-174015",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2347",
+   "name": "聯強",
+   "date": "2026-11-09",
+   "time": "17:42:11",
+   "seq_no": "174211",
+   "subject": "公告本公司董事會決議通過對100%直接持有之子公司群環科技股份有限公司現金增資案",
+   "clause_raw": "第20款",
+   "clause": 20,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:42:11",
+   "items": [
+    {
+     "no": 1,
+     "label": "標的物之名稱及性質",
+     "label_lengkap": "標的物之名稱及性質（屬特別股者，並應標明特別股約定發行條件，如股息率等）",
+     "satuan_label": null,
+     "value": "群環科技股份有限公司普通股",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/9~115/11/9",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "董事會通過日期",
+     "label_lengkap": "董事會通過日期",
+     "satuan_label": null,
+     "value": "民國115年11月9日",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "其他核決日期",
+     "label_lengkap": "其他核決日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "交易數量、每單位價格及交易總金額",
+     "label_lengkap": "交易數量、每單位價格及交易總金額",
+     "satuan_label": null,
+     "value": "交易單位數量：35,000仟股 每單位價格：每股新台幣200元 交易總金額：新台幣7,000,000仟元",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "交易相對人為關係人者，並應公告選定關係人為交易對象之原因及前次移 轉之所有人、前次移轉之所有人與公司及交易相對人間相互之關係、前次 移轉日期及移轉金額",
+     "label_lengkap": "交易相對人為關係人者，並應公告選定關係人為交易對象之原因及前次移 轉之所有人、前次移轉之所有人與公司及交易相對人間相互之關係、前次 移轉日期及移轉金額",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "交易標的最近五年內所有權人曾為公司之關係人者，尚應公告關係人之取 得及處分日期、價格及交易當時與公司之關係",
+     "label_lengkap": "交易標的最近五年內所有權人曾為公司之關係人者，尚應公告關係人之取 得及處分日期、價格及交易當時與公司之關係",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "本次係處分債權之相關事項（含處分之債權附隨擔保品種類、處分債權 如有屬對關係人債權者尚需公告關係人名稱及本次處分該關係人之債權 帳面金額: 不適用",
+     "label_lengkap": "本次係處分債權之相關事項（含處分之債權附隨擔保品種類、處分債權 如有屬對關係人債權者尚需公告關係人名稱及本次處分該關係人之債權 帳面金額: 不適用",
+     "satuan_label": null,
+     "value": "",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "處分利益",
+     "label_lengkap": "處分利益（或損失）（取得有價證券者不適用）（原遞延者應列表說明 認列情形）",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "交付或付款條件、契約限制條款及其他重要約定 事項",
+     "label_lengkap": "交付或付款條件（含付款期間及金額）、契約限制條款及其他重要約定 事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "本次交易之決定方式、價格決定之參考依據及決策單位",
+     "label_lengkap": "本次交易之決定方式、價格決定之參考依據及決策單位",
+     "satuan_label": null,
+     "value": "本公司董事會決議",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "取得或處分有價證券標的公司每股淨值",
+     "label_lengkap": "取得或處分有價證券標的公司每股淨值",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "迄目前為止，累積持有本交易證券之數量、金額、持股 比例及權利受限情形",
+     "label_lengkap": "迄目前為止，累積持有本交易證券（含本次交易）之數量、金額、持股 比例及權利受限情形（如質押情形）",
+     "satuan_label": null,
+     "value": "累積持有本交易證券之數量：普通股103,203仟股 累積持有本交易證券之金額：新台幣1,072,033仟元 持股比率：100% 權利受限情形：無",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "迄目前為止，依「公開發行公司取得或處分資產處理準則」第三條所列 之有價證券投資占公司最近期財務報表中總資產及歸屬 於母公司業主之權益之比例暨最近期財務報表中營運資金數額",
+     "label_lengkap": "迄目前為止，依「公開發行公司取得或處分資產處理準則」第三條所列 之有價證券投資（含本次交易）占公司最近期財務報表中總資產及歸屬 於母公司業主之權益之比例暨最近期財務報表中營運資金數額（註二）",
+     "satuan_label": null,
+     "value": "(1)占公司最近期財務報表中總資產比例：5.89% (2)占公司最近期財務報表中歸屬於母公司業主之權益之比例：11.46% (3)最近期財務報表中營運資金數額：-新台幣55,062,135仟元 (4)取得有價證券之資金來源：自有資金及銀行借款 (5)取得有價證券之原因：因應子公司未來營運資金需求",
+     "sub": [
+      {
+       "no": 1,
+       "label": "占公司最近期財務報表中總資產比例",
+       "label_lengkap": "占公司最近期財務報表中總資產比例",
+       "satuan_label": null,
+       "value": "5.89%"
+      },
+      {
+       "no": 2,
+       "label": "占公司最近期財務報表中歸屬於母公司業主之權益之比例",
+       "label_lengkap": "占公司最近期財務報表中歸屬於母公司業主之權益之比例",
+       "satuan_label": null,
+       "value": "11.46%"
+      },
+      {
+       "no": 3,
+       "label": "最近期財務報表中營運資金數額",
+       "label_lengkap": "最近期財務報表中營運資金數額",
+       "satuan_label": null,
+       "value": "-新台幣55,062,135仟元"
+      },
+      {
+       "no": 4,
+       "label": "取得有價證券之資金來源",
+       "label_lengkap": "取得有價證券之資金來源",
+       "satuan_label": null,
+       "value": "自有資金及銀行借款"
+      },
+      {
+       "no": 5,
+       "label": "取得有價證券之原因",
+       "label_lengkap": "取得有價證券之原因",
+       "satuan_label": null,
+       "value": "因應子公司未來營運資金需求"
+      }
+     ]
+    },
+    {
+     "no": 16,
+     "label": "經紀人及經紀費用",
+     "label_lengkap": "經紀人及經紀費用",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 17,
+     "label": "取得或處分之具體目的或用途",
+     "label_lengkap": "取得或處分之具體目的或用途",
+     "satuan_label": null,
+     "value": "充實子公司營運資金",
+     "sub": []
+    },
+    {
+     "no": 18,
+     "label": "本次交易表示異議董事之意見",
+     "label_lengkap": "本次交易表示異議董事之意見",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    },
+    {
+     "no": 19,
+     "label": "本次交易為關係人交易",
+     "label_lengkap": "本次交易為關係人交易",
+     "satuan_label": null,
+     "value": "是",
+     "sub": []
+    },
+    {
+     "no": 20,
+     "label": "監察人承認或審計委員會同意日期",
+     "label_lengkap": "監察人承認或審計委員會同意日期",
+     "satuan_label": null,
+     "value": "民國115年11月9日",
+     "sub": []
+    },
+    {
+     "no": 21,
+     "label": "本次交易會計師出具非合理性意見",
+     "label_lengkap": "本次交易會計師出具非合理性意見",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 22,
+     "label": "會計師事務所名稱",
+     "label_lengkap": "會計師事務所名稱",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 24,
+     "label": "會計師開業證書字號",
+     "label_lengkap": "會計師開業證書字號",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 25,
+     "label": "是否涉及營運模式變更",
+     "label_lengkap": "是否涉及營運模式變更",
+     "satuan_label": null,
+     "value": "否",
+     "sub": []
+    },
+    {
+     "no": 26,
+     "label": "營運模式變更說明",
+     "label_lengkap": "營運模式變更說明",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 27,
+     "label": "過去一年及預計未來一年內與交易相對人交易情形",
+     "label_lengkap": "過去一年及預計未來一年內與交易相對人交易情形",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 28,
+     "label": "資金來源",
+     "label_lengkap": "資金來源",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 29,
+     "label": "前已就同一件事件發布重大訊息日期",
+     "label_lengkap": "前已就同一件事件發布重大訊息日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 30,
+     "label": "其他敘明事項",
+     "label_lengkap": "其他敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 1373,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#2347-2026-11-09-174211",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2347",
+   "name": "聯強",
+   "date": "2026-11-09",
+   "time": "17:44:54",
+   "seq_no": "174454",
+   "subject": "聯強國際對子公司新增背書保證金額逾公開發行公司 最近期財務報表淨值5%",
+   "clause_raw": "第22款",
+   "clause": 22,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:44:54",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "被背書保證之",
+     "label_lengkap": "被背書保證之",
+     "satuan_label": null,
+     "value": "(1)公司名稱:Synnex Global Ltd. (2)與提供背書保證公司之關係: 為本公司100%持有子公司 (3)背書保證之限額(仟元):92,783,319 (4)原背書保證之餘額(仟元):28,638,600 (5)本次新增背書保證之金額(仟元):1,152,025 (6)迄事實發生日止背書保證餘額(仟元):29,790,625 (7)被背書保證公司實際動支金額(仟元):14,754,401 (8)本次新增背書保證之原因: 營運需求 (1)公司名稱:聯強國際(香港)有限公司 (2)與提供背書保證公司之關係: 為本公司100%持有子公司 (3)背書保證之限額(仟元):92,783,319 (4)原背書保證之餘額(仟元):4,456,691 (5)本次新增背書保證之金額(仟元):11,520,250 (6)迄事實發生日止背書保證餘額(仟元):15,976,941 (7)被背書保證公司實際動支金額(仟元):7,672,962 (8)本次新增背書保證之原因: 營運需求 (1)公司名稱:Syntech Asia Ltd. (2)與提供背書保證公司之關係: 為本公司100%持有子公司 (3)背書保證之限額(仟元):92,783,319 (4)原背書保證之餘額(仟元):25,341,259 (5)本次新增背書保證之金額(仟元):1,645,750 (6)迄事實發生日止背書保證餘額(仟元):26,987,009 (7)被背書保證公司實際動支金額(仟元):19,951,548 (8)本次新增背書保證之原因: 營運需求 (1)公司名稱:嘉榮行銷股份有限公司 (2)與提供背書保證公司之關係: 為本公司100%持有子公司 (3)背書保證之限額(仟元):92,783,319 (4)原背書保證之餘額(仟元):2,500,000 (5)本次新增背書保證之金額(仟元):600,000 (6)迄事實發生日止背書保證餘額(仟元):3,100,000 (7)被背書保證公司實際動支金額(仟元):963,654 (8)本次新增背書保證之原因: 營運需求",
+     "sub": [
+      {
+       "no": 1,
+       "label": "公司名稱",
+       "label_lengkap": "公司名稱",
+       "satuan_label": null,
+       "value": "Synnex Global Ltd."
+      },
+      {
+       "no": 2,
+       "label": "與提供背書保證公司之關係",
+       "label_lengkap": "與提供背書保證公司之關係",
+       "satuan_label": null,
+       "value": "為本公司100%持有子公司"
+      },
+      {
+       "no": 3,
+       "label": "背書保證之限額",
+       "label_lengkap": "背書保證之限額(仟元)",
+       "satuan_label": "仟元",
+       "value": "92,783,319"
+      },
+      {
+       "no": 4,
+       "label": "原背書保證之餘額",
+       "label_lengkap": "原背書保證之餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "28,638,600"
+      },
+      {
+       "no": 5,
+       "label": "本次新增背書保證之金額",
+       "label_lengkap": "本次新增背書保證之金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "1,152,025"
+      },
+      {
+       "no": 6,
+       "label": "迄事實發生日止背書保證餘額",
+       "label_lengkap": "迄事實發生日止背書保證餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "29,790,625"
+      },
+      {
+       "no": 7,
+       "label": "被背書保證公司實際動支金額",
+       "label_lengkap": "被背書保證公司實際動支金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "14,754,401"
+      },
+      {
+       "no": 8,
+       "label": "本次新增背書保證之原因",
+       "label_lengkap": "本次新增背書保證之原因",
+       "satuan_label": null,
+       "value": "營運需求 (1)公司名稱:聯強國際(香港)有限公司 (2)與提供背書保證公司之關係: 為本公司100%持有子公司 (3)背書保證之限額(仟元):92,783,319 (4)原背書保證之餘額(仟元):4,456,691 (5)本次新增背書保證之金額(仟元):11,520,250 (6)迄事實發生日止背書保證餘額(仟元):15,976,941 (7)被背書保證公司實際動支金額(仟元):7,672,962 (8)本次新增背書保證之原因: 營運需求 (1)公司名稱:Syntech Asia Ltd. (2)與提供背書保證公司之關係: 為本公司100%持有子公司 (3)背書保證之限額(仟元):92,783,319 (4)原背書保證之餘額(仟元):25,341,259 (5)本次新增背書保證之金額(仟元):1,645,750 (6)迄事實發生日止背書保證餘額(仟元):26,987,009 (7)被背書保證公司實際動支金額(仟元):19,951,548 (8)本次新增背書保證之原因: 營運需求 (1)公司名稱:嘉榮行銷股份有限公司 (2)與提供背書保證公司之關係: 為本公司100%持有子公司 (3)背書保證之限額(仟元):92,783,319 (4)原背書保證之餘額(仟元):2,500,000 (5)本次新增背書保證之金額(仟元):600,000 (6)迄事實發生日止背書保證餘額(仟元):3,100,000 (7)被背書保證公司實際動支金額(仟元):963,654 (8)本次新增背書保證之原因: 營運需求"
+      }
+     ]
+    },
+    {
+     "no": 3,
+     "label": "被背書保證公司提供擔保品之",
+     "label_lengkap": "被背書保證公司提供擔保品之",
+     "satuan_label": null,
+     "value": "(1)內容: 不適用 (2)價值(仟元):0",
+     "sub": [
+      {
+       "no": 1,
+       "label": "內容",
+       "label_lengkap": "內容",
+       "satuan_label": null,
+       "value": "不適用"
+      },
+      {
+       "no": 2,
+       "label": "價值",
+       "label_lengkap": "價值(仟元)",
+       "satuan_label": "仟元",
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "no": 4,
+     "label": "被背書保證公司最近期財務報表之",
+     "label_lengkap": "被背書保證公司最近期財務報表之",
+     "satuan_label": null,
+     "value": "(1)資本(仟元):5,290,751 (2)累積盈虧金額(仟元):139,820,475",
+     "sub": [
+      {
+       "no": 1,
+       "label": "資本",
+       "label_lengkap": "資本(仟元)",
+       "satuan_label": "仟元",
+       "value": "5,290,751"
+      },
+      {
+       "no": 2,
+       "label": "累積盈虧金額",
+       "label_lengkap": "累積盈虧金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "139,820,475"
+      }
+     ]
+    },
+    {
+     "no": 5,
+     "label": "解除背書保證責任之",
+     "label_lengkap": "解除背書保證責任之",
+     "satuan_label": null,
+     "value": "(1)條件: 被保證公司債務解除時 (2)日期: 當事實消滅時",
+     "sub": [
+      {
+       "no": 1,
+       "label": "條件",
+       "label_lengkap": "條件",
+       "satuan_label": null,
+       "value": "被保證公司債務解除時"
+      },
+      {
+       "no": 2,
+       "label": "日期",
+       "label_lengkap": "日期",
+       "satuan_label": null,
+       "value": "當事實消滅時"
+      }
+     ]
+    },
+    {
+     "no": 6,
+     "label": "背書保證之總限額",
+     "label_lengkap": "背書保證之總限額(仟元)",
+     "satuan_label": "仟元",
+     "value": "185,566,638",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "迄事實發生日為止，背書保證餘額",
+     "label_lengkap": "迄事實發生日為止，背書保證餘額(仟元)",
+     "satuan_label": "仟元",
+     "value": "100,663,762",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "迄事實發生日為止，A提供背書保證餘額占公開發行公司最近期財務報表淨值之 比率",
+     "label_lengkap": "迄事實發生日為止，A提供背書保證餘額占公開發行公司最近期財務報表淨值之 比率",
+     "satuan_label": null,
+     "value": "108.49",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "迄事實發生日為止，背書保證、長期投資及資金貸與餘額合計數達該公開發行公 司最近期財務報表淨值之比率",
+     "label_lengkap": "迄事實發生日為止，背書保證、長期投資及資金貸與餘額合計數達該公開發行公 司最近期財務報表淨值之比率",
+     "satuan_label": null,
+     "value": "296.60",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 1305,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#2347-2026-11-09-174454",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2454",
+   "name": "聯發科",
+   "date": "2026-11-09",
+   "time": "17:03:28",
+   "seq_no": "170328",
+   "subject": "公告本公司參與機構投資人說明會",
+   "clause_raw": "第12款",
+   "clause": 12,
+   "fact_date": "2026-11-10",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:03:28",
+   "items": [
+    {
+     "no": 1,
+     "label": "召開法人說明會之日期",
+     "label_lengkap": "召開法人說明會之日期",
+     "satuan_label": null,
+     "value": "115/11/10 ~ 115/11/23",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "召開法人說明會之時間",
+     "label_lengkap": "召開法人說明會之時間",
+     "satuan_label": null,
+     "value": "09 時 00 分",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "召開法人說明會之地點",
+     "label_lengkap": "召開法人說明會之地點",
+     "satuan_label": null,
+     "value": "台北、香港、新加坡",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "法人說明會擇要訊息",
+     "label_lengkap": "法人說明會擇要訊息",
+     "satuan_label": null,
+     "value": "公告本公司115年11月10日受邀參加永豐金證券於台北舉辦之Taiwan Market Mover Access Day、115年11月16日受邀參加麥格里證券於台北舉辦之Macquarie Taiwan Conference、115年‎11月16日至11月17日受邀參加摩根大通證券於香港舉辦之APAC Technology, Innovation and Growth Conference、115年11‎月18日至11月19日受邀參加摩根史丹利證券於新加坡舉辦之Annual Asia Pacific Summit及115年11月23日受邀參加花旗證券於台北舉辦之Taiwan Corporate Day，簡報資料請參閱公開資訊觀測站。‎",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無 完整財務業務資訊請至公開資訊觀測站之法人說明會一覽表或法說會項目下查閱。",
+     "sub": []
+    }
+   ],
+   "body_chars": 503,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#2454-2026-11-09-170328",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2540",
+   "name": "愛山林",
+   "date": "2026-11-09",
+   "time": "20:57:08",
+   "seq_no": "205708",
+   "subject": "公告本公司新北市三重區三重段(市政愛悅)之新建工程結算及最終工程追加款案",
+   "clause_raw": "第20款",
+   "clause": 20,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "20:57:08",
+   "items": [
+    {
+     "no": 1,
+     "label": "契約種類",
+     "label_lengkap": "契約種類",
+     "satuan_label": null,
+     "value": "工程契約",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/9~115/11/9",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "董事會通過日期",
+     "label_lengkap": "董事會通過日期",
+     "satuan_label": null,
+     "value": "民國115年11月9日",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "其他核決日期",
+     "label_lengkap": "其他核決日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "契約相對人及其與公司之關係",
+     "label_lengkap": "契約相對人及其與公司之關係",
+     "satuan_label": null,
+     "value": "契約相對人：祝旺開發(股)公司/廣泰基建設股份有限公司 其與公司之關係：本公司100%之子公司/關係人",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "契約主要內容 、限制條款及其他重要約定事項",
+     "label_lengkap": "契約主要內容（含契約總金額、預計參與投入之金額及契約起迄日期） 、限制條款及其他重要約定事項",
+     "satuan_label": null,
+     "value": "契約總金額：追加部分工程金額新台幣92,225,000元； 本公司負擔64,557,500元(70%)， 調整後本案總工程造價為新台幣546,730,000元(含稅)。 本案總投入工程預計為新台幣382,711,000元(70%)。 契約起迄日期：自開工日起至完工驗收日止。",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "專業估價者事務所或公司名稱及其估價結果",
+     "label_lengkap": "專業估價者事務所或公司名稱及其估價結果",
+     "satuan_label": null,
+     "value": "專業估價者事務所：睿明不動產估價師事務所 估價結果：551,893,100元",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "不動產估價師開業證書字號",
+     "label_lengkap": "不動產估價師開業證書字號",
+     "satuan_label": null,
+     "value": "(108)新北估字第000137號",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "取得之具體目的",
+     "label_lengkap": "取得之具體目的",
+     "satuan_label": null,
+     "value": "興建商業住宅大樓",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "本次交易表示異議之董事意見",
+     "label_lengkap": "本次交易表示異議之董事意見",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "本次交易為關係人交易",
+     "label_lengkap": "本次交易為關係人交易",
+     "satuan_label": null,
+     "value": "是",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "監察人承認或審計委員會同意日期",
+     "label_lengkap": "監察人承認或審計委員會同意日期",
+     "satuan_label": null,
+     "value": "民國115年11月9日",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "估價報告是否為限定價格、特定價格或特殊價格",
+     "label_lengkap": "估價報告是否為限定價格、特定價格或特殊價格",
+     "satuan_label": null,
+     "value": "否或不適用",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "是否尚未取得估價報告",
+     "label_lengkap": "是否尚未取得估價報告",
+     "satuan_label": null,
+     "value": "否或不適用",
+     "sub": []
+    },
+    {
+     "no": 16,
+     "label": "尚未取得估價報告之原因",
+     "label_lengkap": "尚未取得估價報告之原因",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 17,
+     "label": "估價結果有重大差異時，其差異原因及會計師意見",
+     "label_lengkap": "估價結果有重大差異時，其差異原因及會計師意見",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 18,
+     "label": "會計師事務所名稱",
+     "label_lengkap": "會計師事務所名稱",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 20,
+     "label": "會計師開業證書字號",
+     "label_lengkap": "會計師開業證書字號",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 21,
+     "label": "前已就同一件事件發布重大訊息日期",
+     "label_lengkap": "前已就同一件事件發布重大訊息日期",
+     "satuan_label": null,
+     "value": "111年12月9日",
+     "sub": []
+    },
+    {
+     "no": 22,
+     "label": "其他敘明事項",
+     "label_lengkap": "其他敘明事項",
+     "satuan_label": null,
+     "value": "1.估價報告為全部，本公司占比70% 2.本案施工期間因應近年營建工料雙漲、營建成本大幅上漲，以及配合工程實際變更與 請領使用執照之必要調整，擬進行最後工程結算並辦理工程款追加。",
+     "sub": []
+    }
+   ],
+   "body_chars": 852,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#2540-2026-11-09-205708",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2707",
+   "name": "晶華",
+   "date": "2026-11-09",
+   "time": "16:25:28",
+   "seq_no": "162528",
+   "subject": "公告本公司董事會決議通過於台灣設立子公司",
+   "clause_raw": "第20款",
+   "clause": 20,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:25:28",
+   "items": [
+    {
+     "no": 1,
+     "label": "標的物之名稱及性質",
+     "label_lengkap": "標的物之名稱及性質（屬特別股者，並應標明特別股約定發行條件，如股息率等）",
+     "satuan_label": null,
+     "value": "標的物之名稱:晶華國際投資股份有限公司 標的物之性質:普通股股權",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/9~115/11/9",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "董事會通過日期",
+     "label_lengkap": "董事會通過日期",
+     "satuan_label": null,
+     "value": "民國115年11月9日",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "其他核決日期",
+     "label_lengkap": "其他核決日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "交易數量、每單位價格及交易總金額",
+     "label_lengkap": "交易數量、每單位價格及交易總金額",
+     "satuan_label": null,
+     "value": "交易單位數量：101,600,000股。 每單位價格：每股新臺幣10元。 交易總金額：新臺幣1,016,000,000元。",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "交易相對人為關係人者，並應公告選定關係人為交易對象之原因及前次移 轉之所有人、前次移轉之所有人與公司及交易相對人間相互之關係、前次 移轉日期及移轉金額",
+     "label_lengkap": "交易相對人為關係人者，並應公告選定關係人為交易對象之原因及前次移 轉之所有人、前次移轉之所有人與公司及交易相對人間相互之關係、前次 移轉日期及移轉金額",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "交易標的最近五年內所有權人曾為公司之關係人者，尚應公告關係人之取 得及處分日期、價格及交易當時與公司之關係",
+     "label_lengkap": "交易標的最近五年內所有權人曾為公司之關係人者，尚應公告關係人之取 得及處分日期、價格及交易當時與公司之關係",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "本次係處分債權之相關事項（含處分之債權附隨擔保品種類、處分債權 如有屬對關係人債權者尚需公告關係人名稱及本次處分該關係人之債權 帳面金額: 不適用",
+     "label_lengkap": "本次係處分債權之相關事項（含處分之債權附隨擔保品種類、處分債權 如有屬對關係人債權者尚需公告關係人名稱及本次處分該關係人之債權 帳面金額: 不適用",
+     "satuan_label": null,
+     "value": "",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "處分利益",
+     "label_lengkap": "處分利益（或損失）（取得有價證券者不適用）（原遞延者應列表說明 認列情形）",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "交付或付款條件、契約限制條款及其他重要約定 事項",
+     "label_lengkap": "交付或付款條件（含付款期間及金額）、契約限制條款及其他重要約定 事項",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "本次交易之決定方式、價格決定之參考依據及決策單位",
+     "label_lengkap": "本次交易之決定方式、價格決定之參考依據及決策單位",
+     "satuan_label": null,
+     "value": "決策單位:本公司董事會決議通過",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "取得或處分有價證券標的公司每股淨值",
+     "label_lengkap": "取得或處分有價證券標的公司每股淨值",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "迄目前為止，累積持有本交易證券之數量、金額、持股 比例及權利受限情形",
+     "label_lengkap": "迄目前為止，累積持有本交易證券（含本次交易）之數量、金額、持股 比例及權利受限情形（如質押情形）",
+     "satuan_label": null,
+     "value": "數量：101,600,000股。 金額：新臺幣1,016,000,000元。 預計持股比例：100%。 權利受限情形：無",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "迄目前為止，依「公開發行公司取得或處分資產處理準則」第三條所列 之有價證券投資占公司最近期財務報表中總資產及歸屬 於母公司業主之權益之比例暨最近期財務報表中營運資金數額",
+     "label_lengkap": "迄目前為止，依「公開發行公司取得或處分資產處理準則」第三條所列 之有價證券投資（含本次交易）占公司最近期財務報表中總資產及歸屬 於母公司業主之權益之比例暨最近期財務報表中營運資金數額（註二）",
+     "satuan_label": null,
+     "value": "占公司最近期財務報表中總資產比例:57.1% 占公司最近期財務報表中歸屬於母公司業主之權益之比例:134.1% 最近期財務報表中營運資金數額:-19,678仟元",
+     "sub": []
+    },
+    {
+     "no": 16,
+     "label": "經紀人及經紀費用",
+     "label_lengkap": "經紀人及經紀費用",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 17,
+     "label": "取得或處分之具體目的或用途",
+     "label_lengkap": "取得或處分之具體目的或用途",
+     "satuan_label": null,
+     "value": "拓展公司業務需求",
+     "sub": []
+    },
+    {
+     "no": 18,
+     "label": "本次交易表示異議董事之意見",
+     "label_lengkap": "本次交易表示異議董事之意見",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    },
+    {
+     "no": 19,
+     "label": "本次交易為關係人交易",
+     "label_lengkap": "本次交易為關係人交易",
+     "satuan_label": null,
+     "value": "否",
+     "sub": []
+    },
+    {
+     "no": 20,
+     "label": "監察人承認或審計委員會同意日期",
+     "label_lengkap": "監察人承認或審計委員會同意日期",
+     "satuan_label": null,
+     "value": "115年11月9日",
+     "sub": []
+    },
+    {
+     "no": 21,
+     "label": "本次交易會計師出具非合理性意見",
+     "label_lengkap": "本次交易會計師出具非合理性意見",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 22,
+     "label": "會計師事務所名稱",
+     "label_lengkap": "會計師事務所名稱",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 24,
+     "label": "會計師開業證書字號",
+     "label_lengkap": "會計師開業證書字號",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 25,
+     "label": "是否涉及營運模式變更",
+     "label_lengkap": "是否涉及營運模式變更",
+     "satuan_label": null,
+     "value": "否",
+     "sub": []
+    },
+    {
+     "no": 26,
+     "label": "營運模式變更說明",
+     "label_lengkap": "營運模式變更說明",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 27,
+     "label": "過去一年及預計未來一年內與交易相對人交易情形",
+     "label_lengkap": "過去一年及預計未來一年內與交易相對人交易情形",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 28,
+     "label": "資金來源",
+     "label_lengkap": "資金來源",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 29,
+     "label": "前已就同一件事件發布重大訊息日期",
+     "label_lengkap": "前已就同一件事件發布重大訊息日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 30,
+     "label": "其他敘明事項",
+     "label_lengkap": "其他敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 1304,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#2707-2026-11-09-162528",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2884",
+   "name": "玉山金",
+   "date": "2026-11-09",
+   "time": "18:37:19",
+   "seq_no": "183719",
+   "subject": "玉山金控代子公司玉山投信公告 調整股份轉換案之股份轉換基準日",
+   "clause_raw": "第11款",
+   "clause": 11,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "18:37:19",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "原公告申報日期",
+     "label_lengkap": "原公告申報日期",
+     "satuan_label": null,
+     "value": "115/09/01",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "簡述原公告申報內容",
+     "label_lengkap": "簡述原公告申報內容",
+     "satuan_label": null,
+     "value": "玉山金控與玉山投信進行股份轉換（以下簡稱「本股份轉換案」）一案， 原暫訂股份轉換基準日為民國116年1月4日。",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "變動緣由及主要內容",
+     "label_lengkap": "變動緣由及主要內容",
+     "satuan_label": null,
+     "value": "考量股東權益及衡酌產業競爭與集團整合需求，依據115年9月1日 董事會決議暨「股份轉換契約」第5.2條，經雙方董事長同意將股份 轉換基準日從原116年1月4日調整為115年12月20日。",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "變動後對公司財務業務之影響",
+     "label_lengkap": "變動後對公司財務業務之影響",
+     "satuan_label": null,
+     "value": "無。",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無。",
+     "sub": []
+    }
+   ],
+   "body_chars": 245,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#2884-2026-11-09-183719",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "3015",
+   "name": "全漢",
+   "date": "2026-11-09",
+   "time": "14:56:29",
+   "seq_no": "145629",
+   "subject": "公告董事會重大決議事項",
+   "clause_raw": "第51款",
+   "clause": 51,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "14:56:29",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "公司名稱",
+     "label_lengkap": "公司名稱",
+     "satuan_label": null,
+     "value": "全漢企業股份有限公司",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "與公司關係",
+     "label_lengkap": "與公司關係(請輸入本公司或子公司)",
+     "satuan_label": null,
+     "value": "本公司",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "相互持股比例",
+     "label_lengkap": "相互持股比例",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "發生緣由",
+     "label_lengkap": "發生緣由",
+     "satuan_label": null,
+     "value": "(A)通過本公司民國115年第三季合併財務報表案。 (B)通過本公司民國116年度稽核計畫案。 (C)通過本公司擬修正「永續發展實務守則」部分條文案。 (D)通過本公司擬對「財團法人全漢教育基金會」捐贈案。 (E)通過本公司銀行綜合授信額度合約案。",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "因應措施",
+     "label_lengkap": "因應措施",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項(若事件發生或決議之主體係屬公開發行以上公司，本則重大訊息同時 符合證券交易法施行細則第7條第9款所定對股東權益或證券價格有重大影響之事項)",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 300,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#3015-2026-11-09-145629",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "4590",
+   "name": "富田-創",
+   "date": "2026-11-09",
+   "time": "15:44:49",
+   "seq_no": "154449",
+   "subject": "公告本公司研發主管異動案",
+   "clause_raw": "第8款",
+   "clause": 8,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "15:44:49",
+   "items": [
+    {
+     "no": 1,
+     "label": "人員變動別、財務主管、會計主管、公司治理主管、資訊安全長、研發主管、 內部稽核主管或訴訟及非訟代理人）",
+     "label_lengkap": "人員變動別（請輸入發言人、代理發言人、重要營運主管(如:執行長、營運長、 行銷長及策略長等)、財務主管、會計主管、公司治理主管、資訊安全長、研發主管、 內部稽核主管或訴訟及非訟代理人）",
+     "satuan_label": null,
+     "value": "研發主管",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "發生變動日期",
+     "label_lengkap": "發生變動日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "異動情形",
+     "label_lengkap": "異動情形（請輸入「辭職」、「職務調整」、「資遣」、「退休」、「死亡」、「新 任」或「解任」）",
+     "satuan_label": null,
+     "value": "本公司董事會及薪酬委員會追認通過",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "生效日期",
+     "label_lengkap": "生效日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    }
+   ],
+   "body_chars": 350,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#4590-2026-11-09-154449",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "4590",
+   "name": "富田-創",
+   "date": "2026-11-09",
+   "time": "15:45:33",
+   "seq_no": "154533",
+   "subject": "公告本公司董事會決議通過115年第3季財務報告",
+   "clause_raw": "第31款",
+   "clause": 31,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "15:45:33",
+   "items": [
+    {
+     "no": 1,
+     "label": "提報董事會或經董事會決議日期",
+     "label_lengkap": "提報董事會或經董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "審計委員會通過日期",
+     "label_lengkap": "審計委員會通過日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "財務報告或年度自結財務資訊報導期間 起訖日期",
+     "label_lengkap": "財務報告或年度自結財務資訊報導期間 起訖日期(XXX/XX/XX~XXX/XX/XX)",
+     "satuan_label": null,
+     "value": "115/01/01~115/09/30",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "1月1日累計至本期止營業收入",
+     "label_lengkap": "1月1日累計至本期止營業收入(仟元)",
+     "satuan_label": "仟元",
+     "value": "941,099",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "1月1日累計至本期止營業毛利",
+     "label_lengkap": "1月1日累計至本期止營業毛利(毛損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "294,395",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "1月1日累計至本期止營業利益",
+     "label_lengkap": "1月1日累計至本期止營業利益(損失) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(17,281)",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "1月1日累計至本期止稅前淨利",
+     "label_lengkap": "1月1日累計至本期止稅前淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "200,558",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "1月1日累計至本期止本期淨利",
+     "label_lengkap": "1月1日累計至本期止本期淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "169,597",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "1月1日累計至本期止歸屬於母公司業主淨利",
+     "label_lengkap": "1月1日累計至本期止歸屬於母公司業主淨利(損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "169,597",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "1月1日累計至本期止基本每股盈餘",
+     "label_lengkap": "1月1日累計至本期止基本每股盈餘(損失) (元)",
+     "satuan_label": "元",
+     "value": "3.11",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "期末總資產",
+     "label_lengkap": "期末總資產(仟元)",
+     "satuan_label": "仟元",
+     "value": "5,951,705",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "期末總負債",
+     "label_lengkap": "期末總負債(仟元)",
+     "satuan_label": "仟元",
+     "value": "2,320,131",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "期末歸屬於母公司業主之權益",
+     "label_lengkap": "期末歸屬於母公司業主之權益(仟元)",
+     "satuan_label": "仟元",
+     "value": "3,631,574",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 442,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#4590-2026-11-09-154533",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "4977",
+   "name": "眾達-KY",
+   "date": "2026-11-09",
+   "time": "19:14:18",
+   "seq_no": "191418",
+   "subject": "更正:代子公司PCL TECHNOLOGIES, INC.公告新增資金貸與 金額達公開發行公司資金貸與及背書保證處理準則第 二十二條第一項第三款之公告標準",
+   "clause_raw": "第23款",
+   "clause": 23,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "19:14:18",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "接受資金貸與之",
+     "label_lengkap": "接受資金貸與之",
+     "satuan_label": null,
+     "value": "(1)公司名稱:眾達光電(股)公司 (2)與資金貸與他人公司之關係: 本公司100%持股之子公司 (3)資金貸與之限額(仟元):865,193 (4)原資金貸與之餘額(仟元):87,696 (5)本次新增資金貸與之金額(仟元):211,120 (6)是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與:否 (7)迄事實發生日止資金貸與餘額(仟元):298,816 (8)本次新增資金貸與之原因: 短期資金融通需要",
+     "sub": [
+      {
+       "no": 1,
+       "label": "公司名稱",
+       "label_lengkap": "公司名稱",
+       "satuan_label": null,
+       "value": "眾達光電(股)公司"
+      },
+      {
+       "no": 2,
+       "label": "與資金貸與他人公司之關係",
+       "label_lengkap": "與資金貸與他人公司之關係",
+       "satuan_label": null,
+       "value": "本公司100%持股之子公司"
+      },
+      {
+       "no": 3,
+       "label": "資金貸與之限額",
+       "label_lengkap": "資金貸與之限額(仟元)",
+       "satuan_label": "仟元",
+       "value": "865,193"
+      },
+      {
+       "no": 4,
+       "label": "原資金貸與之餘額",
+       "label_lengkap": "原資金貸與之餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "87,696"
+      },
+      {
+       "no": 5,
+       "label": "本次新增資金貸與之金額",
+       "label_lengkap": "本次新增資金貸與之金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "211,120"
+      },
+      {
+       "no": 6,
+       "label": "是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與",
+       "label_lengkap": "是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與",
+       "satuan_label": null,
+       "value": "否"
+      },
+      {
+       "no": 7,
+       "label": "迄事實發生日止資金貸與餘額",
+       "label_lengkap": "迄事實發生日止資金貸與餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "298,816"
+      },
+      {
+       "no": 8,
+       "label": "本次新增資金貸與之原因",
+       "label_lengkap": "本次新增資金貸與之原因",
+       "satuan_label": null,
+       "value": "短期資金融通需要"
+      }
+     ]
+    },
+    {
+     "no": 3,
+     "label": "接受資金貸與公司所提供擔保品之",
+     "label_lengkap": "接受資金貸與公司所提供擔保品之",
+     "satuan_label": null,
+     "value": "(1)內容: 無 (2)價值(仟元):0",
+     "sub": [
+      {
+       "no": 1,
+       "label": "內容",
+       "label_lengkap": "內容",
+       "satuan_label": null,
+       "value": "無"
+      },
+      {
+       "no": 2,
+       "label": "價值",
+       "label_lengkap": "價值(仟元)",
+       "satuan_label": "仟元",
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "no": 4,
+     "label": "接受資金貸與公司最近期財務報表之",
+     "label_lengkap": "接受資金貸與公司最近期財務報表之",
+     "satuan_label": null,
+     "value": "(1)資本(仟元):218,000 (2)累積盈虧金額(仟元):39,275",
+     "sub": [
+      {
+       "no": 1,
+       "label": "資本",
+       "label_lengkap": "資本(仟元)",
+       "satuan_label": "仟元",
+       "value": "218,000"
+      },
+      {
+       "no": 2,
+       "label": "累積盈虧金額",
+       "label_lengkap": "累積盈虧金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "39,275"
+      }
+     ]
+    },
+    {
+     "no": 5,
+     "label": "計息方式",
+     "label_lengkap": "計息方式",
+     "satuan_label": null,
+     "value": "無息",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "還款之",
+     "label_lengkap": "還款之",
+     "satuan_label": null,
+     "value": "(1)條件: 依合約規定 (2)日期: 依合約規定自首次動撥日起不得超過1年",
+     "sub": [
+      {
+       "no": 1,
+       "label": "條件",
+       "label_lengkap": "條件",
+       "satuan_label": null,
+       "value": "依合約規定"
+      },
+      {
+       "no": 2,
+       "label": "日期",
+       "label_lengkap": "日期",
+       "satuan_label": null,
+       "value": "依合約規定自首次動撥日起不得超過1年"
+      }
+     ]
+    },
+    {
+     "no": 7,
+     "label": "迄事實發生日為止，資金貸與餘額",
+     "label_lengkap": "迄事實發生日為止，資金貸與餘額(仟元)",
+     "satuan_label": "仟元",
+     "value": "907,719",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "迄事實發生日為止，資金貸與餘額占公開發行公司最近期財務報表淨值之比率",
+     "label_lengkap": "迄事實發生日為止，資金貸與餘額占公開發行公司最近期財務報表淨值之比率",
+     "satuan_label": null,
+     "value": "21.11",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "公司貸與他人資金之來源",
+     "label_lengkap": "公司貸與他人資金之來源",
+     "satuan_label": null,
+     "value": "子公司本身",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "美金匯率以32.48折算為新台幣",
+     "sub": []
+    }
+   ],
+   "body_chars": 556,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#4977-2026-11-09-191418",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "6443",
+   "name": "元晶",
+   "date": "2026-11-09",
+   "time": "16:57:18",
+   "seq_no": "165718",
+   "subject": "公告本公司董事會決議通過115年第三季財務報告",
+   "clause_raw": "第31款",
+   "clause": 31,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:57:18",
+   "items": [
+    {
+     "no": 1,
+     "label": "提報董事會或經董事會決議日期",
+     "label_lengkap": "提報董事會或經董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "審計委員會通過日期",
+     "label_lengkap": "審計委員會通過日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "財務報告或年度自結財務資訊報導期間 起訖日期",
+     "label_lengkap": "財務報告或年度自結財務資訊報導期間 起訖日期(XXX/XX/XX~XXX/XX/XX)",
+     "satuan_label": null,
+     "value": "115/01/01~115/09/30",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "1月1日累計至本期止營業收入",
+     "label_lengkap": "1月1日累計至本期止營業收入(仟元)",
+     "satuan_label": "仟元",
+     "value": "896,335",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "1月1日累計至本期止營業毛利",
+     "label_lengkap": "1月1日累計至本期止營業毛利(毛損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(317,829)",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "1月1日累計至本期止營業利益",
+     "label_lengkap": "1月1日累計至本期止營業利益(損失) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(767,163)",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "1月1日累計至本期止稅前淨利",
+     "label_lengkap": "1月1日累計至本期止稅前淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(771,321)",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "1月1日累計至本期止本期淨利",
+     "label_lengkap": "1月1日累計至本期止本期淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(776,677)",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "1月1日累計至本期止歸屬於母公司業主淨利",
+     "label_lengkap": "1月1日累計至本期止歸屬於母公司業主淨利(損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(776,662)",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "1月1日累計至本期止基本每股盈餘",
+     "label_lengkap": "1月1日累計至本期止基本每股盈餘(損失) (元)",
+     "satuan_label": "元",
+     "value": "(1.51)",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "期末總資產",
+     "label_lengkap": "期末總資產(仟元)",
+     "satuan_label": "仟元",
+     "value": "6,421,658",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "期末總負債",
+     "label_lengkap": "期末總負債(仟元)",
+     "satuan_label": "仟元",
+     "value": "3,553,341",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "期末歸屬於母公司業主之權益",
+     "label_lengkap": "期末歸屬於母公司業主之權益(仟元)",
+     "satuan_label": "仟元",
+     "value": "2,865,463",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 453,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#6443-2026-11-09-165718",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "6446",
+   "name": "藥華藥",
+   "date": "2026-11-09",
+   "time": "21:13:21",
+   "seq_no": "211321",
+   "subject": "公告本公司董事會通過與子公司予宇生技股份有限公司 簡易合併案",
+   "clause_raw": "第11款",
+   "clause": 11,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "21:13:21",
+   "items": [
+    {
+     "no": 1,
+     "label": "併購種類",
+     "label_lengkap": "併購種類(如合併、分割、收購或股份受讓)",
+     "satuan_label": null,
+     "value": "簡易合併",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/9",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "參與併購公司名稱(如合併另一方公司、分割新設公司、收購或受讓股份標的公司之 名稱: 存續公司：藥華醫藥股份有限公司 消滅公司：予宇生技股份有限公司",
+     "label_lengkap": "參與併購公司名稱(如合併另一方公司、分割新設公司、收購或受讓股份標的公司之 名稱: 存續公司：藥華醫藥股份有限公司 消滅公司：予宇生技股份有限公司",
+     "satuan_label": null,
+     "value": "",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "交易相對人",
+     "label_lengkap": "交易相對人(如合併另一方公司、分割讓與他公司、收購或受讓股份之交易對象)",
+     "satuan_label": null,
+     "value": "予宇生技股份有限公司",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "交易相對人為關係人",
+     "label_lengkap": "交易相對人為關係人",
+     "satuan_label": null,
+     "value": "是",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "交易相對人與公司之關係，並說明選定 收購、受讓他公司股份之對象為關係企業或關係人之原因及是否不影響股東權益",
+     "label_lengkap": "交易相對人與公司之關係(本公司轉投資持股達XX%之被投資公司)，並說明選定 收購、受讓他公司股份之對象為關係企業或關係人之原因及是否不影響股東權益",
+     "satuan_label": null,
+     "value": "予宇生技股份有限公司為本公司持股100%之子公司。 為精簡投資架構、增加研發及管理效率，依企業併購法第19條與本公司100%持股之 子公司間進行簡易合併，原股東權益不受影響。",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "併購目的及條件，包括併購理由、對價條件及支付時點",
+     "label_lengkap": "併購目的及條件，包括併購理由、對價條件及支付時點(註七)",
+     "satuan_label": null,
+     "value": "精簡投資架構、增加研發及管理效率",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "併購後預計產生之效益",
+     "label_lengkap": "併購後預計產生之效益",
+     "satuan_label": null,
+     "value": "精簡投資架構、增加研發及管理效率",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "併購對每股淨值及每股盈餘之影響",
+     "label_lengkap": "併購對每股淨值及每股盈餘之影響",
+     "satuan_label": null,
+     "value": "不影響本公司每股淨值及每股盈餘",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "併購之對價種類及資金來源",
+     "label_lengkap": "併購之對價種類及資金來源",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "換股比例及其計算依據",
+     "label_lengkap": "換股比例及其計算依據",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "本次交易會計師、律師或證券承銷商出具非合理性意見",
+     "label_lengkap": "本次交易會計師、律師或證券承銷商出具非合理性意見",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "會計師或律師事務所名稱或證券承銷商公司名稱",
+     "label_lengkap": "會計師或律師事務所名稱或證券承銷商公司名稱",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "會計師或律師開業證書字號",
+     "label_lengkap": "會計師或律師開業證書字號",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 16,
+     "label": "獨立專家就本次併購換股比例、配發股東之現金或其他財產之合理性意見書內容",
+     "label_lengkap": "獨立專家就本次併購換股比例、配發股東之現金或其他財產之合理性意見書內容 (一、包含公開收購價格訂定所採用之方法、原則或計算方式及與國際慣用之市價法 、成本法及現金流量折現法之比較。二、被收購公司與已上市櫃同業之財務狀況 、獲利情形及本益比之比較情形。三、公開收購價格若參考鑑價機構之鑑價報告者 ，應說明該鑑價報告內容及結論。四、收購人融資償還計畫若係以被收購公司或合 併後存續公司之資產或股份為擔保者，應說明對被收購公司或合併後存續公司財務 業務健全性之影響評估)(註七)",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 17,
+     "label": "預定完成日程",
+     "label_lengkap": "預定完成日程(註七)",
+     "satuan_label": null,
+     "value": "合併基準日暫定為民國115年12月10日",
+     "sub": []
+    },
+    {
+     "no": 18,
+     "label": "既存或新設公司承受消滅公司權利義務相關事項",
+     "label_lengkap": "既存或新設公司承受消滅(或分割)公司權利義務相關事項(註二)",
+     "satuan_label": null,
+     "value": "自合併基準日起，本公司概括承受予宇生技股份有限公司之帳列資產、負債及截至 合併基準日止仍為有效之一切權利及義務。",
+     "sub": []
+    },
+    {
+     "no": 19,
+     "label": "參與合併公司之基本資料",
+     "label_lengkap": "參與合併公司之基本資料(註三)",
+     "satuan_label": null,
+     "value": "藥華醫藥股份有限公司：新藥之研究開發、生產及銷售 予宇生技股份有限公司：生物技術研究發展。",
+     "sub": []
+    },
+    {
+     "no": 20,
+     "label": "分割之相關事項",
+     "label_lengkap": "分割之相關事項(含預定讓與既存公司或新設公司之營業、資產之評價價值；被 分割公司或其股東所取得股份之總數、種類及數量；被分割公司資本減少時，其資 本減少有關事項)(註：若非分割公告時，則不適用)",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 21,
+     "label": "併購股份未來移轉之條件及限制",
+     "label_lengkap": "併購股份未來移轉之條件及限制",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 22,
+     "label": "併購完成後之計畫、重大變更組織、資本、業務計畫、財務及生產、對公司重要人員 、資產之安排或運用，或其他任何影響公司股東權益之重大事項)",
+     "label_lengkap": "併購完成後之計畫(包含一、繼續經營公司業務之意願及計畫內容。二、是否發生 解散、下市(櫃)、重大變更組織、資本、業務計畫、財務及生產、對公司重要人員 、資產之安排或運用，或其他任何影響公司股東權益之重大事項)",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 23,
+     "label": "其他重要約定事項",
+     "label_lengkap": "其他重要約定事項",
+     "satuan_label": null,
+     "value": "無。",
+     "sub": []
+    },
+    {
+     "no": 24,
+     "label": "其他與併購相關之重大事項",
+     "label_lengkap": "其他與併購相關之重大事項",
+     "satuan_label": null,
+     "value": "無。",
+     "sub": []
+    },
+    {
+     "no": 25,
+     "label": "本次交易，董事有無異議",
+     "label_lengkap": "本次交易，董事有無異議",
+     "satuan_label": null,
+     "value": "否",
+     "sub": []
+    },
+    {
+     "no": 27,
+     "label": "是否涉及營運模式變更",
+     "label_lengkap": "是否涉及營運模式變更",
+     "satuan_label": null,
+     "value": "否",
+     "sub": []
+    },
+    {
+     "no": 28,
+     "label": "營運模式變更說明",
+     "label_lengkap": "營運模式變更說明(註四)",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 29,
+     "label": "過去一年及預計未來一年內與交易相對人交易情形",
+     "label_lengkap": "過去一年及預計未來一年內與交易相對人交易情形(註五)",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 30,
+     "label": "資金來源",
+     "label_lengkap": "資金來源(註五)",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 31,
+     "label": "其他敘明事項",
+     "label_lengkap": "其他敘明事項(註六)",
+     "satuan_label": null,
+     "value": "無 註二、既存或新設公司承受消滅公司權利義務相關事項，包括庫藏股及已發行具有股權性質有 價證券之處理原則。 註三：參與合併公司之基本資料包括公司名稱及所營業務之主要內容。 註四：倘涉營運模式變更，請於欄位敘明包括營業範圍變更、產品線擴充/縮減、製程調整、產業 水平/垂直整合，或其他涉及營運架構調整事項。 註五：非屬私募資金用以併購案件者，得填寫不適用。 註六：若本案成就前，尚需經國內、外主管機關(如:投審會、公平交易委員會、反壟斷局或其他單位)核准或許可者，應予敘明相關事項。",
+     "sub": []
+    }
+   ],
+   "body_chars": 1936,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#6446-2026-11-09-211321",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "6515",
+   "name": "穎崴",
+   "date": "2026-11-09",
+   "time": "14:57:04",
+   "seq_no": "145704",
+   "subject": "公告本公司設置永續長",
+   "clause_raw": "第8款",
+   "clause": 8,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "14:57:04",
+   "items": [
+    {
+     "no": 1,
+     "label": "人員變動別、財務主管、會計主管、公司治理主管、資訊安全長、研發主管、 內部稽核主管或訴訟及非訟代理人）",
+     "label_lengkap": "人員變動別（請輸入發言人、代理發言人、重要營運主管(如:執行長、營運長、 行銷長及策略長等)、財務主管、會計主管、公司治理主管、資訊安全長、研發主管、 內部稽核主管或訴訟及非訟代理人）",
+     "satuan_label": null,
+     "value": "永續長",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "發生變動日期",
+     "label_lengkap": "發生變動日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "異動情形",
+     "label_lengkap": "異動情形（請輸入「辭職」、「職務調整」、「資遣」、「退休」、「死亡」、「新 任」或「解任」）",
+     "satuan_label": null,
+     "value": "新任",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "生效日期",
+     "label_lengkap": "生效日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    }
+   ],
+   "body_chars": 253,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#6515-2026-11-09-145704",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "6655",
+   "name": "科定",
+   "date": "2026-11-09",
+   "time": "18:50:17",
+   "seq_no": "185017",
+   "subject": "公告本公司董事會決議註銷庫藏股及訂定減資基準日",
+   "clause_raw": "第11款",
+   "clause": 11,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "18:50:17",
+   "items": [
+    {
+     "no": 1,
+     "label": "董事會決議日期",
+     "label_lengkap": "董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "減資緣由",
+     "label_lengkap": "減資緣由",
+     "satuan_label": null,
+     "value": "依證券交易法第28條之2規定，註銷本公司第5次庫藏股買回之股份。",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "減資金額",
+     "label_lengkap": "減資金額",
+     "satuan_label": null,
+     "value": "新台幣2,000,000元",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "消除股份",
+     "label_lengkap": "消除股份",
+     "satuan_label": null,
+     "value": "200,000股",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "減資比率",
+     "label_lengkap": "減資比率",
+     "satuan_label": null,
+     "value": "0.25%",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "減資後股本",
+     "label_lengkap": "減資後股本",
+     "satuan_label": null,
+     "value": "新台幣803,718,170元。",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "預定股東會日期",
+     "label_lengkap": "預定股東會日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "預計減資新股上市後之上市普通股股數",
+     "label_lengkap": "預計減資新股上市後之上市普通股股數",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "預計減資新股上市後之上市普通股股數占已發行普通股比率",
+     "label_lengkap": "預計減資新股上市後之上市普通股股數占已發行普通股比率 （減資後上市普通股股數/減資後已發行普通股股數）",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "前二項預計減資後上巿普通股股數未達6000萬股且未達25%者， 請說明股權流通性偏低之因應措施",
+     "label_lengkap": "前二項預計減資後上巿普通股股數未達6000萬股且未達25%者， 請說明股權流通性偏低之因應措施",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "減資基準日",
+     "label_lengkap": "減資基準日",
+     "satuan_label": null,
+     "value": "115/12/07",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 317,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#6655-2026-11-09-185017",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "6830",
+   "name": "汎銓",
+   "date": "2026-11-09",
+   "time": "14:15:23",
+   "seq_no": "141523",
+   "subject": "代子公司南京泛銓電子科技有限公司公告取得營業用機器設備",
+   "clause_raw": "第20款",
+   "clause": 20,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "14:15:23",
+   "items": [
+    {
+     "no": 1,
+     "label": "標的物之名稱及性質",
+     "label_lengkap": "標的物之名稱及性質（如坐落台中市北區ＸＸ段ＸＸ小段土地）",
+     "satuan_label": null,
+     "value": "營業用機器設備",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/9~115/11/9",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "董事會通過日期",
+     "label_lengkap": "董事會通過日期",
+     "satuan_label": null,
+     "value": "民國115年11月9日",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "其他核決日期",
+     "label_lengkap": "其他核決日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "交易單位數量、每單位價格及交易總金額",
+     "label_lengkap": "交易單位數量（如ＸＸ平方公尺，折合ＸＸ坪）、每單位價格及交易總金額",
+     "satuan_label": null,
+     "value": "3台；每單位平均價格：新台幣36,187,653元，交易總金額為新台幣108,562,960元",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "交易相對人為關係人者，並應公告選定關係人為交易對象之原因及前次移轉之 所有人、前次移轉之所有人與公司及交易相對人間相互之關係、前次移轉日期 及移轉金額",
+     "label_lengkap": "交易相對人為關係人者，並應公告選定關係人為交易對象之原因及前次移轉之 所有人、前次移轉之所有人與公司及交易相對人間相互之關係、前次移轉日期 及移轉金額",
+     "satuan_label": null,
+     "value": "營運所需",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "交易標的最近五年內所有權人曾為公司之關係人者，尚應公告關係 人之取得及處分日期、價格及交易當時與公司之關係",
+     "label_lengkap": "交易標的最近五年內所有權人曾為公司之關係人者，尚應公告關係 人之取得及處分日期、價格及交易當時與公司之關係",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "預計處分利益",
+     "label_lengkap": "預計處分利益（或損失）（取得資產者不適用）（遞延者應列表說明 認列情形）",
+     "satuan_label": null,
+     "value": "本次交易屬母子公司間之交易，於合併後無處分損益。",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "交付或付款條件、契約限制條款及其他重要約定 事項",
+     "label_lengkap": "交付或付款條件（含付款期間及金額）、契約限制條款及其他重要約定 事項",
+     "satuan_label": null,
+     "value": "依訂單條件付款。",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "本次交易之決定方式、價格決定之參考依據及 決策單位",
+     "label_lengkap": "本次交易之決定方式（如招標、比價或議價）、價格決定之參考依據及 決策單位",
+     "satuan_label": null,
+     "value": "以機器設備取得時雙方協議金額為交易價格； 依南京泛銓電子科技有限公司核決權限辦理。",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "專業估價者事務所或公司名稱及其估價金額",
+     "label_lengkap": "專業估價者事務所或公司名稱及其估價金額",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "專業估價師開業證書字號",
+     "label_lengkap": "專業估價師開業證書字號",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "估價報告是否為限定價格、特定價格或特殊價格",
+     "label_lengkap": "估價報告是否為限定價格、特定價格或特殊價格",
+     "satuan_label": null,
+     "value": "否或不適用",
+     "sub": []
+    },
+    {
+     "no": 16,
+     "label": "是否尚未取得估價報告",
+     "label_lengkap": "是否尚未取得估價報告",
+     "satuan_label": null,
+     "value": "否或不適用",
+     "sub": []
+    },
+    {
+     "no": 17,
+     "label": "尚未取得估價報告之原因",
+     "label_lengkap": "尚未取得估價報告之原因",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 18,
+     "label": "估價結果有重大差異時，其差異原因及會計師意見",
+     "label_lengkap": "估價結果有重大差異時，其差異原因及會計師意見",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 19,
+     "label": "會計師事務所名稱",
+     "label_lengkap": "會計師事務所名稱",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 21,
+     "label": "會計師開業證書字號",
+     "label_lengkap": "會計師開業證書字號",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 22,
+     "label": "經紀人及經紀費用",
+     "label_lengkap": "經紀人及經紀費用",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 23,
+     "label": "取得或處分之具體目的或用途",
+     "label_lengkap": "取得或處分之具體目的或用途",
+     "satuan_label": null,
+     "value": "營業用途",
+     "sub": []
+    },
+    {
+     "no": 24,
+     "label": "本次交易表示異議之董事之意見",
+     "label_lengkap": "本次交易表示異議之董事之意見",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 25,
+     "label": "本次交易為關係人交易",
+     "label_lengkap": "本次交易為關係人交易",
+     "satuan_label": null,
+     "value": "是",
+     "sub": []
+    },
+    {
+     "no": 26,
+     "label": "監察人承認或審計委員會同意日期",
+     "label_lengkap": "監察人承認或審計委員會同意日期",
+     "satuan_label": null,
+     "value": "1.民國115年11月09日",
+     "sub": []
+    },
+    {
+     "no": 27,
+     "label": "本次交易係向關係人取得不動產或其使用權資產",
+     "label_lengkap": "本次交易係向關係人取得不動產或其使用權資產",
+     "satuan_label": null,
+     "value": "是",
+     "sub": []
+    },
+    {
+     "no": 28,
+     "label": "依「公開發行公司取得或處分資產處理準則」第十六條規定 評估之價格",
+     "label_lengkap": "依「公開發行公司取得或處分資產處理準則」第十六條規定 評估之價格",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 29,
+     "label": "依前項評估之價格較交易價格為低者，依同準則第十七條規 定評估之價格",
+     "label_lengkap": "依前項評估之價格較交易價格為低者，依同準則第十七條規 定評估之價格",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 30,
+     "label": "前已就同一件事件發布重大訊息日期",
+     "label_lengkap": "前已就同一件事件發布重大訊息日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 31,
+     "label": "其他敘明事項",
+     "label_lengkap": "其他敘明事項",
+     "satuan_label": null,
+     "value": "(1)交易總金額為美金3,344,000元，匯率依台銀美元即期平均匯率USD$1=NTD$32.465計算",
+     "sub": []
+    }
+   ],
+   "body_chars": 1183,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#6830-2026-11-09-141523",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "6955",
+   "name": "邦睿生技-創",
+   "date": "2026-11-09",
+   "time": "18:37:08",
+   "seq_no": "183708",
+   "subject": "公告本公司董事會決議發行認股價格低於市價之員工認股權憑證",
+   "clause_raw": "第11款",
+   "clause": 11,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "18:37:08",
+   "items": [
+    {
+     "no": 1,
+     "label": "董事會決議日期",
+     "label_lengkap": "董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "發行期間",
+     "label_lengkap": "發行期間",
+     "satuan_label": null,
+     "value": "自主管機關申報生效通知到達之日起二年內，得視實際需要一次 或分次發行，實際發行日期授權董事長訂定之。",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "認股權人資格條件",
+     "label_lengkap": "認股權人資格條件",
+     "satuan_label": null,
+     "value": "以認股資格基準日本公司及國內外從屬公司具特定職等或對公司 有特殊貢獻之全職員工為限；所稱從屬公司之定義，係依據金管會107年12月27日 金管證發字第1070121068號令之函釋所訂標準認定之。認股資格基準日由董事長決定 ，實際得為認股權人之員工及其所得認股之數量，將參酌年資、職級、工作績效、 整體貢獻或特殊功績等事項訂定分配標準或原則，經董事長核定後，依據以下審核程 序辦理： 一、員工具本公司經理人或董事身分者，應先經本公司薪資報酬委員會同意後，再提 本公司董事會決議通過。 二、員工非具本公司經理人身分者，應先經本公司審計委員會同意後，再提本公司 董事會決議通過。 任一員工依募發準則第五十六條之一第一項規定（認股價格低於發行日標的股票之收 盤價）累計被授予之員工認股權憑證得認購股數，加計其累計取得限制員工權利新股 之合計數，不得超過已發行股份總數之千分之三，且加計依募發準則第五十六條第一 項規定（認股價格不低於發行日標的股票之收盤價）發行員工認股權憑證累計給予單 一認股權人得認購股數，不得超過已發行股份總數之百分之一。 但經各中央目的事業主管機關專案核准者，單一員工取得員工認股權憑證與限制員工 權利新股之合計數，得不受前開比例之限制。",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "員工認股權憑證之發行單位總數",
+     "label_lengkap": "員工認股權憑證之發行單位總數",
+     "satuan_label": null,
+     "value": "1,000,000單位",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "每單位認股權憑證得認購之股數",
+     "label_lengkap": "每單位認股權憑證得認購之股數",
+     "satuan_label": null,
+     "value": "1股",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "因認股權行使而須發行之新股總數或依證券交易法第二十八條之二 規定須買回之股數",
+     "label_lengkap": "因認股權行使而須發行之新股總數或依證券交易法第二十八條之二 規定須買回之股數",
+     "satuan_label": null,
+     "value": "因認股權行使而須發行之普通股新股總數為1,000,000股。",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "認股價格",
+     "label_lengkap": "認股價格",
+     "satuan_label": null,
+     "value": "以不低於本員工認股權憑證發行日之普通股收盤價格50%為認股價格， 實際之認股價格授權董事長決定。",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "認股權利期間",
+     "label_lengkap": "認股權利期間",
+     "satuan_label": null,
+     "value": "一、認股權人自被授予員工認股權憑證屆滿2年後，可按下列時程行使認股權。 股權憑證之存續期間為發行日起算6年，認股權憑證及其權益不得轉讓、質 押、贈與他人、或作其他方式之處分，但因繼承者不在此限。 存續期間屆滿後，未行使之員工認股權憑證視同放棄，認股權人不得再行主 張其認股權利。 認股權憑證授予期間 可行使認股權比例（累計） 屆滿 2 年 50 % 屆滿 3 年 75 % 屆滿 4 年 100 % 二、稅賦：認股權人因行使認股權獲得股份，而須於任何國家或地區依法律規定 繳納任何賦稅時，此等稅賦，包括但不限於認股權人個人所得稅及本公司代 扣繳稅，應由認股權人負擔。 三、認股權人自公司授予員工認股權憑證後，遇有違反勞動契約、委任契約或工 作規則等事由時，本公司有權就尚未具行使權之認股權憑證及已具行使權而 尚未行使之認股權憑證予以收回並註銷。",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "認購股份之種類",
+     "label_lengkap": "認購股份之種類",
+     "satuan_label": null,
+     "value": "本公司普通股股票。",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "員工離職或發生繼承時之處理方式",
+     "label_lengkap": "員工離職或發生繼承時之處理方式",
+     "satuan_label": null,
+     "value": "一、自願離職或資遣：已具行使權之認股權憑證，得自離職/資遣生效日起十個工 作日(含離職/資遣生效日當日)內或本認股權憑證之存續期間內(以截止日期 孰前者為主)行使認股權利，若適逢本辦法所定不得行使認股期間，其行使 期間得順延之，未於前述期間內行使權利者，視同放棄認股權利。未具行使 權之員工認股權憑證，於離職/資遣生效日即視為放棄認股權利。 二、解雇：認股權人如違反勞動契約或工作規則等重大過失而遭公司解僱者， 其已授予之認股權憑證，於解僱當日即視為放棄認股權利。 三、退休：已具行使權之員工認股權憑證，得於本認股權憑證存續期間內依本條 第二項之權利期間行使認股權利。若適逢本辦法所定不得行使認股期間， 其行使期間得順延之，未於前述期間內行使權利者，視同放棄認股權利。 未具行使權之員工認股權憑證，於退休當日即視為放棄認股權利。 四、死亡：認股權人死亡時，已具行使權之認股權憑證，應由繼承人自被繼承人 死亡日起一年內行使認股權，惟仍應依本條第二項之權利期間行使認股權利。 繼承人依認股權人所屬國之繼承相關法令及「公開發行股票公司股務處理 準則」繼承過戶相關規定，完成法定程序並提供相關證明文件後，方得在本 員工認股權憑證之存續期間內申請行使認股權利。尚未具行使權之員工認股 權憑證，於認股權人死亡當日即喪失一切權利義務。 五、受職業災害殘疾者：因受職業災害致身體殘疾而無法繼續任職者，其已授予 之員工認股權憑證，得於認股權憑證存續期間內依本條第二項之權利期間行 使認股權利。 六、留職停薪或連續請假30天(含例假日)以上者：凡經公司核准辦理留職停薪或 連續請假30天(含例假日)以上之認股權人，其已具行使權利之員工認股權憑 證，應自留職停薪/請假起始日起一個月內(含留職停薪/請假起始日當日) 行使認股權，逾期未行使者，凍結其認股權行使權利，並遞延至復職後恢復 ，惟本認股權憑證之存續期間不因留職停薪/請假期間而延後；未具行使權之 認股權憑證，自復職/銷假上班起回復其權利，惟認股權行使時程應按留職停 薪/請假期間往後遞延，但仍以本認股權憑證之存續期間為限。 七、調職：認股權人轉任至他公司任職，且該他公司屬本公司或本公司直接或間 接持有具表決權股份百分之五十以上之國內外子公司，經董事長核可時，其 被授予員工認股權憑證之權利義務均不受轉任之影響。 八、非屬上列原因或實際依照前揭各目規定執行時須依相關法令進行調整時， 授權董事長依實際狀況個別訂定或調整之。 九、認股權人或其繼承人若未能於上述期限內行使認股權者，即視為放棄認股權 利。",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "其他認股條件",
+     "label_lengkap": "其他認股條件",
+     "satuan_label": null,
+     "value": "對於放棄之認股權憑證，本公司將予以註銷不再發行。",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "履約方式",
+     "label_lengkap": "履約方式",
+     "satuan_label": null,
+     "value": "一、以本公司發行新股交付，由本公司以無實體帳簿劃撥發行新股方式交付之。 二、新股交付對象為在境外子公司員工者，則交付至本公司或境外子公司開立於 保管機構之「員工集合投資專戶」。該帳戶僅限於賣出該等員工因行使認購 有價證券權利及因讓受與配發取得之股票，不得從事其他證券買賣交易。",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "認股價格之調整",
+     "label_lengkap": "認股價格之調整",
+     "satuan_label": null,
+     "value": "一、本認股權憑證發行後，除本公司所發行具有普通股轉換權或認股權之各種有 價證券換發普通股股份，或因員工酬勞發行新股者外，遇有本公司已發行普 通股股份增加時，包括但不限於以募集發行或私募方式辦理現金增資、盈餘 轉增資、資本公積轉增資、公司合併或受讓他公司股份發行新股、股票分割 及辦理現金增資參與發行海外存託憑證等情形，認股價格依下列公式及原則 調整之（計算至新台幣角為止，分以下四捨五入）： 調整後認股價格＝調整前認股價格 ×〔已發行股數+(每股繳款金額×新股發行 股數÷每股時價)〕÷(已發行股數+新股發行股數) 股票面額變更致已發行普通股股份增加時： 調整後之認股價格＝調整前認股價格×(股票面額變更前已發行普通股股數÷股 票面額變更後已發行普通股股數) 前述認股價格之調整時點及計算原則如下： (一) 原則於新股發行除權基準日調整之；如為股票分割，於股票分割基準日 如為公司合併或受讓他公司股份發行新股，於合併或受讓基準日調整。 (二) 如係因股票面額變更致已發行普通股股份增加，於新股換發基準日調整 之。 (三) 如係採詢價圈購方式辦理現金增資或辦理現金增資參與發行海外存託憑 證，因無除權基準日者，於股款繳足日調整之。 (四) 如係以私募方式辦理現金增資，於私募有價證券交付日調整之。 (五) 已發行股數係指本公司普通股已發行股份總數，包括募集發行及私募股 份，並應扣除本公司買回但尚未註銷或轉讓之庫藏股，以及本公司已收 回或買回但尚未註銷之限制員工權利新股。 (六) 每股繳款金額如係無償配股或股票分割，其每股繳款金額為零。 (七) 本公司與他公司合併或受讓他公司股份發行新股時，增資新股每股繳款 金額，以合併或受讓他公司股份基準日前三十個營業日本公司普通股平 均收盤價計算之。 (八) 上述每股時價之訂定，應以除權基準日、訂價基準日、股票分割基準日 或私募有價證券交付日之前一、三、五個營業日擇一計算之本公司普通 股收盤價簡單算術平均數為準。 (九) 遇有調整後認股價格高於調整前認股價格時，不予調整。 (十) 調整後認股價格如低於本公司普通股股票面額時，以普通股股票面額為 認股價格。 (十一) 如發生非前述所列舉之股份變動情形，是否調整認股價格及其調整方 董事會依法令及實際情況決議之。 (十二) 依本款所定公式及原則應調整認股價格者，其調整結果經董事長核定 後辦理，無須另提董事會決議。 二、本認股權憑證發行後，遇有本公司發放普通股現金股利者，認股價格應於除 息基準日依下列公式調整之 (計算至新台幣角為止，分以下四捨五入)： 調整後之認股價格 = 調整前認股價格×（1－發放普通股現金股利占每股時價 之比率） 上述每股時價之訂定，係以現金股息停止過戶除息公告日之前一、三、五個 營業日，擇一計算本公司普通股收盤價之簡單算術平均數為準。 遇有同時發放現金股利及股票股利（含盈餘轉增資及資本公積轉增資）時， 則先依現金股利金額調整認股價格後，再依股票股利金額調整認股價格。 三、本認股權憑證發行後，如遇非因庫藏股註銷之減資致普通股股份減少時，包 括減資彌補虧損及現金減資等情形時，認股價格依下列公式於減資基準日調 整之(計算至新台幣角為止，分以下四捨五入)；如係因股票面額變更致普通 股股份減少，於新股換發基準日調整之。 (一) 減資彌補虧損時： 調整後認股價格＝調整前認股價格×(減資前已發行普通股股數÷減資後 已發行普通股股數) (二) 現金減資時： 調整後認股價格＝〔調整前認股價格×（１-每股退還現金金額占換發新 股票前最後交易日收盤價之比率）〕×(減資前已發行普通股股數÷減資 後已發行普通股股數) (三) 股票面額變更時： 調整後認股價格＝調整前認股價格 ×（股票面額變更前已發行普通股股 數÷股票面額變更後已發行普通股股數） 四、本條有關認股價格之調整，如相關法令、主管機關規定或本公司股票交易制 度有所變更時，應依調整時有效之相關法令及規定辦理。",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "行使認股權之程序",
+     "label_lengkap": "行使認股權之程序",
+     "satuan_label": null,
+     "value": "一、認股權人除依法暫停過戶期間及第二款所定暫停權利行使期間外，得依第五 條第二款第(一)目所定之權利期間行使認股權利，填具員工認股申請書，向 本公司之股務代理機構提出申請，並繳納股款至指定銀行，認股權人一經繳 款後， 即不得撤銷認股繳款，而逾期未繳款者，視為放棄其認股權利。 二、本員工認股權憑證，於以下期間不得行使認股權： (一) 當年度股東會召開前之法定停止過戶期間。 (二) 發行無償配股停止過戶日、現金股息停止過戶日或現金增資認股停止過 戶日前十五個營業日起，至權利分派基準日止。 (三) 辦理減資之減資基準日起至減資換發股票開始交易日前一日止。 (四) 決定合併基準日之董事會召開後至合併基準日止之期間；或決定分割基 準日之董事會召開後至分割基準日止之期間。 (五) 其他依事實發生之法定停止過戶期間。 三、本公司於確認收足股款後，指示本公司股務代理機構將員工認購之股數及員 工姓名登載於本公司股東名簿，並於五個營業日內以集保劃撥方式發給本公 司新發行之普通股股票，上述普通股股票自向認股權人交付之日起上市買賣。 四、本公司董事會授權董事長訂定發行新股增資基準日，至少每季向公司登記之 主管機關辦理資本額變更登記。 五、上述有關認股權人若為大陸地區設有戶籍之員工者，則由台灣地區代理人或 代為執行之。",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "認股後之權利義務",
+     "label_lengkap": "認股後之權利義務",
+     "satuan_label": null,
+     "value": "一、本公司依本辦法所交付之普通股，其權利義務與本公司普通股股票相同；認 股權人依本辦法所認購之股票及其交易所產生之稅賦，按主管機關所訂之相 關稅務規定辦理。 二、境外子公司員工持有本公司依本辦法所交付之普通股者，其表決權之行使， 另有規定外，不得有實質控制或影響公司經營管理之情事，並應由台灣地區 代理人或代表人出席為之。",
+     "sub": []
+    },
+    {
+     "no": 16,
+     "label": "附有轉換、交換或認股者，其換股基準日",
+     "label_lengkap": "附有轉換、交換或認股者，其換股基準日",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 17,
+     "label": "附有轉換、交換或認股者，對股權可能稀釋情形",
+     "label_lengkap": "附有轉換、交換或認股者，對股權可能稀釋情形",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 18,
+     "label": "其他重要約定事項",
+     "label_lengkap": "其他重要約定事項",
+     "satuan_label": null,
+     "value": "保密規定： 認股權人經授予員工認股權憑證後，應遵守保密規定，除法令或主管機關要求外 ，不得洩露被授予之認股權憑證相關內容及數量，若有違反之情事，依第五條第 二款第(三)目規定辦理。",
+     "sub": []
+    },
+    {
+     "no": 19,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "一、實施細則： 個別認股權人被授予員工認股權憑證及數量、認股權憑證行使、認股繳款、換 發股票、認股價格調整等事宜之相關作業及各該作業時間，將由本公司另行通 知認股權人。 二、其他重要事項： (一) 本辦法經董事會三分之二以上董事出席及出席董事超過二分之一同意，並 報經主管機關申報生效後執行，發行前修正時亦同。若於送件審核過程中 ，因主管機關審核之要求而須做修正時，授權董事長修正本辦法，嗣後再 提董事會經三分之二以上董事出席及出席董事超過二分之一同意追認後始 得發行。 (二) 本辦法如有未盡事宜，悉依相關法令規定或主管機關之要求辦理。",
+     "sub": []
+    }
+   ],
+   "body_chars": 6026,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#6955-2026-11-09-183708",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "7740",
+   "name": "熙特爾-創",
+   "date": "2026-11-09",
+   "time": "16:34:25",
+   "seq_no": "163425",
+   "subject": "公告本公司總裁任命案",
+   "clause_raw": "第8款",
+   "clause": 8,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:34:25",
+   "items": [
+    {
+     "no": 1,
+     "label": "人員變動別、財務主管、會計主管、公司治理主管、資訊安全長、研發主管、 內部稽核主管或訴訟及非訟代理人）",
+     "label_lengkap": "人員變動別（請輸入發言人、代理發言人、重要營運主管(如:執行長、營運長、 行銷長及策略長等)、財務主管、會計主管、公司治理主管、資訊安全長、研發主管、 內部稽核主管或訴訟及非訟代理人）",
+     "satuan_label": null,
+     "value": "總裁",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "發生變動日期",
+     "label_lengkap": "發生變動日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "異動情形",
+     "label_lengkap": "異動情形（請輸入「辭職」、「職務調整」、「資遣」、「退休」、「死亡」、「新 任」或「解任」）",
+     "satuan_label": null,
+     "value": "新任",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "生效日期",
+     "label_lengkap": "生效日期",
+     "satuan_label": null,
+     "value": "115/11/11",
+     "sub": []
+    }
+   ],
+   "body_chars": 251,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#7740-2026-11-09-163425",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "8466",
+   "name": "美吉吉-KY",
+   "date": "2026-11-09",
+   "time": "17:57:36",
+   "seq_no": "175736",
+   "subject": "公告本公司對子公司背書保證達公開發行公司資金貸與及背書保證 處理準則第二十五條第一項第二款、第三款之公告標準",
+   "clause_raw": "第22款",
+   "clause": 22,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:57:36",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "被背書保證之",
+     "label_lengkap": "被背書保證之",
+     "satuan_label": null,
+     "value": "(1)公司名稱:Opulent International Group Limited (2)與提供背書保證公司之關係: 為本公司100%持股之海外子公司 (3)背書保證之限額(仟元):4,311,640 (4)原背書保證之餘額(仟元):1,059,440 (5)本次新增背書保證之金額(仟元):9,744 (6)迄事實發生日止背書保證餘額(仟元):1,069,184 (7)被背書保證公司實際動支金額(仟元):0 (8)本次新增背書保證之原因: 銀行授信額度續約提供之背書保證",
+     "sub": [
+      {
+       "no": 1,
+       "label": "公司名稱",
+       "label_lengkap": "公司名稱",
+       "satuan_label": null,
+       "value": "Opulent International Group Limited"
+      },
+      {
+       "no": 2,
+       "label": "與提供背書保證公司之關係",
+       "label_lengkap": "與提供背書保證公司之關係",
+       "satuan_label": null,
+       "value": "為本公司100%持股之海外子公司"
+      },
+      {
+       "no": 3,
+       "label": "背書保證之限額",
+       "label_lengkap": "背書保證之限額(仟元)",
+       "satuan_label": "仟元",
+       "value": "4,311,640"
+      },
+      {
+       "no": 4,
+       "label": "原背書保證之餘額",
+       "label_lengkap": "原背書保證之餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "1,059,440"
+      },
+      {
+       "no": 5,
+       "label": "本次新增背書保證之金額",
+       "label_lengkap": "本次新增背書保證之金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "9,744"
+      },
+      {
+       "no": 6,
+       "label": "迄事實發生日止背書保證餘額",
+       "label_lengkap": "迄事實發生日止背書保證餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "1,069,184"
+      },
+      {
+       "no": 7,
+       "label": "被背書保證公司實際動支金額",
+       "label_lengkap": "被背書保證公司實際動支金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "0"
+      },
+      {
+       "no": 8,
+       "label": "本次新增背書保證之原因",
+       "label_lengkap": "本次新增背書保證之原因",
+       "satuan_label": null,
+       "value": "銀行授信額度續約提供之背書保證"
+      }
+     ]
+    },
+    {
+     "no": 3,
+     "label": "被背書保證公司提供擔保品之",
+     "label_lengkap": "被背書保證公司提供擔保品之",
+     "satuan_label": null,
+     "value": "(1)內容: 無 (2)價值(仟元):0",
+     "sub": [
+      {
+       "no": 1,
+       "label": "內容",
+       "label_lengkap": "內容",
+       "satuan_label": null,
+       "value": "無"
+      },
+      {
+       "no": 2,
+       "label": "價值",
+       "label_lengkap": "價值(仟元)",
+       "satuan_label": "仟元",
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "no": 4,
+     "label": "被背書保證公司最近期財務報表之",
+     "label_lengkap": "被背書保證公司最近期財務報表之",
+     "satuan_label": null,
+     "value": "(1)資本(仟元):276,703 (2)累積盈虧金額(仟元):312,865",
+     "sub": [
+      {
+       "no": 1,
+       "label": "資本",
+       "label_lengkap": "資本(仟元)",
+       "satuan_label": "仟元",
+       "value": "276,703"
+      },
+      {
+       "no": 2,
+       "label": "累積盈虧金額",
+       "label_lengkap": "累積盈虧金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "312,865"
+      }
+     ]
+    },
+    {
+     "no": 5,
+     "label": "解除背書保證責任之",
+     "label_lengkap": "解除背書保證責任之",
+     "satuan_label": null,
+     "value": "(1)條件: 銀行合約到期 (2)日期: 被背書保證公司償還借款之日",
+     "sub": [
+      {
+       "no": 1,
+       "label": "條件",
+       "label_lengkap": "條件",
+       "satuan_label": null,
+       "value": "銀行合約到期"
+      },
+      {
+       "no": 2,
+       "label": "日期",
+       "label_lengkap": "日期",
+       "satuan_label": null,
+       "value": "被背書保證公司償還借款之日"
+      }
+     ]
+    },
+    {
+     "no": 6,
+     "label": "背書保證之總限額",
+     "label_lengkap": "背書保證之總限額(仟元)",
+     "satuan_label": "仟元",
+     "value": "8,623,280",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "迄事實發生日為止，背書保證餘額",
+     "label_lengkap": "迄事實發生日為止，背書保證餘額(仟元)",
+     "satuan_label": "仟元",
+     "value": "4,710,930",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "迄事實發生日為止，A提供背書保證餘額占公開發行公司最近期財務報表淨值之 比率",
+     "label_lengkap": "迄事實發生日為止，A提供背書保證餘額占公開發行公司最近期財務報表淨值之 比率",
+     "satuan_label": null,
+     "value": "163.89",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "迄事實發生日為止，背書保證、長期投資及資金貸與餘額合計數達該公開發行公 司最近期財務報表淨值之比率",
+     "label_lengkap": "迄事實發生日為止，背書保證、長期投資及資金貸與餘額合計數達該公開發行公 司最近期財務報表淨值之比率",
+     "satuan_label": null,
+     "value": "163.89",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 629,
+   "dropped_pii": [],
+   "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap04_L#8466-2026-11-09-175736",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TWSE OpenAPI t187ap04_L (上市公司每日重大訊息)",
+   "pasar": "sii",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "1799",
+   "name": "易威",
+   "date": "2026-11-09",
+   "time": "15:54:52",
+   "seq_no": "155452",
+   "subject": "依公開發行公司資金貸與及背書保證 處理準則第二十二條第一項第三款公告",
+   "clause_raw": "第23款",
+   "clause": 23,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "15:54:52",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "接受資金貸與之",
+     "label_lengkap": "接受資金貸與之",
+     "satuan_label": null,
+     "value": "(1)公司名稱:Tulex Pharmaceuticals Inc. (2)與資金貸與他人公司之關係: 子公司。 (3)資金貸與之限額(仟元):2,257,567 (4)原資金貸與之餘額(仟元):162,400 (5)本次新增資金貸與之金額(仟元):32,480 (6)是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與:否 (7)迄事實發生日止資金貸與餘額(仟元):194,880 (8)本次新增資金貸與之原因: 營運需求",
+     "sub": [
+      {
+       "no": 1,
+       "label": "公司名稱",
+       "label_lengkap": "公司名稱",
+       "satuan_label": null,
+       "value": "Tulex Pharmaceuticals Inc."
+      },
+      {
+       "no": 2,
+       "label": "與資金貸與他人公司之關係",
+       "label_lengkap": "與資金貸與他人公司之關係",
+       "satuan_label": null,
+       "value": "子公司。"
+      },
+      {
+       "no": 3,
+       "label": "資金貸與之限額",
+       "label_lengkap": "資金貸與之限額(仟元)",
+       "satuan_label": "仟元",
+       "value": "2,257,567"
+      },
+      {
+       "no": 4,
+       "label": "原資金貸與之餘額",
+       "label_lengkap": "原資金貸與之餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "162,400"
+      },
+      {
+       "no": 5,
+       "label": "本次新增資金貸與之金額",
+       "label_lengkap": "本次新增資金貸與之金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "32,480"
+      },
+      {
+       "no": 6,
+       "label": "是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與",
+       "label_lengkap": "是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與",
+       "satuan_label": null,
+       "value": "否"
+      },
+      {
+       "no": 7,
+       "label": "迄事實發生日止資金貸與餘額",
+       "label_lengkap": "迄事實發生日止資金貸與餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "194,880"
+      },
+      {
+       "no": 8,
+       "label": "本次新增資金貸與之原因",
+       "label_lengkap": "本次新增資金貸與之原因",
+       "satuan_label": null,
+       "value": "營運需求"
+      }
+     ]
+    },
+    {
+     "no": 3,
+     "label": "接受資金貸與公司所提供擔保品之",
+     "label_lengkap": "接受資金貸與公司所提供擔保品之",
+     "satuan_label": null,
+     "value": "(1)內容: 無。 (2)價值(仟元):0",
+     "sub": [
+      {
+       "no": 1,
+       "label": "內容",
+       "label_lengkap": "內容",
+       "satuan_label": null,
+       "value": "無。"
+      },
+      {
+       "no": 2,
+       "label": "價值",
+       "label_lengkap": "價值(仟元)",
+       "satuan_label": "仟元",
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "no": 4,
+     "label": "接受資金貸與公司最近期財務報表之",
+     "label_lengkap": "接受資金貸與公司最近期財務報表之",
+     "satuan_label": null,
+     "value": "(1)資本(仟元):1,340,044 (2)累積盈虧金額(仟元):-1,251,607",
+     "sub": [
+      {
+       "no": 1,
+       "label": "資本",
+       "label_lengkap": "資本(仟元)",
+       "satuan_label": "仟元",
+       "value": "1,340,044"
+      },
+      {
+       "no": 2,
+       "label": "累積盈虧金額",
+       "label_lengkap": "累積盈虧金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "-1,251,607"
+      }
+     ]
+    },
+    {
+     "no": 5,
+     "label": "計息方式",
+     "label_lengkap": "計息方式",
+     "satuan_label": null,
+     "value": "依合約約定條件為之。",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "還款之",
+     "label_lengkap": "還款之",
+     "satuan_label": null,
+     "value": "(1)條件: 依合約約定條件為之。 (2)日期: 依合約約定條件為之。",
+     "sub": [
+      {
+       "no": 1,
+       "label": "條件",
+       "label_lengkap": "條件",
+       "satuan_label": null,
+       "value": "依合約約定條件為之。"
+      },
+      {
+       "no": 2,
+       "label": "日期",
+       "label_lengkap": "日期",
+       "satuan_label": null,
+       "value": "依合約約定條件為之。"
+      }
+     ]
+    },
+    {
+     "no": 7,
+     "label": "迄事實發生日為止，資金貸與餘額",
+     "label_lengkap": "迄事實發生日為止，資金貸與餘額(仟元)",
+     "satuan_label": "仟元",
+     "value": "194,880",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "迄事實發生日為止，資金貸與餘額占公開發行公司最近期財務報表淨值之比率",
+     "label_lengkap": "迄事實發生日為止，資金貸與餘額占公開發行公司最近期財務報表淨值之比率",
+     "satuan_label": null,
+     "value": "3.45",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "公司貸與他人資金之來源",
+     "label_lengkap": "公司貸與他人資金之來源",
+     "satuan_label": null,
+     "value": "母公司",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "(1)資金貸與對象為本公司97.94%持有之國外子公司。 (2)匯率係以115年10月31日 收盤之美金匯率32.48計算之。",
+     "sub": []
+    }
+   ],
+   "body_chars": 619,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#1799-2026-11-09-155452",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2067",
+   "name": "嘉鋼",
+   "date": "2026-11-09",
+   "time": "15:47:39",
+   "seq_no": "154739",
+   "subject": "公告本公司未來三個月預計之現金收支狀況，及上一月份 之銀行融資額度使用情形",
+   "clause_raw": "第53款",
+   "clause": 53,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "15:47:39",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "公司名稱",
+     "label_lengkap": "公司名稱",
+     "satuan_label": null,
+     "value": "嘉鋼精密工業股份有限公司",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "與公司關係",
+     "label_lengkap": "與公司關係(請輸入本公司或子公司)",
+     "satuan_label": null,
+     "value": "本公司",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "相互持股比例",
+     "label_lengkap": "相互持股比例",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "發生緣由",
+     "label_lengkap": "發生緣由",
+     "satuan_label": null,
+     "value": "依據櫃買中心證櫃監字第1060200795號函辦理 (1)未來三個月預計之現金收支狀況(單位：新台幣仟元) 項目 115年11月 115年12月 116年01月 -------- ---------- ---------- ---------- 期初金額 48,457 92,881 97,979 現金流入 157,935 119,099 123,144 現金流出 113,511 114,001 109,443 期末現金 92,881 97,979 111,680 (2)上一月份之銀行融資額度使用情形(單位：新台幣仟元) 項目 融資額度 已動撥金額 可用餘額 --------- ---------- ---------- ---------- 短期借款 903,647 900,647 3,000 中長期借款 310,525 310,525 0",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "因應措施",
+     "label_lengkap": "因應措施",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項(若事件發生或決議之主體係屬公開發行以上公司， 本則重大訊息同時符合證券交易法施行細則第7條第9款所定 對股東權益或證券價格有重大影響之事項)",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 851,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#2067-2026-11-09-154739",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "2067",
+   "name": "嘉鋼",
+   "date": "2026-11-09",
+   "time": "15:48:41",
+   "seq_no": "154841",
+   "subject": "本公司新增資金貸與金額達新臺幣一千萬元以上且達本公司 最近期財務報表淨值百分之二以上",
+   "clause_raw": "第23款",
+   "clause": 23,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "15:48:41",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "接受資金貸與之",
+     "label_lengkap": "接受資金貸與之",
+     "satuan_label": null,
+     "value": "(1)公司名稱:中佑精密材料股份有限公司 (2)與資金貸與他人公司之關係: 持股61%子公司 (3)資金貸與之限額(仟元):57,686 (4)原資金貸與之餘額(仟元):0 (5)本次新增資金貸與之金額(仟元):10,000 (6)是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與:是 (7)迄事實發生日止資金貸與餘額(仟元):10,000 (8)本次新增資金貸與之原因: 子公司營運週轉所需 (1)公司名稱:WISHING POND INTERNATION LIMITED (2)與資金貸與他人公司之關係: 持股100%子公司 (3)資金貸與之限額(仟元):57,686 (4)原資金貸與之餘額(仟元):0 (5)本次新增資金貸與之金額(仟元):40,000 (6)是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與:是 (7)迄事實發生日止資金貸與餘額(仟元):40,000 (8)本次新增資金貸與之原因: 子公司營運週轉所需",
+     "sub": [
+      {
+       "no": 1,
+       "label": "公司名稱",
+       "label_lengkap": "公司名稱",
+       "satuan_label": null,
+       "value": "中佑精密材料股份有限公司"
+      },
+      {
+       "no": 2,
+       "label": "與資金貸與他人公司之關係",
+       "label_lengkap": "與資金貸與他人公司之關係",
+       "satuan_label": null,
+       "value": "持股61%子公司"
+      },
+      {
+       "no": 3,
+       "label": "資金貸與之限額",
+       "label_lengkap": "資金貸與之限額(仟元)",
+       "satuan_label": "仟元",
+       "value": "57,686"
+      },
+      {
+       "no": 4,
+       "label": "原資金貸與之餘額",
+       "label_lengkap": "原資金貸與之餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "0"
+      },
+      {
+       "no": 5,
+       "label": "本次新增資金貸與之金額",
+       "label_lengkap": "本次新增資金貸與之金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "10,000"
+      },
+      {
+       "no": 6,
+       "label": "是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與",
+       "label_lengkap": "是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與",
+       "satuan_label": null,
+       "value": "是"
+      },
+      {
+       "no": 7,
+       "label": "迄事實發生日止資金貸與餘額",
+       "label_lengkap": "迄事實發生日止資金貸與餘額(仟元)",
+       "satuan_label": "仟元",
+       "value": "10,000"
+      },
+      {
+       "no": 8,
+       "label": "本次新增資金貸與之原因",
+       "label_lengkap": "本次新增資金貸與之原因",
+       "satuan_label": null,
+       "value": "子公司營運週轉所需 (1)公司名稱:WISHING POND INTERNATION LIMITED (2)與資金貸與他人公司之關係: 持股100%子公司 (3)資金貸與之限額(仟元):57,686 (4)原資金貸與之餘額(仟元):0 (5)本次新增資金貸與之金額(仟元):40,000 (6)是否為董事會授權董事長對同一貸與對象分次撥貸或循環動用之資金貸與:是 (7)迄事實發生日止資金貸與餘額(仟元):40,000 (8)本次新增資金貸與之原因: 子公司營運週轉所需"
+      }
+     ]
+    },
+    {
+     "no": 3,
+     "label": "接受資金貸與公司所提供擔保品之",
+     "label_lengkap": "接受資金貸與公司所提供擔保品之",
+     "satuan_label": null,
+     "value": "(1)內容: 無 (2)價值(仟元):0",
+     "sub": [
+      {
+       "no": 1,
+       "label": "內容",
+       "label_lengkap": "內容",
+       "satuan_label": null,
+       "value": "無"
+      },
+      {
+       "no": 2,
+       "label": "價值",
+       "label_lengkap": "價值(仟元)",
+       "satuan_label": "仟元",
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "no": 4,
+     "label": "接受資金貸與公司最近期財務報表之",
+     "label_lengkap": "接受資金貸與公司最近期財務報表之",
+     "satuan_label": null,
+     "value": "(1)資本(仟元):132,906 (2)累積盈虧金額(仟元):-20,031",
+     "sub": [
+      {
+       "no": 1,
+       "label": "資本",
+       "label_lengkap": "資本(仟元)",
+       "satuan_label": "仟元",
+       "value": "132,906"
+      },
+      {
+       "no": 2,
+       "label": "累積盈虧金額",
+       "label_lengkap": "累積盈虧金額(仟元)",
+       "satuan_label": "仟元",
+       "value": "-20,031"
+      }
+     ]
+    },
+    {
+     "no": 5,
+     "label": "計息方式",
+     "label_lengkap": "計息方式",
+     "satuan_label": null,
+     "value": "依貸放時本公司向一般金融機構借款之利率",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "還款之",
+     "label_lengkap": "還款之",
+     "satuan_label": null,
+     "value": "(1)條件: 到期還本 (2)日期: 一年期",
+     "sub": [
+      {
+       "no": 1,
+       "label": "條件",
+       "label_lengkap": "條件",
+       "satuan_label": null,
+       "value": "到期還本"
+      },
+      {
+       "no": 2,
+       "label": "日期",
+       "label_lengkap": "日期",
+       "satuan_label": null,
+       "value": "一年期"
+      }
+     ]
+    },
+    {
+     "no": 7,
+     "label": "迄事實發生日為止，資金貸與餘額",
+     "label_lengkap": "迄事實發生日為止，資金貸與餘額(仟元)",
+     "satuan_label": "仟元",
+     "value": "90,000",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "迄事實發生日為止，資金貸與餘額占公開發行公司最近期財務報表淨值之比率",
+     "label_lengkap": "迄事實發生日為止，資金貸與餘額占公開發行公司最近期財務報表淨值之比率",
+     "satuan_label": null,
+     "value": "46.80",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "公司貸與他人資金之來源",
+     "label_lengkap": "公司貸與他人資金之來源",
+     "satuan_label": null,
+     "value": "母公司",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "一、接受資金貸與公司最近期財務報表之資本(仟元)： (1) WISHING POND INTERNATION LIMITED：0 (2)中佑精密材料股份有限公司：132,906 二、接受資金貸與公司最近期財務報表之累積盈虧金額(仟元) ： (1) WISHING POND INTERNATION LIMITED：18,095 (2)中佑精密材料股份有限公司：-38,126",
+     "sub": [
+      {
+       "no": 1,
+       "label": "WISHING POND INTERNATION LIMITED",
+       "label_lengkap": "WISHING POND INTERNATION LIMITED",
+       "satuan_label": null,
+       "value": "0"
+      },
+      {
+       "no": 2,
+       "label": "中佑精密材料股份有限公司",
+       "label_lengkap": "中佑精密材料股份有限公司",
+       "satuan_label": null,
+       "value": "132,906 二、接受資金貸與公司最近期財務報表之累積盈虧金額(仟元) ： (1) WISHING POND INTERNATION LIMITED：18,095 (2)中佑精密材料股份有限公司：-38,126"
+      }
+     ]
+    }
+   ],
+   "body_chars": 958,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#2067-2026-11-09-154841",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "3293",
+   "name": "鈊象",
+   "date": "2026-11-09",
+   "time": "18:02:35",
+   "seq_no": "180235",
+   "subject": "董事會決議115年上半年不分派盈餘",
+   "clause_raw": "第14款",
+   "clause": 14,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "18:02:35",
+   "items": [
+    {
+     "no": 1,
+     "label": "董事會決議日期",
+     "label_lengkap": "董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "股利所屬年度",
+     "label_lengkap": "股利所屬年(季)度",
+     "satuan_label": null,
+     "value": "115年 上半年",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "股利所屬期間",
+     "label_lengkap": "股利所屬期間",
+     "satuan_label": null,
+     "value": "115/01/01 至 115/06/30",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "股東配發內容",
+     "label_lengkap": "股東配發內容",
+     "satuan_label": null,
+     "value": "(1)盈餘分配之現金股利(元/股)：0 (2)法定盈餘公積發放之現金(元/股)：0 (3)資本公積發放之現金(元/股)：0 (4)股東配發之現金(股利)總金額(元)：0 (5)盈餘轉增資配股(元/股)：0 (6)法定盈餘公積轉增資配股(元/股)：0 (7)資本公積轉增資配股(元/股)：0 (8)股東配股總股數(股)：0",
+     "sub": [
+      {
+       "no": 1,
+       "label": "盈餘分配之現金股利",
+       "label_lengkap": "盈餘分配之現金股利(元/股)",
+       "satuan_label": null,
+       "value": "0"
+      },
+      {
+       "no": 2,
+       "label": "法定盈餘公積發放之現金",
+       "label_lengkap": "法定盈餘公積發放之現金(元/股)",
+       "satuan_label": null,
+       "value": "0"
+      },
+      {
+       "no": 3,
+       "label": "資本公積發放之現金",
+       "label_lengkap": "資本公積發放之現金(元/股)",
+       "satuan_label": null,
+       "value": "0"
+      },
+      {
+       "no": 4,
+       "label": "股東配發之現金總金額",
+       "label_lengkap": "股東配發之現金(股利)總金額(元)",
+       "satuan_label": "元",
+       "value": "0"
+      },
+      {
+       "no": 5,
+       "label": "盈餘轉增資配股",
+       "label_lengkap": "盈餘轉增資配股(元/股)",
+       "satuan_label": null,
+       "value": "0"
+      },
+      {
+       "no": 6,
+       "label": "法定盈餘公積轉增資配股",
+       "label_lengkap": "法定盈餘公積轉增資配股(元/股)",
+       "satuan_label": null,
+       "value": "0"
+      },
+      {
+       "no": 7,
+       "label": "資本公積轉增資配股",
+       "label_lengkap": "資本公積轉增資配股(元/股)",
+       "satuan_label": null,
+       "value": "0"
+      },
+      {
+       "no": 8,
+       "label": "股東配股總股數",
+       "label_lengkap": "股東配股總股數(股)",
+       "satuan_label": null,
+       "value": "0"
+      }
+     ]
+    },
+    {
+     "no": 5,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無。",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "普通股每股面額欄位",
+     "label_lengkap": "普通股每股面額欄位",
+     "satuan_label": null,
+     "value": "新台幣10.0000元",
+     "sub": []
+    }
+   ],
+   "body_chars": 308,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#3293-2026-11-09-180235",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "3354",
+   "name": "律勝",
+   "date": "2026-11-09",
+   "time": "17:43:24",
+   "seq_no": "174324",
+   "subject": "公告本公司執行副總經理異動",
+   "clause_raw": "第8款",
+   "clause": 8,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:43:24",
+   "items": [
+    {
+     "no": 1,
+     "label": "人員變動別、財務主管、會計 主管、公司治理主管、資訊安全長、研發主管、內部稽核主管或訴訟及非 訟代理人）",
+     "label_lengkap": "人員變動別（請輸入發言人、代理發言人、重要營運主管 (如:執行長、營運長、行銷長及策略長等)、財務主管、會計 主管、公司治理主管、資訊安全長、研發主管、內部稽核主管或訴訟及非 訟代理人）",
+     "satuan_label": null,
+     "value": "執行副總經理",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "發生變動日期",
+     "label_lengkap": "發生變動日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "異動情形",
+     "label_lengkap": "異動情形（請輸入「辭職」、「職務調整」、「資遣」、 「退休」、「死亡」、「新任」或「解任」）",
+     "satuan_label": null,
+     "value": "辭職",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "生效日期",
+     "label_lengkap": "生效日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    }
+   ],
+   "body_chars": 246,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#3354-2026-11-09-174324",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "3540",
+   "name": "曜越",
+   "date": "2026-11-09",
+   "time": "17:32:31",
+   "seq_no": "173231",
+   "subject": "公告本公司董事會決議擬以私募方式辦理現金增資發行普通股案",
+   "clause_raw": "第11款",
+   "clause": 11,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:32:31",
+   "items": [
+    {
+     "no": 1,
+     "label": "董事會決議日期",
+     "label_lengkap": "董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "私募有價證券種類",
+     "label_lengkap": "私募有價證券種類",
+     "satuan_label": null,
+     "value": "普通股",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "私募對象及其與公司間關係",
+     "label_lengkap": "私募對象及其與公司間關係",
+     "satuan_label": null,
+     "value": "本次私募之應募人，以符合證券交易法第43條之6及金融監督管理委員會112年9月12日 金管證發字第1120383220號令等相關函令規定之特定人，並以策略性投資人為限。 目前尚無洽定之應募人，實際洽定應募人之相關事宜，擬授權董事會全權處理。",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "私募股數或張數",
+     "label_lengkap": "私募股數或張數",
+     "satuan_label": null,
+     "value": "發行股數不超過15,000仟股",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "得私募額度",
+     "label_lengkap": "得私募額度",
+     "satuan_label": null,
+     "value": "不超過15,000仟股之普通股額度內，每股面額新台幣10元，自股東臨時會決議 之日起一年內，一次或分次(最多不超過三次)辦理。",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "私募價格訂定之依據及合理性",
+     "label_lengkap": "私募價格訂定之依據及合理性",
+     "satuan_label": null,
+     "value": "(1)本次私募普通股價格之訂定，以不低於參考價格之八成為訂價依據。 參考價格係以下列二基準計算價格較高者定之： A.以定價日前1、3或5個營業日，擇一計算普通股收盤價簡單算數平均數 扣除無償配股除權及配息，並加回減資反除權後之股價。 B.定價日前30個營業日普通股收盤價簡單算數平均數扣除無償配股除權及 配息，並加回減資反除權後之股價。 (2)實際定價日及實際私募價格，擬提請股東臨時會授權董事會於不低於股東臨 時會決議成數之範圍內，視日後洽特定人情形及市場狀況決定之。 (3)本次私募價格之訂定係依主管機關法令規定辦理，並考量證券交易法對私募 有價證券有三年轉讓限制、公司經營績效、未來展望及普通股市價，應屬合理。 依據私募價格訂定原則，若私募普通股價格低於股票面額而造成累積虧損增加 對股東權益產生影響，將視公司未來營運及市場狀況，採未來年度產生之盈餘 或辦理減資以彌補虧損。",
+     "sub": [
+      {
+       "no": 1,
+       "label": "本次私募普通股價格之訂定，以不低於參考價格之八成為訂價依據。 參考價格係以下列二基準計算價格較高者定之",
+       "label_lengkap": "本次私募普通股價格之訂定，以不低於參考價格之八成為訂價依據。 參考價格係以下列二基準計算價格較高者定之",
+       "satuan_label": null,
+       "value": "A.以定價日前1、3或5個營業日，擇一計算普通股收盤價簡單算數平均數 扣除無償配股除權及配息，並加回減資反除權後之股價。 B.定價日前30個營業日普通股收盤價簡單算數平均數扣除無償配股除權及 配息，並加回減資反除權後之股價。"
+      }
+     ]
+    },
+    {
+     "no": 7,
+     "label": "本次私募資金用途",
+     "label_lengkap": "本次私募資金用途",
+     "satuan_label": null,
+     "value": "為尋求與國內外產業大廠進行策略聯盟，同時充實營運週轉金及因應本公司未來 發展之資金需求。",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "不採用公開募集之理由",
+     "label_lengkap": "不採用公開募集之理由",
+     "satuan_label": null,
+     "value": "考量籌資時效性、可行性、發行成本及資本市場狀況，私募方式較能於短期內 確實取得所需資金；且私募有價證券於三年內不得自由轉讓，可確保應募人與 本公司之長期關係，故不採用公開募集，擬以私募方式辦理。",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "獨立董事反對或保留意見",
+     "label_lengkap": "獨立董事反對或保留意見",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "實際定價日",
+     "label_lengkap": "實際定價日",
+     "satuan_label": null,
+     "value": "俟股東臨時股通過後，授權董事會日後洽特定人情形及市場狀況決定之。",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "參考價格",
+     "label_lengkap": "參考價格",
+     "satuan_label": null,
+     "value": "俟股東臨時股通過後，授權董事會日後洽特定人情形及市場狀況決定之。",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "實際私募價格、轉換或認購價格",
+     "label_lengkap": "實際私募價格、轉換或認購價格",
+     "satuan_label": null,
+     "value": "俟股東臨時股通過後，授權董事會於不低於股東臨時會決議成數之範圍內， 視日後洽特定人情形及市場狀況決定之。",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "本次私募新股之權利義務",
+     "label_lengkap": "本次私募新股之權利義務",
+     "satuan_label": null,
+     "value": "與本公司已發行之普通股相同，採無實體方式發行，惟依證券交易法 第43條之8規定，本次私募普通股，除符合特定情形外，於交付日起 滿三年後始得自由轉讓，並於私募普通股交付日滿三年後，擬依相關 法令規定申報補辦公開發行及上櫃交易。",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "附有轉換、交換或認股者，其換股基準日",
+     "label_lengkap": "附有轉換、交換或認股者，其換股基準日",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "附有轉換、交換或認股者，對股權可能稀釋情形",
+     "label_lengkap": "附有轉換、交換或認股者，對股權可能稀釋情形",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 16,
+     "label": "附有轉換或認股者，於私募公司債交付且假設全數轉換或認購普通股後對上櫃普通股 股權比率之可能影響",
+     "label_lengkap": "附有轉換或認股者，於私募公司債交付且假設全數轉換或認購普通股後對上櫃普通股 股權比率之可能影響（上櫃普通股數A、A/已發行普通股）",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 17,
+     "label": "前項預計上櫃普通股未達500萬股且未達25%者，請說明股權流通性偏低之因應措施",
+     "label_lengkap": "前項預計上櫃普通股未達500萬股且未達25%者，請說明股權流通性偏低之因應措施",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 18,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "(1)如預計無法於期限內辦理完成分次私募事宜，或於剩餘期限內已無繼續分次私募 之計畫，原計畫仍屬可行，則視為已收足私募有價證券之股款。 (2)董事會決議辦理本次私募普通股前一年內，本公司經營權並無發生重大變動，且 預計辦理本次私募普通股引進之策略性投資人，將以私募普通股交付日起一年內經營 權不發生重大變動為原則。 (3)本次私募計畫之發行條件、計畫項目、發行價格、訂價日、發行股數及其他未盡 事宜等，若因未來法令或主管機關指示修正或基於營運評估或因客觀環境需要變更時， 擬請股東臨時會授權董事會全權處理之。 (4)為辦理本次私募計畫，擬授權董事長代表本公司辦理相關事宜並簽署相關文件。 如有其他未盡事宜，授權董事長全權處理之。",
+     "sub": []
+    }
+   ],
+   "body_chars": 1681,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#3540-2026-11-09-173231",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "3666",
+   "name": "光耀",
+   "date": "2026-11-09",
+   "time": "18:40:35",
+   "seq_no": "184035",
+   "subject": "公告本公司董事會決議召開115年第三次股東臨時會事宜 (變更開會地點及新增議案)",
+   "clause_raw": "第17款",
+   "clause": 17,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "18:40:35",
+   "items": [
+    {
+     "no": 1,
+     "label": "董事會決議日期",
+     "label_lengkap": "董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "股東臨時會召開日期",
+     "label_lengkap": "股東臨時會召開日期",
+     "satuan_label": null,
+     "value": "115/12/03",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "股東臨時會召開地點",
+     "label_lengkap": "股東臨時會召開地點",
+     "satuan_label": null,
+     "value": "桃園市桃園區新埔六街95號26(R)樓",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "股東臨時會召開方式",
+     "label_lengkap": "股東臨時會召開方式(實體股東會/視訊輔助股東會/視訊股東會)",
+     "satuan_label": null,
+     "value": "實體股東會",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "召集事由一",
+     "label_lengkap": "召集事由一",
+     "satuan_label": null,
+     "value": "報告事項 (1)：辦理私募普通股執行情形報告。",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "召集事由二",
+     "label_lengkap": "召集事由二",
+     "satuan_label": null,
+     "value": "承認事項 (1)：本公司114年度私募資金用途變更追認案。",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "召集事由三",
+     "label_lengkap": "召集事由三",
+     "satuan_label": null,
+     "value": "討論事項 (1)：擬以低於實際買回股份之平均價格轉讓予員工案。 (2)：本公司辦理私募有價證券案。 (3)：本公司擬投資及取得大牛牛建設股份有限公司股權案。 (4)：修訂本公司「公司章程」案。",
+     "sub": [
+      {
+       "no": 1,
+       "label": "",
+       "label_lengkap": "",
+       "satuan_label": null,
+       "value": "擬以低於實際買回股份之平均價格轉讓予員工案。"
+      },
+      {
+       "no": 2,
+       "label": "",
+       "label_lengkap": "",
+       "satuan_label": null,
+       "value": "本公司辦理私募有價證券案。"
+      },
+      {
+       "no": 3,
+       "label": "",
+       "label_lengkap": "",
+       "satuan_label": null,
+       "value": "本公司擬投資及取得大牛牛建設股份有限公司股權案。"
+      },
+      {
+       "no": 4,
+       "label": "",
+       "label_lengkap": "",
+       "satuan_label": null,
+       "value": "修訂本公司「公司章程」案。"
+      }
+     ]
+    },
+    {
+     "no": 8,
+     "label": "臨時動議",
+     "label_lengkap": "臨時動議",
+     "satuan_label": null,
+     "value": "",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "停止過戶起始日期",
+     "label_lengkap": "停止過戶起始日期",
+     "satuan_label": null,
+     "value": "115/11/04",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "停止過戶截止日期",
+     "label_lengkap": "停止過戶截止日期",
+     "satuan_label": null,
+     "value": "115/12/03",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 367,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#3666-2026-11-09-184035",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "4305",
+   "name": "世坤",
+   "date": "2026-11-09",
+   "time": "13:37:10",
+   "seq_no": "133710",
+   "subject": "公告本公司董事會通過115年第三季財務報告",
+   "clause_raw": "第31款",
+   "clause": 31,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "13:37:10",
+   "items": [
+    {
+     "no": 1,
+     "label": "提報董事會或經董事會決議日期",
+     "label_lengkap": "提報董事會或經董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "審計委員會通過日期",
+     "label_lengkap": "審計委員會通過日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "財務報告或年度自結財務資訊報導期間 起訖日期",
+     "label_lengkap": "財務報告或年度自結財務資訊報導期間 起訖日期(XXX/XX/XX~XXX/XX/XX)",
+     "satuan_label": null,
+     "value": "115/01/01~115/09/30",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "1月1日累計至本期止營業收入",
+     "label_lengkap": "1月1日累計至本期止營業收入(仟元)",
+     "satuan_label": "仟元",
+     "value": "723491",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "1月1日累計至本期止營業毛利",
+     "label_lengkap": "1月1日累計至本期止營業毛利(毛損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "230340",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "1月1日累計至本期止營業利益",
+     "label_lengkap": "1月1日累計至本期止營業利益(損失) (仟元)",
+     "satuan_label": "仟元",
+     "value": "158643",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "1月1日累計至本期止稅前淨利",
+     "label_lengkap": "1月1日累計至本期止稅前淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "199488",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "1月1日累計至本期止本期淨利",
+     "label_lengkap": "1月1日累計至本期止本期淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "159682",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "1月1日累計至本期止歸屬於母公司業主淨利",
+     "label_lengkap": "1月1日累計至本期止歸屬於母公司業主淨利(損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "159682",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "1月1日累計至本期止基本每股盈餘",
+     "label_lengkap": "1月1日累計至本期止基本每股盈餘(損失) (元)",
+     "satuan_label": "元",
+     "value": "2.90",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "期末總資產",
+     "label_lengkap": "期末總資產(仟元)",
+     "satuan_label": "仟元",
+     "value": "1431538",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "期末總負債",
+     "label_lengkap": "期末總負債(仟元)",
+     "satuan_label": "仟元",
+     "value": "187926",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "期末歸屬於母公司業主之權益",
+     "label_lengkap": "期末歸屬於母公司業主之權益(仟元)",
+     "satuan_label": "仟元",
+     "value": "1243612",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無。",
+     "sub": []
+    }
+   ],
+   "body_chars": 429,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#4305-2026-11-09-133710",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "4503",
+   "name": "金雨",
+   "date": "2026-11-09",
+   "time": "17:16:22",
+   "seq_no": "171622",
+   "subject": "本公司業務大幅縮減，擬依法辦理大量解僱勞工並提報 「解僱計畫書」。",
+   "clause_raw": "第3款",
+   "clause": 3,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:16:22",
+   "items": [
+    {
+     "no": 1,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "事件緣由",
+     "label_lengkap": "事件緣由",
+     "satuan_label": null,
+     "value": "本公司於民國115年8月6日依規定發佈重訊，主因為主要客戶之一樺漢 科技股份有限公司採購等相關合約擬於民國115年8月15日到期不再展延續約，因該 客戶於民國114年度佔本公司個體財務報告銷售額之59.69%，為本公司主要業務來源 之一，合約終止造成業務大幅縮減，及民國115年8月10日發佈重訊，本公司前營運 中心相關經理人等於本公司任職中及離職後，經初步調查疑有嚴重違反商業判斷、 公司治理原則及營業秘密遵守等情事，致本公司既有客戶訂單遭不當移轉至其他公司 (此部分相關法律責任已經公司財務、法務部門調查彙整中)，經評估短期內產能利用 率將下降，且替代訂單之取得時程、產品組合尚需相當時程，為因應短期內核心產能 與業務量的縮減，並維持公司長期經營之健全性，強化公司後續競爭力，有進行 人力結構調整之必要，並依規定辦理大量解僱員工事宜。 為保障受影響同仁權益，公司已依相關法令編製解僱計畫書。後續並依大量解僱勞工 保護法、勞動基準法、勞工退休金條例及相關法令辦理。另相關經理人等自本公司 任職中及離職後，疑有嚴重違反商業判斷、公司治理原則及營業秘密遵守等情事， 致本公司既有權益受損部分，公司相關部門將齊備事證，委請律師研議後，依法進行 法律程序救濟，保障公司既有利益。 預計解僱通報日：民國115年11月10日。 本案業經民國115年11月9日審計委員會審議通過後，提請董事會討論決議通過。",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "最近三年度與減產後之產能比較",
+     "label_lengkap": "最近三年度與減產後之產能比較",
+     "satuan_label": null,
+     "value": "112年度：7,000台 113年度：7,000台 114年度：24,000台",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "最近三年度與減產後之產量比較",
+     "label_lengkap": "最近三年度與減產後之產量比較",
+     "satuan_label": null,
+     "value": "112年度：2,257台 113年度：3,860台 114年度：14,080台",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "全部或部分停工項目之產能",
+     "label_lengkap": "全部或部分停工項目之產能",
+     "satuan_label": null,
+     "value": "17,000台/年。",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "全部或部分停工項目之產量",
+     "label_lengkap": "全部或部分停工項目之產量",
+     "satuan_label": null,
+     "value": "12,818台/年。",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "全部或部分停工項目占公司營收比例",
+     "label_lengkap": "全部或部分停工項目占公司營收比例",
+     "satuan_label": null,
+     "value": "占114年個體營收59.69%。",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "出租之公司廠房或主要設備明細",
+     "label_lengkap": "出租之公司廠房或主要設備明細",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "出租之公司廠房或主要設備占總資產比例",
+     "label_lengkap": "出租之公司廠房或主要設備占總資產比例",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "質押之資產明細",
+     "label_lengkap": "質押之資產明細",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "質押之資產占總資產比例",
+     "label_lengkap": "質押之資產占總資產比例",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "決策過程",
+     "label_lengkap": "決策過程",
+     "satuan_label": null,
+     "value": "本案業經民國115年11月9日審計委員會審議通過後，提請董事會 討論決議通過。",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項(若事件發生或決議之主體係屬公開發行以上公司， 本則重大訊息同時符合證券交易法施行細則第7條第3款所定對 股東權益或證券價格有重大影響之事項)",
+     "satuan_label": null,
+     "value": "無。",
+     "sub": []
+    }
+   ],
+   "body_chars": 1045,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#4503-2026-11-09-171622",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "4726",
+   "name": "永昕",
+   "date": "2026-11-09",
+   "time": "19:22:55",
+   "seq_no": "192255",
+   "subject": "公告本公司董事會通過115年第三季合併財務報告",
+   "clause_raw": "第31款",
+   "clause": 31,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "19:22:55",
+   "items": [
+    {
+     "no": 1,
+     "label": "提報董事會或經董事會決議日期",
+     "label_lengkap": "提報董事會或經董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "審計委員會通過日期",
+     "label_lengkap": "審計委員會通過日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "財務報告或年度自結財務資訊報導期間 起訖日期",
+     "label_lengkap": "財務報告或年度自結財務資訊報導期間 起訖日期(XXX/XX/XX~XXX/XX/XX)",
+     "satuan_label": null,
+     "value": "115/01/01~115/09/30",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "1月1日累計至本期止營業收入",
+     "label_lengkap": "1月1日累計至本期止營業收入(仟元)",
+     "satuan_label": "仟元",
+     "value": "708,102",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "1月1日累計至本期止營業毛利",
+     "label_lengkap": "1月1日累計至本期止營業毛利(毛損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(49,754)",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "1月1日累計至本期止營業利益",
+     "label_lengkap": "1月1日累計至本期止營業利益(損失) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(209,356)",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "1月1日累計至本期止稅前淨利",
+     "label_lengkap": "1月1日累計至本期止稅前淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(250,713)",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "1月1日累計至本期止本期淨利",
+     "label_lengkap": "1月1日累計至本期止本期淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(241,520)",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "1月1日累計至本期止歸屬於母公司業主淨利",
+     "label_lengkap": "1月1日累計至本期止歸屬於母公司業主淨利(損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(241,520)",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "1月1日累計至本期止基本每股盈餘",
+     "label_lengkap": "1月1日累計至本期止基本每股盈餘(損失) (元)",
+     "satuan_label": "元",
+     "value": "(1.17)",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "期末總資產",
+     "label_lengkap": "期末總資產(仟元)",
+     "satuan_label": "仟元",
+     "value": "3,261,052",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "期末總負債",
+     "label_lengkap": "期末總負債(仟元)",
+     "satuan_label": "仟元",
+     "value": "1,891,184",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "期末歸屬於母公司業主之權益",
+     "label_lengkap": "期末歸屬於母公司業主之權益(仟元)",
+     "satuan_label": "仟元",
+     "value": "1,369,868",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 452,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#4726-2026-11-09-192255",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "4749",
+   "name": "新應材",
+   "date": "2026-11-09",
+   "time": "17:23:44",
+   "seq_no": "172344",
+   "subject": "公告本公司董事會決議申購土地",
+   "clause_raw": "第20款",
+   "clause": 20,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:23:44",
+   "items": [
+    {
+     "no": 1,
+     "label": "標的物之名稱及性質",
+     "label_lengkap": "標的物之名稱及性質（如坐落台中市北區ＸＸ段ＸＸ小段土地）",
+     "satuan_label": null,
+     "value": "彰濱產業園區鹿港區鹿海段31-213及31-214(暫編)地號共2筆土地",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/9~115/11/9",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "董事會通過日期",
+     "label_lengkap": "董事會通過日期",
+     "satuan_label": null,
+     "value": "民國115年11月9日",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "其他核決日期",
+     "label_lengkap": "其他核決日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "交易單位數量、每單位價格及交易總金額",
+     "label_lengkap": "交易單位數量（如ＸＸ平方公尺，折合ＸＸ坪）、每單位價格及交易總金額",
+     "satuan_label": null,
+     "value": "交易數量：申購面積約27,768.64平方公尺(約8,400坪) 每單位價格：平均單價預計7.39萬元/坪 交易總金額：預計新台幣6.2億元(鹿海段31-213及31-214土地均申購成功)",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "交易相對人為關係人者，並應公告選定關係人為交易對象之原因及前次移轉之 所有人、前次移轉之所有人與公司及交易相對人間相互之關係、前次移轉日期 及移轉金額",
+     "label_lengkap": "交易相對人為關係人者，並應公告選定關係人為交易對象之原因及前次移轉之 所有人、前次移轉之所有人與公司及交易相對人間相互之關係、前次移轉日期 及移轉金額",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "交易標的最近五年內所有權人曾為公司之關係人者，尚應公告關係 人之取得及處分日期、價格及交易當時與公司之關係",
+     "label_lengkap": "交易標的最近五年內所有權人曾為公司之關係人者，尚應公告關係 人之取得及處分日期、價格及交易當時與公司之關係",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "預計處分利益",
+     "label_lengkap": "預計處分利益（或損失）（取得資產者不適用）（遞延者應列表說明 認列情形）",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "交付或付款條件、契約限制條款及其他重要約定 事項",
+     "label_lengkap": "交付或付款條件（含付款期間及金額）、契約限制條款及其他重要約定 事項",
+     "satuan_label": null,
+     "value": "第一期土地價款(20%)預計2026年11月繳交 第二期土地價款(80%)預計2027年11月繳交",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "本次交易之決定方式、價格決定之參考依據及 決策單位",
+     "label_lengkap": "本次交易之決定方式（如招標、比價或議價）、價格決定之參考依據及 決策單位",
+     "satuan_label": null,
+     "value": "本次交易之決定方式：依經濟部產業發展署申購條約 決策單位：本公司董事會",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "專業估價者事務所或公司名稱及其估價金額",
+     "label_lengkap": "專業估價者事務所或公司名稱及其估價金額",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "專業估價師開業證書字號",
+     "label_lengkap": "專業估價師開業證書字號",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "估價報告是否為限定價格、特定價格或特殊價格",
+     "label_lengkap": "估價報告是否為限定價格、特定價格或特殊價格",
+     "satuan_label": null,
+     "value": "否或不適用",
+     "sub": []
+    },
+    {
+     "no": 16,
+     "label": "是否尚未取得估價報告",
+     "label_lengkap": "是否尚未取得估價報告",
+     "satuan_label": null,
+     "value": "否或不適用",
+     "sub": []
+    },
+    {
+     "no": 17,
+     "label": "尚未取得估價報告之原因",
+     "label_lengkap": "尚未取得估價報告之原因",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 18,
+     "label": "估價結果有重大差異時，其差異原因及會計師意見",
+     "label_lengkap": "估價結果有重大差異時，其差異原因及會計師意見",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 19,
+     "label": "會計師事務所名稱",
+     "label_lengkap": "會計師事務所名稱",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 21,
+     "label": "會計師開業證書字號",
+     "label_lengkap": "會計師開業證書字號",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 22,
+     "label": "經紀人及經紀費用",
+     "label_lengkap": "經紀人及經紀費用",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 23,
+     "label": "取得或處分之具體目的或用途",
+     "label_lengkap": "取得或處分之具體目的或用途",
+     "satuan_label": null,
+     "value": "為業務發展與特殊新產品開發需求",
+     "sub": []
+    },
+    {
+     "no": 24,
+     "label": "本次交易表示異議之董事之意見",
+     "label_lengkap": "本次交易表示異議之董事之意見",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    },
+    {
+     "no": 25,
+     "label": "本次交易為關係人交易",
+     "label_lengkap": "本次交易為關係人交易",
+     "satuan_label": null,
+     "value": "否",
+     "sub": []
+    },
+    {
+     "no": 26,
+     "label": "監察人承認或審計委員會同意日期",
+     "label_lengkap": "監察人承認或審計委員會同意日期",
+     "satuan_label": null,
+     "value": "1.民國115年11月09日",
+     "sub": []
+    },
+    {
+     "no": 27,
+     "label": "本次交易係向關係人取得不動產或其使用權資產",
+     "label_lengkap": "本次交易係向關係人取得不動產或其使用權資產",
+     "satuan_label": null,
+     "value": "否",
+     "sub": []
+    },
+    {
+     "no": 28,
+     "label": "依「公開發行公司取得或處分資產處理準則」第十六條規定 評估之價格",
+     "label_lengkap": "依「公開發行公司取得或處分資產處理準則」第十六條規定 評估之價格",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 29,
+     "label": "依前項評估之價格較交易價格為低者，依同準則第十七條規 定評估之價格",
+     "label_lengkap": "依前項評估之價格較交易價格為低者，依同準則第十七條規 定評估之價格",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 30,
+     "label": "前已就同一件事件發布重大訊息日期",
+     "label_lengkap": "前已就同一件事件發布重大訊息日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 31,
+     "label": "其他敘明事項",
+     "label_lengkap": "其他敘明事項",
+     "satuan_label": null,
+     "value": "董事會授權董事長全權處理購置土地相關事宜。",
+     "sub": []
+    }
+   ],
+   "body_chars": 1249,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#4749-2026-11-09-172344",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "4903",
+   "name": "聯光通",
+   "date": "2026-11-09",
+   "time": "14:14:19",
+   "seq_no": "141419",
+   "subject": "公告本公司董事會決議辦理現金增資發行新股",
+   "clause_raw": "第11款",
+   "clause": 11,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "14:14:19",
+   "items": [
+    {
+     "no": 1,
+     "label": "董事會決議日期",
+     "label_lengkap": "董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "增資資金來源",
+     "label_lengkap": "增資資金來源",
+     "satuan_label": null,
+     "value": "現金增資發行新股",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "是否採總括申報發行新股",
+     "label_lengkap": "是否採總括申報發行新股(是，請併敘明預定發行期間/否)",
+     "satuan_label": null,
+     "value": "否",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "全案發行總金額及股數",
+     "label_lengkap": "全案發行總金額及股數(如屬盈餘或公積轉增資，發行股數則不含配發給員工部分)",
+     "satuan_label": null,
+     "value": "按面額計發行總金額100,000,000元，發行股數：普通股10,000,000股",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "採總括申報發行新股案件，本次發行金額及股數",
+     "label_lengkap": "採總括申報發行新股案件，本次發行金額及股數",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "採總括申報發行新股案件，本次發行後，剩餘之金額及股數餘額",
+     "label_lengkap": "採總括申報發行新股案件，本次發行後，剩餘之金額及股數餘額",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "每股面額",
+     "label_lengkap": "每股面額",
+     "satuan_label": null,
+     "value": "新台幣10元",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "發行價格",
+     "label_lengkap": "發行價格",
+     "satuan_label": null,
+     "value": "本次辦理現金增資發行普通股之發行價格，係依「中華民國證券 商業同業公會承銷商會員輔導發行公司募集與發行有價證券自律規則」(以下 簡稱「承銷商自律規則」)第六條規定辦理，暫定發行價格為新台幣50元，為 因應市場變化，董事會授權董事長於符合前述法令規定，向金管會申報案件 及除權交易日前五個營業日，皆不得低於其前一、三、五個營業日擇一計 算之普通股收盤價簡單算術平均數扣除無償配股除權(或減資除權)及除息 後平均股價之七成範圍。實際發行價格俟本現金增資案向金管會申報生 效後，董事會授權董事長依承銷商自律規則第六條規定及其他相關法令規 定辦理。",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "員工認購股數或配發金額",
+     "label_lengkap": "員工認購股數或配發金額",
+     "satuan_label": null,
+     "value": "本次現金增資發行普通股依公司法第267條之規 定，保留實際增資發行新股總數之10%~15%，由符合資格之員工認購。",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "公開銷售股數",
+     "label_lengkap": "公開銷售股數",
+     "satuan_label": null,
+     "value": "依證券交易法第28條之一規定，提撥實際增資發行新股 總額之10%，採公開申購之方式對外公開承銷。",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "原股東認購或無償配發比例",
+     "label_lengkap": "原股東認購或無償配發比例(請註明暫定每仟股認購或配發股數)",
+     "satuan_label": null,
+     "value": "本次增資發行新股總數之75%~80%，將由原股東按增資認股基準日之股東 名簿所載之股東持股比例認購。",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "畸零股及逾期未認購股份之處理方式",
+     "label_lengkap": "畸零股及逾期未認購股份之處理方式",
+     "satuan_label": null,
+     "value": "認購不足一股之畸零股，得由 股東自停止過戶日起五日內，逕向本公司股務代理機構辦理併湊成整股認 購。 其併湊不足一股之畸零股及原股東、員工放棄認購或認購不足，以及逾期 未申報併湊之部分，擬授權董事長洽特定人按發行價格認購之。",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "本次發行新股之權利義務",
+     "label_lengkap": "本次發行新股之權利義務",
+     "satuan_label": null,
+     "value": "其權利義務與原已發行之普通股股份相同。",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "本次增資資金用途",
+     "label_lengkap": "本次增資資金用途",
+     "satuan_label": null,
+     "value": "償還銀行借款及充實營運資金。",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "現金減資後再行募資之合理性及必要性",
+     "label_lengkap": "現金減資後再行募資之合理性及必要性 (募資當年度及前一年度有辦理現金減資者適用)",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 16,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "(1)因資本市場籌資環境變化快速，為掌握訂定發行新股及實際發行作業之時 效，本次現金增資計畫、發行程序及相關事項，包括但不限於議定發行價 格、實際發行股數、發行條件、員工認購總數、計畫項目、募集金額、資 金運用計畫、預計進度及預計可能產生效益、增資認股基準日、增資基準 日、簽署並交付一切有關本次現金增資之相關契約及文件及其他相關事 項，擬請授權董事長或其指定之人全權處理。 (2)未來如遇法令變更、經主管機關修正或有未盡事宜，或因市場狀況需要或 因客觀環境而需要變更時，亦請授權董事長或其指定之人全權處理。 (3)本次現金增資發行普通股案，如每股實際發行價格因市場變動而調整，致 募集資金不足時，其差額將以自有資金、銀行借款或其他籌資工具因應； 惟若致募集資金增加時，超過部分則作為本公司充實營運資金之用。",
+     "sub": []
+    }
+   ],
+   "body_chars": 1332,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#4903-2026-11-09-141419",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "5398",
+   "name": "慕康生醫",
+   "date": "2026-11-09",
+   "time": "16:15:31",
+   "seq_no": "161531",
+   "subject": "公告本公司發言人及代理發言人異動",
+   "clause_raw": "第8款",
+   "clause": 8,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:15:31",
+   "items": [
+    {
+     "no": 1,
+     "label": "人員變動別、財務主管、會計 主管、公司治理主管、資訊安全長、研發主管、內部稽核主管或訴訟及非 訟代理人）",
+     "label_lengkap": "人員變動別（請輸入發言人、代理發言人、重要營運主管 (如:執行長、營運長、行銷長及策略長等)、財務主管、會計 主管、公司治理主管、資訊安全長、研發主管、內部稽核主管或訴訟及非 訟代理人）",
+     "satuan_label": null,
+     "value": "發言人、代理發言人",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "發生變動日期",
+     "label_lengkap": "發生變動日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "異動情形",
+     "label_lengkap": "異動情形（請輸入「辭職」、「職務調整」、「資遣」、 「退休」、「死亡」、「新任」或「解任」）",
+     "satuan_label": null,
+     "value": "職務調整",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "生效日期",
+     "label_lengkap": "生效日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    }
+   ],
+   "body_chars": 345,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#5398-2026-11-09-161531",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "6535",
+   "name": "順藥",
+   "date": "2026-11-09",
+   "time": "16:40:06",
+   "seq_no": "164006",
+   "subject": "本公司董事會通過115年第3季合併財務報告",
+   "clause_raw": "第31款",
+   "clause": 31,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:40:06",
+   "items": [
+    {
+     "no": 1,
+     "label": "提報董事會或經董事會決議日期",
+     "label_lengkap": "提報董事會或經董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "審計委員會通過日期",
+     "label_lengkap": "審計委員會通過日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "財務報告或年度自結財務資訊報導期間 起訖日期",
+     "label_lengkap": "財務報告或年度自結財務資訊報導期間 起訖日期(XXX/XX/XX~XXX/XX/XX)",
+     "satuan_label": null,
+     "value": "115/01/01~115/09/30",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "1月1日累計至本期止營業收入",
+     "label_lengkap": "1月1日累計至本期止營業收入(仟元)",
+     "satuan_label": "仟元",
+     "value": "18,958",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "1月1日累計至本期止營業毛利",
+     "label_lengkap": "1月1日累計至本期止營業毛利(毛損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "10,986",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "1月1日累計至本期止營業利益",
+     "label_lengkap": "1月1日累計至本期止營業利益(損失) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(213,673)",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "1月1日累計至本期止稅前淨利",
+     "label_lengkap": "1月1日累計至本期止稅前淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(342,488)",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "1月1日累計至本期止本期淨利",
+     "label_lengkap": "1月1日累計至本期止本期淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(342,488)",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "1月1日累計至本期止歸屬於母公司業主淨利",
+     "label_lengkap": "1月1日累計至本期止歸屬於母公司業主淨利(損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "(339,123)",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "1月1日累計至本期止基本每股盈餘",
+     "label_lengkap": "1月1日累計至本期止基本每股盈餘(損失) (元)",
+     "satuan_label": "元",
+     "value": "(2.04)",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "期末總資產",
+     "label_lengkap": "期末總資產(仟元)",
+     "satuan_label": "仟元",
+     "value": "1,304,688",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "期末總負債",
+     "label_lengkap": "期末總負債(仟元)",
+     "satuan_label": "仟元",
+     "value": "112,744",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "期末歸屬於母公司業主之權益",
+     "label_lengkap": "期末歸屬於母公司業主之權益(仟元)",
+     "satuan_label": "仟元",
+     "value": "1,185,552",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 447,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#6535-2026-11-09-164006",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "6584",
+   "name": "南俊國際",
+   "date": "2026-11-09",
+   "time": "16:34:32",
+   "seq_no": "163432",
+   "subject": "本公司向關係人取得營業使用之不動產使用權資產(北港廠)",
+   "clause_raw": "第20款",
+   "clause": 20,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:34:32",
+   "items": [
+    {
+     "no": 1,
+     "label": "標的物之名稱及性質",
+     "label_lengkap": "標的物之名稱及性質（如坐落台中市北區ＸＸ段ＸＸ小段土地）",
+     "satuan_label": null,
+     "value": "坐落雲林縣北港鎮福德段地號0975-0000、0976-000、0977-000 土地",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "事實發生日",
+     "label_lengkap": "事實發生日",
+     "satuan_label": null,
+     "value": "115/11/9~115/11/9",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "董事會通過日期",
+     "label_lengkap": "董事會通過日期",
+     "satuan_label": null,
+     "value": "民國115年11月9日",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "其他核決日期",
+     "label_lengkap": "其他核決日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "交易單位數量、每單位價格及交易總金額",
+     "label_lengkap": "交易單位數量（如ＸＸ平方公尺，折合ＸＸ坪）、每單位價格及交易總金額",
+     "satuan_label": null,
+     "value": "(1)承租面積：3813.58平方公尺。 (2)租金單價：每平方公尺月租金約13.11元/平方公尺。 (3)租賃期間：自民國116年1月1日起至118年12月31日止，共計三年整。 (4)認列不動產使用權資產金額約新台幣：1,748,582元。",
+     "sub": [
+      {
+       "no": 1,
+       "label": "承租面積",
+       "label_lengkap": "承租面積",
+       "satuan_label": null,
+       "value": "3813.58平方公尺。"
+      },
+      {
+       "no": 2,
+       "label": "租金單價",
+       "label_lengkap": "租金單價",
+       "satuan_label": null,
+       "value": "每平方公尺月租金約13.11元/平方公尺。"
+      },
+      {
+       "no": 3,
+       "label": "租賃期間",
+       "label_lengkap": "租賃期間",
+       "satuan_label": null,
+       "value": "自民國116年1月1日起至118年12月31日止，共計三年整。"
+      },
+      {
+       "no": 4,
+       "label": "認列不動產使用權資產金額約新台幣",
+       "label_lengkap": "認列不動產使用權資產金額約新台幣",
+       "satuan_label": null,
+       "value": "1,748,582元。"
+      }
+     ]
+    },
+    {
+     "no": 7,
+     "label": "交易相對人為關係人者，並應公告選定關係人為交易對象之原因及前次移轉之 所有人、前次移轉之所有人與公司及交易相對人間相互之關係、前次移轉日期 及移轉金額",
+     "label_lengkap": "交易相對人為關係人者，並應公告選定關係人為交易對象之原因及前次移轉之 所有人、前次移轉之所有人與公司及交易相對人間相互之關係、前次移轉日期 及移轉金額",
+     "satuan_label": null,
+     "value": "(1)選定關係人為交易對象之原因：地點符合需求。 (2)公告選定關係人為前次移轉之所有人：不適用。 (3)前次移轉之所有人與公司及交易相對人間相互之關係：不適用。 (4)前次移轉日期及移轉金額：不適用。",
+     "sub": [
+      {
+       "no": 1,
+       "label": "選定關係人為交易對象之原因",
+       "label_lengkap": "選定關係人為交易對象之原因",
+       "satuan_label": null,
+       "value": "地點符合需求。"
+      },
+      {
+       "no": 2,
+       "label": "公告選定關係人為前次移轉之所有人",
+       "label_lengkap": "公告選定關係人為前次移轉之所有人",
+       "satuan_label": null,
+       "value": "不適用。"
+      },
+      {
+       "no": 3,
+       "label": "前次移轉之所有人與公司及交易相對人間相互之關係",
+       "label_lengkap": "前次移轉之所有人與公司及交易相對人間相互之關係",
+       "satuan_label": null,
+       "value": "不適用。"
+      },
+      {
+       "no": 4,
+       "label": "前次移轉日期及移轉金額",
+       "label_lengkap": "前次移轉日期及移轉金額",
+       "satuan_label": null,
+       "value": "不適用。"
+      }
+     ]
+    },
+    {
+     "no": 8,
+     "label": "交易標的最近五年內所有權人曾為公司之關係人者，尚應公告關係 人之取得及處分日期、價格及交易當時與公司之關係",
+     "label_lengkap": "交易標的最近五年內所有權人曾為公司之關係人者，尚應公告關係 人之取得及處分日期、價格及交易當時與公司之關係",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "預計處分利益",
+     "label_lengkap": "預計處分利益（或損失）（取得資產者不適用）（遞延者應列表說明 認列情形）",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "交付或付款條件、契約限制條款及其他重要約定 事項",
+     "label_lengkap": "交付或付款條件（含付款期間及金額）、契約限制條款及其他重要約定 事項",
+     "satuan_label": null,
+     "value": "(1)交付或付款條件：每月支付。 (2)租賃期間及金額：116/1/1-118/12/31每月50仟元。 (3)契約限制條款及其他重要約定事項：無。",
+     "sub": [
+      {
+       "no": 1,
+       "label": "交付或付款條件",
+       "label_lengkap": "交付或付款條件",
+       "satuan_label": null,
+       "value": "每月支付。"
+      },
+      {
+       "no": 2,
+       "label": "租賃期間及金額",
+       "label_lengkap": "租賃期間及金額",
+       "satuan_label": null,
+       "value": "116/1/1-118/12/31每月50仟元。"
+      },
+      {
+       "no": 3,
+       "label": "契約限制條款及其他重要約定事項",
+       "label_lengkap": "契約限制條款及其他重要約定事項",
+       "satuan_label": null,
+       "value": "無。"
+      }
+     ]
+    },
+    {
+     "no": 11,
+     "label": "本次交易之決定方式、價格決定之參考依據及 決策單位",
+     "label_lengkap": "本次交易之決定方式（如招標、比價或議價）、價格決定之參考依據及 決策單位",
+     "satuan_label": null,
+     "value": "(1)本次交易之決定方式：議價。 (2)價格決定之參考依據：參考鄰近地區租賃行情。 (3)決策單位：董事會。",
+     "sub": [
+      {
+       "no": 1,
+       "label": "本次交易之決定方式",
+       "label_lengkap": "本次交易之決定方式",
+       "satuan_label": null,
+       "value": "議價。"
+      },
+      {
+       "no": 2,
+       "label": "價格決定之參考依據",
+       "label_lengkap": "價格決定之參考依據",
+       "satuan_label": null,
+       "value": "參考鄰近地區租賃行情。"
+      },
+      {
+       "no": 3,
+       "label": "決策單位",
+       "label_lengkap": "決策單位",
+       "satuan_label": null,
+       "value": "董事會。"
+      }
+     ]
+    },
+    {
+     "no": 12,
+     "label": "專業估價者事務所或公司名稱及其估價金額",
+     "label_lengkap": "專業估價者事務所或公司名稱及其估價金額",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "專業估價師開業證書字號",
+     "label_lengkap": "專業估價師開業證書字號",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 15,
+     "label": "估價報告是否為限定價格、特定價格或特殊價格",
+     "label_lengkap": "估價報告是否為限定價格、特定價格或特殊價格",
+     "satuan_label": null,
+     "value": "否或不適用",
+     "sub": []
+    },
+    {
+     "no": 16,
+     "label": "是否尚未取得估價報告",
+     "label_lengkap": "是否尚未取得估價報告",
+     "satuan_label": null,
+     "value": "否或不適用",
+     "sub": []
+    },
+    {
+     "no": 17,
+     "label": "尚未取得估價報告之原因",
+     "label_lengkap": "尚未取得估價報告之原因",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 18,
+     "label": "估價結果有重大差異時，其差異原因及會計師意見",
+     "label_lengkap": "估價結果有重大差異時，其差異原因及會計師意見",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 19,
+     "label": "會計師事務所名稱",
+     "label_lengkap": "會計師事務所名稱",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 21,
+     "label": "會計師開業證書字號",
+     "label_lengkap": "會計師開業證書字號",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 22,
+     "label": "經紀人及經紀費用",
+     "label_lengkap": "經紀人及經紀費用",
+     "satuan_label": null,
+     "value": "不適用。",
+     "sub": []
+    },
+    {
+     "no": 23,
+     "label": "取得或處分之具體目的或用途",
+     "label_lengkap": "取得或處分之具體目的或用途",
+     "satuan_label": null,
+     "value": "供營運使用。",
+     "sub": []
+    },
+    {
+     "no": 24,
+     "label": "本次交易表示異議之董事之意見",
+     "label_lengkap": "本次交易表示異議之董事之意見",
+     "satuan_label": null,
+     "value": "無。",
+     "sub": []
+    },
+    {
+     "no": 25,
+     "label": "本次交易為關係人交易",
+     "label_lengkap": "本次交易為關係人交易",
+     "satuan_label": null,
+     "value": "是",
+     "sub": []
+    },
+    {
+     "no": 26,
+     "label": "監察人承認或審計委員會同意日期",
+     "label_lengkap": "監察人承認或審計委員會同意日期",
+     "satuan_label": null,
+     "value": "民國115年11月9日",
+     "sub": []
+    },
+    {
+     "no": 27,
+     "label": "本次交易係向關係人取得不動產或其使用權資產",
+     "label_lengkap": "本次交易係向關係人取得不動產或其使用權資產",
+     "satuan_label": null,
+     "value": "是",
+     "sub": []
+    },
+    {
+     "no": 28,
+     "label": "依「公開發行公司取得或處分資產處理準則」第十六條規定 評估之價格",
+     "label_lengkap": "依「公開發行公司取得或處分資產處理準則」第十六條規定 評估之價格",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 29,
+     "label": "依前項評估之價格較交易價格為低者，依同準則第十七條規 定評估之價格",
+     "label_lengkap": "依前項評估之價格較交易價格為低者，依同準則第十七條規 定評估之價格",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 30,
+     "label": "前已就同一件事件發布重大訊息日期",
+     "label_lengkap": "前已就同一件事件發布重大訊息日期",
+     "satuan_label": null,
+     "value": "不適用",
+     "sub": []
+    },
+    {
+     "no": 31,
+     "label": "其他敘明事項",
+     "label_lengkap": "其他敘明事項",
+     "satuan_label": null,
+     "value": "無。",
+     "sub": []
+    }
+   ],
+   "body_chars": 1400,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#6584-2026-11-09-163432",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "6667",
+   "name": "信紘科",
+   "date": "2026-11-09",
+   "time": "16:51:13",
+   "seq_no": "165113",
+   "subject": "公告本公司董事會通過營運長任命案",
+   "clause_raw": "第8款",
+   "clause": 8,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "16:51:13",
+   "items": [
+    {
+     "no": 1,
+     "label": "人員變動別、財務主管、會計 主管、公司治理主管、資訊安全長、研發主管、內部稽核主管或訴訟及非 訟代理人）",
+     "label_lengkap": "人員變動別（請輸入發言人、代理發言人、重要營運主管 (如:執行長、營運長、行銷長及策略長等)、財務主管、會計 主管、公司治理主管、資訊安全長、研發主管、內部稽核主管或訴訟及非 訟代理人）",
+     "satuan_label": null,
+     "value": "營運長",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "發生變動日期",
+     "label_lengkap": "發生變動日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "異動情形",
+     "label_lengkap": "異動情形（請輸入「辭職」、「職務調整」、「資遣」、 「退休」、「死亡」、「新任」或「解任」）",
+     "satuan_label": null,
+     "value": "新任",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "生效日期",
+     "label_lengkap": "生效日期",
+     "satuan_label": null,
+     "value": "116/01/01",
+     "sub": []
+    }
+   ],
+   "body_chars": 289,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#6667-2026-11-09-165113",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "7718",
+   "name": "友鋮",
+   "date": "2026-11-09",
+   "time": "17:30:39",
+   "seq_no": "173039",
+   "subject": "公告本公司公司治理主管退休",
+   "clause_raw": "第8款",
+   "clause": 8,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:30:39",
+   "items": [
+    {
+     "no": 1,
+     "label": "人員變動別、財務主管、會計 主管、公司治理主管、資訊安全長、研發主管、內部稽核主管或訴訟及非 訟代理人）",
+     "label_lengkap": "人員變動別（請輸入發言人、代理發言人、重要營運主管 (如:執行長、營運長、行銷長及策略長等)、財務主管、會計 主管、公司治理主管、資訊安全長、研發主管、內部稽核主管或訴訟及非 訟代理人）",
+     "satuan_label": null,
+     "value": "公司治理主管",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "發生變動日期",
+     "label_lengkap": "發生變動日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "異動情形",
+     "label_lengkap": "異動情形（請輸入「辭職」、「職務調整」、「資遣」、 「退休」、「死亡」、「新任」或「解任」）",
+     "satuan_label": null,
+     "value": "退休",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "生效日期",
+     "label_lengkap": "生效日期",
+     "satuan_label": null,
+     "value": "116/01/01",
+     "sub": []
+    }
+   ],
+   "body_chars": 318,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#7718-2026-11-09-173039",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "8107",
+   "name": "大億金茂",
+   "date": "2026-11-09",
+   "time": "17:03:52",
+   "seq_no": "170352",
+   "subject": "公告本公司董事會通過民國115年第三季合併財務報告",
+   "clause_raw": "第31款",
+   "clause": 31,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "17:03:52",
+   "items": [
+    {
+     "no": 1,
+     "label": "提報董事會或經董事會決議日期",
+     "label_lengkap": "提報董事會或經董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "審計委員會通過日期",
+     "label_lengkap": "審計委員會通過日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "財務報告或年度自結財務資訊報導期間 起訖日期",
+     "label_lengkap": "財務報告或年度自結財務資訊報導期間 起訖日期(XXX/XX/XX~XXX/XX/XX)",
+     "satuan_label": null,
+     "value": "115/01/01~115/09/30",
+     "sub": []
+    },
+    {
+     "no": 4,
+     "label": "1月1日累計至本期止營業收入",
+     "label_lengkap": "1月1日累計至本期止營業收入(仟元)",
+     "satuan_label": "仟元",
+     "value": "517,803",
+     "sub": []
+    },
+    {
+     "no": 5,
+     "label": "1月1日累計至本期止營業毛利",
+     "label_lengkap": "1月1日累計至本期止營業毛利(毛損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "87,238",
+     "sub": []
+    },
+    {
+     "no": 6,
+     "label": "1月1日累計至本期止營業利益",
+     "label_lengkap": "1月1日累計至本期止營業利益(損失) (仟元)",
+     "satuan_label": "仟元",
+     "value": "-80,624",
+     "sub": []
+    },
+    {
+     "no": 7,
+     "label": "1月1日累計至本期止稅前淨利",
+     "label_lengkap": "1月1日累計至本期止稅前淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "94,536",
+     "sub": []
+    },
+    {
+     "no": 8,
+     "label": "1月1日累計至本期止本期淨利",
+     "label_lengkap": "1月1日累計至本期止本期淨利(淨損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "106,708",
+     "sub": []
+    },
+    {
+     "no": 9,
+     "label": "1月1日累計至本期止歸屬於母公司業主淨利",
+     "label_lengkap": "1月1日累計至本期止歸屬於母公司業主淨利(損) (仟元)",
+     "satuan_label": "仟元",
+     "value": "106,708",
+     "sub": []
+    },
+    {
+     "no": 10,
+     "label": "1月1日累計至本期止基本每股盈餘",
+     "label_lengkap": "1月1日累計至本期止基本每股盈餘(損失) (元)",
+     "satuan_label": "元",
+     "value": "1.42",
+     "sub": []
+    },
+    {
+     "no": 11,
+     "label": "期末總資產",
+     "label_lengkap": "期末總資產(仟元)",
+     "satuan_label": "仟元",
+     "value": "2,862,033",
+     "sub": []
+    },
+    {
+     "no": 12,
+     "label": "期末總負債",
+     "label_lengkap": "期末總負債(仟元)",
+     "satuan_label": "仟元",
+     "value": "1,250,171",
+     "sub": []
+    },
+    {
+     "no": 13,
+     "label": "期末歸屬於母公司業主之權益",
+     "label_lengkap": "期末歸屬於母公司業主之權益(仟元)",
+     "satuan_label": "仟元",
+     "value": "1,611,862",
+     "sub": []
+    },
+    {
+     "no": 14,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 439,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#8107-2026-11-09-170352",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  },
+  {
+   "code": "8240",
+   "name": "華宏",
+   "date": "2026-11-09",
+   "time": "13:48:04",
+   "seq_no": "134804",
+   "subject": "代重要子公司蘇州工業園區長宏光電科技有限公司公告 董事會決議盈餘分配",
+   "clause_raw": "第14款",
+   "clause": 14,
+   "fact_date": "2026-11-09",
+   "announce_date": "2026-11-09",
+   "announce_time": "13:48:04",
+   "items": [
+    {
+     "no": 1,
+     "label": "董事會決議日期",
+     "label_lengkap": "董事會決議日期",
+     "satuan_label": null,
+     "value": "115/11/09",
+     "sub": []
+    },
+    {
+     "no": 2,
+     "label": "發放股利種類及金額",
+     "label_lengkap": "發放股利種類及金額",
+     "satuan_label": null,
+     "value": "現金股利CNY15,357,693.1元予WAH HONG TECHNOLOGY LIMITED (華宏科技有限公司)。",
+     "sub": []
+    },
+    {
+     "no": 3,
+     "label": "其他應敘明事項",
+     "label_lengkap": "其他應敘明事項",
+     "satuan_label": null,
+     "value": "無",
+     "sub": []
+    }
+   ],
+   "body_chars": 105,
+   "dropped_pii": [],
+   "source_url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O#8240-2026-11-09-134804",
+   "mops_url": "https://mops.twse.com.tw/mops/#/web/t05st01",
+   "sumber_data": "TPEx OpenAPI mopsfin_t187ap04_O (上櫃公司每日重大訊息)",
+   "pasar": "otc",
+   "tanggal_terbit_data": "2026-11-10",
+   "fetched_at": "x"
+  }
+ ]
+}

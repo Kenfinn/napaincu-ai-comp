@@ -134,7 +134,30 @@ def main() -> None:
     ap.add_argument("--keluar", required=True)
     ap.add_argument("--per-jalur", type=int, default=7)
     ap.add_argument("--ke-csv", default=None, help="ubah xlsx yang sudah diisi ke CSV gold")
+    ap.add_argument("--snapshot", action="store_true",
+                    help="tulis salinan pengumuman gold (tanpa butir nama) untuk eval/gold_dokumen.json")
+    ap.add_argument("--gold", default=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                                    "eval", "gold.csv"))
     a = ap.parse_args()
+    if a.snapshot:
+        import json
+        with open(a.gold, encoding="utf-8") as f:
+            url = {r["source_url"] for r in csv.DictReader(f)}
+        detail, _ = store.muat_detail()
+        rek = [gold.untuk_snapshot(d) for d in detail if d.get("source_url") in url]
+        rek.sort(key=lambda d: d["source_url"])
+        from app import pasar
+        kap = {}
+        for k in sorted({d.get("code", "") for d in rek}):
+            v = pasar.kapitalisasi_dari_cache(k)
+            if v:
+                kap[k] = v
+        with open(a.keluar, "w", encoding="utf-8") as f:
+            json.dump({"catatan": "Salinan pengumuman gold set (butir nama dibuang) dan kapitalisasi pasar "
+                                  "saat evaluasi resmi, supaya hasil bisa diulang tanpa data server.",
+                       "kapitalisasi": kap, "pengumuman": rek}, f, ensure_ascii=False, indent=1)
+        print(f"{len(rek)} pengumuman → {a.keluar}")
+        return
     if a.ke_csv:
         print(f"{ke_csv(a.ke_csv, a.keluar)} baris berlabel → {a.keluar}")
         return
