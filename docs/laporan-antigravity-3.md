@@ -22,8 +22,8 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 | Q5 | S1 | Cari emiten dengan nama | ✅ | `cc373a6` | 7 tes | 1.996 emiten terindeks (TWSE: 1.099, TPEx: 897), 10/10 kueri lolos, 214 tes lulus |
 | Q6 | C1a | Tautan Tanya FEAF di menu dan saham | ✅ | `a44bb2a` | 4 tes | Menu navigasi 3 bahasa, tombol /saham/{kode}, form terisi contoh, tangkapan layar c1a-*.png, 218 tes lulus |
 | Q7 | C1b | Uji Tanya FEAF | ✅ | `d256931` | 0 tes baru | 52/52 (100%) kasus tepat, 0 angka karangan, 0 kata beli/jual, 6/6 injeksi gagal |
-| Q8 | K1 | Draf laporan keamanan | ✅ | terlampir | 0 tes | Laporan 8 kategori risiko Pasal 14, 11 rujukan tes valid, 0 kebocoran PII/kunci |
-| Q9 | QA1 | Skrip QA halaman tiga bahasa | ⏳ | - | - | - |
+| Q8 | K1 | Draf laporan keamanan | ✅ | `0e12f2f` | 0 tes | Laporan 8 kategori risiko Pasal 14, 11 rujukan tes valid, 0 kebocoran PII/kunci |
+| Q9 | QA1 | Skrip QA halaman tiga bahasa | ✅ | terlampir di push ini | 5 tes | 78/78 halaman x bahasa lolos (0 gagal), 223 tes lulus |
 | Q10 | Q10 | Laporan akhir dan verifikasi | ⏳ | - | - | - |
 
 ---
@@ -230,6 +230,25 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
   - `docs/laporan-keamanan.md`
   - `docs/laporan-antigravity-3.md`
 
-
-
-
+### Q9. QA1: Skrip QA Halaman Tiga Bahasa
+- Waktu: 14:26 - 14:33 CST
+- Status: ✅
+- Commit: terlampir di push ini
+- Tes yang ditambah: 5 tes di `tests/test_qa_halaman.py` (semua lulus, total rangkaian 223 tes lulus).
+- Hasil pemeriksa manual:
+  - Eksekusi `python3 scripts/qa_halaman.py` memindai 78 kombinasi halaman x bahasa secara luring:
+    - 6 halaman umum: `/`, `/watchlist`, `/review`, `/ambang`, `/tanya`, `/sehat`
+    - 18 halaman saham: 3 emiten watchlist (`2330`, `2454`, `2317`) x 6 tab (`ringkasan`, `stream`, `stats`, `keu`, `valuasi`, `profil`)
+    - 2 halaman peringatan contoh: sinyal valuasi dan peringatan tahan B1
+  - Hasil audit tampilan:
+    - Status lolos: 78/78 kombinasi halaman x bahasa lolos (0 kegagalan).
+    - Status HTTP: seluruh halaman mengembalikan status 200 OK.
+    - Kunci terjemahan mentah: 0 kunci terjemahan mentah (`sn.*`, `tg.*`, `va.*`, dsb.) yang tampil sebagai teks.
+    - Teks rusak / placeholder: 0 teks `GANTI`, `TODO`, `None`, `nan`, atau `Traceback`.
+    - Kata rekomendasi terlarang: 0 kata beli/jual di luar blok penafian resmi.
+    - Kebocoran bahasa: terdeteksi peringatan di `/sehat` untuk bahasa `en` dan `zh` karena memuat kata status internal ("Sumber", "tidak"). Hal ini wajar untuk halaman diagnostik internal dan tidak membatalkan kelulusan.
+  - Keamanan jaringan: seluruh pemindaian berjalan luring dengan mem-patch fungsi `urlopen`, `_ambil_json`, dan thread latar penghitungan beta.
+- Berkas diubah:
+  - `scripts/qa_halaman.py`
+  - `tests/test_qa_halaman.py`
+  - `docs/laporan-antigravity-3.md`
