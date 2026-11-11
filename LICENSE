@@ -1,0 +1,26 @@
+FEAF · Agentic AI Investment Assistant
+Copyright (c) 2026 the FEAF team. All rights reserved.
+
+This repository, including its source code, prompts, templates, evaluation data and
+documentation, is proprietary. No licence to use, copy, modify, merge, publish,
+distribute, sublicense or sell it is granted, except as stated below.
+
+1. Competition review. The organisers, reviewers and judges of the NAPAI Agentic AI
+   Innovation Competition 2026 (AAIC 2026) may access, install, run, test and inspect
+   this repository for the sole purpose of evaluating the entry, for the duration of
+   the competition and any review period that follows it. This permission does not
+   extend to publishing the source code, data or confidential content, in line with
+   the competition rules.
+
+2. Third-party components keep their own licences. They are listed with their terms in
+   docs/pengungkapan-pihak-ketiga.md, including Python packages (FastAPI: MIT; Uvicorn,
+   Jinja2, httpx: BSD-3-Clause) and data sources (TWSE and TPEx OpenAPI under the
+   Taiwan Open Government Data License; FinMind under its terms of service; MOPS public
+   filings). Nothing in this licence restricts rights granted by those licences.
+
+3. Not investment advice. The software summarises and checks public filings. It does not
+   recommend buying or selling any security and does not place orders. It is provided
+   "as is", without warranty of any kind. The authors are not liable for any loss arising
+   from its use.
+
+For any other use, contact the FEAF team through the repository owner.

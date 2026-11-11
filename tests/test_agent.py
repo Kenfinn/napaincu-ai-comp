@@ -721,15 +721,16 @@ class TestModelPengganti(unittest.TestCase):
         self.config, self.llm = config, llm
         self._tmp = tempfile.TemporaryDirectory()
         self._asli = (llm.CACHE_DIR, llm._panggil_gemini, llm._daftar_model, llm._model_aktif,
-                      config.API_KEY, config.MODEL, config.RETRY_MAKS)
+                      config.API_KEY, config.MODEL, config.RETRY_MAKS, config.MODEL_CADANGAN)
         llm.CACHE_DIR = self._tmp.name
         llm._model_aktif = None
         llm._gagal_404.clear()
         config.API_KEY, config.MODEL, config.RETRY_MAKS = "uji", "gemini-2.5-flash", 0
+        config.MODEL_CADANGAN = []          # tes yang butuh cadangan memasangnya sendiri
 
     def tearDown(self):
         (self.llm.CACHE_DIR, self.llm._panggil_gemini, self.llm._daftar_model, self.llm._model_aktif,
-         self.config.API_KEY, self.config.MODEL, self.config.RETRY_MAKS) = self._asli
+         self.config.API_KEY, self.config.MODEL, self.config.RETRY_MAKS, self.config.MODEL_CADANGAN) = self._asli
         self.llm._gagal_404.clear()
         self._tmp.cleanup()
 

@@ -12,20 +12,95 @@ Dibangun untuk NAPAI Agentic AI Innovation Competition 2026, track SYSTEX —
 
 ---
 
-## Menjalankan
+## Run locally · 本機執行 · Menjalankan di lokal
+
+### English
+
+Requirements: Python 3.12 or newer, Git, internet access (TWSE/TPEx OpenAPI). No database.
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
+git clone https://github.com/Kenfinn/napaincu-ai-comp.git
+cd napaincu-ai-comp
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Buka <http://127.0.0.1:8000>. **Tidak ada login** — tidak ada kata sandi yang disimpan
-dan tidak ada akun evaluator yang perlu dibuat.
+Open <http://127.0.0.1:8000>. On the first run the feed shows clearly marked sample
+filings. Press **Check now** (or add a stock on **Watchlist**) to pull today's real
+filings from TWSE/TPEx. The interface defaults to English; switch to 中文 or ID in the left menu.
 
-Tanpa kunci API pun aplikasi tetap jalan penuh: tahap yang biasanya memakai model
-turun ke penalar berbasis aturan, dan setiap layar menyatakan mode mana yang sedang
-dipakai.
+Optional settings, set before `uvicorn`:
+
+```bash
+export GEMINI_API_KEY=...                 # without it the rule-based reasoner is used
+export SENTINEL_MODEL=gemini-3.6-flash    # default
+export SENTINEL_TARIK_OTOMATIS_DETIK=600  # pull new filings every 10 minutes
+export SENTINEL_KODE_AKSES=...            # require an access code for actions
+```
+
+On Windows PowerShell use `$env:GEMINI_API_KEY="..."` instead of `export`.
+Run the tests with `python -m unittest discover -s tests` (no network needed).
+
+### 繁體中文
+
+需求：Python 3.12 以上、Git、可連線至證交所與櫃買中心 OpenAPI。不需要資料庫。
+
+```bash
+git clone https://github.com/Kenfinn/napaincu-ai-comp.git
+cd napaincu-ai-comp
+python3 -m venv .venv
+source .venv/bin/activate          # Windows：.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+開啟 <http://127.0.0.1:8000>。第一次執行時，動態頁會顯示標示為「範例」的公告。按下
+**立即檢查**（或在**觀察清單**加入股票）即可從證交所與櫃買中心取得今日的真實重大訊息。
+介面預設為英文，可在左側選單切換為「中文」。
+
+選用設定（在執行 `uvicorn` 前設定）：
+
+```bash
+export GEMINI_API_KEY=...                 # 未設定時改用規則推理
+export SENTINEL_MODEL=gemini-3.6-flash    # 預設模型
+export SENTINEL_TARIK_OTOMATIS_DETIK=600  # 每 10 分鐘自動抓取新公告
+export SENTINEL_KODE_AKSES=...            # 操作需輸入存取碼
+```
+
+Windows PowerShell 請改用 `$env:GEMINI_API_KEY="..."`。
+執行測試：`python -m unittest discover -s tests`（不需網路）。
+
+### Bahasa Indonesia
+
+Kebutuhan: Python 3.12 atau lebih baru, Git, akses internet ke OpenAPI TWSE/TPEx. Tanpa database.
+
+```bash
+git clone https://github.com/Kenfinn/napaincu-ai-comp.git
+cd napaincu-ai-comp
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+Buka <http://127.0.0.1:8000>. Saat pertama dijalankan, feed menampilkan pengumuman contoh
+yang diberi tanda jelas. Tekan **Check now** (atau tambah saham di **Watchlist**) untuk
+menarik pengumuman asli hari ini dari TWSE/TPEx. Tampilan bawaan berbahasa Inggris; ganti
+ke 中文 atau ID di menu kiri.
+
+Pengaturan opsional, diisi sebelum `uvicorn`:
+
+```bash
+export GEMINI_API_KEY=...                 # tanpa ini dipakai penalar aturan
+export SENTINEL_MODEL=gemini-3.6-flash    # bawaan
+export SENTINEL_TARIK_OTOMATIS_DETIK=600  # tarik pengumuman baru tiap 10 menit
+export SENTINEL_KODE_AKSES=...            # aksi butuh kode akses
+```
+
+Di Windows PowerShell pakai `$env:GEMINI_API_KEY="..."`, bukan `export`.
+Tes: `python -m unittest discover -s tests` (tanpa jaringan).
 
 ### Menarik pengumuman asli (dari jaringan mana pun)
 
@@ -143,7 +218,8 @@ apa pun di dalamnya tidak boleh dituruti. Percobaan pengarahan dicatat di jejak 
 | Nama | Wajib | Default | Guna |
 |---|---|---|---|
 | `GEMINI_API_KEY` atau `GOOGLE_API_KEY` | tidak | — | Kunci model. Tanpa ini, penalar aturan yang dipakai |
-| `SENTINEL_MODEL` | tidak | `gemini-2.5-flash` | Nama model |
+| `SENTINEL_MODEL` | tidak | `gemini-3.6-flash` | Nama model |
+| `SENTINEL_MODEL_CADANGAN` | tidak | `gemini-3.5-flash` | Model cadangan saat model utama sibuk, dipisah koma |
 | `SENTINEL_PENYEDIA` | tidak | `gemini` | Penyedia model |
 | `SENTINEL_TRIAGE_THRESHOLD` | tidak | `0.55` | Ambang keyakinan pemilah |
 | `SENTINEL_RETRY` | tidak | `2` | Percobaan ulang sebelum turun ke penalar aturan |
@@ -256,3 +332,18 @@ bisa berbeda diam-diam dari kertas kerja.
 | `tests/` | Test case agent — bahan deck halaman 9 dan Appendix 2 |
 | `eval/` | Gold set berlabel dan hasil evaluasi |
 | `data/fixtures/` | Empat kasus uji supaya aplikasi jalan di mana saja |
+
+---
+
+## License · 授權 · Lisensi
+
+All rights reserved. See [`LICENSE`](LICENSE). AAIC 2026 organisers and judges may run and
+inspect this repository to evaluate the entry. Third-party components and data keep their own
+licences ([`docs/pengungkapan-pihak-ketiga.md`](docs/pengungkapan-pihak-ketiga.md)).
+
+版權所有，詳見 [`LICENSE`](LICENSE)。AAIC 2026 主辦單位與評審可為評選目的執行及檢視本專案。
+第三方元件與資料沿用其原授權。
+
+Hak cipta dilindungi; lihat [`LICENSE`](LICENSE). Panitia dan juri AAIC 2026 boleh menjalankan
+dan memeriksa repo ini untuk penilaian. Komponen dan data pihak ketiga tetap memakai lisensinya masing-masing.
+
