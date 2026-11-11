@@ -111,7 +111,7 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
         return _selesai(j, "dilewati", detail, None, hasil_saring["alasan"],
                         hasil_saring.get("alasan_i18n"))
 
-    if hasil_saring.get("jalur") in ("risiko", "modal", "laporan", "berat"):
+    if hasil_saring.get("jalur") in ("risiko", "modal", "laporan", "berat", "tata_kelola"):
         return _jalur_sinyal(j, detail, hasil_saring, d_valuasi)
 
     # --- tahap 1 & 2 -------------------------------------------------------
@@ -260,6 +260,8 @@ def _jalur_sinyal(j: Jejak, detail: dict, saring: dict, d_valuasi: dict | None) 
         s = sinyal.urai_modal(detail, _skala(detail, d_valuasi))
     elif jalur == "laporan":
         s = sinyal.urai_laporan(detail)
+    elif jalur == "tata_kelola":
+        s = sinyal.urai_auditor(detail) if detail.get("clause") == 7 else sinyal.urai_pejabat(detail)
     else:
         s = sinyal.urai_berat(detail)
     j.catat("Pengurai sinyal", "lolos", {"jalur": jalur}, s, t0=t0,
@@ -296,6 +298,13 @@ def _jalur_sinyal(j: Jejak, detail: dict, saring: dict, d_valuasi: dict | None) 
         return _selesai(j, "terbit", detail, muatan, "Sinyal risiko (info).",
                         pesan("akhir.risiko", ekuitas=_pct(s.get("rasio_ekuitas")),
                               limit=_pct(s.get("pemakaian_limit")), n=len(s.get("penerima", []))))
+    if jalur == "tata_kelola":
+        if tingkat_server["tingkat"] == "serius":
+            return _selesai(j, "ditahan", detail, dict(muatan, tahan={"jenis": "tata_kelola_serius", "boleh_setujui": True}),
+                            "Auditor mundur atau ada beda pendapat dengan auditor: ditinjau manusia.",
+                            pesan("akhir.tata_kelola_serius"))
+        return _selesai(j, "terbit", detail, muatan, f"Sinyal tata kelola ({s['jenis']}).",
+                        pesan(f"akhir.{s['jenis']}"))
     if jalur == "laporan":
         return _selesai(j, "terbit", detail, muatan, "Laporan kuartal: ringkasan angka.",
                         pesan("akhir.laporan", periode=s.get("periode") or "—"))

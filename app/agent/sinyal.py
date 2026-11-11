@@ -5,6 +5,11 @@ Keputusan tim (docs/pemetaan-pasal.md, "Keputusan tim"):
     11, 35   perubahan modal, obligasi, pembelian kembali → sinyal; DCF berbasis kas
     31       laporan keuangan kuartal → ringkasan angka; memicu pembaruan valuasi
     1, 3, 40 gagal bayar, penghentian produksi, suspensi → selalu ke manusia
+    7        pergantian auditor eksternal → sinyal tata kelola (Patrice 11 Nov)
+    8        pergantian pejabat kunci → sinyal tata kelola (Patrice 11 Nov)
+
+Pasal 7 dan 8 memuat nama orang (akuntan, pejabat). Butir yang labelnya memuat 姓名
+tidak pernah dikutip, dan teks bebas 異動原因 tidak diambil karena bisa memuat nama.
 
 Semua angka diurai oleh KODE dari butir pengumuman, tidak oleh model, dan setiap angka
 membawa kutipan "label: isi" yang kemudian dicek ulang ada di dokumen. Satuan (仟元)
@@ -251,6 +256,71 @@ def urai_berat(detail: dict) -> dict:
     b = _cari(detail, "喪失債信之日期") or _cari(detail, "事實發生日")
     if b:
         hasil["kutipan"].append(_kutip(b))
+    return hasil
+
+
+# --------------------------------------------------------------------------- 7 / 8
+_TIDAK = ("無", "不適用", "否", "沒有", "none", "n/a")
+
+
+def _kosong(v: str | None) -> bool:
+    v = (v or "").strip().strip("。.").lower()
+    return not v or any(v.startswith(t) for t in _TIDAK)
+
+
+def urai_auditor(detail: dict) -> dict:
+    """Pasal 7: kantor akuntan sama (rotasi) atau berganti; auditor mundur; beda pendapat."""
+    hasil = {"jenis": "auditor", "pasal": detail.get("clause"), "kutipan": [],
+             "ganti_kantor": None, "auditor_mundur": False, "beda_pendapat": False}
+    lama = _cari(detail, "舊會計師事務所")
+    baru = _cari(detail, "新會計師事務所")
+    for b in (lama, baru, _cari(detail, "變更會計師之原因")):
+        if b:
+            hasil["kutipan"].append(_kutip(b))
+    if lama and baru:
+        hasil["ganti_kantor"] = (lama.get("value") or "").strip() != (baru.get("value") or "").strip()
+    elif "事務所" in (detail.get("subject") or "") and "內部輪調" not in (detail.get("subject") or ""):
+        hasil["ganti_kantor"] = True
+    hasil["kantor_lama"] = (lama or {}).get("value")
+    hasil["kantor_baru"] = (baru or {}).get("value")
+    siapa = _cari(detail, "主動終止委任")
+    if siapa and "會計師主動" in (siapa.get("value") or ""):
+        hasil["auditor_mundur"] = True
+        hasil["kutipan"].append(_kutip(siapa))
+    beda = _cari(detail, "有無不同意見")
+    if beda and not _kosong(beda.get("value")):
+        hasil["beda_pendapat"] = True
+        hasil["kutipan"].append(_kutip(beda))
+    return hasil
+
+
+# Jabatan yang langsung menyentuh angka laporan atau arah perusahaan.
+JABATAN_KUNCI = ("財務長", "財務主管", "會計主管", "內部稽核主管", "稽核主管", "執行長", "總經理",
+                 "總裁", "營運長", "董事長")
+_KELUAR = ("辭職", "資遣", "解任", "死亡", "逝世")
+
+
+def urai_pejabat(detail: dict) -> dict:
+    """Pasal 8: jabatan apa, jenis perubahan, berlaku kapan. Tanpa nama orang."""
+    hasil = {"jenis": "pejabat", "pasal": detail.get("clause"), "kutipan": [],
+             "jabatan": None, "perubahan": None, "kunci": False, "keluar": False,
+             "anak_perusahaan": (detail.get("subject") or "").startswith("代")}
+    jab = _cari(detail, "人員變動別")
+    if jab:
+        hasil["jabatan"] = (jab.get("value") or "").strip() or None
+        hasil["kutipan"].append(_kutip(jab))
+    ub = _cari(detail, "異動情形")
+    if ub:
+        hasil["perubahan"] = (ub.get("value") or "").strip() or None
+        hasil["kutipan"].append(_kutip(ub))
+    eff = _cari(detail, "生效日期")
+    if eff:
+        hasil["berlaku"] = eff.get("value")
+        hasil["kutipan"].append(_kutip(eff))
+    # 副總經理 (wakil) bukan 總經理 (direktur utama): buang dulu sebelum dicocokkan.
+    teks_jab = (hasil["jabatan"] or detail.get("subject") or "").replace("副總經理", "")
+    hasil["kunci"] = any(k in teks_jab for k in JABATAN_KUNCI)
+    hasil["keluar"] = any(k in (hasil["perubahan"] or "") for k in _KELUAR)
     return hasil
 
 

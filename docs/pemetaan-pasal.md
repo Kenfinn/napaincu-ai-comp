@@ -143,10 +143,23 @@ Hasil pada 578 pengumuman asli 10 Nov (tanpa model): 177 laporan, 38 sinyal penj
 pinjaman, dan 26 sinyal modal terbit; 6 risiko serius dan 4 kejadian berat ditahan untuk
 manusia; 783 halaman sinyal tampil di tiga bahasa tanpa galat.
 
+### Jawaban lanjutan Patrice (11 Nov siang) dan implementasinya
+
+| Pasal | Jawaban | Implementasi |
+|---|---|---|
+| 1, 3, 40 | Setuju selalu ditahan | Sudah (B1) |
+| 6 (direksi badan hukum) | Boleh dilewati | Tetap dilewati |
+| 7 (auditor eksternal) | Ganti auditor jarang terjadi, perlu diberi info | Sinyal tata kelola. Rotasi partner di kantor yang sama = Info. Kantor berganti = Perlu diperhatikan. Auditor lama yang mundur atau ada beda pendapat = Serius, ditahan untuk review |
+| 8 (pejabat) | Penting, perlu info | Sinyal tata kelola. Jabatan kunci (keuangan, akuntansi, audit internal, CEO/direktur utama/presiden/COO, ketua direksi) yang keluar (辭職/資遣/解任/死亡) = Perlu diperhatikan. Jabatan kunci lain = Info (konservatif: Perlu diperhatikan). Jabatan lain = Info |
+
+Nama akuntan dan pejabat tidak diambil: butir berlabel 姓名 tidak dikutip dan teks bebas
+異動原因 tidak dipakai. Usulan tingkat di atas dari Claude, perlu dicek Patrice.
+
 ### Masih terbuka
 
 - Pengurangan modal tunai (現金減資): saham turun sekaligus kas keluar ke pemegang saham. Belum ditanyakan secara khusus.
 - Pasal 23: setahu Claude regulasi membatasi total pinjaman dana sekitar 40% ekuitas (jauh di bawah penjaminan). Perlu dicek dengan teks resmi sebelum ambang 80% dipakai untuk pasal 23.
+- Pasal 51/53 belum dijawab (sekarang dilewati).
 - Pertanyaan 1, 4–9 di bagian "Pertanyaan untuk Ferry & Patrice" di atas (pasal 31, 1/3/40, 51/53, 6/7/8, teks regulasi, semantik transaksi pasal 20, batas materialitas triase). Pertanyaan 8 sebagian terjawab oleh prinsip berbasis kas.
 
 ## Bukti: statistik pengumuman asli 9 Nov

@@ -50,6 +50,8 @@ Rincian dan kriteria QA tiap item ada di [`rencana-finalis.md`](./rencana-finali
 | 11 Nov | Server: volume `/data` permanen (`feaf-data`) | dicek Afinzaki |
 | 11 Nov | Daftar "Source of each input": kolom tidak tertimpa, URL dibungkus, teks Inggris | `8bc177c` |
 | 11 Nov | Deploy dengan env model Gemini | dicek Afinzaki |
+| 11 Nov | `/sehat` menampilkan mesin, panggilan model, galat model terakhir, sebab cadangan | `ae226ce`, `217e625` |
+| 11 Nov | Pasal 7 (auditor) dan 8 (pejabat kunci) jadi sinyal tata kelola, tanpa nama orang (jawaban Patrice) | lihat git log |
 
 Tes otomatis: 178, semua lulus, tanpa jaringan.
 
@@ -79,7 +81,7 @@ Sebelum B1 (10 Nov malam): 0 terbit.
 | Afinzaki | Uji tautan MOPS dari laptop Taiwan | B3 |
 | Afinzaki | Putuskan kapan `SENTINEL_KUNCI_BACA=1`; nyalakan billing dengan kredit AI Pro menjelang demo (opsional) | demo |
 | Afinzaki | Formulir pihak ketiga (draf: `docs/pengungkapan-pihak-ketiga.md`) dan self-assessment; deck dan video. Deck perlu menyebut prinsip DCF berbasis kas: pengumuman pasal 20 = skenario | E2 |
-| Ferry & Patrice | Cek ambang profil konservatif/agresif (tabel di `pemetaan-pasal.md`), 現金減資, batas pasal 23 (±40% ekuitas?), pasal 1/3/40 selalu HELD, 51/53 dan 6/7/8 dilewati | B1 |
+| Ferry & Patrice | Cek ambang profil konservatif/agresif dan tingkat sinyal pasal 7/8 (tabel di `pemetaan-pasal.md`), 現金減資, batas pasal 23 (±40% ekuitas?), pasal 51/53 | B1 |
 | Ferry & Patrice | Label gold set + baseline menit kerja manual | D2, D5 |
 | Ferry & Patrice | Cek `AMBANG` di `app/ringkasan.py` dan terjemahan 中文 | Ringkasan |
 | Belum dijawab | Format test case resmi panitia, cara menyerahkan repo privat ke juri, field liaison | E2 |
@@ -112,7 +114,6 @@ profil risiko; antrean review memakai moderat. README diperbarui paling akhir.
 - Pasal 51/53 (lain-lain) diserahkan ke triase model (sekarang dilewati).
 - 👍/👎 untuk peringatan sinyal (sekarang hanya peringatan yang lewat triase).
 - Perbandingan laporan pasal 31 dengan periode yang sama tahun lalu.
-- Sinyal tata kelola dari pasal 6/7/8 (ganti direksi, auditor).
 - Emiten keuangan TPEx ditandai benar di `pasar.profil` (B2 sudah menangani untuk valuasi).
 - Uji serangan dengan Gemini sungguhan (`scripts/uji_serangan.py --model`).
 - Latihan demo minimal 5 kali dan latihan Q&A.

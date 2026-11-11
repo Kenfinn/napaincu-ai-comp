@@ -20,11 +20,11 @@ PROFIL_SERVER = "moderat"
 
 AMBANG: dict[str, dict[str, float | str]] = {
     "konservatif": {"ekuitas": 0.50, "limit": 0.70, "saham": 0.005, "uang": 0.01, "tutup_rugi": "perhatian",
-                    "utang": 0.50},
+                    "utang": 0.50, "pejabat_kunci": "perhatian"},
     "moderat":     {"ekuitas": 0.80, "limit": 0.80, "saham": 0.01, "uang": 0.02, "tutup_rugi": "perhatian",
-                    "utang": 0.60},
+                    "utang": 0.60, "pejabat_kunci": "info"},
     "agresif":     {"ekuitas": 1.00, "limit": 0.90, "saham": 0.02, "uang": 0.05, "tutup_rugi": "info",
-                    "utang": 0.75},
+                    "utang": 0.75, "pejabat_kunci": "info"},
 }
 
 URUT = {"info": 0, "perhatian": 1, "serius": 2}
@@ -86,6 +86,31 @@ def tingkat(sinyal: dict | None, profil: str | None) -> dict | None:
         if ru is not None and ru >= a["utang"]:
             t = "perhatian"
             alasan.append(("tg.utang", {"nilai": round(ru * 100, 1), "ambang": round(a["utang"] * 100)}))
+    elif jenis == "auditor":
+        # Pasal 7 (Patrice): ganti auditor eksternal jarang terjadi, jadi selalu diberi tahu.
+        if sinyal.get("auditor_mundur") or sinyal.get("beda_pendapat"):
+            t = "serius"
+            if sinyal.get("auditor_mundur"):
+                alasan.append(("tg.auditor_mundur", {}))
+            if sinyal.get("beda_pendapat"):
+                alasan.append(("tg.beda_pendapat", {}))
+        elif sinyal.get("ganti_kantor"):
+            t = "perhatian"
+            alasan.append(("tg.ganti_kantor", {}))
+        else:
+            alasan.append(("tg.rotasi", {}))
+    elif jenis == "pejabat":
+        # Pasal 8 (Patrice: penting). Jabatan kunci yang keluar mendadak = perlu diperhatikan.
+        if sinyal.get("kunci") and sinyal.get("keluar"):
+            t = "perhatian"
+            alasan.append(("tg.pejabat_keluar", {}))
+        elif sinyal.get("kunci"):
+            t = str(a["pejabat_kunci"])
+            alasan.append(("tg.pejabat_kunci", {}))
+        else:
+            alasan.append(("tg.pejabat_lain", {}))
+        if sinyal.get("anak_perusahaan"):
+            alasan.append(("tg.anak_perusahaan", {}))
     elif jenis == "berat":
         t = "serius"
         alasan.append(("tg.berat", {}))

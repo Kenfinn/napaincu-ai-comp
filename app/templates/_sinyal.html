@@ -54,6 +54,16 @@
     {% if s.rasio_utang is not none %}<div class="kv"><span class="k">{{ t('sn.rasio_utang') }}</span><span class="v">{{ s.rasio_utang | pct(1) }}</span></div>{% endif %}
     {% if s.margin_bersih is not none %}<div class="kv"><span class="k">{{ t('sn.margin_bersih') }}</span><span class="v">{{ s.margin_bersih | pct(1) }}</span></div>{% endif %}
     <p class="catatan">{{ t('sn.memicu') }}</p>
+  {% elif s.jenis == 'auditor' %}
+    {% if s.kantor_lama %}<div class="kv"><span class="k">{{ t('sn.kantor_lama') }}</span><span class="v">{{ s.kantor_lama }}</span></div>{% endif %}
+    {% if s.kantor_baru %}<div class="kv"><span class="k">{{ t('sn.kantor_baru') }}</span><span class="v">{{ s.kantor_baru }}</span></div>{% endif %}
+    <div class="kv"><span class="k">{{ t('sn.ganti_kantor') }}</span><span class="v">{{ t('sn.ya') if s.ganti_kantor else t('sn.tidak') }}</span></div>
+    <p class="catatan">{{ t('sn.tanpa_nama') }}</p>
+  {% elif s.jenis == 'pejabat' %}
+    <div class="kv"><span class="k">{{ t('sn.jabatan') }}</span><span class="v">{{ s.jabatan or '—' }}</span></div>
+    <div class="kv"><span class="k">{{ t('sn.perubahan') }}</span><span class="v">{{ s.perubahan or '—' }}</span></div>
+    {% if s.berlaku %}<div class="kv"><span class="k">{{ t('sn.berlaku') }}</span><span class="v">{{ s.berlaku }}</span></div>{% endif %}
+    <p class="catatan">{{ t('sn.tanpa_nama') }}</p>
   {% elif s.jenis == 'berat' %}
     {% if s.nilai_juta is not none %}<div class="kv"><span class="k">{{ t('sn.nilai_gagal') }}</span><span class="v">{{ s.nilai_juta | rb(1) }} {{ t('sn.juta') }}</span></div>{% endif %}
   {% endif %}

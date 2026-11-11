@@ -34,6 +34,8 @@ KLAUSA_RELEVAN: dict[int, dict] = {
     1: {"nama": "Gagal bayar atau kehilangan kredit", "jalur": "berat", "input": []},
     3: {"nama": "Penghentian produksi atau kejadian berat", "jalur": "berat", "input": []},
     40: {"nama": "Penghentian perdagangan saham", "jalur": "berat", "input": []},
+    7: {"nama": "Pergantian akuntan publik (auditor eksternal)", "jalur": "tata_kelola", "input": []},
+    8: {"nama": "Pergantian pejabat kunci", "jalur": "tata_kelola", "input": []},
 }
 
 # Pengumuman anggaran belanja modal direksi bisa datang di pasal mana pun (kasus demo TSMC
