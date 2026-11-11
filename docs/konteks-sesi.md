@@ -41,7 +41,7 @@ dan tim). Per **11 Nov 2026 pagi**. Status harian dan daftar kerja ada di
 | Repo | `Kenfinn/napaincu-ai-comp`, branch `main` |
 | Server | Dokploy, **https://feaf.afinzaki.my.id**, port 8000, volume bernama **`feaf-data` → `/data`** (dipasang 11 Nov; sebelumnya volume tanpa nama, data hilang tiap deploy) |
 | Env server | `SENTINEL_KODE_AKSES`, `SENTINEL_TARIK_OTOMATIS_DETIK=600`, `SENTINEL_SERTAKAN_CONTOH=0`, `GEMINI_API_KEY`, **`SENTINEL_MODEL=gemini-3.6-flash`**, **`SENTINEL_MODEL_CADANGAN=gemini-3.5-flash,gemini-3.8-flash`**, opsional `SENTINEL_KUNCI_BACA`, `SENTINEL_PROSES_SEMUA`, `SENTINEL_MODEL_MAKS_PER_JALAN`, `FINMIND_TOKEN` |
-| Gemini | Kunci dari AI Studio. `gemini-2.5-flash` tercantum di ListModels tapi 404; 3.7/3.8/flash-latest sering 503; 3.5 dan 3.6 jalan (tes 11 Nov). Langganan AI Pro tidak menambah kuota API, hanya kredit Cloud US$10/bulan |
+| Gemini | Kunci dari AI Studio. `gemini-2.5-flash` tercantum di ListModels tapi 404; 3.7/3.8/flash-latest sering 503; 3.5 dan 3.6 jalan (tes 11 Nov). Langganan AI Pro tidak menambah kuota API, hanya kredit Cloud US$10/bulan. **11 Nov sore:** proyek `napaincu-ai-comp` sudah Paid tier 1 dengan kredit GCP ±IDR 545 ribu, tetapi API membalas **402 saldo prabayar habis**: kredit Cloud baru terpakai setelah saldo prabayar AI Studio di atas $0. Inilah penyebab `panggilan_model` 0 di server |
 | Deploy | Push ke `main`, tekan Deploy di Dokploy. Panduan: [`deploy-dokploy.md`](./deploy-dokploy.md) |
 | Tes | `python3 -m unittest discover -s tests` → **178 tes**, tanpa jaringan |
 | Evaluasi | `scripts/evaluasi.py --operasional --arsip-dir <folder arsip>`, `--chat`, mode gold |
