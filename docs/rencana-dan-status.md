@@ -19,9 +19,9 @@ Rincian dan kriteria QA tiap item ada di [`rencana-finalis.md`](./rencana-finali
 | B1 | Pemetaan pasal dari jawaban Patrice | ✅ terpasang (`472727e`). ⏳ cek ambang profil konservatif/agresif oleh tim |
 | B2 | DCF otomatis semua emiten non-keuangan | ✅ (Antigravity) |
 | B3 | Sitasi MOPS untuk angka laporan keuangan | ✅ (Antigravity). ⏳ uji tautan dari laptop Taiwan |
-| C1 | Chatbot "Tanya FEAF" | ✅ versi awal + tautan menu. ⬜ filter jenis pengumuman, tolak injeksi di gerbang, uji dengan Gemini; versi lengkap 21 Nov |
+| C1 | Chatbot "Tanya FEAF" | ✅ versi awal, tautan menu, filter jenis pengumuman B1, injeksi ditolak di gerbang, penilaian per alat. ⬜ uji dengan Gemini (D5); versi lengkap 21 Nov |
 | D1 | Kandidat gold set dari arsip server | ✅ |
-| D2 | Gold set 30–50 + baseline menit manual | ⏳ Ferry & Patrice |
+| D2 | Gold set 30–50 + baseline menit manual | ⏳ paket dikirim 11 Nov sore (PDF + Excel 46 baris), kembali 12 Nov siang |
 | D3 | Set uji serangan | ✅ (Antigravity), 0 angka penyerang terbit |
 | D4 | Skrip evaluasi lengkap | ✅ `--operasional`, `--chat`. Akurasi menunggu gold set |
 | D5 | Laporan evaluasi + keamanan + jejak asli dengan model | ⬜ butuh Gemini jalan di server dan gold set |

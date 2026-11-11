@@ -44,7 +44,7 @@ router = APIRouter()
 MAX_STEPS = 5
 MAX_PER_HOUR = int(os.environ.get("SENTINEL_CHAT_MAKS_PER_JAM", "60"))
 TRACE_DIR_NAME = "traces_chat"
-PROMPT_VERSION = "chat-2026-11-11.1"
+PROMPT_VERSION = "chat-2026-11-11.2"
 
 SYSTEM = """You are the research assistant of FEAF, a monitoring tool for companies listed in
 Taiwan (TWSE and TPEx). You answer questions about listed companies using ONLY the tools
@@ -77,6 +77,14 @@ TOLAK = {
         r"buy (it )?for me|sell (it )?for me|place (an |a )?order|execute (a |the )?trade"
         r"|belikan|jualkan|pasang order|eksekusi order"
         r"|幫我(買|賣|下單)|下單", re.I),
+    # Instructions aimed at the assistant itself. Refused before any tool call; the trace keeps
+    # the attempt. (Injection inside filings is handled by the tool-result checker instead.)
+    "injeksi": re.compile(
+        r"ignore (all |any )?(the )?(previous|prior|above|earlier) (instructions|rules|prompts?)"
+        r"|(forget|disregard|override|bypass) (your |all |the )?(safety |previous )?(rules|instructions|guardrails|system)"
+        r"|system (override|prompt)|you are now|developer mode|jailbreak"
+        r"|abaikan (semua )?(instruksi|aturan|perintah)|lupakan (semua )?(instruksi|aturan)|format ulang aturan"
+        r"|忽略(所有|全部)?(先前|之前|以上|上述)?的?(指示|指令|規則)|無視.{0,6}(規則|防護|指示)", re.I),
     "pribadi": re.compile(
         r"phone number|home address|personal email|spokes(man|person)'?s? (name|phone)"
         r"|nomor (hp|telepon) |alamat rumah|email pribadi"
@@ -155,15 +163,59 @@ def alat_laporan(kode: str, laporan: str = "lr", periode: str = "q") -> dict:
             "sumber": f"FinMind {pasar.LAPORAN[laporan]} (copied from MOPS)"}
 
 
-def alat_pengumuman(kode: str, n: int = 5) -> dict:
+# Announcement types the agent produces (pipeline result "jenis"), and the words people use.
+JENIS_PENGUMUMAN = {
+    "skenario": ("skenario",),
+    "risiko": ("penjaminan", "pinjaman"),
+    "modal": ("modal",),
+    "laporan": ("laporan",),
+    "berat": ("berat",),
+    "tata_kelola": ("auditor", "pejabat"),
+}
+
+
+def _angka_sinyal(h: dict) -> dict:
+    """The few numbers that explain a signal, already computed by the agent."""
+    s = (h.get("muatan") or {}).get("sinyal") or {}
+
+    def pct(x):
+        return None if x is None else round(x * 100, 2)
+    j = s.get("jenis")
+    if j in ("penjaminan", "pinjaman"):
+        return {"saldo_ekuitas_persen": pct(s.get("rasio_ekuitas")), "pemakaian_limit_persen": pct(s.get("pemakaian_limit")),
+                "penerima": len(s.get("penerima") or []), "ada_pihak_luar": bool(s.get("pihak_luar"))}
+    if j == "modal":
+        return {"subjenis": s.get("subjenis"), "persen_saham": pct(s.get("persen_saham")),
+                "nilai_juta_ntd": s.get("nilai_juta")}
+    if j == "laporan":
+        return {"periode": s.get("periode"), "laba_induk_juta_ntd": s.get("laba_induk_juta"), "eps": s.get("eps"),
+                "rasio_utang_persen": pct(s.get("rasio_utang"))}
+    if j == "auditor":
+        return {"kantor_akuntan_berganti": s.get("ganti_kantor"), "auditor_mundur": s.get("auditor_mundur"),
+                "beda_pendapat": s.get("beda_pendapat")}
+    if j == "pejabat":
+        return {"jabatan": s.get("jabatan"), "perubahan": s.get("perubahan"), "jabatan_kunci": s.get("kunci")}
+    return {}
+
+
+def alat_pengumuman(kode: str, n: int = 5, jenis: str | None = None) -> dict:
+    from . import ambang_profil
     daftar = [h for h in _hasil_agent() if (h.get("emiten") or {}).get("kode") == kode]
+    jenis = (jenis or "").strip().lower() or None
+    if jenis in JENIS_PENGUMUMAN:
+        daftar = [h for h in daftar if h.get("jenis") in JENIS_PENGUMUMAN[jenis]]
+    else:
+        jenis = None
     daftar.sort(key=lambda h: (h.get("tanggal") or "", h.get("jam") or ""), reverse=True)
     keluar = []
     for h in daftar[:max(1, min(int(n or 5), 10))]:
+        tg = ambang_profil.tingkat(((h.get("muatan") or {}).get("sinyal")), "moderat")
         keluar.append({"id": h["id"], "tanggal": h.get("tanggal"), "judul": h.get("judul"),
+                       "jenis": h.get("jenis"), "tingkat_moderat": (tg or {}).get("tingkat"),
+                       "angka": _angka_sinyal(h),
                        "state": h.get("state"), "alasan": i18n.tr(h.get("alasan_i18n"), "en", h.get("alasan") or ""),
                        "tautan_jejak": f"/jejak/{h['id']}", "sumber": h.get("sumber_url")})
-    return {"kode": kode, "jumlah": len(daftar), "pengumuman": keluar,
+    return {"kode": kode, "jenis_diminta": jenis, "jumlah": len(daftar), "pengumuman": keluar,
             "sumber": "TWSE/TPEx material announcements (OpenAPI t187ap04), processed by the FEAF agent"}
 
 
@@ -213,8 +265,9 @@ ALAT = {
                   {"kode": "Stock code"}),
     "laporan": (alat_laporan, "Financial statement table for the last 6 periods. laporan: lr (income), neraca (balance sheet), arus (cash flow). periode: q or y.",
                 {"kode": "Stock code", "laporan": "lr | neraca | arus", "periode": "q | y"}),
-    "pengumuman": (alat_pengumuman, "Recent material announcements of the company and how the FEAF agent handled them (PUBLISHED/HELD/ARCHIVED).",
-                   {"kode": "Stock code", "n": "How many, 1-10"}),
+    "pengumuman": (alat_pengumuman, "Recent material announcements of the company and how the FEAF agent handled them (PUBLISHED/HELD/ARCHIVED), with the signal numbers the agent computed. Use jenis to filter by type.",
+                   {"kode": "Stock code", "n": "How many, 1-10",
+                    "jenis": "Optional type: skenario (asset deal/capex), risiko (guarantees, loans to others), modal (capital change, buyback, bonds), laporan (quarterly report), berat (default, halt, suspension), tata_kelola (auditor or key officer change)"}),
     "valuasi": (alat_valuasi, "Reverse DCF result: market-implied growth, WACC, and a fair-value scenario.",
                 {"kode": "Stock code"}),
     "ringkasan": (alat_ringkasan, "The FEAF per-aspect assessment of the company (strengths, watch-outs, conclusion). No buy/sell labels.",
@@ -405,10 +458,25 @@ NIAT = {
 }
 
 
+NIAT_JENIS = {
+    "risiko": re.compile(r"endorse|guarantee|loans? (of funds )?to|lending|penjaminan|pinjaman dana|背書|保證|資金貸與", re.I),
+    "modal": re.compile(r"capital (reduction|increase|change)|buy ?back|treasury|convertible|bond|share issu"
+                        r"|perubahan modal|pengurangan modal|saham baru|obligasi|pembelian kembali"
+                        r"|減資|增資|庫藏|可轉債|公司債", re.I),
+    "tata_kelola": re.compile(r"auditor|accountant|\bcpa\b|officer|cfo|ceo|akuntan|auditor|pejabat|direktur keuangan"
+                              r"|會計師|主管|財務長|總經理", re.I),
+    "berat": re.compile(r"default|suspen|halt|gagal bayar|suspensi|penghentian|退票|停止買賣|停工", re.I),
+    "laporan": re.compile(r"quarterly (report|result)|laporan kuartal|季報|季度財報|第.季", re.I),
+}
+
+
 def _rencana_aturan(pertanyaan: str) -> list[tuple[str, dict]]:
     kode = next(iter(KODE_RE.findall(pertanyaan.upper())), None)
     if not kode:
         return []
+    jenis = [j for j, pola in NIAT_JENIS.items() if pola.search(pertanyaan)]
+    if jenis:
+        return [("pengumuman", {"kode": kode, "jenis": j}) for j in jenis][:MAX_STEPS]
     niat = [n for n, pola in NIAT.items() if pola.search(pertanyaan)] or ["harga", "statistik", "ringkasan"]
     rencana = [(n, {"kode": kode, **({"laporan": "arus" if re.search(r"cash|arus|現金", pertanyaan, re.I)
                                        else "neraca" if re.search(r"balance|neraca|資產", pertanyaan, re.I)
@@ -441,6 +509,24 @@ def _ringkas_template(hasil_alat: list[dict], bahasa: str) -> str:
             kol = r["kolom"][0] if r.get("kolom") else ""
             isi = "; ".join(f"{k} {a(v.get(kol), 1)}" for k, v in list(r["baris"].items())[:5])
             kalimat.append(t("ch.tpl.laporan", kode=r["kode"], lap=r["laporan"], tgl=kol, isi=isi))
+        elif h["alat"] == "pengumuman" and r.get("jenis_diminta"):
+            nama_jenis = t(f"ch.jenis.{r['jenis_diminta']}")
+            if not r["pengumuman"]:
+                kalimat.append(t("ch.tpl.jenis_kosong", kode=r["kode"], jenis=nama_jenis))
+            else:
+                p = r["pengumuman"][0]
+                def nilai(k, v):
+                    if isinstance(v, bool):
+                        return t("sn.ya") if v else t("ch.tidak")
+                    if isinstance(v, (int, float)):
+                        return a(v) + ("%" if k.endswith("_persen") else "")
+                    return t(f"modal.{v}") if k == "subjenis" else str(v)
+                isi = "; ".join(f"{t('ch.k.' + k)} {nilai(k, v)}"
+                                for k, v in (p.get("angka") or {}).items() if v is not None)
+                kalimat.append(t("ch.tpl.jenis", kode=r["kode"], n=r["jumlah"], jenis=nama_jenis,
+                                 tgl=p.get("tanggal") or "", judul=p.get("judul") or "",
+                                 tingkat=t(f"tk.{p['tingkat_moderat']}") if p.get("tingkat_moderat") else "—",
+                                 isi=isi or "—"))
         elif h["alat"] == "pengumuman":
             if not r["pengumuman"]:
                 kalimat.append(t("ch.tpl.umum_kosong", kode=r["kode"]))
