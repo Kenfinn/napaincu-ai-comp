@@ -27,7 +27,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import config, i18n, pasar, review, ringkasan, sitasi, store, tarik, umpan_balik, valuasi_otomatis
+from . import ambang_profil, config, i18n, pasar, review, ringkasan, sitasi, store, tarik, umpan_balik, valuasi_otomatis
 from .agent import llm, pipeline
 
 import sys
@@ -44,11 +44,34 @@ def _pemantau() -> None:
             # otomatis (beta: 25 bulan harga harian, jeda 2 detik) bisa makan menit, jadi
             # dibangun sesudahnya, lalu hasil diproses ulang sekali lagi.
             hasil(segarkan=True)
+            _segarkan_valuasi_dari_laporan()
             if valuasi_otomatis.panaskan(tarik.baca_watchlist()):
                 hasil(segarkan=True)
         except Exception as e:                        # noqa: BLE001
             print(f"[pemantau] gagal: {type(e).__name__}: {e}", flush=True)
         time.sleep(jeda)
+
+
+_laporan_diproses: set[str] = set()
+
+
+def _segarkan_valuasi_dari_laporan() -> None:
+    """Pasal 31 (laporan kuartal) memicu pembangunan ulang valuasi otomatis emiten watchlist.
+
+    Sekali per pengumuman laporan selama proses hidup. Bila FinMind belum memuat laporannya,
+    valuasi dibangun dari kuartal sebelumnya dan diperbarui lagi oleh TTL cache berikutnya.
+    """
+    wl = set(tarik.baca_watchlist())
+    for h in list(_cache or []):
+        if h.get("jenis") != "laporan" or h["id"] in _laporan_diproses:
+            continue
+        kode = (h.get("emiten") or {}).get("kode")
+        _laporan_diproses.add(h["id"])
+        if kode in wl:
+            try:
+                valuasi_otomatis.segarkan(kode)
+            except Exception as e:                    # noqa: BLE001
+                print(f"[laporan→valuasi] {kode}: {type(e).__name__}: {e}", flush=True)
 
 
 def _panaskan_latar() -> None:
@@ -187,7 +210,12 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
         except (ValueError, AttributeError):
             pesan_kilat = None
     wl_set = set(tarik.baca_watchlist())
+    profil = request.query_params.get("risiko") or request.cookies.get("risiko")
+    profil = ambang_profil.normal(profil)
     dasar = {
+        "profil_risiko": profil,
+        "daftar_profil": ambang_profil.PROFIL,
+        "tingkat_sinyal": lambda h: ambang_profil.tingkat(((h or {}).get("muatan") or {}).get("sinyal"), profil),
         "bahasa": bhs,
         "daftar_bahasa": i18n.BAHASA,
         # Posisional saja: kunci terjemahan boleh memakai parameter bernama {k} (pasal).
@@ -582,10 +610,13 @@ def peringatan(request: Request, pengenal: str):
     # Dicari di sini, bukan di template: Jinja tidak punya test pencarian
     # substring, dan logika seperti ini memang bukan urusan lapisan tampilan.
     injeksi = next((l for l in h["jejak"] if "injeksi" in l["tahap"].lower()), None)
-    return tpl.TemplateResponse(
+    r = tpl.TemplateResponse(
         request=request, name="peringatan.html",
         context=konteks(request, "feed", h=h, injeksi=injeksi,
                         suara=umpan_balik.suara_untuk(pengenal)))
+    if request.query_params.get("risiko") in ambang_profil.PROFIL:
+        r.set_cookie("risiko", request.query_params["risiko"], max_age=60 * 60 * 24 * 365, samesite="lax")
+    return r
 
 
 @app.get("/jejak/{pengenal}", response_class=HTMLResponse)

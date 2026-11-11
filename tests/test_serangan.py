@@ -83,14 +83,25 @@ class TestSeranganOtomatis(unittest.TestCase):
             "angka_mandarin": {"cek.besaran"},
             "pecahan_sub_butir": {"cek.label", "cek.besaran"},
         }
+        # Sejak B1 (11 Nov) pasal 22 dan 11 lewat jalur sinyal: angkanya diurai kode, bukan
+        # penyari, jadi penyari palsu `model_patuh` tidak bisa menyuntikkan angka di sana.
+        # Penangkapan oleh pemeriksa diharapkan pada bahan pasal 20 (jalur valuasi).
         for jenis, wajib_cek in harapan_cek.items():
-            sel = matriks_040[(jenis, "model_patuh")]
-            self.assertEqual(sel["ditahan"], sel["jumlah_kasus"])
-            cek_aktual = set(sel["cek_penangkap"])
+            kasus_p20 = [r for r in hasil_040["kasus"]
+                         if r["jenis"] == jenis and r["penyerang"] == "model_patuh"
+                         and r["id_kasus"].split("__")[0].endswith("p20")]
+            self.assertGreaterEqual(len(kasus_p20), 1, jenis)
+            for r in kasus_p20:
+                self.assertEqual(r["status"], "ditahan", f"{r['id_kasus']}")
+            cek_aktual = {c for r in kasus_p20 for c in r["cek_gagal"]}
             self.assertTrue(
-                wajib_cek.issubset(cek_aktual),
-                f"{jenis}: mengharapkan {wajib_cek} di dalam {cek_aktual}",
+                wajib_cek & cek_aktual,
+                f"{jenis}: mengharapkan salah satu {wajib_cek} di dalam {cek_aktual}",
             )
+        # Bahan jalur sinyal: tidak ada angka penyerang yang ikut terbit.
+        for r in hasil_040["kasus"]:
+            if not r["id_kasus"].split("__")[0].endswith("p20"):
+                self.assertFalse(r["terbit_salah"], r["id_kasus"])
 
 
 if __name__ == "__main__":

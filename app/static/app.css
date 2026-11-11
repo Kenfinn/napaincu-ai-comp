@@ -216,3 +216,8 @@ table.fin td.kosong-sel { color: var(--abu); }
 .tombol.abu { background: #EEF0F4; color: var(--navy); }
 .tombol.abu:hover { background: #E1E5EC; }
 .cek .nama.mono { width: 46px; }
+
+/* --- B1: tingkat sinyal per profil --- */
+.lencana.tk-info { background: #EEF0F4; color: var(--abu-2); }
+.lencana.tk-perhatian { background: #FBF2E3; color: #5F4409; }
+.lencana.tk-serius { background: #F9EAE8; color: var(--tolak); }

@@ -57,6 +57,10 @@
   </div>
   <div class="kanan">
     <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
+    {% if h.jenis %}
+      {% set tg = tingkat_sinyal(h) %}
+      <span class="lencana {{ ('tk-' ~ tg.tingkat) if tg else 'l-dilewati' }}">{{ t('jenis.' ~ h.jenis) }}{% if tg %} · {{ t('tk.' ~ tg.tingkat) }}{% endif %}</span>
+    {% endif %}
     {% if h.status == 'terbit' and h.muatan and h.muatan.diterima %}
       {% set d = h.muatan.diterima[0].hasil %}
       <span class="delta {{ 'naik' if d.delta.g_tersirat > 0 else 'turun' }}">

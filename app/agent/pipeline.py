@@ -24,7 +24,7 @@ import time
 from datetime import datetime, timezone
 
 from .. import config, pasar, review, store, umpan_balik
-from . import extract, llm, recompute, screen, triase, verify
+from . import extract, llm, recompute, screen, sinyal, triase, verify
 from ..i18n import pesan
 
 # Nama state di brief hal. 7. Status internal tetap berbahasa Indonesia supaya jejak
@@ -110,6 +110,9 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
     if not hasil_saring["lolos"]:
         return _selesai(j, "dilewati", detail, None, hasil_saring["alasan"],
                         hasil_saring.get("alasan_i18n"))
+
+    if hasil_saring.get("jalur") in ("risiko", "modal", "laporan", "berat"):
+        return _jalur_sinyal(j, detail, hasil_saring, d_valuasi)
 
     # --- tahap 1 & 2 -------------------------------------------------------
     # Pemilah dan penyari digabung dalam satu panggilan: pertanyaan "input mana yang
@@ -238,10 +241,85 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
                         {"ditolak": ditolak, "tahan": {"jenis": "verifikasi", "boleh_setujui": boleh}},
                         "; ".join(unik), unik_i18n)
 
+    # DCF berbasis kas (keputusan tim 11 Nov): angka dari pengumuman belum menggerakkan
+    # kas, jadi hasil hitung ulang adalah SKENARIO "bila terealisasi", bukan valuasi baru.
     return _selesai(j, "terbit", detail,
-                    {"diterima": diterima, "ditolak": ditolak},
-                    f"{len(diterima)} temuan lolos seluruh pemeriksaan.",
-                    pesan("akhir.terbit", n=len(diterima)))
+                    {"diterima": diterima, "ditolak": ditolak, "skenario": True},
+                    f"{len(diterima)} temuan lolos seluruh pemeriksaan; skenario bila terealisasi.",
+                    pesan("akhir.skenario", n=len(diterima)))
+
+
+def _jalur_sinyal(j: Jejak, detail: dict, saring: dict, d_valuasi: dict | None) -> dict:
+    """Pasal 22/23/11/35/31/1/3/40: angka diurai kode, dicek ke dokumen, lalu diputuskan."""
+    from .. import ambang_profil
+    jalur = saring["jalur"]
+    t0 = time.monotonic()
+    if jalur == "risiko":
+        s = sinyal.urai_penjaminan(detail, detail.get("clause"))
+    elif jalur == "modal":
+        s = sinyal.urai_modal(detail, _skala(detail, d_valuasi))
+    elif jalur == "laporan":
+        s = sinyal.urai_laporan(detail)
+    else:
+        s = sinyal.urai_berat(detail)
+    j.catat("Pengurai sinyal", "lolos", {"jalur": jalur}, s, t0=t0,
+            i18n=pesan("tahap.sinyal", jalur=jalur), state="EXTRACTED · signal")
+    dokumen = llm.dokumen_teks(detail)
+    penanda = extract.deteksi_injeksi(dokumen)
+    if penanda:
+        # Pengurai sinyal tidak memakai model, jadi teks perintah tidak bisa mengarahkannya;
+        # tetap dicatat supaya percobaan pengarahan terlihat di jejak audit.
+        j.catat("· Penanda injeksi", "tercatat", {"penanda": penanda},
+                {"tindakan": "Tidak mengubah perilaku. Pengurai sinyal deterministik, tanpa model."},
+                i18n=pesan("tahap.injeksi"))
+
+    t0 = time.monotonic()
+    cek = sinyal.periksa_kutipan(s, dokumen)
+    lolos = all(c["lolos"] for c in cek)
+    j.catat("Pemeriksa kutipan sinyal", "lolos" if lolos else "tolak", {"kutipan": len(cek)}, {"cek": cek},
+            t0=t0, i18n=pesan("tahap.sinyal_cek"), state="VERIFIED · sumber")
+    tingkat_server = ambang_profil.tingkat(s, ambang_profil.PROFIL_SERVER)
+    muatan = {"sinyal": s, "tingkat_server": tingkat_server}
+    if not lolos:
+        return _selesai(j, "ditahan", detail, dict(muatan, tahan={"jenis": "sinyal_rusak", "boleh_setujui": False}),
+                        "Kutipan sinyal tidak ditemukan di dokumen.", pesan("akhir.sinyal_rusak"))
+    if jalur == "berat":
+        return _selesai(j, "ditahan", detail, dict(muatan, tahan={"jenis": "risiko_berat", "boleh_setujui": True}),
+                        f"Pasal {detail.get('clause')}: kejadian berat, selalu ditinjau manusia.",
+                        pesan("akhir.berat", k=detail.get("clause")))
+    if jalur == "risiko":
+        if tingkat_server["tingkat"] == "serius":
+            return _selesai(j, "ditahan", detail, dict(muatan, tahan={"jenis": "risiko_serius", "boleh_setujui": True}),
+                            "Sinyal risiko melewati ambang serius profil server.",
+                            pesan("akhir.risiko_serius", ekuitas=_pct(s.get("rasio_ekuitas")),
+                                  limit=_pct(s.get("pemakaian_limit"))))
+        return _selesai(j, "terbit", detail, muatan, "Sinyal risiko (info).",
+                        pesan("akhir.risiko", ekuitas=_pct(s.get("rasio_ekuitas")),
+                              limit=_pct(s.get("pemakaian_limit")), n=len(s.get("penerima", []))))
+    if jalur == "laporan":
+        return _selesai(j, "terbit", detail, muatan, "Laporan kuartal: ringkasan angka.",
+                        pesan("akhir.laporan", periode=s.get("periode") or "—"))
+    # modal
+    sub = s["subjenis"]
+    if sub == "treasuri":
+        return _selesai(j, "dilewati", detail, muatan, "Pembatalan saham treasuri: saham beredar tidak berubah.",
+                        pesan("akhir.modal_treasuri"))
+    if sub == "lain":
+        return _selesai(j, "dilewati", detail, muatan, "Jenis perubahan modal tidak dikenali.",
+                        pesan("akhir.modal_lain"))
+    if sub in ("saham_baru", "rsa_batal", "beli_kembali"):
+        batas = ambang_profil.materialitas_terendah()
+        ps, pk = s.get("persen_saham"), s.get("persen_kapitalisasi")
+        if (ps is not None or pk is not None) and not ((ps or 0) >= batas["saham"] or (pk or 0) >= batas["uang"]):
+            return _selesai(j, "dilewati", detail, muatan, "Perubahan modal di bawah ambang materialitas terendah.",
+                            pesan("akhir.modal_kecil", saham=_pct(ps), batas=round(batas["saham"] * 100, 2)))
+    return _selesai(j, "terbit", detail, muatan, f"Sinyal perubahan modal ({sub}).",
+                    {"kode": "akhir.modal", "param": {"saham": _pct(s.get("persen_saham"))},
+                     "param_kode": {"sub": f"modal.{sub}"}})
+
+
+def _pct(x: float | None):
+    return "—" if x is None else round(x * 100, 2)
 
 
 def _skala(detail: dict, d_valuasi: dict | None) -> dict | None:
@@ -315,6 +393,8 @@ def _selesai(j: Jejak, status: str, detail: dict, muatan, alasan: str,
         "state": STATE.get(status),
         "keputusan_manusia": kep,
         "triase": j.triase,
+        "jenis": (muatan or {}).get("sinyal", {}).get("jenis") if isinstance(muatan, dict) and muatan.get("sinyal")
+                 else ("skenario" if isinstance(muatan, dict) and muatan.get("skenario") else None),
         "id": j.pengenal,
         "contoh": bool(detail.get("_fixture")),
         "status": status,

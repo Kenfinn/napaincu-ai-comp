@@ -114,6 +114,35 @@ sekarang ada ditampilkan sebagai skenario "bila terealisasi", tidak sebagai valu
 | Saham baru dari konversi / opsi karyawan (增資基準日) | Jumlah saham naik (dilusi) (Q6-C) |
 | Materialitas | Peringatan bila perubahan saham **≥ 1%** atau jumlah uang **≥ 2% kapitalisasi**; di bawahnya diarsipkan dengan alasan (Q9) |
 
+### Status implementasi (B1, 11 Nov)
+
+Terpasang di `app/agent/screen.py` (jalur per pasal), `app/agent/sinyal.py` (pengurai),
+`app/ambang_profil.py` (ambang per profil risiko), `app/agent/pipeline.py` (keputusan),
+`app/templates/_sinyal.html` (tampilan). Ambang dipilih lewat profil risiko (konservatif /
+moderat / agresif); moderat = jawaban Patrice, dua lainnya usulan Claude yang menunggu cek tim:
+
+| Ambang | Konservatif | Moderat | Agresif |
+|---|---|---|---|
+| Saldo penjaminan/pinjaman ÷ ekuitas | ≥ 50% | ≥ 80% | ≥ 100% |
+| Pemakaian limit (butir 7 ÷ 6) | ≥ 70% | ≥ 80% | ≥ 90% |
+| Perubahan saham | ≥ 0,5% | ≥ 1% | ≥ 2% |
+| Jumlah uang ÷ kapitalisasi | ≥ 1% | ≥ 2% | ≥ 5% |
+| Pengurangan modal untuk menutup rugi | sinyal | sinyal | info |
+
+Antrean review (HELD) memakai moderat. Arsip karena tidak material memakai ambang paling
+longgar (konservatif). Pilihan sementara Claude sambil menunggu tim:
+- 現金減資 → sinyal "perlu diperhatikan".
+- Pasal 23 memakai ambang yang sama dengan pasal 22.
+- Pasal 1, 3, 40 → selalu HELD (boleh disetujui setelah ditinjau). Butir nama di pasal 1
+  (公司名稱(或負責人姓名)) tidak diambil karena bisa nama orang.
+- Pasal 51/53, 6/7/8, 10, 26, 28 → dilewati.
+- Pasal 31 → ringkasan angka dari isi pengumuman (pendapatan, laba, EPS, aset, liabilitas,
+  ekuitas YTD), lalu valuasi otomatis emiten watchlist dibangun ulang.
+
+Hasil pada 578 pengumuman asli 10 Nov (tanpa model): 177 laporan, 38 sinyal penjaminan/
+pinjaman, dan 26 sinyal modal terbit; 6 risiko serius dan 4 kejadian berat ditahan untuk
+manusia; 783 halaman sinyal tampil di tiga bahasa tanpa galat.
+
 ### Masih terbuka
 
 - Pengurangan modal tunai (現金減資): saham turun sekaligus kas keluar ke pemegang saham. Belum ditanyakan secara khusus.

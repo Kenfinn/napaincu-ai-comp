@@ -42,7 +42,9 @@ class TestOperasional(unittest.TestCase):
         self.assertLessEqual(m["latensi_ms"]["median"], m["latensi_ms"]["maks"])
         self.assertEqual(m["biaya_usd_perkiraan_berbayar"], 0.0)          # tanpa model, tanpa token
         self.assertIn("arsip.saringan_pasal", m["kategori"])                # pasal 12 dilewati
-        self.assertEqual(m["jatuh_ke_cadangan"].get("tanpa kunci API", 0), m["lolos_saringan"])
+        # Hanya jalur valuasi (pasal 20) yang memakai penyari; jalur sinyal tidak memanggil model.
+        self.assertGreaterEqual(m["jatuh_ke_cadangan"].get("tanpa kunci API", 0), 1)
+        self.assertLessEqual(m["jatuh_ke_cadangan"].get("tanpa kunci API", 0), m["lolos_saringan"])
         teks = self.ev.laporan_operasional(m, "uji", "penalar aturan")
         self.assertIn("Intervensi manusia", teks)
 

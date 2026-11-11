@@ -15,6 +15,9 @@
 {% if h.status == 'ditahan' %}
 <div class="pita bahaya"><div>{{ t('al.ditahan', sebab=((tr(h.alasan_i18n) if h.alasan_i18n else h.alasan) | e)) | safe }}</div></div>
 {% endif %}
+{% if h.muatan and h.muatan.skenario %}
+<div class="pita fixture"><div>{{ t('sn.skenario') }}</div></div>
+{% endif %}
 {% if h.keputusan_manusia and h.status == 'terbit' %}
 <div class="pita nyata"><div>{{ t('al.disetujui_manusia', catatan=(h.keputusan_manusia.catatan | e)) | safe }}</div></div>
 {% endif %}
@@ -41,6 +44,8 @@
   <div class="kv"><span class="k">{{ t('al.jejak') }}</span>
     <span class="v"><a href="/jejak/{{ h.id }}">{{ t('al.lihat_langkah', n=h.ringkasan.langkah) }}</a></span></div>
 </div>
+
+{% if h.muatan and h.muatan.sinyal %}{% include "_sinyal.html" %}{% endif %}
 
 {% if h.triase %}
 {% set tri = h.triase %}

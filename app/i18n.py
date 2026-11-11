@@ -393,9 +393,9 @@ _T: dict[str, tuple[str, str, str]] = {
         "Pasal {k} tidak ada dalam daftar pasal yang dapat mengubah input valuasi. Tidak diteruskan ke model."),
     "saring.cocok": ("Clause {k} · {nama}. May affect: {input}.", "第 {k} 款 · {nama}。可能影響：{input}。",
                      "Pasal {k} — {nama}. Dapat menyentuh: {input}."),
-    "klausa.11": ("Board decision on capital expenditure", "董事會決議資本支出", "Keputusan dewan direksi atas belanja modal"),
+    "klausa.11": ("Capital changes and corporate bonds", "資本變動與公司債", "Perubahan modal dan surat utang"),
     "klausa.20": ("Acquisition or disposal of assets", "取得或處分資產", "Perolehan atau pelepasan aset"),
-    "klausa.22": ("Significant lending or guarantees", "重大資金貸與或背書保證", "Pinjaman dana atau penjaminan signifikan"),
+    "klausa.22": ("Endorsements and guarantees for others", "為他人背書保證", "Penjaminan untuk pihak lain"),
     "klausa.2": ("Bounced cheque, default or financial distress", "退票、違約或財務困難",
                  "Cek kosong, gagal bayar, atau kesulitan keuangan"),
 
