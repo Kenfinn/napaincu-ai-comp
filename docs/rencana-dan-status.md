@@ -68,9 +68,9 @@ Sebelum B1 (10 Nov malam): 0 terbit.
 
 | Urutan | Pekerjaan | Selesai bila |
 |---|---|---|
-| 1 | Deploy versi terbaru (Afinzaki), lalu cek `/sehat`: `panggilan_model` naik, `sebab_cadangan` menyusut tiap 10 menit | Semua pasal 20 di server pernah dijawab Gemini |
+| 1 | Deploy versi terbaru (Afinzaki), lalu cek `/sehat`: `versi_kode` sama dengan hasil `python3 -c "from app.main import VERSI_KODE; print(VERSI_KODE)"` di repo, `sebab_cadangan` kosong. 11 Nov 09:19 UTC: Gemini jalan tanpa galat (1106 pengumuman, 99 jawaban cache), tapi server **belum** memakai commit kalibrasi b3cc0ee | `versi_kode` cocok, semua pasal 20 pernah dijawab Gemini |
 | 2 | D5: jalankan di container `scripts/evaluasi.py --simpan` (gold, mode model) dan `--chat --simpan`; ambil satu jejak audit asli yang memakai Gemini; gabung dengan `hasil-gold-set.md` dan `laporan-keamanan.md` jadi laporan evaluasi | Semua metrik Appendix 2 terisi angka asli, termasuk biaya dan latensi model |
-| 3 | E1: README finalis (arsitektur, model & versi 3.6/3.5, env, akses, aliran data, izin, keterbatasan, angka evaluasi resmi) | Bagian wajib lomba lengkap, tidak ada info basi |
+| 3 | E1: README finalis — **selesai 11 Nov** (bahasa Inggris, jalankan-lokal tiga bahasa; arsitektur, jalur pasal, model 3.6/3.5, env, akses, aliran data, angka evaluasi resmi, keterbatasan). Sisa: tambah angka Gemini setelah D5 | Bagian wajib lomba lengkap, tidak ada info basi |
 | 4 | QA akhir di server tiga bahasa (`scripts/qa_halaman.py` + cek manual) | Daftar cek `diagram-alur.md` bagian 3 lolos |
 | 5 | Opsional: set uji baru 15–20 pengumuman untuk angka di luar sampel | Dilabeli tanpa melihat hasil agent |
 

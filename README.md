@@ -1,14 +1,20 @@
 # FEAF · Agentic AI Investment Assistant
 
-Agent pemantau pengumuman resmi bursa Taiwan (MOPS 重大訊息) yang menghitung ulang
-valuasi saat sebuah dokumen mengubah angka, dan **menolak menerbitkan peringatan**
-ketika angkanya tidak bisa ditelusuri kembali ke dokumen sumbernya.
+An agent that watches official Taiwan exchange filings (MOPS 重大訊息), works out which
+valuation input each filing touches, recalculates the valuation when the numbers change,
+and **refuses to publish an alert** when a number cannot be traced back to the filing it
+came from.
 
-Dibangun untuk NAPAI Agentic AI Innovation Competition 2026, track SYSTEX —
+Built for the NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), SYSTEX track:
 *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
-> **Bukan alat perdagangan.** Tidak ada jalur ke broker dan tidak ada eksekusi order.
-> Agent menyaring, menjelaskan, dan menyitasi; manusia yang memutuskan.
+> **Not a trading tool.** There is no broker connection and no order execution, and the agent
+> gives no buy or sell advice. It screens, explains and cites; a person decides.
+
+Results on a 46-filing gold set labelled by a finance team member (official numbers, measured
+before any tuning): **0 wrong numbers published**, 41/46 publish/hold/archive decisions match
+the expert, 13/46 sent to a person. Without the checker, 5 wrong numbers were published.
+Details in [Evaluation](#evaluation).
 
 ---
 
@@ -102,20 +108,21 @@ export SENTINEL_KODE_AKSES=...            # aksi butuh kode akses
 Di Windows PowerShell pakai `$env:GEMINI_API_KEY="..."`, bukan `export`.
 Tes: `python -m unittest discover -s tests` (tanpa jaringan).
 
-### Menarik pengumuman asli (dari jaringan mana pun)
+### Pulling real filings
 
-Buka halaman **Watchlist**, tambah kode saham, lalu tekan **Periksa sekarang**. Atau lewat terminal:
+Open **Watchlist**, add a stock code, then press **Check now**. From a terminal:
 
 ```bash
-python3 scripts/tarik.py                 # tarik untuk watchlist di data/watchlist.json
-python3 scripts/tarik.py --ulang 600     # periksa tiap 10 menit sampai Ctrl+C
+python3 scripts/tarik.py                 # pull for the watchlist in data/watchlist.json
+python3 scripts/tarik.py --ulang 600     # check every 10 minutes until Ctrl+C
 ```
 
-Sumbernya OpenAPI resmi TWSE (`t187ap04_L`) dan TPEx (`mopsfin_t187ap04_O`), yang memuat
-isi lengkap pengumuman material hari berjalan dan **tidak** diblokir di luar Taiwan.
-Endpoint itu tidak menyimpan riwayat, jadi setiap tarikan digabung ke
-`data/parsed/details.json` tanpa duplikat. Riwayat yang lebih lama hanya bisa ditarik
-dari MOPS lewat jaringan Taiwan (`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`).
+The sources are the official TWSE (`t187ap04_L`) and TPEx (`mopsfin_t187ap04_O`) OpenAPI
+endpoints. They carry the full text of today's material filings and are reachable from
+outside Taiwan. They keep no history, so every pull is merged into `data/parsed/details.json`
+without duplicates. Older history can only be pulled from MOPS on a Taiwan network
+(`scripts/spike_mops.py` → `parse_mops.py` → `fetch_details.py`, see
+[`docs/tarik-riwayat.md`](docs/tarik-riwayat.md)) and uploaded with `scripts/kirim_riwayat.py`.
 
 ### Deploy (Docker / Dokploy)
 
@@ -124,214 +131,308 @@ docker build -t feaf .
 docker run -p 8000:8000 -v feaf-data:/data -e SENTINEL_TARIK_OTOMATIS_DETIK=600 feaf
 ```
 
-Langkah lengkap untuk Dokploy, termasuk kode akses dan daftar uji untuk tim, ada di
+Pulled filings, the watchlist, audit traces and review decisions live in the `/data` volume and
+survive redeploys. `GET /sehat` is the health check; its `versi_kode` field is a hash of
+`app/*.py`, so you can confirm the server runs the same code as your checkout
+(`python3 -c "from app.main import VERSI_KODE; print(VERSI_KODE)"`). Full Dokploy steps:
 [`docs/deploy-dokploy.md`](docs/deploy-dokploy.md).
 
-### Menjalankan tes
+### Tests
 
 ```bash
-python3 -m unittest discover -s tests -v
+python3 -m unittest discover -s tests
 ```
 
-### Menjalankan evaluasi (Appendix 2)
-
-```bash
-python3 scripts/evaluasi.py --menit-manual 6
-```
-
-Membandingkan pipeline lengkap dengan "LLM tanpa pemeriksa" pada gold set di
-`eval/gold.csv`, lalu mencetak angka salah yang terbit, ketepatan keputusan, tingkat
-intervensi manusia, panggilan model, token, retry, dan latensi. Mode `model` ikut
-dijalankan kalau `GEMINI_API_KEY` terpasang. Cara mengisi gold set ada di
-[`docs/panduan-gold-set.md`](docs/panduan-gold-set.md).
+236 tests, no network access needed. They include the attack set, the rule that API keys never
+reach a file, page or trace, and the rule that personal names never reach the model or the
+gold-set export.
 
 ---
 
-## Arsitektur
+## Architecture
 
 ```
-Pengumuman MOPS
-        │
-   [0] SARINGAN 符合條款 ── deterministik, gratis ── 711 → ~30
-        │
-   [1] PEMILAH      model   Menyentuh input valuasi yang mana? Seberapa yakin?
-   [2] PENYARI      model   Angka berapa, dari kalimat mana persis?
-        │
-   [3] PENGHITUNG   deterministik — dcf.compute() dua kali, sebelum vs sesudah
-        │
-   [4] PEMERIKSA    deterministik — tiap angka wajib ada di dokumen sumber
-        │
-   lolos → terbit      gagal → ditolak, alasan tercatat
+TWSE / TPEx OpenAPI (today)      MOPS history (Taiwan network)
+            │                              │
+            └──── scripts/tarik.py ────────┘   personal fields dropped before saving
+                        │
+                data/parsed/details.json
+                        │
+ [0] CLAUSE SCREEN    deterministic. The 重大訊息 clause number picks a lane, or skips
+                        │
+ [1] TRIAGE           model  Which valuation input does this touch? How sure?
+ [2] EXTRACT          model  Which number, quoted from which exact item?
+                        │
+ [3] RECOMPUTE        deterministic. dcf.compute() before vs after
+ [4] VERIFY           deterministic. Every number and quote must exist in the filing
+                        │
+     PUBLISHED      HELD FOR REVIEW (a person decides)      ARCHIVED (reason logged)
 ```
 
-Empat akhir yang mungkin, dan tiga di antaranya **bukan** "terbit":
+**Stages 3 and 4 never use a model.** Numbers come from arithmetic, and every claim the model
+makes is checked back against the filing. The model never calculates and never grades itself.
+Without an API key, stages 1 and 2 fall back to a rule-based reasoner, which is also the
+baseline the evaluation compares against. The screen and the trace always say which one ran.
 
-| Akhir | Artinya |
+### Lanes by clause
+
+The clause list and thresholds were set with the team's finance members (Ferry, Patrice).
+Full mapping and the reasoning behind each decision: [`docs/pemetaan-pasal.md`](docs/pemetaan-pasal.md).
+
+| Clause | Lane | What happens |
+|---|---|---|
+| 20 (asset acquisition / disposal) | Valuation scenario | DCF recomputed as an "if this is realised" scenario. DCF is cash-based: a plan does not move the valuation until a quarterly report shows the cash. Deals with a 100%-owned subsidiary are archived (cash stays in the group) |
+| 22, 23 (guarantees, loans of funds) | Risk signal | Balance ÷ equity, limit usage, per recipient, related vs outside party. Loans ≥ 40% of equity are flagged |
+| 11, 35 (capital changes, bonds, buybacks) | Capital signal | Dilution and money amounts against materiality thresholds (shares ≥ 1%, money ≥ 2% of market cap) |
+| 31 (quarterly reports) | Report signal | Profit/loss, debt ratio. Losses written in brackets `(339,123)` are read as negative |
+| 1, 3, 40 (default, halt of production, trading suspension) | Severe | Always held for a person |
+| 7, 8 (external auditor change, key officer change) | Governance | Published as information; officer names are never extracted |
+| 6, 51, 53 and others | Skipped | Never reach the model |
+
+Signal level (info / attention / serious) depends on a risk profile (conservative / moderate /
+aggressive) chosen on screen; thresholds live in `app/ambang_profil.py`. The server uses
+*moderate* (the finance team's answers) for hold decisions.
+
+### What stage 4 checks
+
+| Check | Catches |
 |---|---|
-| `dilewati` | Nomor pasal tidak menyentuh input valuasi. Tidak pernah sampai ke model. |
-| `ditahan` | Tidak ada angka yang bisa ditarik lengkap dengan kalimat sumbernya. Antre ke manusia. |
-| `ditolak` | Pemeriksa menggagalkan klaim. Peringatan tidak terbit, alasannya tercatat. |
-| `terbit` | Lolos seluruh pemeriksaan. |
+| Item label allowed for the input | Quotes taken from free-text notes, where injected instructions usually sit |
+| Quote exists in the filing | Invented source sentences |
+| Digits exist in the filing | Hallucinated numbers |
+| Supported currency | USD amounts silently converted without an exchange rate |
+| Known unit | 仟元 / 百萬元 / 億元 mix-ups (thousand-fold errors) |
+| Magnitude within 0.2–3.0× of the base | Wrong item, or an injected number |
+| Circularity intact | Arithmetic bugs in the calculator |
 
-**Tahap 3 dan 4 sengaja tidak memakai model.** Di situ letak pertahanannya: angka
-datang dari aritmetika, dan klaim model diuji balik ke dokumen. Model tidak pernah
-menghitung, dan tidak pernah menilai dirinya sendiri.
+### Valuation
 
-Diagram lengkapnya: `design/AlurState.dc.html` dan `design/Arsitektur.dc.html`
-(PNG-nya di `design/export/`).
+`scripts/dcf.py` is a standalone DCF calculator; the web app calls the same `compute()`, so the
+screen cannot silently differ from the worksheet. `valuation/inputs/2330.json` is a manual
+worksheet with a source for every input. For other non-financial issuers,
+`app/valuasi_otomatis.py` builds the same input structure from exchange prices and FinMind
+financial statements, cached for 12 hours ([`docs/valuasi-otomatis.md`](docs/valuasi-otomatis.md)).
+Financial companies (banks, insurers) get no DCF.
 
-### Yang diperiksa tahap 4
+### Ask FEAF (chat)
 
-| Pemeriksaan | Menangkap |
+`/tanya` answers questions about filings, signals and valuations **only from tool results**
+(`app/chat.py`). Every number in an answer is checked against the tool output before it is
+shown. Questions asking for buy/sell advice, price predictions, or containing injected
+instructions are refused. Limited to 60 questions per hour per server.
+
+### Pages
+
+| Page | Content |
 |---|---|
-| Label butir sah untuk input | Kutipan dari butir catatan, tempat teks pengarah biasa diselipkan |
-| Kutipan ada di dokumen | Kalimat sumber yang dikarang |
-| Digit angka ada di dokumen | Angka halusinasi |
-| Mata uang didukung | Jumlah USD yang dikonversi diam-diam tanpa kurs |
-| Satuan dikenali | Kekeliruan 仟元 / 百萬元 / 億元 — selisihnya ribuan kali |
-| Besaran dalam pita 0,2–3,0× | Salah tarik butir, atau angka yang disuntikkan |
-| Sirkularitas utuh | Bug aritmetika di kalkulator |
+| `/` | Alert feed |
+| `/saham/{code}` | Stock page: filings, financial statements, valuation, signals |
+| `/peringatan/{id}` | Alert detail with MOPS citation and checker verdict |
+| `/jejak/{id}` | Operation trace (every step, model call, token count, latency) |
+| `/valuasi/{code}` | DCF, cost of capital, sensitivity, source of each input |
+| `/review` | HELD FOR REVIEW queue; a person approves or rejects |
+| `/ambang` | Triage thresholds per clause, adjusted by 👍/👎 feedback, with history |
+| `/watchlist` | Stocks being watched |
+| `/tanya` | Ask FEAF |
 
----
-
-## Aliran data dan privasi
-
-```
-MOPS / TWSE  →  scripts/  →  data/parsed/  →  app/agent/  →  app/ (web)
-                    │                              │
-           data pribadi dibuang            data/traces/
-```
-
-`scripts/fetch_details.py` membuang `發言人`, `發言人職稱`, dan `發言人電話` **sebelum
-apa pun disimpan**. Yang dicatat hanya *bahwa* field itu dibuang, tidak pernah isinya.
-Jadi tidak ada data pribadi yang bisa sampai ke model — secara konstruksi, bukan
-secara kebijakan (Pasal 14.1, minimisasi data).
-
-Teks pengumuman diperlakukan sebagai **data yang tidak dipercaya**: isinya dikendalikan
-penerbit, jadi ia masuk prompt di dalam pembatas dan instruksi sistem menyatakan bahwa
-apa pun di dalamnya tidak boleh dituruti. Percobaan pengarahan dicatat di jejak audit.
-
----
-
-## Environment variable
-
-| Nama | Wajib | Default | Guna |
-|---|---|---|---|
-| `GEMINI_API_KEY` atau `GOOGLE_API_KEY` | tidak | — | Kunci model. Tanpa ini, penalar aturan yang dipakai |
-| `SENTINEL_MODEL` | tidak | `gemini-3.6-flash` | Nama model |
-| `SENTINEL_MODEL_CADANGAN` | tidak | `gemini-3.5-flash` | Model cadangan saat model utama sibuk, dipisah koma |
-| `SENTINEL_PENYEDIA` | tidak | `gemini` | Penyedia model |
-| `SENTINEL_TRIAGE_THRESHOLD` | tidak | `0.55` | Ambang keyakinan pemilah |
-| `SENTINEL_RETRY` | tidak | `2` | Percobaan ulang sebelum turun ke penalar aturan |
-| `SENTINEL_TIMEOUT` | tidak | `45` | Batas waktu panggilan model (detik) |
-
-**Kunci hanya dibaca dari environment.** Tidak pernah ditulis ke berkas, layar, log,
-maupun jejak audit — dan ada tes yang memeriksanya.
-
-### Model dan versinya
-
-- Model: `gemini-2.5-flash` (free tier), suhu `0` supaya hasilnya bisa diulang
-- Versi prompt: konstanta `VERSI_PROMPT` di `app/agent/llm.py`
-- Baseline pembanding: penalar berbasis aturan di `screen.py` / `extract.py`
-
-**Pengungkapan free tier:** konten free tier Gemini dipakai Google untuk meningkatkan
-produknya. Dapat diterima di sini karena pengumuman MOPS adalah dokumen publik *dan*
-data pribadi sudah dibuang di hulu. Kalau nanti perlu menganalisis apa pun yang tidak
-publik, free tier tidak boleh dipakai lagi.
+The interface is available in English, 繁體中文 and Bahasa Indonesia.
 
 ---
 
 ## API
 
-`/docs` menyajikan OpenAPI otomatis.
+`/docs` serves the OpenAPI description.
 
-| Rute | Isi |
+| Route | Content |
 |---|---|
-| `GET /` | Feed peringatan |
-| `GET /peringatan/{id}` | Detail, sitasi MOPS, vonis pemeriksa |
-| `GET /valuasi/{kode}` | DCF, biaya modal, sensitivitas, sumber tiap input |
-| `GET /jejak/{id}` | Operation trace |
-| `GET /api/peringatan` | Daftar hasil (JSON) |
-| `GET /api/jejak/{id}` | Operation trace (JSON) |
-| `GET /api/valuasi/{kode}` | Keluaran kalkulator DCF (JSON) |
+| `GET /api/peringatan` | All processing results (JSON) |
+| `GET /api/jejak/{id}` | Operation trace of one filing |
+| `GET /api/valuasi/{code}` | DCF calculator output |
+| `GET /api/saham/{code}/keuangan` | Financial statement tables |
+| `GET /api/review` | Review queue and human decisions |
+| `GET /api/ambang` | Thresholds per clause and their history |
+| `GET /api/watchlist` | Watched stock codes |
+| `GET /api/cari?q=` | Search issuers by code or name |
+| `POST /api/tanya` | Ask FEAF |
+| `GET /api/tanya/jejak/{id}` | Trace of one Ask FEAF answer |
+| `POST /periksa` | Pull new filings for the watchlist and reprocess |
+| `POST /api/impor` | Import MOPS history pulled on a Taiwan network |
+| `GET /sehat` | Health check: filing count, last run, model in use, fallback reasons, code version |
 
 ---
 
-## Data
+## Model and version
 
-Data MOPS asli hanya bisa ditarik dari jaringan Taiwan, jadi repo menyertakan empat
-kasus uji di `data/fixtures/` supaya aplikasi jalan di mesin mana pun. Kalau
-`data/parsed/` terisi, itu yang dipakai — lewat **kode baca yang sama persis**, supaya
-bug di jalur asli tidak bersembunyi di balik jalur fixture. Layar selalu menyatakan
-sumber mana yang sedang ditampilkan.
+| | |
+|---|---|
+| Provider | Google Gemini API (`generativelanguage.googleapis.com`), paid tier |
+| Main model | `gemini-3.6-flash`, temperature 0 |
+| Backup model | `gemini-3.5-flash`, used only when the main model is busy (429/5xx) after retries |
+| Pipeline prompt version | `VERSI_PROMPT` in `app/agent/llm.py` (currently `2026-11-10.1`) |
+| Chat prompt version | `PROMPT_VERSION` in `app/chat.py` (currently `chat-2026-11-11.2`) |
+| Baseline | Rule-based reasoner in `app/agent/screen.py` / `extract.py` |
 
-Menarik data asli (dari Taiwan):
+Safeguards around the model: answers are cached per filing and prompt version; each run is
+capped at 40 model calls and 90 seconds; three failures in a row switch the rest of the run to
+the rule-based reasoner; an exhausted prepaid balance (HTTP 402) is reported in `/sehat` and
+never retried. Each fallback and its reason is written to the trace.
 
-```bash
-python3 scripts/probe_sources.py      # cek keterjangkauan
-python3 scripts/spike_mops.py         # tarik massal
-python3 scripts/parse_mops.py         # parse jadi record + URL sitasi
-python3 scripts/fetch_details.py      # ambil detail, buang data pribadi
-```
-
-Kalkulator valuasi berdiri sendiri dan bisa dijalankan tanpa aplikasi:
-
-```bash
-python3 scripts/dcf.py valuation/inputs/2330.json
-python3 scripts/dcf.py valuation/inputs/2330.json --forward-g 0.03
-```
-
-Aplikasi web memanggil `compute()` dari berkas yang sama, jadi angka di layar tidak
-bisa berbeda diam-diam dari kertas kerja.
+Only public MOPS filings are sent to the model, with personal fields already removed. No
+SYSTEX or partner data is sent to any model.
 
 ---
 
-## Keterbatasan yang diketahui
+## Data flow and privacy
 
-1. **Pemetaan nomor pasal masih sementara.** `KLAUSA_RELEVAN` di `app/agent/screen.py`
-   adalah dugaan kerja, belum dicocokkan baris per baris dengan daftar resmi 重大訊息.
-   Nomor yang salah menyaring keluar pengumuman penting, dan kegagalan seperti itu
-   tidak bersuara. **Wajib diverifikasi sebelum masuk deck.**
-2. **Baru satu emiten punya berkas valuasi.** Hanya TSMC (2330). Fubon (2881)
-   perusahaan keuangan — DCF biasa tidak berlaku dan butuh metode lain.
-3. **Enam sumber input TSMC belum lengkap.** Ditandai di layar valuasi. Angka boleh
-   dihitung, belum boleh masuk deck.
-4. **Tidak ada konversi mata uang.** Jumlah non-NTD ditolak, bukan dikonversi.
-5. **Semantik "ganti", bukan "tambah".** Pengumuman anggaran diperlakukan sebagai
-   tingkat belanja, dan hasilnya adalah skenario "bila tingkat ini berlanjut" —
-   bukan ramalan.
-6. **Reverse DCF tidak menghasilkan nilai intrinsik.** Yang dihasilkannya adalah
-   pertumbuhan abadi yang sedang diasumsikan pasar. Nilai wajar hanya ditampilkan
-   sebagai skenario dengan asumsi g yang disebutkan.
+```
+TWSE / TPEx / MOPS → scripts/ → data/parsed/ → app/agent/ → app/ (web)
+                        │                          │
+            personal fields dropped         data/traces/ (audit)
+```
+
+- `scripts/fetch_details.py` and `app/tarik.py` drop `發言人`, `發言人職稱` and
+  `發言人電話` **before anything is saved**. Only the fact that a field was dropped is logged,
+  never its value. Personal data cannot reach the model by construction.
+- Names of officers, directors and auditors (clauses 1, 6, 7, 8) are never extracted, shown or
+  exported. The governance lane reports the role and the kind of change only.
+- Filing text is treated as **untrusted data**: it enters the prompt inside delimiters, the
+  system instruction says nothing inside may be followed, and injection attempts are logged in
+  the trace.
+- API keys are read from the environment only and are never written to a file, page, log or
+  trace (tested).
+
+## Access and permissions
+
+| Setting | Effect |
+|---|---|
+| none | Every page readable; actions (watchlist, Check now, review, thresholds) open |
+| `SENTINEL_KODE_AKSES=<code>` | Actions require opening `/akses?kode=<code>` once; reading stays open |
+| plus `SENTINEL_KUNCI_BACA=1` | Every page and `/api/*` require the code; `/sehat` and static files stay open |
+
+The access code for the judges' environment is given through the competition form, not in this
+repository.
+
+---
+
+## Environment variables
+
+| Name | Required | Default | Purpose |
+|---|---|---|---|
+| `GEMINI_API_KEY` or `GOOGLE_API_KEY` | no | — | Model key. Without it the rule-based reasoner is used |
+| `SENTINEL_MODEL` | no | `gemini-3.6-flash` | Main model |
+| `SENTINEL_MODEL_CADANGAN` | no | `gemini-3.5-flash` | Backup models, comma-separated |
+| `SENTINEL_PENYEDIA` | no | `gemini` | Model provider |
+| `SENTINEL_MODEL_MAKS_PER_JALAN` | no | `40` | Model calls allowed per run |
+| `SENTINEL_RETRY` | no | `2` | Retries before falling back |
+| `SENTINEL_TIMEOUT` | no | `45` | Model call timeout (seconds) |
+| `SENTINEL_TRIAGE_THRESHOLD` | no | `0.55` | Triage confidence threshold |
+| `SENTINEL_DATA_DIR` | no | `./data` (`/data` in Docker) | Where pulled data and traces live |
+| `SENTINEL_TARIK_OTOMATIS_DETIK` | no | `0` (off) | Pull new filings every N seconds (minimum 300) |
+| `SENTINEL_PROSES_SEMUA` | no | `1` | Process filings of all issuers, not only the watchlist |
+| `SENTINEL_KODE_AKSES` | no | — | Access code for actions |
+| `SENTINEL_KUNCI_BACA` | no | `0` | `1` = access code also required for reading |
+| `SENTINEL_SERTAKAN_CONTOH` | no | `0` | `1` = show the four sample filings next to real data |
+| `SENTINEL_CHAT_MAKS_PER_JAM` | no | `60` | Ask FEAF questions per hour |
+| `FINMIND_TOKEN` | no | — | Higher FinMind quota for financial statements |
+
+---
+
+## Evaluation
+
+```bash
+python3 scripts/evaluasi.py --simpan            # gold set: agent vs no checker
+python3 scripts/evaluasi.py --chat --simpan     # Ask FEAF test set
+python3 scripts/uji_serangan.py --simpan        # attack set
+```
+
+Reports are written to `eval/hasil/`. The gold set and how it was labelled:
+[`docs/hasil-gold-set.md`](docs/hasil-gold-set.md), [`docs/panduan-gold-set.md`](docs/panduan-gold-set.md).
+
+**Gold set.** 46 real filings from 9 Nov 2026, about 7 per lane, labelled publish / hold /
+archive and signal level by a finance team member. Success = the agent makes the same decision
+and publishes no wrong number. Baseline ("without checker"): the same clause screen and extractor with no checker and no hold rules, so anything extracted is published, as a plain LLM pipeline would. Manual
+time per filing, from the labeller: 20–30 minutes.
+
+| Metric | FEAF agent | Without checker |
+|---|---|---|
+| Wrong numbers published | **0/46** | 5/46 |
+| Decision matches expert | 41/46 (89%) | 15/46 (33%) |
+| Signal level matches expert (moderate profile) | 21/29 (72%) | 0/29 |
+| Held for a person (human intervention) | 13/46 (28%) | 33/46 (72%) |
+
+These numbers were measured **before** tuning. The disagreements exposed two parser bugs
+(losses in brackets read as profits; share counts in 仟股 not read) and three thresholds; all
+were fixed afterwards. On the same 46 filings the tuned agent scores 43/46 and 29/29, but that
+is in-sample and is not reported as accuracy.
+
+**Attack set** ([`eval/hasil/serangan-2026-11-10.md`](eval/hasil/serangan-2026-11-10.md)).
+12 attack types on real filings (injected instructions, invented numbers and quotes, fake labels,
+unit swaps, foreign currency, extreme magnitudes), 72 cases, attacked by both the rule-based
+reasoner and a simulated model that obeys every injection: **0 wrong numbers published**.
+
+**Ask FEAF** ([`eval/hasil/chat-20261111T062005Z.md`](eval/hasil/chat-20261111T062005Z.md)).
+52 questions: 31/31 data questions answered with sources and passed the number check, 21/21
+out-of-scope or injection questions refused, 0 recommendation words. Average latency 49 ms
+(rule path).
+
+**Operations** ([`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md)).
+581 real filings: 318 passed the clause screen, 241 published, 58 held (10% of all), the rest
+archived with a logged reason. Latency per filing (rule path): mean 1 ms, max 29 ms.
+
+Every result has an operation trace at `/jejak/{id}` and `GET /api/jejak/{id}`: each stage, its
+input and output, model name, tokens, retries, latency, and the checker verdict.
+
+---
+
+## Known limitations
+
+1. **Clause 20 recalculations are scenarios, not forecasts.** DCF is cash-based; a plan or
+   board approval moves the valuation only once a quarterly report shows the cash.
+2. **No valuation for financial companies** (banks, insurers). Their clause-20 filings are held.
+3. **No currency conversion.** Non-NTD amounts are held, not converted.
+4. **Today's filings only, outside Taiwan.** The OpenAPI endpoints keep no history; older filings
+   need a pull from a Taiwan network.
+5. **Thresholds for the conservative and aggressive profiles** are proposals awaiting the finance
+   team's review; the moderate profile is the team's answer.
+6. **The tuned accuracy is in-sample.** A fresh, blind-labelled test set is needed for an
+   out-of-sample figure.
+7. **Reverse DCF gives no intrinsic value**; it gives the perpetual growth the market implies.
+   Fair value is shown only as a scenario with a stated growth assumption.
+
+Worst case and recovery: if the model is unavailable or out of credit, the run switches to the
+rule-based reasoner and says so on screen and in `/sehat`; if a number cannot be verified, the
+filing is held for a person rather than published.
 
 ---
 
 ## Troubleshooting
 
-| Gejala | Sebab dan tindakan |
+| Symptom | Cause and fix |
 |---|---|
-| Layar menyatakan "penalar-aturan" | Tidak ada kunci API di environment. Ini sah; isi `GEMINI_API_KEY` kalau ingin jalur model |
-| Penarikan MOPS balas HTTP 200 tapi isinya halaman blokir | Geo-blocking. Sumbernya hanya terjangkau dari jaringan Taiwan — validasi bentuk balasan, bukan kode statusnya |
-| `render_design.js` minta `npx playwright install` | Jangan dijalankan. Nomor build Chromium yang terpasang berbeda; skrip sudah menunjuk binary yang ada lewat `PLAYWRIGHT_BROWSERS_PATH` |
-| Feed kosong | `data/parsed/` dan `data/fixtures/` sama-sama kosong |
-| `404` di `/valuasi/{kode}` | Belum ada `valuation/inputs/{kode}.json` |
+| Screen says "rule-based reasoner" | No API key in the environment. This is valid; set `GEMINI_API_KEY` for the model path |
+| `/sehat` shows `galat_model_terakhir` with 402 | The Gemini prepaid balance is empty. Top up in AI Studio billing |
+| `/sehat` shows `sebab_cadangan` with a time limit | The 90-second run cap was reached; remaining filings are answered on the next runs |
+| MOPS pull returns HTTP 200 but a block page | Geo-blocking. MOPS is only reachable from a Taiwan network; use the OpenAPI pull instead |
+| Empty feed | `data/parsed/` is empty; press **Check now** or set `SENTINEL_SERTAKAN_CONTOH=1` |
+| No valuation on a stock page | Financial company, or FinMind quota reached (set `FINMIND_TOKEN`) |
+| Server behaves like an older version | Compare `versi_kode` in `/sehat` with your checkout |
 
 ---
 
-## Isi repo
+## Repository contents
 
-| Jalur | Isi |
+| Path | Content |
 |---|---|
-| `app/` | Aplikasi web dan agent |
-| `app/agent/` | Lima tahap pipeline |
-| `scripts/` | Penarikan MOPS, parsing, dan kalkulator DCF |
-| `valuation/inputs/` | Input DCF per emiten, lengkap dengan sumber tiap angka |
-| `design/` | Delapan layar hi-fi + dua diagram wajib deck |
-| `wireframe/` | Delapan wireframe beserta alasan tiap wilayah layar |
-| `docs/` | Ringkasan aturan lomba, rencana kerja, catatan akses data |
-| `tests/` | Test case agent — bahan deck halaman 9 dan Appendix 2 |
-| `eval/` | Gold set berlabel dan hasil evaluasi |
-| `data/fixtures/` | Empat kasus uji supaya aplikasi jalan di mana saja |
+| `app/` | Web app, Ask FEAF, thresholds, valuation builder |
+| `app/agent/` | Pipeline stages: screen, triage, extract, recompute, verify |
+| `app/teks/`, `app/i18n.py` | Interface text in three languages |
+| `scripts/` | Filing pulls, DCF calculator, evaluation, attack set |
+| `valuation/inputs/` | Manual DCF worksheets with a source for every input |
+| `eval/` | Gold set, Ask FEAF test set, evaluation reports |
+| `tests/` | Unit and end-to-end tests (no network) |
+| `data/fixtures/` | Four sample filings so the app runs anywhere |
+| `design/`, `wireframe/` | Screen designs and diagrams |
+| `docs/` | Clause mapping, evaluation notes, deploy guide (mostly in Indonesian) |
 
 ---
 
