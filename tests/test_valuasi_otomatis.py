@@ -331,8 +331,8 @@ class TestValuasiOtomatis(_LingkunganOfflineMixin, unittest.TestCase):
 
         jejak = pipeline.jalankan(pengumuman_2454, val_2454)
         states = [l["state"] for l in jejak["jejak"]]
-        self.assertIn("VERIFIED · sumber", states)
-        self.assertIn("VERIFIED · hitungan", states)
+        self.assertIn("VERIFIED · source", states)
+        self.assertIn("VERIFIED · arithmetic", states)
         self.assertEqual(jejak["state"], "PUBLISHED")
         self.assertEqual(jejak["status"], "terbit")
         self.assertEqual(len(jejak["muatan"]["diterima"]), 1)

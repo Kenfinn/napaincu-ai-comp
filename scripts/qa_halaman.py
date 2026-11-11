@@ -128,6 +128,12 @@ def periksa_kebocoran_bahasa(html: str, bahasa: str) -> list[str]:
     if bahasa not in ("en", "zh"):
         return []
     teks = _ekstrak_teks_bersih(html)
+    # Nama field dan nilai enum di JSON mentah halaman jejak ("sumber": "valuasi") adalah
+    # pengenal kode yang sama dengan /api/jejak, bukan teks antarmuka.
+    import html as _html
+    teks = _html.unescape(teks)
+    teks = re.sub(r'"\w+"\s*:', ":", teks)
+    teks = re.sub(r':\s*"[a-z_]+"', ":", teks)
     bocor: list[str] = []
     for kata in KATA_BOCOR_ID:
         # Gunakan boundary bila alfabet

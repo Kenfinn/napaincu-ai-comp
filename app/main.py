@@ -202,7 +202,11 @@ def jejak_bahasa(ctx, obj, alasan_akhir=None):
         return obj
 
 
+# Jejak yang tersimpan sebelum 11 Nov memakai akhiran Indonesia pada label state.
+_STATE_LAMA = {"VERIFIED · sumber": "VERIFIED · source", "VERIFIED · hitungan": "VERIFIED · arithmetic"}
+
 tpl.env.filters["jejak_bahasa"] = jejak_bahasa
+tpl.env.filters["state"] = lambda s: _STATE_LAMA.get(s, s)
 tpl.env.filters["rb"] = rb
 tpl.env.filters["pct"] = pct
 tpl.env.globals["mops_laporan"] = sitasi.mops_laporan

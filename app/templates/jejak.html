@@ -33,7 +33,7 @@
     <span class="no">{{ l.urutan }}</span>
     <div style="flex:1; min-width:0;">
       <div style="display:flex; justify-content:space-between; gap:12px;">
-        <b style="font-size:13px;">{% if l.state %}<span class="state">{{ l.state }}</span> {% endif %}{{ tr(l.tahap_i18n) if l.tahap_i18n else l.tahap }}</b>
+        <b style="font-size:13px;">{% if l.state %}<span class="state">{{ l.state | state }}</span> {% endif %}{{ tr(l.tahap_i18n) if l.tahap_i18n else l.tahap }}</b>
         {% set st_kunci = ('st.' ~ l.status) if l.status in ('terbit','ditolak','ditahan','dilewati') else ('jst.' ~ l.status) %}
         <span class="mono" style="font-size:11px; color:var(--abu);">{{ t(st_kunci) if not t(st_kunci).startswith('⟦') else l.status }} · {{ l.durasi_ms }} ms</span>
       </div>
