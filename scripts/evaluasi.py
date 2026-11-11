@@ -279,7 +279,9 @@ def nilai(hasil: list[dict], gold: dict[str, dict]) -> dict:
     n = len(hasil)
     tepat = terbit_benar = salah_terbit = terlewat = ditahan = 0
     input_benar = input_total = 0
-    harus_ya = sum(1 for h in hasil if gold[h["source_url"]]["harus_terbit"])
+    # Metrik angka hanya untuk baris yang memuat angka input DCF (capex/cash/debt). Sinyal B1
+    # dinilai lewat keputusan 3 arah dan tingkat, bukan lewat angka.
+    harus_ya = sum(1 for h in hasil if gold[h["source_url"]]["harus_terbit"] and gold[h["source_url"]]["angka"])
     rincian = []
 
     keputusan_3arah_tepat = 0
@@ -317,7 +319,7 @@ def nilai(hasil: list[dict], gold: dict[str, dict]) -> dict:
                 input_benar += any(i == gi for gi, _ in g["angka"])
         if salah:
             salah_terbit += 1
-        if g["harus_terbit"]:
+        if g["harus_terbit"] and g["angka"]:
             if benar and not salah:
                 terbit_benar += 1
             else:
