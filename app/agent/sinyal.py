@@ -25,7 +25,19 @@ from . import extract
 ANGKA = re.compile(r"-?\d[\d,]*(?:\.\d+)?")
 
 
+# Angka akuntansi negatif ditulis dalam kurung: "(339,123)" = rugi 339.123. Sebelum 11 Nov
+# ini terbaca positif, sehingga 29 dari 177 laporan kuartal rugi tampil sebagai laba
+# (ditemukan Patrice di gold set, kasus 6535).
+KURUNG = re.compile(r"^\s*[（(]\s*(\d[\d,]*(?:\.\d+)?)\s*[)）]")
+
+
 def _f(s: str | None) -> float | None:
+    m = KURUNG.match(s or "")
+    if m:
+        try:
+            return -float(m.group(1).replace(",", ""))
+        except ValueError:
+            return None
     m = ANGKA.search(s or "")
     if not m:
         return None
@@ -150,6 +162,17 @@ def _subjenis_modal(detail: dict) -> str:
     return "lain"
 
 
+_SATUAN_SAHAM = {"仟股": 1_000, "千股": 1_000, "萬股": 10_000, "張": 1_000, "股": 1}
+
+
+def _lembar(isi: str) -> float | None:
+    """Jumlah saham pertama yang tertulis, dalam lembar: "120,000仟股" = 120 juta lembar."""
+    m = re.search(r"(\d[\d,]*(?:\.\d+)?)\s*(仟股|千股|萬股|張|股)", isi or "")
+    if not m:
+        return None
+    return float(m.group(1).replace(",", "")) * _SATUAN_SAHAM[m.group(2)]
+
+
 def urai_modal(detail: dict, skala: dict | None) -> dict:
     sub = _subjenis_modal(detail)
     kutipan = []
@@ -172,12 +195,12 @@ def urai_modal(detail: dict, skala: dict | None) -> dict:
             kutipan.append(_kutip(b))
             nilai_juta = _ke_juta(_f(b.get("value")), b.get("label_lengkap") or "", b.get("value", ""))
     elif sub == "saham_baru":
-        b = _cari(detail, "發行總金額及股數") or _cari(detail, "發行股數")
+        b = (_cari(detail, "發行總金額及股數") or _cari(detail, "發行股數") or _cari(detail, "私募股數")
+             or _cari(detail, "認股權行使", "新股總數") or _cari(detail, "新股總數"))
         if b:
             kutipan.append(_kutip(b))
             isi = b.get("value", "")
-            jumlah = [float(x.replace(",", "")) for x in re.findall(r"(\d[\d,]*)\s*股", isi)]
-            lembar = sum(jumlah) if jumlah else None
+            lembar = _lembar(isi)
             uang = [float(x.replace(",", "")) for x in re.findall(r"新[台臺]幣\s*([\d,]+(?:\.\d+)?)\s*元", isi)]
             nilai_juta = sum(uang) / 1e6 if uang else None
     elif sub == "obligasi":

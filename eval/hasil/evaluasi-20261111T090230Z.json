@@ -1,0 +1,987 @@
+{
+  "sumber": "nyata",
+  "mode": {
+    "aturan": "penalar aturan",
+    "model": "gemini-3.6-flash",
+    "tanpa-pemeriksa": "penalar aturan"
+  },
+  "metrik": {
+    "aturan": {
+      "dokumen": 46,
+      "keputusan_tepat": 45,
+      "harus_terbit": 1,
+      "terbit_dengan_angka_benar": 0,
+      "dokumen_dengan_angka_salah_terbit": 0,
+      "terlewat": 1,
+      "ditahan_untuk_manusia": 11,
+      "panggilan_model": 0,
+      "token_masuk": 0,
+      "token_keluar": 0,
+      "retry": 0,
+      "jatuh_ke_cadangan": 5,
+      "latensi_median_ms": 0,
+      "latensi_rata_ms": 3,
+      "latensi_maks_ms": 25,
+      "akurasi_input": [
+        0,
+        0
+      ],
+      "akurasi_nilai": [
+        0,
+        0
+      ],
+      "keputusan_3arah_tepat": 43,
+      "matriks_3x3": {
+        "terbit": {
+          "terbit": 22,
+          "tahan": 1,
+          "arsip": 0
+        },
+        "tahan": {
+          "terbit": 0,
+          "tahan": 8,
+          "arsip": 0
+        },
+        "arsip": {
+          "terbit": 0,
+          "tahan": 2,
+          "arsip": 13
+        }
+      },
+      "kecocokan_tingkat": [
+        29,
+        29
+      ],
+      "kategori": {
+        "tahan.tanpa_valuasi": 3,
+        "arsip.saringan_pasal": 9,
+        "terbit": 22,
+        "tahan.tanpa_angka": 1,
+        "tahan.risiko_berat": 4,
+        "tahan.risiko_serius": 3,
+        "arsip.modal_lain": 2,
+        "arsip.modal_treasuri": 1,
+        "arsip.di_bawah_ambang": 1
+      },
+      "rincian": [
+        {
+          "id": "6830-2026-11-09-141523",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "3015-2026-11-09-145629",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6515-2026-11-09-145704",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1319-2026-11-09-150054",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1808-2026-11-09-153732",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4590-2026-11-09-154449",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4590-2026-11-09-154533",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2258-2026-11-09-160358",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2072-2026-11-09-160805",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1589-2026-11-09-162114",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2707-2026-11-09-162528",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "7740-2026-11-09-163425",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6443-2026-11-09-165718",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1464-2026-11-09-165858",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2454-2026-11-09-170328",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1440-2026-11-09-171255",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2347-2026-11-09-174015",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2347-2026-11-09-174211",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2347-2026-11-09-174454",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "8466-2026-11-09-175736",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2314-2026-11-09-183401",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6955-2026-11-09-183708",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2884-2026-11-09-183719",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6655-2026-11-09-185017",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4977-2026-11-09-191418",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2540-2026-11-09-205708",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6446-2026-11-09-211321",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4305-2026-11-09-133710",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "8240-2026-11-09-134804",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4903-2026-11-09-141419",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2067-2026-11-09-154739",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2067-2026-11-09-154841",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1799-2026-11-09-155452",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "5398-2026-11-09-161531",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6584-2026-11-09-163432",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6535-2026-11-09-164006",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6667-2026-11-09-165113",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "8107-2026-11-09-170352",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4503-2026-11-09-171622",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4749-2026-11-09-172344",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "7718-2026-11-09-173039",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "3540-2026-11-09-173231",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "3354-2026-11-09-174324",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "3293-2026-11-09-180235",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "3666-2026-11-09-184035",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4726-2026-11-09-192255",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [],
+          "angka_salah": []
+        }
+      ]
+    },
+    "tanpa-pemeriksa": {
+      "dokumen": 46,
+      "keputusan_tepat": 21,
+      "harus_terbit": 1,
+      "terbit_dengan_angka_benar": 1,
+      "dokumen_dengan_angka_salah_terbit": 3,
+      "terlewat": 0,
+      "ditahan_untuk_manusia": 33,
+      "panggilan_model": 0,
+      "token_masuk": 0,
+      "token_keluar": 0,
+      "retry": 0,
+      "jatuh_ke_cadangan": 37,
+      "latensi_median_ms": 0,
+      "latensi_rata_ms": 0,
+      "latensi_maks_ms": 0,
+      "akurasi_input": [
+        1,
+        2
+      ],
+      "akurasi_nilai": [
+        1,
+        4
+      ],
+      "keputusan_3arah_tepat": 17,
+      "matriks_3x3": {
+        "terbit": {
+          "terbit": 1,
+          "tahan": 22,
+          "arsip": 0
+        },
+        "tahan": {
+          "terbit": 1,
+          "tahan": 7,
+          "arsip": 0
+        },
+        "arsip": {
+          "terbit": 2,
+          "tahan": 4,
+          "arsip": 9
+        }
+      },
+      "kecocokan_tingkat": [
+        0,
+        29
+      ],
+      "kategori": {
+        "terbit": 4,
+        "dilewati": 9,
+        "ditahan": 33
+      },
+      "rincian": [
+        {
+          "id": "6830-2026-11-09-141523",
+          "status": "terbit",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "terbit",
+          "terbit": [
+            [
+              "capex",
+              108.56295999999999
+            ]
+          ],
+          "angka_salah": [
+            [
+              "capex",
+              108.56295999999999
+            ]
+          ]
+        },
+        {
+          "id": "3015-2026-11-09-145629",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6515-2026-11-09-145704",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1319-2026-11-09-150054",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1808-2026-11-09-153732",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4590-2026-11-09-154449",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4590-2026-11-09-154533",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2258-2026-11-09-160358",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2072-2026-11-09-160805",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1589-2026-11-09-162114",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2707-2026-11-09-162528",
+          "status": "terbit",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "terbit",
+          "terbit": [
+            [
+              "capex",
+              1016.0
+            ]
+          ],
+          "angka_salah": [
+            [
+              "capex",
+              1016.0
+            ]
+          ]
+        },
+        {
+          "id": "7740-2026-11-09-163425",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6443-2026-11-09-165718",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1464-2026-11-09-165858",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2454-2026-11-09-170328",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1440-2026-11-09-171255",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2347-2026-11-09-174015",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2347-2026-11-09-174211",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2347-2026-11-09-174454",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "8466-2026-11-09-175736",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2314-2026-11-09-183401",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6955-2026-11-09-183708",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2884-2026-11-09-183719",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6655-2026-11-09-185017",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4977-2026-11-09-191418",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2540-2026-11-09-205708",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6446-2026-11-09-211321",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4305-2026-11-09-133710",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "8240-2026-11-09-134804",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4903-2026-11-09-141419",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2067-2026-11-09-154739",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "2067-2026-11-09-154841",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "1799-2026-11-09-155452",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "5398-2026-11-09-161531",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6584-2026-11-09-163432",
+          "status": "terbit",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "terbit",
+          "terbit": [
+            [
+              "capex",
+              1.7485819999999999
+            ]
+          ],
+          "angka_salah": [
+            [
+              "capex",
+              1.7485819999999999
+            ]
+          ]
+        },
+        {
+          "id": "6535-2026-11-09-164006",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "6667-2026-11-09-165113",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "8107-2026-11-09-170352",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4503-2026-11-09-171622",
+          "status": "ditahan",
+          "harus_terbit": false,
+          "keputusan": "tahan",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4749-2026-11-09-172344",
+          "status": "terbit",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "terbit",
+          "terbit": [
+            [
+              "capex",
+              620.0
+            ]
+          ],
+          "angka_salah": []
+        },
+        {
+          "id": "7718-2026-11-09-173039",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "3540-2026-11-09-173231",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "3354-2026-11-09-174324",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "3293-2026-11-09-180235",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "3666-2026-11-09-184035",
+          "status": "dilewati",
+          "harus_terbit": false,
+          "keputusan": "arsip",
+          "pred_keputusan": "arsip",
+          "terbit": [],
+          "angka_salah": []
+        },
+        {
+          "id": "4726-2026-11-09-192255",
+          "status": "ditahan",
+          "harus_terbit": true,
+          "keputusan": "terbit",
+          "pred_keputusan": "tahan",
+          "terbit": [],
+          "angka_salah": []
+        }
+      ]
+    }
+  }
+}

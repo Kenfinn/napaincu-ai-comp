@@ -128,14 +128,20 @@ moderat / agresif); moderat = jawaban Patrice, dua lainnya usulan Claude yang me
 | Perubahan saham | ≥ 0,5% | ≥ 1% | ≥ 2% |
 | Jumlah uang ÷ kapitalisasi | ≥ 1% | ≥ 2% | ≥ 5% |
 | Pengurangan modal untuk menutup rugi | sinyal | sinyal | info |
+| Rasio utang laporan kuartal (liabilitas ÷ aset), kalibrasi 11 Nov | ≥ 40% | ≥ 50% | ≥ 65% |
+| Pinjaman dana pasal 23 ÷ ekuitas = perlu diperhatikan, kalibrasi 11 Nov | ≥ 40% | ≥ 40% | ≥ 40% |
+
+Kalibrasi 11 Nov dari gold set Patrice: lihat [`hasil-gold-set.md`](./hasil-gold-set.md).
+Juga: saham baru yang jumlahnya tidak terbaca = perlu diperhatikan; pasal 20 dengan anak
+perusahaan 100% = arsip.
 
 Antrean review (HELD) memakai moderat. Arsip karena tidak material memakai ambang paling
 longgar (konservatif). Pilihan sementara Claude sambil menunggu tim:
 - 現金減資 → sinyal "perlu diperhatikan".
-- Pasal 23 memakai ambang yang sama dengan pasal 22.
+- Pasal 23 memakai ambang serius yang sama dengan pasal 22, ditambah "perlu diperhatikan" mulai 40% ekuitas (batas regulasi).
 - Pasal 1, 3, 40 → selalu HELD (boleh disetujui setelah ditinjau). Butir nama di pasal 1
   (公司名稱(或負責人姓名)) tidak diambil karena bisa nama orang.
-- Pasal 51/53, 6/7/8, 10, 26, 28 → dilewati.
+- Pasal 51/53, 6, 10, 26, 28 → dilewati. Pasal 7/8 → sinyal tata kelola (jawaban Patrice 11 Nov).
 - Pasal 31 → ringkasan angka dari isi pengumuman (pendapatan, laba, EPS, aset, liabilitas,
   ekuitas YTD), lalu valuasi otomatis emiten watchlist dibangun ulang.
 

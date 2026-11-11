@@ -13,6 +13,8 @@ penalaran dibutuhkan, alih-alih menabrakkan model ke segala hal.
 
 from __future__ import annotations
 
+import re
+
 from ..i18n import pesan
 
 # Pemetaan pasal → jalur. Keputusan tim 11 Nov (docs/pemetaan-pasal.md, "Keputusan tim").
@@ -50,9 +52,34 @@ def _ada_label_capex(detail: dict) -> bool:
                for it in detail.get("items", []) for b in [it] + it.get("sub", []))
 
 
+# Transaksi dengan anak perusahaan yang dimiliki 100%: kas tidak keluar dari grup, jadi tidak
+# mengubah DCF konsolidasi (keputusan 11 Nov dari gold set Patrice). Hanya dicari di judul dan
+# butir pihak lawan/hubungan, bukan di seluruh teks.
+_ANTAR_GRUP = re.compile(r"(100|百分之百)\s*[%％]?\s*(直接|間接)?\s*(持有|持股)?\s*之?\s*子公司"
+                         r"|持股\s*100\s*[%％]\s*之?\s*子公司")
+
+
+def antar_grup(detail: dict) -> bool:
+    teks = [detail.get("subject") or ""]
+    for it in detail.get("items", []):
+        for b in [it] + it.get("sub", []):
+            lbl = b.get("label_lengkap") or b.get("label") or ""
+            if "相對人" in lbl or "關係" in lbl:
+                teks.append(b.get("value") or "")
+    return any(_ANTAR_GRUP.search(re.sub(r"\s", "", t)) for t in teks)
+
+
 def saring(detail: dict) -> dict:
     """Putuskan apakah pengumuman ini pantas dibawa ke tahap berbiaya."""
     klausa = detail.get("clause")
+
+    if klausa == 20 and antar_grup(detail):
+        return {
+            "lolos": False, "klausa": klausa, "jalur": None,
+            "nama": "Transaksi antar-grup (anak perusahaan 100%)", "input_mungkin": [],
+            "alasan": "Transaksi dengan anak perusahaan 100%: kas tetap di dalam grup, DCF konsolidasi tidak berubah.",
+            "ragu": False, "alasan_i18n": pesan("saring.antar_grup"),
+        }
 
     if detail.get("items") and _ada_label_capex(detail):
         return {
