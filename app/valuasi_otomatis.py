@@ -26,6 +26,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import logging
+import threading
 import time
 import urllib.parse
 import urllib.request
@@ -367,7 +368,40 @@ def _status_tidak_bisa(
     }
 
 
-def bangun(kode: str) -> dict:
+_kunci_thread_beta = threading.Lock()
+_thread_aktif: dict[str, threading.Thread] = {}
+
+
+def pemicu_hitung_beta_latar(kode: str, bursa: str = "TWSE") -> threading.Thread | None:
+    """Memicu perhitungan beta resmi di thread latar (paling banyak 1 per kode)."""
+    with _kunci_thread_beta:
+        t_lama = _thread_aktif.get(kode)
+        if t_lama and t_lama.is_alive():
+            return t_lama
+        t = threading.Thread(
+            target=_pekerja_beta_latar,
+            args=(kode, bursa),
+            name=f"beta_latar_{kode}",
+            daemon=True,
+        )
+        _thread_aktif[kode] = t
+        t.start()
+        return t
+
+
+def _pekerja_beta_latar(kode: str, bursa: str) -> None:
+    try:
+        hitung_beta(kode, bursa=bursa)
+        baru = bangun(kode, lewati_beta_latar=True)
+        simpan_cache(kode, baru)
+    except Exception as e:
+        log.warning("Gagal menghitung beta latar untuk %s: %s", kode, e)
+    finally:
+        with _kunci_thread_beta:
+            _thread_aktif.pop(kode, None)
+
+
+def bangun(kode: str, lewati_beta_latar: bool = False) -> dict:
     """Bangun input DCF otomatis untuk `kode` dengan skema identik `valuation/inputs/2330.json`.
 
     - Emiten keuangan (industri 17) → `{"tidak_berlaku": True, "alasan": ..., ...}`
@@ -575,9 +609,48 @@ def bangun(kode: str) -> dict:
         pretax_income = pretax_raw_m
 
     # 7. Beta dari harga mingguan 2 tahun vs TAIEX
-    info_beta = hitung_beta(kode, bursa=bursa)
-    beta_val = info_beta["beta"]
-    beta_cadangan = bool(info_beta["beta_cadangan"])
+    url_saham = (
+        f"https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?stockNo={kode}"
+        if bursa == "TWSE"
+        else f"https://www.tpex.org.tw/www/zh-tw/afterTrading/tradingStock?code={kode}"
+    )
+    url_indeks = "https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST"
+    daftar_bulan = _daftar_25_bulan()
+    cache_lengkap = harga_resmi.punya_cache_lengkap(kode, bursa=bursa, daftar_bulan=daftar_bulan)
+    if not cache_lengkap:
+        beta_val = 1.0
+        beta_cadangan = True
+        beta_sementara = True
+        alasan_beta_pesan = i18n.pesan("va.beta.sedang_dihitung")
+        info_beta = {
+            "beta": 1.0,
+            "beta_cadangan": True,
+            "beta_sementara": True,
+            "jumlah_pekan": 0,
+            "simbol": f"{kode} ({bursa})",
+            "url_saham": url_saham,
+            "url_indeks": url_indeks,
+            "alasan": alasan_beta_pesan["teks"],
+            "alasan_i18n": alasan_beta_pesan,
+        }
+        catatan_beta = "beta 1.0 sementara, beta resmi sedang dihitung"
+        if not lewati_beta_latar:
+            pemicu_hitung_beta_latar(kode, bursa=bursa)
+    else:
+        info_beta = hitung_beta(kode, bursa=bursa)
+        beta_val = info_beta["beta"]
+        beta_cadangan = bool(info_beta["beta_cadangan"])
+        beta_sementara = False
+        catatan_beta = (
+            f"TWSE/TPEx official daily close 2y weekly regression ({info_beta['simbol']} vs TAIEX, "
+            f"{info_beta['jumlah_pekan']} weeks: {info_beta.get('pekan_awal', '')}..{info_beta.get('pekan_akhir', '')}) — "
+            f"{info_beta['url_saham']} & {info_beta['url_indeks']}"
+            if not beta_cadangan
+            else (
+                f"Fallback beta 1.0 ({info_beta['alasan']}) — "
+                f"{info_beta['url_saham']} vs {info_beta['url_indeks']}"
+            )
+        )
 
     # 8. Penanganan emiten tanpa utang (agar dcf.py tidak ZeroDivisionError pada rd = interest / debt)
     bunga_terakhir = interest_by_year[str(tahun_fiskal)]
@@ -593,16 +666,6 @@ def bangun(kode: str) -> dict:
 
 
     # 9. Susun dict input sesuai skema valuation/inputs/2330.json
-    catatan_beta = (
-        f"TWSE/TPEx official daily close 2y weekly regression ({info_beta['simbol']} vs TAIEX, "
-        f"{info_beta['jumlah_pekan']} weeks: {info_beta.get('pekan_awal', '')}..{info_beta.get('pekan_akhir', '')}) — "
-        f"{info_beta['url_saham']} & {info_beta['url_indeks']}"
-        if not beta_cadangan
-        else (
-            f"Fallback beta 1.0 ({info_beta['alasan']}) — "
-            f"{info_beta['url_saham']} vs {info_beta['url_indeks']}"
-        )
-    )
     sources = {
         "price_per_share": (
             f"{bursa} OpenAPI daily closing quote ({url_harga}), "
@@ -649,6 +712,7 @@ def bangun(kode: str) -> dict:
         "tidak_bisa_dihitung": False,
         "tidak_tersedia": tidak_tersedia,
         "beta_cadangan": beta_cadangan,
+        "beta_sementara": beta_sementara,
         "alasan_beta": info_beta["alasan"],
         "alasan_beta_i18n": info_beta["alasan_i18n"],
         "jumlah_pekan_beta": info_beta["jumlah_pekan"],
@@ -684,6 +748,7 @@ def bangun(kode: str) -> dict:
             "otomatis": True,
             "dibangun": dibangun,
             "beta_cadangan": beta_cadangan,
+            "beta_sementara": beta_sementara,
             "alasan_beta": info_beta["alasan"],
             "alasan_beta_i18n": info_beta["alasan_i18n"],
             "jumlah_pekan_beta": info_beta["jumlah_pekan"],

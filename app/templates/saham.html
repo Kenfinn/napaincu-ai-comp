@@ -222,6 +222,11 @@
 
 {# ----------------------------------------------------------------- VALUASI #}
 {% elif tab == 'valuasi' %}
+  {% if va and va.beta_sementara %}
+  <div class="pita fixture" style="margin:0 0 12px;">
+    <div>{{ t('va.beta_sementara_pita') }}</div>
+  </div>
+  {% endif %}
   {% if r %}
   <div class="kartu">
     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
@@ -236,7 +241,9 @@
       {% else %}
         <span class="lencana l-terbit">{{ t('va.mode.manual') }}</span>
       {% endif %}
-      {% if va and va.beta_cadangan %}
+      {% if va and va.beta_sementara %}
+        <span class="lencana l-dilewati">{{ t('va.beta_sementara_label') }}</span>
+      {% elif va and va.beta_cadangan %}
         <span class="lencana l-dilewati">{{ t('va.beta_cadangan_label', alasan=tr(va.alasan_beta_i18n, va.alasan_beta)) }}</span>
       {% endif %}
     </div>
@@ -249,7 +256,9 @@
     <div class="kv">
       <span class="k">{{ t('va.beta_label') }}</span>
       <span class="v">
-        {% if va and va.beta_cadangan %}
+        {% if va and va.beta_sementara %}
+          {{ t('va.beta_sementara_label') }}
+        {% elif va and va.beta_cadangan %}
           {{ t('va.beta_cadangan_label', alasan=tr(va.alasan_beta_i18n, va.alasan_beta)) }}
         {% elif va and va.jumlah_pekan_beta %}
           {{ t('va.beta_terhitung_label', beta=(r.wacc_inputs.beta | rb(2)), n=va.jumlah_pekan_beta) }}

@@ -114,27 +114,78 @@ def _simpan_cache(nama_file: str, data: list[tuple[str, float]]) -> None:
         print(f"[harga_resmi] gagal simpan cache {nama_file}: {e}", file=sys.stderr)
 
 
+def _daftar_25_bulan(ref_date: dt.date | None = None) -> list[str]:
+    """Kembalikan daftar 25 bulan (2 tahun penuh + bulan berjalan) YYYYMM terurut."""
+    if ref_date is None:
+        ref_date = dt.date.today()
+    y, m = ref_date.year, ref_date.month
+    bulan_list = []
+    for i in range(24, -1, -1):
+        total_m = (y * 12 + m - 1) - i
+        cur_y = total_m // 12
+        cur_m = (total_m % 12) + 1
+        bulan_list.append(f"{cur_y:04d}{cur_m:02d}")
+    return bulan_list
+
+
+def punya_cache_lengkap(
+    kode: str, bursa: str = "TWSE", daftar_bulan: list[str] | None = None
+) -> bool:
+    """Periksa apakah seluruh 25 bulan data saham dan TAIEX sudah ada di cache."""
+    kode = str(kode).strip().upper()
+    bursa_norm = (bursa or "").strip().upper()
+    nama_bursa = "TWSE" if bursa_norm == "TWSE" else "TPEx"
+    if daftar_bulan is None:
+        daftar_bulan = _daftar_25_bulan()
+
+    for bln in daftar_bulan:
+        nama_saham = f"{nama_bursa}-{kode}-{bln}.json"
+        if _baca_cache(nama_saham, bln) is None:
+            return False
+        nama_taiex = f"TAIEX-{bln}.json"
+        if _baca_cache(nama_taiex, bln) is None:
+            return False
+    return True
+
+
 def _ambil_json(url: str) -> dict | None:
-    """Ambil data JSON dari bursa dengan rate-limit minimal 2 detik."""
+    """Ambil data JSON dari bursa dengan rate-limit minimal 2 detik dan pengulangan untuk HTTP 307/429."""
     global _waktu_terakhir_jaringan
-    with _kunci_jaringan:
-        now = time.monotonic()
-        selisih = now - _waktu_terakhir_jaringan
-        if selisih < JEDA_JARINGAN:
-            time.sleep(JEDA_JARINGAN - selisih)
-        try:
-            req = urllib.request.Request(
-                url,
-                headers={"User-Agent": pasar.UA, "Accept": "application/json"},
-            )
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                teks = resp.read().decode("utf-8-sig", "replace")
-            _waktu_terakhir_jaringan = time.monotonic()
-            return json.loads(teks)
-        except Exception as e:
-            _waktu_terakhir_jaringan = time.monotonic()
-            print(f"[harga_resmi] galat ambil {url}: {e}", file=sys.stderr)
-            return None
+    jeda_retry = [5, 10, 20]
+    for coba in range(len(jeda_retry) + 1):
+        tunggu = 0
+        with _kunci_jaringan:
+            now = time.monotonic()
+            selisih = now - _waktu_terakhir_jaringan
+            if selisih < JEDA_JARINGAN:
+                time.sleep(JEDA_JARINGAN - selisih)
+            try:
+                req = urllib.request.Request(
+                    url,
+                    headers={"User-Agent": pasar.UA, "Accept": "application/json"},
+                )
+                with urllib.request.urlopen(req, timeout=20) as resp:
+                    teks = resp.read().decode("utf-8-sig", "replace")
+                _waktu_terakhir_jaringan = time.monotonic()
+                return json.loads(teks)
+            except urllib.error.HTTPError as e:
+                _waktu_terakhir_jaringan = time.monotonic()
+                if e.code in (307, 429) and coba < len(jeda_retry):
+                    tunggu = jeda_retry[coba]
+                    print(
+                        f"[harga_resmi] HTTP {e.code} dari {url}, tunggu {tunggu}s lalu coba lagi (percobaan {coba + 1}/3)...",
+                        file=sys.stderr,
+                    )
+                else:
+                    print(f"[harga_resmi] galat HTTP {e.code} ambil {url}: {e}", file=sys.stderr)
+                    return None
+            except Exception as e:
+                _waktu_terakhir_jaringan = time.monotonic()
+                print(f"[harga_resmi] galat ambil {url}: {e}", file=sys.stderr)
+                return None
+        if tunggu > 0:
+            time.sleep(tunggu)
+    return None
 
 
 def urai_twse(d: dict) -> list[tuple[str, float]]:

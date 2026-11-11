@@ -26,6 +26,12 @@
 
 {% include "_penafian.html" %}
 
+{% if r.wacc_inputs and r.wacc_inputs.beta_sementara %}
+<div class="pita fixture" style="margin:0 0 12px;">
+  <div>{{ t('va.beta_sementara_pita') }}</div>
+</div>
+{% endif %}
+
 {% if r.incomplete_sources %}
 <div class="pita bahaya">
   <div>{{ t('va.sumber_kurang', n=(r.incomplete_sources | length), daftar='<span class="mono">' ~ (r.incomplete_sources | join(', ') | e) ~ '</span>') | safe }}</div>
@@ -52,7 +58,9 @@
       <div class="kv">
         <span class="k">{{ t('va.beta_label') }}</span>
         <span class="v">
-          {% if r.wacc_inputs.beta_cadangan %}
+          {% if r.wacc_inputs.beta_sementara %}
+            {{ t('va.beta_sementara_label') }}
+          {% elif r.wacc_inputs.beta_cadangan %}
             {{ t('va.beta_cadangan_label', alasan=tr(r.wacc_inputs.alasan_beta_i18n, r.wacc_inputs.alasan_beta)) }}
           {% elif r.wacc_inputs.jumlah_pekan_beta %}
             {{ t('va.beta_terhitung_label', beta=(r.wacc_inputs.beta | rb(2)), n=r.wacc_inputs.jumlah_pekan_beta) }}

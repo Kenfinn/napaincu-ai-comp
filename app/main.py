@@ -481,6 +481,8 @@ def saham(request: Request, kode: str, tab: str = "ringkasan", lap: str = "lr",
         if d is None or (d.get("otomatis") and valuasi_otomatis.baca_cache(kode, terima_basi=False) is None):
             d_ambil = valuasi_otomatis.ambil(kode)
             d = store.muat_valuasi(kode) or d_ambil
+        if d and d.get("beta_sementara"):
+            valuasi_otomatis.pemicu_hitung_beta_latar(kode, d.get("bursa", "TWSE"))
         ctx["va"] = d
         if valuasi_otomatis.layak_dcf(d):
             ctx["r"] = dcf.compute(d, forward_g=d.get("assumptions", {}).get("terminal_growth_ceiling"))
