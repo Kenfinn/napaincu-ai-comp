@@ -37,6 +37,9 @@ SATUAN: dict[str, float] = {
     "仟元": 1e-3,
     "千元": 1e-3,
     "百萬元": 1.0,
+    "佰萬元": 1.0,     # varian penulisan 百萬元 (2330, 10 Nov)
+    "千萬元": 10.0,
+    "仟萬元": 10.0,
     "萬元": 1e-2,
     "億元": 100.0,
     "萬": 1e-2,       # "新台幣165萬" — tanpa 元, dipakai di teks bebas
@@ -73,6 +76,7 @@ PENANDA_INJEKSI = (
 
 def _normal_label(s: str) -> str:
     s = re.sub(r"^\s*[(（]\d{1,2}[)）]\s*", "", s or "")
+    s = re.sub(r"^\s*\d{1,2}\s*[.、．:：]\s*", "", s)       # "5. 交易…" — model sering menyertakan nomor butir
     s = re.sub(r"[（(][^）)]*[)）]", "", s)
     return re.sub(r"[\s，,、]", "", s)
 

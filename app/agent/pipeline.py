@@ -69,6 +69,7 @@ class Jejak:
             "langkah": len(self.langkah),
             "token_masuk": tokens_in,
             "token_keluar": tokens_out,
+            "token_pikir": sum(l["meta"].get("token_pikir", 0) for l in self.langkah),
             "biaya_usd": sum(l["meta"].get("biaya_usd", 0.0) for l in self.langkah),
             "retry": sum(l["meta"].get("retry", 0) for l in self.langkah),
             "pakai_cadangan": any(l["meta"].get("cadangan") for l in self.langkah),
