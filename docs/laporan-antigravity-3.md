@@ -330,3 +330,17 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 ## Waktu Selesai
 - Jam selesai: Rabu 11 November 2026, 14:40 CST
 
+
+---
+
+## Tinjauan Claude (11 Nov sore)
+
+Diperiksa terhadap kode. Q2 sampai Q9 diterima, dengan perbaikan berikut:
+
+1. **Tes kadang gagal (V1).** `test_berkas_manual_selalu_menang_dan_store_tanpa_jaringan` gagal sekitar 1 dari 3 kali. Thread beta latar menulis cache valuasi bersamaan dengan pembacaan, sehingga pembaca melihat JSON setengah jadi. Perbaikan: `simpan_cache` menulis ke berkas sementara lalu `os.replace`; tes menunggu thread latar selesai (`tunggu_beta_latar`) sebelum patch jaringan dilepas.
+2. **Tes menyentuh jaringan TWSE sungguhan.** `test_pita_tampil_tiga_bahasa` membuka tab Valuation, yang memicu thread beta latar tanpa patch. Thread itu memanggil TWSE (terlihat balasan 307 saat tes). Perbaikan: pemicu di-patch dan diperiksa pemanggilannya.
+3. **Kembali setelah "tidak ditemukan".** Referer selalu URL penuh, jadi di server pengguna selalu dikirim ke /watchlist. Sekarang kembali ke halaman asal bila host-nya sama.
+4. **Angka Q7 (52/52) terlalu longgar untuk dilaporkan apa adanya.** Diuji tanpa Gemini, dan tiga jawaban yang tidak menjawab pertanyaan (penjaminan, modal, auditor) tetap dihitung benar. Untuk D5, metrik chat dijalankan ulang dengan Gemini dan aturan penilaian diperketat. Catatan kecil: pergantian auditor adalah pasal 7, bukan 6.
+5. Usulan untuk Claude nomor 1–3 (filter jenis pengumuman di alat chat, penolakan injeksi di gerbang awal, rincian WACC) diterima dan masuk daftar kerja Claude. Nomor 4 (/sehat) tidak diubah: itu JSON teknis, bukan halaman pengguna.
+
+Hasil setelah perbaikan: 223 tes lulus 5 kali berturut-turut, tidak ada panggilan jaringan selama tes. Cari nama dicek dengan OpenAPI asli: TSMC dan 台積電 → 2330, MediaTek → 2454, 鴻海 → 2317.

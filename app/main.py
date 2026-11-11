@@ -459,9 +459,9 @@ def cari_saham(request: Request, kode: str = ""):
 
     if not hasil:
         # Nol hasil -> kembali dengan pesan "tidak ditemukan" tiga bahasa
-        ke = request.headers.get("referer") or "/watchlist"
-        if not ke.startswith("/") and not ke.startswith("http://127.0.0.1") and not ke.startswith("http://localhost"):
-            ke = "/watchlist"
+        # Kembali ke halaman asal hanya bila di situs yang sama (jalur saja, bukan URL penuh).
+        ref = urllib.parse.urlsplit(request.headers.get("referer") or "")
+        ke = ref.path if ref.netloc == request.url.netloc and ref.path.startswith("/") else "/watchlist"
         return _balik(ke, i18n.pesan("sh.tidak_ditemukan", q=q), ok=False)
 
     # Satu hasil atau cocok persis -> redirect ke /saham/{kode}
