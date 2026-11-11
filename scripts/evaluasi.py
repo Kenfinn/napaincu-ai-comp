@@ -74,6 +74,38 @@ import collections                                         # noqa: E402
 GOLD_DEFAULT = os.path.join(ROOT, "eval", "gold.csv")
 CHAT_UJI_DEFAULT = os.path.join(ROOT, "eval", "chat_uji.csv")
 HASIL_DIR = os.path.join(ROOT, "eval", "hasil")
+# Salinan 46 pengumuman gold (tanpa butir nama) supaya evaluasi bisa diulang di mesin mana pun,
+# termasuk server yang tidak menyimpan data 9 Nov. Dibuat dengan scripts/buat_paket_gold.py --snapshot.
+GOLD_DOKUMEN = os.path.join(ROOT, "eval", "gold_dokumen.json")
+
+
+def _pakai_kapitalisasi_salinan(kap: dict) -> None:
+    """Kapitalisasi emiten gold diambil dari salinan (tanggal evaluasi resmi), bukan cache
+    pasar mesin ini, supaya keputusan materialitas sama di mana pun evaluasi dijalankan."""
+    from app import pasar
+    asli = pasar.kapitalisasi_dari_cache
+    pasar.kapitalisasi_dari_cache = lambda kode: kap.get(kode) or asli(kode)
+
+
+def _folder_hasil() -> str:
+    """eval/hasil/ bila bisa ditulis; di container (/app milik root) jatuh ke DATA_DIR/eval-hasil."""
+    for d in (HASIL_DIR, os.path.join(config.DATA_DIR, "eval-hasil")):
+        try:
+            os.makedirs(d, exist_ok=True)
+            if os.access(d, os.W_OK):
+                return d
+        except OSError:
+            continue
+    raise SystemExit("Tidak ada folder hasil yang bisa ditulis.")
+
+
+def _tulis_hasil(nama: str, cap: str, teks: str, data: dict) -> None:
+    d = _folder_hasil()
+    with open(os.path.join(d, f"{nama}-{cap}.md"), "w", encoding="utf-8") as f:
+        f.write(teks)
+    with open(os.path.join(d, f"{nama}-{cap}.json"), "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2, default=str)
+    print(f"Tersimpan di {os.path.join(d, f'{nama}-{cap}.md')}", file=sys.stderr)
 
 # Selisih relatif yang masih dianggap angka yang sama. Kecil dengan sengaja: yang dicari
 # adalah salah satuan (×1000) atau salah butir, bukan pembulatan.
@@ -344,6 +376,8 @@ def nilai(hasil: list[dict], gold: dict[str, dict]) -> dict:
         "token_keluar": sum(m.get("token_keluar", 0) for m in meta),
         "retry": sum(m.get("retry", 0) for m in meta),
         "jatuh_ke_cadangan": sum(1 for m in meta if m.get("pakai_cadangan") or m.get("cadangan")),
+        "jawaban_cache": sum(m.get("jawaban_cache", 0) for m in meta),
+        "biaya_usd": round(sum(m.get("biaya_usd", 0) or 0 for m in meta), 6),
         "latensi_median_ms": int(statistics.median(latensi)) if latensi else 0,
         "latensi_rata_ms": int(statistics.mean(latensi)) if latensi else 0,
         "latensi_maks_ms": max(latensi) if latensi else 0,
@@ -389,7 +423,9 @@ def laporan(m_per_mode: dict[str, dict], sumber: str, gold_path: str, label_mode
     row("Ditahan untuk manusia (tingkat intervensi)",
         lambda x: _persen(x["ditahan_untuk_manusia"], x["dokumen"]))
     row("Panggilan model", lambda x: str(x["panggilan_model"]))
+    row("Jawaban model dari cache", lambda x: str(x.get("jawaban_cache", 0)))
     row("Token masuk / keluar", lambda x: f"{x['token_masuk']} / {x['token_keluar']}")
+    row("Biaya model (USD, perkiraan)", lambda x: f"{x.get('biaya_usd', 0):.4f}")
     row("Retry", lambda x: str(x["retry"]))
     row("Jatuh ke penalar aturan", lambda x: str(x["jatuh_ke_cadangan"]))
     row("Latensi median / rata-rata / maks per dokumen",
@@ -572,13 +608,7 @@ def laporan_chat(m: dict) -> str:
 
 
 def _simpan_laporan(nama: str, teks: str, data: dict) -> None:
-    os.makedirs(HASIL_DIR, exist_ok=True)
-    cap = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    with open(os.path.join(HASIL_DIR, f"{nama}-{cap}.md"), "w", encoding="utf-8") as f:
-        f.write(teks)
-    with open(os.path.join(HASIL_DIR, f"{nama}-{cap}.json"), "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2, default=str)
-    print(f"Tersimpan di {os.path.relpath(HASIL_DIR, ROOT)}/{nama}-{cap}.md", file=sys.stderr)
+    _tulis_hasil(nama, datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"), teks, data)
 
 
 class _Terisolasi:
@@ -613,9 +643,17 @@ def main(argv: list[str] | None = None) -> int:
                     help="evaluasi Tanya FEAF dengan set pertanyaan uji (bawaan eval/chat_uji.csv)")
     ap.add_argument("--arsip-dir", default=None,
                     help="folder arsip mentah OpenAPI selain DATA_DIR/raw/openapi (nama berkas memuat twse/tpex)")
+    ap.add_argument("--tanpa-salinan", action="store_true",
+                    help="jangan lengkapi baris gold yang hilang dari eval/gold_dokumen.json")
+    ap.add_argument("--tanpa-cache", action="store_true",
+                    help="abaikan jawaban model yang tersimpan, supaya latensi dan biaya terukur dari panggilan asli")
     ap.add_argument("--harga-token", default=None,
                     help="'<USD/1jt token masuk>,<USD/1jt token keluar>' untuk perkiraan biaya berbayar")
     a = ap.parse_args(argv)
+    if a.tanpa_cache:
+        import tempfile
+        from app.agent import llm
+        llm.CACHE_DIR = tempfile.mkdtemp(prefix="feaf-eval-cache-")
     harga_token = tuple(float(x) for x in a.harga_token.split(",")) if a.harga_token else None
 
     if a.chat:
@@ -658,6 +696,15 @@ def main(argv: list[str] | None = None) -> int:
     data = [d for d in semua if d.get("source_url") in gold]
     tak_berlabel = len(semua) - len(data)
     hilang = set(gold) - {d.get("source_url") for d in data}
+    if hilang and os.path.exists(GOLD_DOKUMEN) and not a.tanpa_salinan:
+        with open(GOLD_DOKUMEN, encoding="utf-8") as f:
+            salinan = json.load(f)
+        tambah = [d for d in salinan["pengumuman"] if d.get("source_url") in hilang]
+        _pakai_kapitalisasi_salinan(salinan.get("kapitalisasi") or {})
+        if tambah:
+            data += tambah
+            hilang -= {d["source_url"] for d in tambah}
+            sumber = f"{sumber} + salinan gold ({len(tambah)} dari eval/gold_dokumen.json)"
     if hilang:
         print(f"Peringatan: {len(hilang)} baris gold tidak ditemukan di data ({sumber}).", file=sys.stderr)
     if not data:
@@ -675,14 +722,8 @@ def main(argv: list[str] | None = None) -> int:
     teks = laporan(m_per_mode, sumber, a.gold, label_mode, tak_berlabel, a.menit_manual)
     print(teks)
     if a.simpan:
-        os.makedirs(HASIL_DIR, exist_ok=True)
-        cap = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-        with open(os.path.join(HASIL_DIR, f"evaluasi-{cap}.md"), "w", encoding="utf-8") as f:
-            f.write(teks)
-        with open(os.path.join(HASIL_DIR, f"evaluasi-{cap}.json"), "w", encoding="utf-8") as f:
-            json.dump({"sumber": sumber, "mode": label_mode, "metrik": m_per_mode},
-                      f, ensure_ascii=False, indent=2)
-        print(f"Tersimpan di {os.path.relpath(HASIL_DIR, ROOT)}/evaluasi-{cap}.md", file=sys.stderr)
+        _tulis_hasil("evaluasi", datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"), teks,
+                     {"sumber": sumber, "mode": label_mode, "metrik": m_per_mode})
     return 0
 
 

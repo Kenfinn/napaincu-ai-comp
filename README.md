@@ -345,7 +345,11 @@ python3 scripts/evaluasi.py --chat --simpan     # Ask FEAF test set
 python3 scripts/uji_serangan.py --simpan        # attack set
 ```
 
-Reports are written to `eval/hasil/`. The gold set and how it was labelled:
+Reports are written to `eval/hasil/` (inside the Docker image, where `/app` is read-only, to
+`/data/eval-hasil/`). The 46 gold filings ship in `eval/gold_dokumen.json` (name-bearing items
+removed, market caps as of the official run), so the evaluation reproduces on any machine without
+pulling data. Add `--tanpa-cache` to measure real model latency and cost instead of cached answers.
+The gold set and how it was labelled:
 [`docs/hasil-gold-set.md`](docs/hasil-gold-set.md), [`docs/panduan-gold-set.md`](docs/panduan-gold-set.md).
 
 **Gold set.** 46 real filings from 9 Nov 2026, about 7 per lane, labelled publish / hold /

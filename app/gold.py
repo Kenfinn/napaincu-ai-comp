@@ -67,6 +67,38 @@ PASAL_ORANG = {1, 6, 7, 8}
 LABEL_AMAN_ORANG = ("人員變動別", "異動情形", "發生變動日期", "生效日期", "會計師事務所名稱",
                     "董事會通過日期", "事實發生日", "喪失債信之日期", "喪失債信之金額", "法人名稱")
 
+# Butir yang dibaca app/agent/sinyal.py untuk pasal 7 (auditor). Nama kantor akuntan boleh;
+# nama akuntan ada di butir berlabel 姓名 dan selalu dibuang.
+LABEL_AMAN_AUDITOR = ("會計師事務所", "變更會計師之原因", "主動終止委任", "有無不同意見")
+
+
+def untuk_snapshot(d: dict) -> dict:
+    """Salinan pengumuman untuk eval/gold_dokumen.json (masuk repo): butir 姓名 selalu dibuang;
+    untuk pasal yang menyebut orang hanya butir dari daftar aman yang disimpan."""
+    import copy
+    d = copy.deepcopy(d)
+    pasal_orang = d.get("clause") in PASAL_ORANG
+    aman = LABEL_AMAN_ORANG + LABEL_AMAN_AUDITOR
+
+    def boleh(x: dict, induk: str = "") -> bool:
+        lbl = (x.get("label_lengkap") or "") + (x.get("label") or "")
+        if "姓名" in lbl or "姓名" in induk:
+            return False
+        return not pasal_orang or any(a in lbl for a in aman)
+
+    butir = []
+    for b in d.get("items", []):
+        sub = [x for x in b.get("sub", []) if boleh(x, b.get("label") or "")]
+        if boleh(b) or sub:
+            b = dict(b, sub=sub)
+            if not boleh(b):
+                b["value"] = ""
+            butir.append(b)
+    d["items"] = butir
+    for k in [k for k in d if k.startswith("raw") or k in ("html", "teks_mentah")]:
+        d.pop(k)
+    return d
+
 
 def _ringkas(d: dict, maks: int = 6) -> str:
     """Butir yang memuat angka, ringkas, supaya pelabel tidak perlu membuka MOPS untuk kasus mudah.
