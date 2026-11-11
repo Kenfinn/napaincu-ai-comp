@@ -19,8 +19,8 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 | Q2 | G1 | Gold set mengenal semua jalur B1 | ✅ | `7ca88d8` | 9 tes | Akurasi 3 arah 75%, matriks 3x3 aktif, 196 tes lulus |
 | Q3 | V1 | Tab Valuation tidak menunggu beta | ✅ | `fd1b116` | 6 tes | Akses emiten baru 2,02s (< 10s), retry 307/429 aktif |
 | Q4 | V2 | Skrip pemanasan cache emiten besar | ✅ | `48a8ad6` | 5 tes | Buka tab valuasi 0,018s–0,073s (< 2s), 207 tes lulus |
-| Q5 | S1 | Cari emiten dengan nama | ✅ | terlampir | 7 tes | 1.996 emiten terindeks (TWSE: 1.099, TPEx: 897), 10/10 kueri lolos, 214 tes lulus |
-| Q6 | C1a | Tautan Tanya FEAF di menu dan saham | ⏳ | - | - | - |
+| Q5 | S1 | Cari emiten dengan nama | ✅ | `cc373a6` | 7 tes | 1.996 emiten terindeks (TWSE: 1.099, TPEx: 897), 10/10 kueri lolos, 214 tes lulus |
+| Q6 | C1a | Tautan Tanya FEAF di menu dan saham | ✅ | terlampir | 4 tes | Menu navigasi 3 bahasa, tombol /saham/{kode}, form terisi contoh, tangkapan layar c1a-*.png, 218 tes lulus |
 | Q7 | C1b | Uji Tanya FEAF | ⏳ | - | - | - |
 | Q8 | K1 | Draf laporan keamanan | ⏳ | - | - | - |
 | Q9 | QA1 | Skrip QA halaman tiga bahasa | ⏳ | - | - | - |
@@ -141,4 +141,34 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
   - `app/templates/cari_hasil.html`
   - `tests/test_cari_nama.py`
   - `docs/laporan-antigravity-3.md`
+
+### Q6. C1a: Tautan Tanya FEAF
+- Waktu: 14:15 - 14:19 CST
+- Status: ✅
+- Commit: terlampir di push ini
+- Tes yang ditambah: 4 tes di `tests/test_c1a_tautan.py` (semua lulus, total rangkaian 218 tes lulus).
+- Hasil pemeriksa manual:
+  - Menu navigasi kiri memuat tautan `/tanya` di antara Feed dan Review dalam 3 bahasa ("Ask FEAF", "問 FEAF", "Tanya FEAF").
+  - Halaman saham `/saham/{kode}` memuat tombol "Ask about {kode}" ("詢問 {kode}", "Tanya tentang {kode}") di kepala halaman yang mengarahkan langsung ke `/tanya?kode={kode}`.
+  - Halaman `/tanya?kode=2330` otomatis mengisi kotak input dengan contoh pertanyaan per kode sesuai bahasa aktif:
+    - EN: `What changed recently for 2330?`
+    - ZH: `2330 最近有什麼重大變化？`
+    - ID: `Apa yang berubah baru-baru ini untuk 2330?`
+    Form tidak langsung dikirim secara otomatis agar pengguna dapat membaca atau mengedit pertanyaan.
+  - Sanitasi: input kode tidak sah seperti `<script>alert(1)</script>` ditolak dan tidak dipantulkan ke dalam elemen input.
+  - Tangkapan layar antarmuka pengguna berhasil dibuat:
+    - `docs/diagram/c1a-menu.png` (navigasi Ask FEAF)
+    - `docs/diagram/c1a-tombol-saham.png` (tombol Ask about 2330)
+    - `docs/diagram/c1a-tanya-kode.png` (kotak tanya dengan contoh pertanyaan terisi)
+- Berkas diubah:
+  - `app/templates/base.html`
+  - `app/templates/saham.html`
+  - `app/templates/chat.html`
+  - `app/teks/antigravity3.py`
+  - `docs/diagram/c1a-menu.png`
+  - `docs/diagram/c1a-tombol-saham.png`
+  - `docs/diagram/c1a-tanya-kode.png`
+  - `tests/test_c1a_tautan.py`
+  - `docs/laporan-antigravity-3.md`
+
 

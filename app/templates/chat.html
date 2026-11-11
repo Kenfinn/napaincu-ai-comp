@@ -15,7 +15,7 @@
   <form method="post" action="/tanya" class="form-review" style="margin-top:0;">
     <input class="isian lebar" name="pertanyaan" maxlength="500" required
            placeholder="{{ t('ch.placeholder') }}"
-           value="{{ (jw.pertanyaan if jw else (kode_awal ~ ' ' if kode_awal else '')) }}">
+           value="{{ (jw.pertanyaan if jw else (t('ch.tanya_contoh_kode', kode=kode_awal) if (kode_awal and kode_awal.isalnum()) else '')) }}">
     <button class="tombol" type="submit">{{ t('ch.kirim') }}</button>
   </form>
   <div style="margin-top:10px; font-size:12px; color:var(--abu-2);">{{ t('ch.contoh') }}:

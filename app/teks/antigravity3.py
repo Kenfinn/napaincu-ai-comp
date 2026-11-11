@@ -51,4 +51,20 @@ T: dict[str, tuple[str, str, str]] = {
         "找到 {n} 家公司",
         "Ditemukan {n} emiten",
     ),
+    # C1a: tautan Tanya FEAF
+    "nav.tanya": (
+        "Ask FEAF",
+        "問 FEAF",
+        "Tanya FEAF",
+    ),
+    "sh.tanya_tentang": (
+        "Ask about {kode}",
+        "詢問 {kode}",
+        "Tanya tentang {kode}",
+    ),
+    "ch.tanya_contoh_kode": (
+        "What changed recently for {kode}?",
+        "{kode} 最近有什麼重大變化？",
+        "Apa yang berubah baru-baru ini untuk {kode}?",
+    ),
 }

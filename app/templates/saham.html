@@ -24,7 +24,8 @@
       <small>{{ t('sh.tanpa_harga') }}</small>
     {% endif %}
   </div>
-  <div>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <a href="/tanya?kode={{ kode_saham }}" class="tombol tipis" style="text-decoration:none;">{{ t('sh.tanya_tentang', kode=kode_saham) }}</a>
     {% if di_watchlist %}
       <span class="lencana l-terbit">✔ {{ t('sh.di_watchlist') }}</span>
     {% else %}
