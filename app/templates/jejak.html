@@ -44,7 +44,7 @@
       </div>
       {% endif %}
       <details class="data-jejak"><summary>{{ t('jj.data') }}</summary>
-        <pre>{{ l.keluaran | tojson(indent=2) }}</pre></details>
+        <pre>{{ l.keluaran | jejak_bahasa(h.alasan_i18n) | tojson(indent=2) }}</pre></details>
     </div>
   </div>
 {% endfor %}

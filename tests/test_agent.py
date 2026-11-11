@@ -372,6 +372,14 @@ class TestTigaBahasa(unittest.TestCase):
                     self.assertNotIn("⟦", r.text, "ada kunci terjemahan yang hilang")
                     self.assertIn(penanda[bhs], r.text)
 
+    def test_json_jejak_ikut_bahasa(self):
+        """QA server 11 Nov: blok JSON mentah di /jejak memuat alasan berbahasa Indonesia."""
+        import html as _html
+        en = _html.unescape(self.c.get("/jejak/2330-2026-09-19-4", params={"lang": "en"}).text)
+        self.assertIn("Currency supported by the model", en)
+        self.assertNotIn("Mata uang didukung model", en)
+        self.assertNotIn("Jumlah berdenominasi", en)
+
     def test_teks_agent_ikut_diterjemahkan(self):
         en = self.c.get("/peringatan/2330-2026-09-19-4", params={"lang": "en"}).text
         zh = self.c.get("/peringatan/2330-2026-09-19-4", params={"lang": "zh"}).text
