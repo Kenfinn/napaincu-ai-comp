@@ -210,5 +210,24 @@ class TestGoldB1(unittest.TestCase):
         self.assertIn("Matriks kebingungan keputusan 3 arah", teks)
 
 
+class TestGoldTanpaNama(unittest.TestCase):
+    def test_teks_bebas_pasal_8_tidak_masuk(self):
+        """Kasus nyata 7718: nama pejabat ada di 其他應敘明事項, label tanpa 姓名."""
+        from app import gold
+        d = {"clause": 8, "items": [
+            {"no": 1, "label": "人員變動別", "value": "公司治理主管"},
+            {"no": 3, "label": "舊任者姓名、級職及簡歷", "value": "王小明/經理"},
+            {"no": 5, "label": "異動情形", "value": "退休"},
+            {"no": 6, "label": "異動原因", "value": "李大華先生退休"},
+            {"no": 7, "label": "生效日期", "value": "116/01/01"},
+            {"no": 8, "label": "其他應敘明事項", "value": "張小英將於115/12/31退休"},
+        ]}
+        r = gold._ringkas(d)
+        for nama in ("王小明", "李大華", "張小英"):
+            self.assertNotIn(nama, r)
+        self.assertIn("公司治理主管", r)
+        self.assertIn("退休", r)
+
+
 if __name__ == "__main__":
     unittest.main()

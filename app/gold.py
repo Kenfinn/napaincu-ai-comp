@@ -60,11 +60,21 @@ def muat_arsip(folder: str | None = None) -> list[dict]:
     return rek
 
 
+# Pasal yang menyebut orang (direksi, pejabat, akuntan). Teks bebas di pasal ini bisa memuat
+# nama walau labelnya tidak memuat 姓名 (contoh nyata: 其他應敘明事項 pasal 8), jadi hanya
+# butir dari daftar izin di bawah yang diambil.
+PASAL_ORANG = {1, 6, 7, 8}
+LABEL_AMAN_ORANG = ("人員變動別", "異動情形", "發生變動日期", "生效日期", "會計師事務所名稱",
+                    "董事會通過日期", "事實發生日", "喪失債信之日期", "喪失債信之金額", "法人名稱")
+
+
 def _ringkas(d: dict, maks: int = 6) -> str:
     """Butir yang memuat angka, ringkas, supaya pelabel tidak perlu membuka MOPS untuk kasus mudah.
-    
-    Nama orang (butir dengan label memuat 姓名) tidak pernah dimasukkan demi privasi.
+
+    Nama orang tidak pernah dimasukkan: butir berlabel 姓名 dibuang, dan untuk pasal yang
+    menyebut orang (PASAL_ORANG) hanya butir dari LABEL_AMAN_ORANG yang diambil.
     """
+    pasal_orang = d.get("clause") in PASAL_ORANG
     keluar = []
     for b in d.get("items", []):
         for x in [b] + b.get("sub", []):
@@ -72,8 +82,10 @@ def _ringkas(d: dict, maks: int = 6) -> str:
             induk_lbl = b.get("label") or ""
             if "姓名" in lbl or "姓名" in induk_lbl:
                 continue
+            if pasal_orang and not any(a in (x.get("label_lengkap") or lbl) for a in LABEL_AMAN_ORANG):
+                continue
             v = x.get("value") or ""
-            if any(c.isdigit() for c in v) and len(keluar) < maks:
+            if (pasal_orang or any(c.isdigit() for c in v)) and len(keluar) < maks:
                 sat = f"({x['satuan_label']})" if x.get("satuan_label") else ""
                 keluar.append(f"{x.get('no')}. {lbl[:28]}{sat}: {v[:60]}")
     return " | ".join(keluar)

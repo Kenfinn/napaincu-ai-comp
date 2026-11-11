@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><title>Panduan Gold Set FEAF</title>
+<style>
+@page { size: A4; margin: 15mm 14mm 15mm 14mm; }
+body { font-family: "Noto Sans", "DejaVu Sans", "WenQuanYi Zen Hei", sans-serif; font-size: 10pt; color: #1b2433; line-height: 1.45; }
+.zh { font-family: "WenQuanYi Zen Hei", sans-serif; }
+h1 { font-size: 17pt; margin: 0 0 2px; color: #13284a; }
+h2 { font-size: 12.5pt; margin: 16px 0 6px; color: #13284a; border-bottom: 2px solid #13284a; padding-bottom: 3px; }
+.sub { color: #5b6577; font-size: 9.5pt; margin-bottom: 10px; }
+.kotak { page-break-inside: avoid; background: #f3f5f9; border-left: 4px solid #13284a; padding: 8px 11px; margin: 8px 0; }
+.kotak.kuning { background: #fbf2e3; border-color: #c98a12; }
+table { border-collapse: collapse; width: 100%; margin: 6px 0 8px; font-size: 9pt; }
+tr { page-break-inside: avoid; }
+th, td { border: 1px solid #cdd3dd; padding: 4px 6px; vertical-align: top; text-align: left; }
+th { background: #e8ecf3; }
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 8.8pt; background: #f3f5f9; padding: 0 3px; }
+ol, ul { margin: 4px 0 6px 18px; padding: 0; }
+li { margin: 2px 0; }
+.pecah { page-break-before: always; }
+small { color: #5b6577; }
+</style></head><body>
+
+<h1>Panduan Gold Set: kunci jawaban untuk menguji agent FEAF</h1>
+<div class="sub">FEAF · Agentic AI Investment Assistant · NAPAI AAIC 2026 · untuk Ferry &amp; Patrice · disusun 11 Nov 2026 · mohon kembali <b>Kamis 12 Nov, siang</b></div>
+
+<div class="kotak">
+<b>Apa ini.</b> Kalian membaca 46 pengumuman material (重大訊息) asli dan menulis keputusan yang benar
+menurut penilaian kalian sebagai analis. Agent lalu dijalankan pada pengumuman yang sama, dan skrip
+evaluasi menghitung seberapa sering agent setuju dengan kalian.<br>
+<b>Kenapa penting.</b> Paket finalis (Jumat 13 Nov) wajib memuat metrik evaluasi: akurasi, jenis
+error, dan waktu yang dihemat dibanding kerja manual. Tanpa jawaban dari kalian, angka-angka itu
+tidak bisa dihitung.
+</div>
+
+<h2>1. Yang kalian terima</h2>
+<ul>
+<li><b>Berkas Excel <code>gold-set-FEAF.xlsx</code></b>, dua lembar:
+  <ul>
+  <li><b>Label</b>: satu baris per pengumuman (kode, nama, tanggal, pasal, judul, ringkasan butir berangka). Kolom kuning diisi kalian; tiga kolom sudah berupa pilihan (dropdown).</li>
+  <li><b>Isi pengumuman</b>: semua butir tiap pengumuman, dicocokkan lewat kolom <code>no</code>. Tidak perlu membuka MOPS.</li>
+  </ul></li>
+<li>Pengumuman diambil dari data asli 9 Nov, sekitar 7 per jenis, termasuk yang seharusnya diarsipkan.</li>
+<li>Nama orang (direksi, pejabat, akuntan) sengaja dihapus dari berkas. Jabatan, jenis perubahan, dan nama kantor akuntan tetap ada.</li>
+</ul>
+
+<h2>2. Kolom yang diisi</h2>
+<table>
+<tr><th style="width:17%">Kolom</th><th>Isi</th></tr>
+<tr><td><code>keputusan</code></td><td><b>terbit</b>: layak jadi peringatan untuk investor tanpa dicek orang lagi.<br><b>tahan</b>: perlu dilihat manusia dulu sebelum disampaikan.<br><b>arsip</b>: tidak perlu disampaikan (rutin atau tidak material).</td></tr>
+<tr><td><code>tingkat</code></td><td>Hanya untuk sinyal, menurut profil risiko <b>moderat</b>: <b>info</b>, <b>perhatian</b>, atau <b>serius</b>. Kosongkan untuk pasal 20 dan baris arsip.</td></tr>
+<tr><td><code>input</code></td><td>Jenis kejadian. Pasal 20: <b>capex</b> (belanja modal), <b>cash</b> (kas masuk/keluar dari transaksi aset), atau <b>debt</b>. Sinyal: <b>risiko</b>, <b>modal</b>, <b>laporan</b>, <b>berat</b>, <b>tata_kelola</b>. Kosongkan bila arsip.</td></tr>
+<tr><td><code>nilai_juta_ntd</code></td><td>Wajib bila input capex, cash, atau debt dan keputusan terbit. Angka dalam <b>juta NTD</b> (lihat bagian 4). Untuk sinyal boleh kosong.</td></tr>
+<tr><td><code>butir_no</code></td><td>Nomor butir tempat angka itu tertulis (lihat lembar Isi pengumuman).</td></tr>
+<tr><td><code>menit</code></td><td><b>Berapa menit kalian butuhkan untuk baris ini</b>, dari mulai membaca sampai yakin dengan jawabannya. Ini baseline kerja manual yang dibandingkan dengan agent. Perkiraan bulat sudah cukup.</td></tr>
+<tr><td><code>pelabel</code></td><td>Inisial: FR atau PDK.</td></tr>
+<tr><td><code>catatan</code></td><td>Satu kalimat alasan. Wajib bila ragu: tulis "RAGU: ...". Jangan lewati kasus sulit, justru itu paling berguna.</td></tr>
+</table>
+
+<div class="kotak kuning">
+<b>Tiga aturan supaya hasilnya jujur.</b>
+<ol>
+<li>Isi jawaban <b>sebelum</b> melihat apa yang dikeluarkan agent di situs FEAF. Kalau sudah melihat, jawaban tidak lagi independen.</li>
+<li>Tulis jawaban menurut penilaian kalian. Tabel di bagian 3 adalah aturan yang sudah kalian sepakati sejauh ini. Kalau untuk kasus tertentu menurut kalian aturan itu salah, tulis jawaban kalian dan alasannya di catatan. Itu temuan, bukan kesalahan.</li>
+<li>Kalian berdua boleh membagi baris (misalnya Ferry nomor ganjil, Patrice nomor genap). Kalau sempat, lima baris yang sama dilabeli berdua, supaya kita tahu seberapa sering dua analis berbeda pendapat.</li>
+</ol>
+</div>
+
+<h2>3. Aturan yang sudah disepakati, per jenis pengumuman</h2>
+<table>
+<tr><th style="width:17%">Jenis (pasal)</th><th>Keputusan</th><th style="width:30%">Tingkat (profil moderat)</th></tr>
+<tr><td><b>Perolehan/pelepasan aset</b> (20), atau anggaran belanja modal di pasal mana pun<br><code>input</code>: capex / cash / debt</td>
+<td><b>terbit</b> bila transaksi itu, kalau terealisasi, menggerakkan kas atau belanja modal secara berarti. Ditampilkan sebagai skenario "bila terealisasi" (DCF berbasis kas).<br><b>tahan</b> bila jumlahnya dalam mata uang asing tanpa padanan NTD.<br><b>arsip</b> bila rutin dan tidak berarti (misalnya pembelian produk investasi jangka pendek).</td>
+<td>Kosong</td></tr>
+<tr><td><b>Penjaminan</b> (22), <b>pinjaman dana</b> (23)<br><code>input</code>: risiko</td>
+<td><b>tahan</b> bila saldo ≥ 80% ekuitas, atau pemakaian limit (butir 7 ÷ 6) ≥ 80%.<br>Selain itu <b>terbit</b>.</td>
+<td><b>serius</b> bila di atas ambang 80%. <b>perhatian</b> bila ada penerima pihak luar (bukan anak/induk perusahaan). Selain itu <b>info</b>.</td></tr>
+<tr><td><b>Perubahan modal</b> (11), <b>beli kembali saham</b> (35)<br><code>input</code>: modal</td>
+<td><b>arsip</b> untuk pembatalan saham treasuri (saham beredar tidak berubah), dan untuk saham baru atau buyback di bawah 0,5% saham beredar dan di bawah 1% kapitalisasi.<br>Selain itu <b>terbit</b>.</td>
+<td><b>perhatian</b> untuk pengurangan modal menutup rugi, pengembalian kas ke pemegang saham, obligasi (potensi dilusi), dan saham baru/buyback ≥ 1% saham atau ≥ 2% kapitalisasi. Selain itu <b>info</b>.</td></tr>
+<tr><td><b>Laporan kuartal</b> (31)<br><code>input</code>: laporan</td>
+<td><b>terbit</b> (ringkasan angka utama).</td>
+<td><b>perhatian</b> bila rugi bersih ke induk, atau rasio utang (liabilitas ÷ aset) ≥ 60%. Selain itu <b>info</b>.</td></tr>
+<tr><td><b>Kejadian berat</b>: gagal bayar (1), penghentian produksi (3), suspensi perdagangan (40)<br><code>input</code>: berat</td>
+<td><b>tahan</b>, selalu (sudah kalian setujui).</td>
+<td><b>serius</b></td></tr>
+<tr><td><b>Ganti auditor eksternal</b> (7)<br><code>input</code>: tata_kelola</td>
+<td><b>tahan</b> bila auditor lama yang mengakhiri penugasan, atau perusahaan berbeda pendapat dengan koreksi auditor.<br>Selain itu <b>terbit</b>.</td>
+<td><b>serius</b> untuk kasus yang ditahan. <b>perhatian</b> bila kantor akuntannya ikut berganti. <b>info</b> bila hanya rotasi partner di kantor yang sama.</td></tr>
+<tr><td><b>Ganti pejabat</b> (8)<br><code>input</code>: tata_kelola</td>
+<td><b>terbit</b>.</td>
+<td><b>perhatian</b> bila jabatan kunci keluar (mengundurkan diri, diberhentikan, meninggal). Jabatan kunci: CFO/kepala keuangan, kepala akuntansi, kepala audit internal, CEO, direktur utama, presiden, COO, ketua direksi. Selain itu <b>info</b>.</td></tr>
+<tr><td><b>Lainnya</b>: ganti direksi badan hukum (6), lain-lain (51, 53), dan semua pasal yang tidak disebut di atas</td>
+<td><b>arsip</b>. Kalau menurut kalian ada yang seharusnya disampaikan, isi jawaban kalian dan tulis alasannya.</td>
+<td>Kosong</td></tr>
+</table>
+<p><small>Angka ambang konservatif dan agresif, serta tingkat pasal 7 dan 8, masih usulan dan bisa kalian koreksi terpisah. Gold set hanya memakai profil moderat.</small></p>
+
+<h2>4. Konversi satuan ke juta NTD</h2>
+<table>
+<tr><th>Tertulis</th><th>Cara</th><th>Contoh</th></tr>
+<tr><td class="zh">仟元 (ribu)</td><td>bagi 1.000</td><td class="zh">1.480.000.000 仟元 → 1480000</td></tr>
+<tr><td class="zh">百萬元 (juta)</td><td>tetap</td><td class="zh">2.500 百萬元 → 2500</td></tr>
+<tr><td class="zh">億元 (100 juta)</td><td>kali 100</td><td class="zh">15 億元 → 1500</td></tr>
+<tr><td class="zh">元</td><td>bagi 1.000.000</td><td class="zh">35.000.000 元 → 35</td></tr>
+</table>
+<p>Satuan sering hanya tertulis di label butir, misalnya <span class="zh">「交易總金額(仟元)」</span>. Mata uang asing tanpa padanan NTD: keputusan <b>tahan</b>, catatan "mata uang asing".</p>
+
+<h2>5. Contoh pengisian</h2>
+<table>
+<tr><th>Pengumuman</th><th>keputusan</th><th>tingkat</th><th>input</th><th>nilai</th><th>catatan</th></tr>
+<tr><td>Pasal 20, direksi menyetujui belanja mesin 1.480.000.000 仟元</td><td>terbit</td><td></td><td>capex</td><td>1480000</td><td>仟元 → ÷1.000</td></tr>
+<tr><td>Pasal 22, saldo penjaminan 54% ekuitas, semua ke anak perusahaan</td><td>terbit</td><td>info</td><td>risiko</td><td></td><td>di bawah 80%</td></tr>
+<tr><td>Pasal 35, pembatalan saham treasuri</td><td>arsip</td><td></td><td></td><td></td><td>saham beredar tetap</td></tr>
+<tr><td>Pasal 31, rugi bersih kuartal 3</td><td>terbit</td><td>perhatian</td><td>laporan</td><td></td><td>rugi</td></tr>
+<tr><td>Pasal 8, kepala akuntansi baru diangkat</td><td>terbit</td><td>info</td><td>tata_kelola</td><td></td><td>jabatan kunci, baru</td></tr>
+<tr><td>Pasal 1, obligasi jatuh tempo belum dibayar</td><td>tahan</td><td>serius</td><td>berat</td><td></td><td></td></tr>
+</table>
+
+<h2>6. Setelah selesai</h2>
+<ol>
+<li>Simpan Excel-nya (format tetap .xlsx, jangan diubah ke CSV).</li>
+<li>Kirim ke Afinzaki <b>Kamis 12 Nov siang</b>. Kalau belum semua, kirim yang sudah ada. 30 baris pun sudah bisa dipakai.</li>
+<li>Kalau ada aturan di bagian 3 yang menurut kalian perlu diubah, tulis di pesan terpisah. Kami ubah agent-nya, bukan jawaban kalian.</li>
+</ol>
+
+</body></html>
