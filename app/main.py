@@ -347,6 +347,25 @@ def _sebab_cadangan(h: list[dict]) -> dict[str, int]:
     return n
 
 
+def _hitung_versi_kode() -> str:
+    """Sidik isi app/*.py (bukan git: .git tidak ikut image). Sama dengan
+    `python3 -c "from app.main import VERSI_KODE; print(VERSI_KODE)"` di laptop
+    berarti server memakai kode yang sama."""
+    import hashlib
+    from pathlib import Path
+    akar = Path(__file__).resolve().parent
+    h = hashlib.sha256()
+    for f in sorted(akar.rglob("*.py")):
+        if "__pycache__" in f.parts:
+            continue
+        h.update(f.relative_to(akar).as_posix().encode())
+        h.update(f.read_bytes().replace(b"\r\n", b"\n"))
+    return h.hexdigest()[:10]
+
+
+VERSI_KODE = _hitung_versi_kode()
+
+
 @app.get("/sehat", include_in_schema=False)
 def sehat():
     """Untuk health check Dokploy/Docker: server hidup dan data terbaca."""
@@ -369,7 +388,7 @@ def sehat():
         n_valuasi = len(list(valuasi_otomatis.CACHE_DIR.glob("*.json")))
     except OSError:
         n_valuasi = 0
-    return {"ok": True, "sumber": sumber, "pengumuman": len(detail),
+    return {"ok": True, "versi_kode": VERSI_KODE, "sumber": sumber, "pengumuman": len(detail),
             "jalan_terakhir": _jalan_terakhir,
             "galat_model_terakhir": llm.galat_terakhir,
             "tarik_terakhir": (tarik.baca_status() or {}).get("waktu"),

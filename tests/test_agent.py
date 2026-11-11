@@ -442,7 +442,7 @@ class TestDeploy(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         b = r.json()
         self.assertTrue(b["ok"])
-        for k in ("mesin", "model_dicoret_404", "valuasi_otomatis_tersimpan", "agent"):
+        for k in ("versi_kode", "mesin", "model_dicoret_404", "valuasi_otomatis_tersimpan", "agent"):
             self.assertIn(k, b)
 
 
