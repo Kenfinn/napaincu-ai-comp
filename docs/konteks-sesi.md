@@ -1,7 +1,7 @@
 # Konteks kerja: BACA INI DULU
 
 Pegangan untuk melanjutkan tanpa riwayat percakapan (sesi Claude berikutnya, Antigravity,
-dan tim). Per **11 Nov 2026 pagi**. Status harian dan daftar kerja ada di
+dan tim). Per **11 Nov 2026 sore**. Status harian dan daftar kerja ada di
 [`rencana-dan-status.md`](./rencana-dan-status.md); berkas ini menjelaskan "kenapa" dan "di mana".
 
 ## 1. Produk, tim, tenggat
@@ -29,7 +29,11 @@ dan tim). Per **11 Nov 2026 pagi**. Status harian dan daftar kerja ada di
 | 👍/👎 | Satu ambang per server, per pasal (0,40–0,90) |
 | Beta | Dari harga harian resmi TWSE/TPEx vs TAIEX, 2 tahun mingguan; data kurang → 1,0 bertanda |
 | DCF | **Berbasis kas** (Patrice): pengumuman tanpa pergerakan kas tidak mengubah DCF. Pasal 20 → skenario "bila terealisasi"; pasal 31 memicu pembangunan ulang valuasi |
-| Ambang sinyal | Ikut profil risiko (konservatif/moderat/agresif), di `app/ambang_profil.py`. Profil hanya mengubah label; antrean review memakai moderat |
+| Ambang sinyal | Ikut profil risiko (konservatif/moderat/agresif), di `app/ambang_profil.py`. Profil hanya mengubah label; antrean review memakai moderat. Kalibrasi 11 Nov dari gold set: rasio utang 40/50/65%, pinjaman dana ≥40% ekuitas = perhatian, saham baru tak terbaca = perhatian ([`hasil-gold-set.md`](./hasil-gold-set.md)) |
+| Pasal 7/8 | Sinyal tata kelola (Patrice): rotasi auditor = info, ganti kantor akuntan = perhatian, auditor mundur/beda pendapat = serius & ditahan; pejabat kunci keluar = perhatian. Nama orang tidak pernah diambil. Pasal 6, 51, 53 dilewati |
+| Pasal 20 antar-grup | Transaksi dengan anak perusahaan 100% = arsip (kas tetap di grup) |
+| Lisensi | All rights reserved (`LICENSE`), juri AAIC boleh menjalankan untuk penilaian |
+| Angka evaluasi resmi | Yang **sebelum** kalibrasi (41/46 keputusan, 21/29 tingkat, 0 angka salah). Angka sesudah kalibrasi = di dalam sampel, tidak dilaporkan sebagai akurasi |
 | Data ke Gemini | Hanya data publik. Tidak ada data SYSTEX/mitra |
 | README | Diperbarui paling akhir |
 | Gaya kerja | Jawab pengguna dalam Bahasa Indonesia, singkat; tanya untuk keputusan penting; QA sendiri sebelum melapor; dokumen untuk manusia memakai gaya humanizer (tanpa tanda pisah, tanpa bold berlebihan) |
@@ -43,7 +47,7 @@ dan tim). Per **11 Nov 2026 pagi**. Status harian dan daftar kerja ada di
 | Env server | `SENTINEL_KODE_AKSES`, `SENTINEL_TARIK_OTOMATIS_DETIK=600`, `SENTINEL_SERTAKAN_CONTOH=0`, `GEMINI_API_KEY`, **`SENTINEL_MODEL=gemini-3.6-flash`**, **`SENTINEL_MODEL_CADANGAN=gemini-3.5-flash,gemini-3.8-flash`**, opsional `SENTINEL_KUNCI_BACA`, `SENTINEL_PROSES_SEMUA`, `SENTINEL_MODEL_MAKS_PER_JALAN`, `FINMIND_TOKEN` |
 | Gemini | Kunci dari AI Studio. `gemini-2.5-flash` tercantum di ListModels tapi 404; 3.7/3.8/flash-latest sering 503; 3.5 dan 3.6 jalan (tes 11 Nov). Langganan AI Pro tidak menambah kuota API, hanya kredit Cloud US$10/bulan. **11 Nov sore:** proyek `napaincu-ai-comp` sudah Paid tier 1 dengan kredit GCP ±IDR 545 ribu, tetapi API membalas **402 saldo prabayar habis**: kredit Cloud baru terpakai setelah saldo prabayar AI Studio di atas $0. Inilah penyebab `panggilan_model` 0 di server |
 | Deploy | Push ke `main`, tekan Deploy di Dokploy. Panduan: [`deploy-dokploy.md`](./deploy-dokploy.md) |
-| Tes | `python3 -m unittest discover -s tests` → **178 tes**, tanpa jaringan |
+| Tes | `python3 -m unittest discover -s tests` → **236 tes**, tanpa jaringan (tes yang memicu thread beta latar wajib mem-patch pemicunya) |
 | Evaluasi | `scripts/evaluasi.py --operasional --arsip-dir <folder arsip>`, `--chat`, mode gold |
 | Sesi cloud Claude | Bisa: OpenAPI TWSE/TPEx, situs TWSE/TPEx (harga harian), FinMind, Gemini tidak (tanpa kunci). Tidak bisa: MOPS |
 | Laptop Taiwan | Jalan ke MOPS: riwayat pengumuman ([`tarik-riwayat.md`](./tarik-riwayat.md)), uji tautan MOPS |
@@ -65,7 +69,9 @@ dan tim). Per **11 Nov 2026 pagi**. Status harian dan daftar kerja ada di
 | `app/review.py` | Keputusan review per jenis penahanan |
 | `app/valuasi_otomatis.py`, `app/harga_resmi.py`, `app/sitasi.py` | DCF otomatis (cache berversi `VERSI_SKEMA`), harga harian resmi untuk beta, tautan MOPS |
 | `app/pasar.py`, `app/ringkasan.py` | Data pasar & laporan (FinMind), tab Ringkasan |
-| `app/chat.py` | Tanya FEAF: penjaga, function calling ke 7 alat, pemeriksa angka, jejak |
+| `app/chat.py` | Tanya FEAF: penjaga (prediksi/order/pribadi/injeksi), function calling ke 7 alat, filter jenis pengumuman B1, pemeriksa angka, jejak |
+| `app/indeks_nama.py`, `app/gold.py` | Cari emiten dengan nama (TSMC, 台積電); kandidat gold set tanpa nama orang |
+| `scripts/buat_paket_gold.py`, `scripts/panaskan_cache.py`, `scripts/qa_halaman.py` | Paket Excel gold set dan konversi balik; pemanasan cache sebelum demo; QA halaman tiga bahasa |
 | `scripts/evaluasi.py`, `scripts/uji_serangan.py` | Evaluasi Appendix 2, set uji serangan |
 
 ## 5. Temuan penting
@@ -74,8 +80,7 @@ dan tim). Per **11 Nov 2026 pagi**. Status harian dan daftar kerja ada di
 2. OpenAPI pengumuman tertunda sekitar 1 hari. Real-time butuh relay laptop Taiwan (backlog).
 3. Satuan (仟元) sering hanya di label; total transaksi pasal 20 ada di butir yang juga memuat
    jumlah unit; penerima penjaminan ditulis berurutan dalam satu butir.
-4. Emiten yang belum di-cache butuh ±2 menit untuk tab Valuation (beta: 25 bulan harga harian,
-   jeda 2 detik, TWSE membalas 307 bila terlalu sering). Belum diperbaiki: item kesiapan demo.
+4. Tab Valuation emiten baru kini ±2 detik: beta sementara 1,0 bertanda, beta resmi dihitung di latar (putaran 3). 307/429 TWSE ditunggu lalu diulang.
 5. Pasal 1 bisa memuat nama orang (公司名稱(或負責人姓名)); tidak diambil.
 6. Cache profil TPEx sempat menyimpan nama pejabat dan email (diperbaiki 10 Nov, perlu ditulis
    di formulir self-assessment).
@@ -93,3 +98,13 @@ per item (pola yang sama), lalu tinjau hasilnya terhadap kode sebelum deploy.
 - Tidak ada kunci API atau data pribadi di repo.
 - Tes tidak boleh menyentuh jaringan; patch `pasar._ambil_json`/`_finmind` atau arahkan cache ke folder sementara.
 - Setiap commit diakhiri baris atribusi Claude seperti commit sebelumnya.
+7. **Gemini di server (11 Nov sore):** penyebab `panggilan_model` 0 adalah **HTTP 402 saldo
+   prabayar habis**. Proyek `napaincu-ai-comp` sudah Paid tier 1 dengan kredit GCP dari AI Pro,
+   tetapi kredit Cloud baru terpakai setelah saldo prabayar AI Studio di atas $0. Setelah itu
+   diisi, uji langsung di container menjawab "OK" dan `/sehat` mencatat panggilan model. Satu
+   jalan memakai model paling lama 90 detik (±12 panggilan); sisanya menyusul tiap 10 menit lewat cache.
+8. **Bug ditemukan lewat gold set:** angka akuntansi dalam kurung (rugi) terbaca positif; 29 dari
+   177 laporan kuartal rugi tampil sebagai laba. Diperbaiki 11 Nov.
+9. Server: 1.106 pengumuman per 11 Nov sore; `/sehat` menampilkan mesin, panggilan model, galat
+   model terakhir, dan sebab penalar aturan dipakai, tanpa memicu proses.
+

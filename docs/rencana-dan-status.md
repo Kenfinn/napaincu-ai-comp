@@ -1,7 +1,7 @@
 # FEAF: rencana dan status
 
 Berkas ini dipakai tim untuk memantau pekerjaan: rencana awal, yang sudah selesai, yang
-berikutnya, yang menunggu orang lain, dan backlog. Terakhir diperbarui: **11 Nov 2026 pagi**.
+berikutnya, yang menunggu orang lain, dan backlog. Terakhir diperbarui: **11 Nov 2026 sore**.
 
 Tenggat paket finalis: **Jumat 13 Nov, 23:59**. Demo final: 21 Nov.
 
@@ -13,19 +13,19 @@ Rincian dan kriteria QA tiap item ada di [`rencana-finalis.md`](./rencana-finali
 
 | ID | Pekerjaan | Status |
 |---|---|---|
-| 0 | Gemini jalan di server | ✅ kode (model 404 dicoret, cadangan saat 503, pemutus). ⏳ cek `panggilan_model > 0` setelah deploy dengan `SENTINEL_MODEL=gemini-3.6-flash` |
+| 0 | Gemini jalan di server | ✅ 11 Nov sore: 402 saldo prabayar diatasi, `panggilan_model` 12 di jalan pertama, tanpa galat |
 | A1 | State brief hal. 7 + antrean review manusia | ✅ |
 | A2 | Triase keyakinan, 👍/👎 menyetel ambang | ✅ |
-| B1 | Pemetaan pasal dari jawaban Patrice | ✅ terpasang (`472727e`). ⏳ cek ambang profil konservatif/agresif oleh tim |
+| B1 | Pemetaan pasal dari jawaban Patrice | ✅ terpasang, ditambah pasal 7/8 dan kalibrasi gold set. ⏳ cek ambang profil konservatif/agresif oleh tim |
 | B2 | DCF otomatis semua emiten non-keuangan | ✅ (Antigravity) |
 | B3 | Sitasi MOPS untuk angka laporan keuangan | ✅ (Antigravity). ⏳ uji tautan dari laptop Taiwan |
 | C1 | Chatbot "Tanya FEAF" | ✅ versi awal, tautan menu, filter jenis pengumuman B1, injeksi ditolak di gerbang, penilaian per alat. ⬜ uji dengan Gemini (D5); versi lengkap 21 Nov |
 | D1 | Kandidat gold set dari arsip server | ✅ |
-| D2 | Gold set 30–50 + baseline menit manual | ✅ 46 baris dilabeli Patrice (11 Nov). ⏳ kolom menit kosong: baseline waktu manual belum ada |
+| D2 | Gold set 30–50 + baseline menit manual | ✅ 46 baris (Patrice), baseline 20–30 menit per pengumuman. Hasil: [`hasil-gold-set.md`](./hasil-gold-set.md) |
 | D3 | Set uji serangan | ✅ (Antigravity), 0 angka penyerang terbit |
 | D4 | Skrip evaluasi lengkap | ✅ `--operasional`, `--chat`. Akurasi menunggu gold set |
-| D5 | Laporan evaluasi + keamanan + jejak asli dengan model | ⬜ butuh Gemini jalan di server dan gold set |
-| E1 | README finalis | ⬜ paling akhir |
+| D5 | Laporan evaluasi + keamanan + jejak asli dengan model | 🔄 gold tanpa model selesai; draf laporan keamanan ada (`laporan-keamanan.md`). ⬜ evaluasi gold + chat dengan Gemini di server, satu jejak audit asli dengan model, gabung jadi laporan |
+| E1 | README finalis | 🔄 `LICENSE` dan panduan jalan di lokal (EN/中文/ID) sudah. ⬜ bagian lain README masih versi lama ("tanpa login", model 2.5) |
 | E2 | Deck, video, formulir | ⏳ Afinzaki |
 
 ## 2. Sudah selesai
@@ -52,9 +52,12 @@ Rincian dan kriteria QA tiap item ada di [`rencana-finalis.md`](./rencana-finali
 | 11 Nov | Deploy dengan env model Gemini | dicek Afinzaki |
 | 11 Nov | `/sehat` menampilkan mesin, panggilan model, galat model terakhir, sebab cadangan | `ae226ce`, `217e625` |
 | 11 Nov | Putaran 3 Antigravity: gold set B1, Valuation cepat (beta latar, 307 diulang), pemanasan cache, cari nama, tautan Tanya FEAF, draf laporan keamanan, skrip QA. Ditinjau dan diperbaiki Claude | `cc373a6`..`0a9f8f0` |
+| 11 Nov | Gold set Patrice masuk; bug rugi dalam kurung dan satuan 仟股 diperbaiki; kalibrasi a–d | lihat `hasil-gold-set.md` |
+| 11 Nov | Tanya FEAF: filter jenis pengumuman, injeksi ditolak di gerbang; evaluasi chat menilai alat | `f5003cd` |
+| 11 Nov | Gemini 402 ditangani; model bawaan 3.6 dengan cadangan 3.5; LICENSE; panduan lokal tiga bahasa | `6720fa0`, `2ba944a` |
 | 11 Nov | Pasal 7 (auditor) dan 8 (pejabat kunci) jadi sinyal tata kelola, tanpa nama orang (jawaban Patrice) | lihat git log |
 
-Tes otomatis: 223, semua lulus, tanpa jaringan.
+Tes otomatis: 236, semua lulus, tanpa jaringan.
 
 Hasil evaluasi operasional terbaru (`eval/hasil/operasional-20261111T024832Z.md`, 581
 pengumuman asli 10 Nov, tanpa model): **241 terbit**, 58 ditahan untuk manusia (40 belum ada
@@ -63,16 +66,13 @@ Sebelum B1 (10 Nov malam): 0 terbit.
 
 ## 3. Berikutnya (Claude)
 
-Putaran 3 Antigravity (11 Nov siang) mengerjakan urutan 1 dan 1b, uji C1, draf laporan keamanan, dan skrip QA: [`prompt-antigravity-3.md`](./prompt-antigravity-3.md), laporan di `docs/laporan-antigravity-3.md`. Claude meninjau hasilnya sebelum Deploy.
-
 | Urutan | Pekerjaan | Selesai bila |
 |---|---|---|
-| 1 | Kesiapan demo: tab Valuation tidak menunggu beta (beta dihitung di latar), balasan 307 TWSE = tunggu lalu ulang, skrip pemanasan cache untuk emiten besar, cari emiten berdasarkan nama, tautan Tanya FEAF di menu dan di halaman saham | Emiten yang belum pernah dibuka tampil < 10 detik; "TSMC"/"台積電" ketemu |
-| 1b | Panduan gold set dan `evaluasi.py` mode gold diperbarui untuk jalur B1 (modal, laporan, berat), karena panduan lama hanya mengenal capex/debt/cash/risiko | Ferry & Patrice bisa melabeli semua jenis peringatan |
-| 2 | Cek server setelah deploy: Gemini jalan, "All Issuers" berisi data asli, valuasi otomatis tersimpan | `panggilan_model > 0`, folder `/data/valuasi_otomatis` ada |
-| 3 | D5: evaluasi akhir dengan model dan gold set, laporan keamanan, satu jejak audit asli dengan model | Semua metrik Appendix 2 terisi angka asli |
-| 4 | E1: README finalis | Bagian wajib lomba lengkap (arsitektur, instalasi, model & versi, env, lisensi, aliran data, izin, keterbatasan) |
-| 5 | QA akhir di server, tiga bahasa | Daftar cek di `docs/diagram-alur.md` bagian 3 lolos |
+| 1 | Deploy versi terbaru (Afinzaki), lalu cek `/sehat`: `panggilan_model` naik, `sebab_cadangan` menyusut tiap 10 menit | Semua pasal 20 di server pernah dijawab Gemini |
+| 2 | D5: jalankan di container `scripts/evaluasi.py --simpan` (gold, mode model) dan `--chat --simpan`; ambil satu jejak audit asli yang memakai Gemini; gabung dengan `hasil-gold-set.md` dan `laporan-keamanan.md` jadi laporan evaluasi | Semua metrik Appendix 2 terisi angka asli, termasuk biaya dan latensi model |
+| 3 | E1: README finalis (arsitektur, model & versi 3.6/3.5, env, akses, aliran data, izin, keterbatasan, angka evaluasi resmi) | Bagian wajib lomba lengkap, tidak ada info basi |
+| 4 | QA akhir di server tiga bahasa (`scripts/qa_halaman.py` + cek manual) | Daftar cek `diagram-alur.md` bagian 3 lolos |
+| 5 | Opsional: set uji baru 15–20 pengumuman untuk angka di luar sampel | Dilabeli tanpa melihat hasil agent |
 
 ## 4. Menunggu orang lain
 
@@ -85,7 +85,6 @@ Putaran 3 Antigravity (11 Nov siang) mengerjakan urutan 1 dan 1b, uji C1, draf l
 | Afinzaki | Putuskan kapan `SENTINEL_KUNCI_BACA=1`; nyalakan billing dengan kredit AI Pro menjelang demo (opsional) | demo |
 | Afinzaki | Formulir pihak ketiga (draf: `docs/pengungkapan-pihak-ketiga.md`) dan self-assessment; deck dan video. Deck perlu menyebut prinsip DCF berbasis kas: pengumuman pasal 20 = skenario | E2 |
 | Ferry & Patrice | Cek ambang profil konservatif/agresif dan tingkat sinyal pasal 7/8 (tabel di `pemetaan-pasal.md`), 現金減資, batas pasal 23 (±40% ekuitas?), pasal 51/53 | B1 |
-| Ferry & Patrice | Label gold set + baseline menit kerja manual | D2, D5 |
 | Ferry & Patrice | Cek `AMBANG` di `app/ringkasan.py` dan terjemahan 中文 | Ringkasan |
 | Belum dijawab | Format test case resmi panitia, cara menyerahkan repo privat ke juri, field liaison | E2 |
 

@@ -20,14 +20,18 @@ PROFIL_SERVER = "moderat"
 
 AMBANG: dict[str, dict[str, float | str]] = {
     "konservatif": {"ekuitas": 0.50, "limit": 0.70, "saham": 0.005, "uang": 0.01, "tutup_rugi": "perhatian",
-                    "utang": 0.50, "pejabat_kunci": "perhatian"},
+                    "utang": 0.40, "pejabat_kunci": "perhatian"},
     "moderat":     {"ekuitas": 0.80, "limit": 0.80, "saham": 0.01, "uang": 0.02, "tutup_rugi": "perhatian",
-                    "utang": 0.60, "pejabat_kunci": "info"},
+                    "utang": 0.50, "pejabat_kunci": "info"},
     "agresif":     {"ekuitas": 1.00, "limit": 0.90, "saham": 0.02, "uang": 0.05, "tutup_rugi": "info",
-                    "utang": 0.75, "pejabat_kunci": "info"},
+                    "utang": 0.65, "pejabat_kunci": "info"},
 }
 
 URUT = {"info": 0, "perhatian": 1, "serius": 2}
+
+# Pinjaman dana (pasal 23): batas regulasi total pinjaman ±40% ekuitas, jauh di bawah penjaminan.
+# Gold set Patrice (11 Nov): 47% ekuitas = perlu diperhatikan. Sama untuk semua profil.
+PINJAMAN_PERHATIAN = 0.40
 
 
 def normal(profil: str | None) -> str:
@@ -61,6 +65,9 @@ def tingkat(sinyal: dict | None, profil: str | None) -> dict | None:
             alasan.append(("tg.pihak_luar", {}))
             if t == "info":
                 t = "perhatian"
+        if jenis == "pinjaman" and re_ is not None and re_ >= PINJAMAN_PERHATIAN and t == "info":
+            t = "perhatian"
+            alasan.append(("tg.pinjaman_regulasi", {"nilai": round(re_ * 100, 2), "ambang": round(PINJAMAN_PERHATIAN * 100)}))
         if not alasan:
             alasan.append(("tg.di_bawah", {"ekuitas": round(a["ekuitas"] * 100), "limit": round(a["limit"] * 100)}))
     elif jenis == "modal":
@@ -73,7 +80,11 @@ def tingkat(sinyal: dict | None, profil: str | None) -> dict | None:
             alasan.append((f"tg.{sub}", {}))
         else:
             ps, pk = sinyal.get("persen_saham"), sinyal.get("persen_kapitalisasi")
-            if (ps is not None and ps >= a["saham"]) or (pk is not None and pk >= a["uang"]):
+            if sub == "saham_baru" and ps is None and pk is None:
+                # Jumlah tidak terbaca: jangan diremehkan (gold set Patrice: saham baru = perhatian).
+                t = "perhatian"
+                alasan.append(("tg.saham_tak_terbaca", {}))
+            elif (ps is not None and ps >= a["saham"]) or (pk is not None and pk >= a["uang"]):
                 t = "perhatian"
                 alasan.append(("tg.material", {"saham": round(a["saham"] * 100, 2), "uang": round(a["uang"] * 100, 2)}))
             else:
