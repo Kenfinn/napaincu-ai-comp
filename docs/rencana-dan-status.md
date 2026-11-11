@@ -62,6 +62,8 @@ Sebelum B1 (10 Nov malam): 0 terbit.
 
 ## 3. Berikutnya (Claude)
 
+Putaran 3 Antigravity (11 Nov siang) mengerjakan urutan 1 dan 1b, uji C1, draf laporan keamanan, dan skrip QA: [`prompt-antigravity-3.md`](./prompt-antigravity-3.md), laporan di `docs/laporan-antigravity-3.md`. Claude meninjau hasilnya sebelum Deploy.
+
 | Urutan | Pekerjaan | Selesai bila |
 |---|---|---|
 | 1 | Kesiapan demo: tab Valuation tidak menunggu beta (beta dihitung di latar), balasan 307 TWSE = tunggu lalu ulang, skrip pemanasan cache untuk emiten besar, cari emiten berdasarkan nama, tautan Tanya FEAF di menu dan di halaman saham | Emiten yang belum pernah dibuka tampil < 10 detik; "TSMC"/"台積電" ketemu |
