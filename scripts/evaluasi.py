@@ -165,6 +165,9 @@ def kategori(h: dict) -> str:
             return "arsip.di_bawah_ambang"
         if h.get("keputusan_manusia"):
             return "arsip.manusia"
+        kode = (h.get("alasan_i18n") or {}).get("kode") or ""
+        if kode.startswith("akhir.modal"):
+            return "arsip." + kode.split(".", 1)[1]          # modal_treasuri, modal_kecil, modal_lain
         return "arsip.saringan_pasal"
     if st == "ditahan":
         jenis = (muatan.get("tahan") or {}).get("jenis", "lain")
@@ -384,7 +387,9 @@ def laporan_operasional(m: dict, sumber: str, mode: str) -> str:
     b += ["", "Arti kategori: `arsip.saringan_pasal` dilewati karena pasal di luar daftar; "
           "`arsip.di_bawah_ambang` keyakinan triase di bawah ambang; `tahan.tanpa_angka` tidak ada angka "
           "bersumber; `tahan.tanpa_valuasi` belum ada model valuasi; `tahan.keyakinan` keyakinan di zona ragu; "
-          "`tahan.verifikasi:<cek>` pemeriksa menolak, dengan kode cek yang gagal."]
+          "`tahan.verifikasi:<cek>` pemeriksa menolak, dengan kode cek yang gagal; "
+          "`tahan.risiko_serius` sinyal penjaminan/pinjaman di atas ambang moderat; `tahan.risiko_berat` "
+          "pasal 1/3/40; `arsip.modal_*` perubahan modal tanpa dampak (treasuri), tidak material, atau tidak dikenali."]
     return "\n".join(b) + "\n"
 
 

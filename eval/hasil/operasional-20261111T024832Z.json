@@ -1,0 +1,43 @@
+{
+  "dokumen": 581,
+  "state": {
+    "ARCHIVED": 282,
+    "PUBLISHED": 241,
+    "HELD": 58
+  },
+  "kategori": {
+    "arsip.saringan_pasal": 263,
+    "terbit": 241,
+    "tahan.tanpa_valuasi": 40,
+    "tahan.tanpa_angka": 8,
+    "arsip.di_bawah_ambang": 7,
+    "tahan.risiko_serius": 6,
+    "arsip.modal_kecil": 5,
+    "tahan.risiko_berat": 4,
+    "arsip.modal_lain": 4,
+    "arsip.modal_treasuri": 3
+  },
+  "latensi_ms": {
+    "rata": 1,
+    "median": 0,
+    "p95": 9,
+    "maks": 29
+  },
+  "lolos_saringan": 318,
+  "panggilan_model": 0,
+  "jawaban_cache": 0,
+  "token_masuk": 0,
+  "token_keluar": 0,
+  "biaya_usd_free_tier": 0.0,
+  "biaya_usd_perkiraan_berbayar": null,
+  "retry": 0,
+  "jatuh_ke_cadangan": {
+    "tanpa kunci API": 55
+  },
+  "intervensi_manusia": {
+    "ditahan": 58,
+    "persen_dari_semua": 10.0,
+    "persen_dari_lolos_saringan": 18.2
+  },
+  "terbit": 241
+}

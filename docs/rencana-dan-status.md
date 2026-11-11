@@ -1,122 +1,95 @@
 # FEAF: rencana dan status
 
-Berkas ini dipakai tim untuk memantau pekerjaan. Isinya rencana awal, apa yang sudah
-selesai, apa yang dikerjakan berikutnya, dan backlog. Diperbarui setiap kali ada item
-yang selesai. Terakhir diperbarui: 10 Nov 2026 malam.
+Berkas ini dipakai tim untuk memantau pekerjaan: rencana awal, yang sudah selesai, yang
+berikutnya, yang menunggu orang lain, dan backlog. Terakhir diperbarui: **11 Nov 2026 pagi**.
 
-Tenggat paket finalis: Jumat 13 Nov, 23:59. Demo final: 21 Nov.
+Tenggat paket finalis: **Jumat 13 Nov, 23:59**. Demo final: 21 Nov.
 
 Kode status: ✅ selesai · 🔄 sedang dikerjakan · ⏳ menunggu orang lain · ⬜ belum mulai
 
-## 1. Rencana awal (disusun 10 Nov)
+## 1. Rencana awal (10 Nov) dan statusnya
 
-Daftar ini berasal dari masukan tim setelah lolos finalis. Rinciannya ada di
-[`rencana-finalis.md`](./rencana-finalis.md).
+Rincian dan kriteria QA tiap item ada di [`rencana-finalis.md`](./rencana-finalis.md).
 
 | ID | Pekerjaan | Status |
 |---|---|---|
-| 0 | Gemini memakai model pengganti bila nama model ditolak (404) | ✅ kode, ⏳ cek di server |
-| A1 | Nama state sesuai brief hal. 7, antrean review manusia | ✅ |
-| A2 | Skor keyakinan triase, 👍/👎 menyetel ambang | ✅ |
-| B1 | Pemetaan pasal dari data asli | ✅ draf, ⏳ jawaban Ferry & Patrice |
-| B2 | DCF otomatis untuk semua emiten non-keuangan | ✅ (Antigravity) |
-| B3 | Sitasi angka laporan keuangan ke MOPS | ⬜ |
-| C1 | Chatbot "Tanya FEAF" versi awal di atas data asli | Claude | Angka di jawaban selalu ada di hasil tool, bersumber, tanpa kata beli/jual | ✅ versi awal di `/tanya` (18 tes). Tautan di menu menunggu Antigravity selesai dengan `base.html` |
+| 0 | Gemini jalan di server | ✅ kode (model 404 dicoret, cadangan saat 503, pemutus). ⏳ cek `panggilan_model > 0` setelah deploy dengan `SENTINEL_MODEL=gemini-3.6-flash` |
+| A1 | State brief hal. 7 + antrean review manusia | ✅ |
+| A2 | Triase keyakinan, 👍/👎 menyetel ambang | ✅ |
+| B1 | Pemetaan pasal dari jawaban Patrice | ✅ terpasang (`472727e`). ⏳ cek ambang profil konservatif/agresif oleh tim |
+| B2 | DCF otomatis semua emiten non-keuangan | ✅ (Antigravity) |
+| B3 | Sitasi MOPS untuk angka laporan keuangan | ✅ (Antigravity). ⏳ uji tautan dari laptop Taiwan |
+| C1 | Chatbot "Tanya FEAF" | ✅ versi awal di `/tanya`. ⬜ tautan di menu, versi lengkap untuk 21 Nov |
 | D1 | Kandidat gold set dari arsip server | ✅ |
-| D2 | Gold set 30–50 pengumuman + baseline menit manual | ⏳ Ferry & Patrice |
-| D3 | Set uji serangan otomatis | ✅ (Antigravity) |
-| D4 | Skrip evaluasi lengkap dengan data asli | Claude | Latensi, biaya, retry, intervensi manusia, kategori error terisi angka asli | ✅ `--operasional` dan `--chat` (`eval/hasil/operasional-*`, `chat-*`). Akurasi menunggu gold set |
-| D5 | Laporan evaluasi, laporan keamanan, jejak audit asli | ⬜ |
-| E1 | README finalis | ⬜ dikerjakan paling akhir |
+| D2 | Gold set 30–50 + baseline menit manual | ⏳ Ferry & Patrice |
+| D3 | Set uji serangan | ✅ (Antigravity), 0 angka penyerang terbit |
+| D4 | Skrip evaluasi lengkap | ✅ `--operasional`, `--chat`. Akurasi menunggu gold set |
+| D5 | Laporan evaluasi + keamanan + jejak asli dengan model | ⬜ butuh Gemini jalan di server dan gold set |
+| E1 | README finalis | ⬜ paling akhir |
 | E2 | Deck, video, formulir | ⏳ Afinzaki |
 
 ## 2. Sudah selesai
 
 | Tanggal | Apa | Bukti |
 |---|---|---|
-| 10 Nov | State brief (FETCHED sampai PUBLISHED/HELD/ARCHIVED) dan halaman `/review` | commit `bbbbdad` |
-| 10 Nov | Model pengganti saat Gemini 404 | commit `1869173` |
-| 10 Nov | Pengurai pengumuman asli: satuan di label, sub-butir (1)(2)(3) | commit `975bf2a` |
-| 10 Nov | Triase keyakinan dan ambang dari 👍/👎, halaman `/ambang` | commit `e4572d6` |
-| 10 Nov | Penyari mengambil total transaksi pasal 20, satuan 萬/億, kode mata uang | commit `e4572d6` |
-| 10 Nov | Profil TPEx tidak lagi menyimpan nama pejabat dan email | commit `e4572d6` |
-| 10 Nov | DCF otomatis dari FinMind, harga bursa, dan beta Yahoo | commit `047185f` |
-| 10 Nov | 72 skenario serangan, 0 angka penyerang terbit | commit `f5d1b3d`, `eval/hasil/serangan-2026-11-10.md` |
-| 10 Nov | Pemeriksa menolak satuan yang tidak tertulis di sumber | commit `de5b363` |
-| 10 Nov | PDF pertanyaan pasal 11 dan 22 untuk Ferry & Patrice | `docs/untuk-tim/` |
+| 10 Nov | State brief dan halaman `/review` | `bbbbdad` |
+| 10 Nov | Pengurai pengumuman asli: satuan di label, sub-butir | `975bf2a` |
+| 10 Nov | Triase keyakinan, ambang dari 👍/👎, halaman `/ambang`; penyari total transaksi pasal 20; profil TPEx tanpa data pribadi | `e4572d6` |
+| 10 Nov | DCF otomatis (Antigravity) | `047185f` |
+| 10 Nov | 72 skenario serangan, 0 angka penyerang terbit (Antigravity) | `f5d1b3d` |
+| 10 Nov | Pemeriksa menolak satuan yang tidak tertulis di sumber | `de5b363` |
+| 10 Nov | PDF pertanyaan pasal 11 dan 22 | `docs/untuk-tim/` |
+| 11 Nov | Tanya FEAF versi awal, pemeriksa angka jawaban | `4c6222b` |
+| 11 Nov | Evaluasi operasional dan chatbot | `de2a62f` |
+| 11 Nov | Diagram alur diperbarui | `073e06f` |
+| 11 Nov | Putaran 2 Antigravity: beta resmi, penafian, kunci baca, semua emiten, 2330 otomatis, utang lancar, sitasi MOPS, pengungkapan pihak ketiga | `docs/laporan-antigravity-2.md` |
+| 11 Nov | Gemini: model 404 dicoret, cadangan saat sibuk, pemutus per jalan, halaman tidak menggantung | `685164e`, `e59a7ef`, `92855b8` |
+| 11 Nov | Pengumuman diproses sebelum valuasi; Check now tidak menunggu | `9ae517a` |
+| 11 Nov | Versi skema cache valuasi otomatis | `ee737b0` |
+| 11 Nov | B1: jalur sinyal 22/23/11/35/31/1/3/40, ambang per profil, pasal 20 jadi skenario | `472727e` |
+| 11 Nov | Server: volume `/data` permanen (`feaf-data`) | dicek Afinzaki |
 
-Tes otomatis: 131, semua lulus (11 Nov dini hari).
+Tes otomatis: 178, semua lulus, tanpa jaringan.
 
-## 3. Dikerjakan berikutnya
+Hasil evaluasi operasional terbaru (`eval/hasil/operasional-20261111T024832Z.md`, 581
+pengumuman asli 10 Nov, tanpa model): **241 terbit**, 58 ditahan untuk manusia (40 belum ada
+valuasi, 8 tanpa angka, 6 risiko serius, 4 kejadian berat), 282 diarsipkan dengan alasan.
+Sebelum B1 (10 Nov malam): 0 terbit.
 
-Kolom "Siapa" menunjukkan pembagian kerja. Antigravity dan Claude bekerja di `main`
-bersamaan, dengan berkas yang dibagi supaya tidak saling menimpa. Spesifikasi untuk
-Antigravity ada di [`prompt-antigravity-2.md`](./prompt-antigravity-2.md). Versi tiga agent
-paralel (DATA, WEB, QA) ada di [`prompt-antigravity-multiagen.md`](./prompt-antigravity-multiagen.md);
-koordinasinya di `docs/papan-agen.md`. Untuk kerja semalam tanpa pengawasan dipakai
-[`prompt-antigravity-berurutan.md`](./prompt-antigravity-berurutan.md) (P1–P10).
+## 3. Berikutnya (Claude)
 
-### Rabu 11 Nov
-
-| ID | Pekerjaan | Siapa | Selesai bila | Status |
-|---|---|---|---|---|
-| R1 | Beta dihitung dari harga harian resmi TWSE/TPEx dan indeks TAIEX. Yahoo tidak dipakai lagi | Antigravity | Beta 2330 dari sekitar 100 minggu data; data kurang memberi 1,0 bertanda | ✅ Selesai (`88e5770`, beta 2330 = 1,03 dari 104 pekan, Yahoo bersih) |
-| R2 | Penafian "bukan rekomendasi" di semua halaman analisis; kalimat profil risiko dilunakkan | Antigravity | Penafian tampil di tiga bahasa di setiap halaman analisis | ✅ Selesai (`0849027`, `_penafian.html` tepat 1x per halaman) |
-| R3 | Pilihan kunci akses untuk halaman baca (`SENTINEL_KUNCI_BACA`) | Antigravity | Tanpa kode muncul halaman kode; `/sehat` tetap terbuka | ✅ Selesai (`e0b2c0d`, middleware 401 + halaman kunci) |
-| D-a | Agent memproses pengumuman semua emiten, tidak hanya watchlist | Antigravity | Server memproses ratusan pengumuman asli; halaman tetap cepat saat memproses | ✅ Selesai (`6e731fc`, lock terpisah, `?lingkup=semua`) |
-| D-b | 2330 memakai valuasi otomatis; berkas manual hanya menyimpan asumsi tim | Antigravity | Angka keuangan 2330 sama dengan FinMind | ✅ Selesai (`c04ddee` & `c70f432`, panaskan semua emiten) |
-| D-c | Utang jangka panjang yang jatuh tempo setahun terbaca di valuasi otomatis | Antigravity | Utang 2330 otomatis selisih kurang dari 1% dari manual | ✅ Selesai (`fb49d77`, utang total 2330 selisih 0,00%) |
-| C1 | Chatbot "Tanya FEAF" versi awal di atas data asli | Claude | Angka di jawaban selalu ada di hasil tool, bersumber, tanpa kata beli/jual | ⬜ |
-
-### Kamis 12 Nov
-
-| ID | Pekerjaan | Siapa | Selesai bila | Status |
-|---|---|---|---|---|
-| B3 | Tautan MOPS untuk angka laporan keuangan dan valuasi | Antigravity | Setiap kolom periode di tab Financials punya tautan MOPS | ✅ Selesai (`c5c9404`, sitasi MOPS + cek FinMind 100% cocok) |
-| R4 | Draf pengungkapan pihak ketiga dan alat AI untuk formulir panitia | Antigravity | Daftar lengkap: nama, tujuan, lingkup, lisensi | ✅ Selesai (`b9fa8fd`, `docs/pengungkapan-pihak-ketiga.md`) |
-| D4 | Skrip evaluasi lengkap dengan data asli | Claude | Latensi, biaya, retry, intervensi manusia, kategori error terisi angka asli | ⬜ |
-| — | Diagram alur diperbarui (triase, ambang, review, valuasi otomatis) | Claude | PNG baru di `docs/diagram/` | ✅ `docs/diagram-alur.md` + PNG/SVG |
-
-### Jumat 13 Nov
-
-| ID | Pekerjaan | Siapa | Status |
-|---|---|---|---|
-| B1 | Pasang jawaban Ferry & Patrice: label pasal 11, 22, 23, 31, jalur sinyal risiko, pasal 31 memicu hitung ulang DCF | Claude | ⏳ |
-| D5 | Evaluasi akhir (dengan gold set) dan laporan | Claude | ⏳ |
-| E1 | README finalis | Claude | ⬜ |
-| QA | Uji akhir di server, tiga bahasa | Claude + Afinzaki | ⬜ |
-| E2 | Kirim paket | Afinzaki | ⬜ |
-
-Temuan evaluasi operasional 10 Nov (578 pengumuman asli, penalar aturan): 0 terbit,
-96 ditahan (56 tanpa angka bersumber, 40 tanpa model valuasi), 7 diarsipkan triase,
-478 dilewati saringan pasal. Artinya pada data asli agent belum menerbitkan apa pun
-sampai B1 (pemetaan pasal) dan B2/D-b (valuasi otomatis di server) terpasang.
+| Urutan | Pekerjaan | Selesai bila |
+|---|---|---|
+| 1 | Kesiapan demo: tab Valuation tidak menunggu beta (beta dihitung di latar), balasan 307 TWSE = tunggu lalu ulang, skrip pemanasan cache untuk emiten besar, cari emiten berdasarkan nama, tautan Tanya FEAF di menu dan di halaman saham | Emiten yang belum pernah dibuka tampil < 10 detik; "TSMC"/"台積電" ketemu |
+| 2 | Cek server setelah deploy: Gemini jalan, "All Issuers" berisi data asli, valuasi otomatis tersimpan | `panggilan_model > 0`, folder `/data/valuasi_otomatis` ada |
+| 3 | D5: evaluasi akhir dengan model dan gold set, laporan keamanan, satu jejak audit asli dengan model | Semua metrik Appendix 2 terisi angka asli |
+| 4 | E1: README finalis | Bagian wajib lomba lengkap (arsitektur, instalasi, model & versi, env, lisensi, aliran data, izin, keterbatasan) |
+| 5 | QA akhir di server, tiga bahasa | Daftar cek di `docs/diagram-alur.md` bagian 3 lolos |
 
 ## 4. Menunggu orang lain
 
 | Siapa | Apa | Untuk |
 |---|---|---|
-| Ferry & Patrice | Jawaban PDF pasal 11/22 (Q1–Q9) dan 7 pertanyaan di `pemetaan-pasal.md`. Target Rabu siang | B1 |
-| Ferry & Patrice | Label gold set dan baseline menit kerja manual. Target Kamis siang | D2, D5 |
-| Ferry & Patrice | Cek ambang penilaian di `app/ringkasan.py` dan terjemahan 中文 | Ringkasan |
-| Afinzaki | Deploy ulang setiap ada batch baru, lalu cek jejak audit `panggilan_model` lebih dari 0. Per 10 Nov malam masih 0 | 0 |
-| Afinzaki | Tarik riwayat MOPS dari laptop Taiwan | data sebelum 8 Nov |
-| Afinzaki | Uji tautan MOPS dari laptop Taiwan setelah B3 | B3 |
-| Afinzaki | Putuskan kapan `SENTINEL_KUNCI_BACA=1` dinyalakan | R3 |
-| Afinzaki | Isi formulir pihak ketiga dan self-assessment, termasuk catatan cache profil TPEx yang sempat menyimpan nama | E2 |
+| Afinzaki | Deploy versi terbaru; pastikan env `SENTINEL_MODEL=gemini-3.6-flash`, `SENTINEL_MODEL_CADANGAN=gemini-3.5-flash,gemini-3.8-flash`; cek Reasoning engine dan Model calls | 0, D5 |
+| Afinzaki | Uji data bertahan: catat `/sehat`, Deploy, cek lagi | server |
+| Afinzaki | Tarik riwayat MOPS dari laptop Taiwan (data 8–10 Nov hilang sebelum volume dipasang) | data |
+| Afinzaki | Uji tautan MOPS dari laptop Taiwan | B3 |
+| Afinzaki | Putuskan kapan `SENTINEL_KUNCI_BACA=1`; nyalakan billing dengan kredit AI Pro menjelang demo (opsional) | demo |
+| Afinzaki | Formulir pihak ketiga (draf: `docs/pengungkapan-pihak-ketiga.md`) dan self-assessment; deck dan video. Deck perlu menyebut prinsip DCF berbasis kas: pengumuman pasal 20 = skenario | E2 |
+| Ferry & Patrice | Cek ambang profil konservatif/agresif (tabel di `pemetaan-pasal.md`), 現金減資, batas pasal 23 (±40% ekuitas?), pasal 1/3/40 selalu HELD, 51/53 dan 6/7/8 dilewati | B1 |
+| Ferry & Patrice | Label gold set + baseline menit kerja manual | D2, D5 |
+| Ferry & Patrice | Cek `AMBANG` di `app/ringkasan.py` dan terjemahan 中文 | Ringkasan |
 | Belum dijawab | Format test case resmi panitia, cara menyerahkan repo privat ke juri, field liaison | E2 |
 
-Catatan tinjauan Claude untuk putaran 2 (11 Nov dini hari): `tests/test_putaran2.py`
-`test_dc_manual_mengisi_yang_kosong` memakai cache valuasi otomatis asli di `data/` dan
-gagal bila ada cache 2330 yang dibuat sebelum D-c. Masalah yang sama terjadi di server:
-cache lama tidak punya tanda `tidak_tersedia`, dan pipeline menerima cache basi, jadi utang
-2330 tetap kurang 13% sampai cache dibangun ulang. Diperbaiki Claude 11 Nov: `VERSI_SKEMA` di cache valuasi
-otomatis; cache tanpa versi terbaru dianggap tidak ada dan dibangun ulang.
-Temuan kedua: `valuasi_otomatis.panaskan` melewati emiten yang punya berkas manual, jadi
-cache otomatis 2330 tidak pernah dibangun di server dan D-b (2330 otomatis + asumsi tim)
-tidak pernah aktif di sana. Diperbaiki Antigravity (`c70f432`).
+## 5. Keputusan yang dikunci
 
-## 5. Backlog (setelah 13 Nov atau bila sempat)
+Kerja langsung di `main`. Tiga bahasa (English bawaan, 繁體中文, Indonesia). Merah naik, hijau
+turun. Tanpa label beli/jual. Review manusia hanya menyetujui kasus ragu. Satu ambang 👍/👎
+per server. Beta dari harga resmi bursa. Tidak ada data SYSTEX atau mitra ke Gemini. DCF
+berbasis kas: pengumuman tanpa pergerakan kas = sinyal atau skenario. Ambang sinyal ikut
+profil risiko; antrean review memakai moderat. README diperbarui paling akhir.
+
+## 6. Backlog (setelah 13 Nov atau bila sempat)
 
 - Bahasa dasar sistem jadi Inggris. Tampilan bawaan sudah Inggris, tetapi bagian dalam
   masih Indonesia. Urutan yang diusulkan, dari dampak terbesar:
@@ -133,9 +106,10 @@ tidak pernah aktif di sana. Diperbaiki Antigravity (`c70f432`).
 
 - Chatbot versi lengkap untuk demo 21 Nov.
 - Relay real-time dari laptop Taiwan ke `/api/impor`. OpenAPI bursa tertinggal sekitar satu hari.
-- Pasal 51/53 (lain-lain) diserahkan ke triase model.
+- Pasal 51/53 (lain-lain) diserahkan ke triase model (sekarang dilewati).
+- 👍/👎 untuk peringatan sinyal (sekarang hanya peringatan yang lewat triase).
+- Perbandingan laporan pasal 31 dengan periode yang sama tahun lalu.
 - Sinyal tata kelola dari pasal 6/7/8 (ganti direksi, auditor).
-- Transaksi tunggal pasal 20 ditambahkan ke capex, bukan mengganti. Menunggu jawaban Q8 di `pemetaan-pasal.md`.
 - Emiten keuangan TPEx ditandai benar di `pasar.profil` (B2 sudah menangani untuk valuasi).
 - Uji serangan dengan Gemini sungguhan (`scripts/uji_serangan.py --model`).
 - Latihan demo minimal 5 kali dan latihan Q&A.
