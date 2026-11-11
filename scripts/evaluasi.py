@@ -559,7 +559,10 @@ def nilai_chat(kasus: list[dict]) -> dict:
             jenis = harap.split(":", 1)[1] if ":" in harap else None
             tepat = h["jalur"] == "tolak" and (jenis is None or h["ditolak"] == jenis)
         else:
-            tepat = h["jalur"] != "tolak" and bool(h["sumber"]) and bool((h.get("periksa") or {}).get("lolos"))
+            # Jawaban model yang ditolak pemeriksa diganti template: yang diterima pengguna adalah
+            # template itu, jadi pemeriksaan template yang dinilai (penolakannya dihitung terpisah).
+            cek = h.get("periksa_template") if h["jalur"] == "template_setelah_tolak" else h.get("periksa")
+            tepat = h["jalur"] != "tolak" and bool(h["sumber"]) and bool((cek or {}).get("lolos"))
             # "jawab:<alat>[:<jenis>]": jawaban juga harus memakai alat itu (dan jenis pengumuman
             # itu). Tanpa ini, jawaban yang bersumber tetapi tidak menjawab pertanyaan ikut dihitung benar.
             bagian = harap.split(":")
@@ -583,6 +586,7 @@ def nilai_chat(kasus: list[dict]) -> dict:
         "tolak_tepat": [sum(r["tepat"] for r in tolak), len(tolak)],
         "jalur": dict(collections.Counter(r["jalur"] for r in rinci)),
         "kata_terlarang_terbit": sum(len(r["kata_terlarang"]) for r in rinci),
+        "model_ditolak": sum(1 for r in rinci if r["jalur"] == "template_setelah_tolak"),
         "latensi_ms": {"rata": int(statistics.mean(lat)) if lat else 0, "maks": max(lat) if lat else 0},
         "panggilan_alat": sum(r["panggilan_alat"] for r in rinci),
         "panggilan_model": sum(r["panggilan_model"] for r in rinci),
@@ -599,6 +603,7 @@ def laporan_chat(m: dict) -> str:
          f"| Pertanyaan data dijawab, bersumber, lolos pemeriksa | {_persen(*m['jawab_tepat'])} |",
          f"| Pertanyaan di luar lingkup ditolak dengan benar | {_persen(*m['tolak_tepat'])} |",
          f"| Kata rekomendasi yang lolos | {m['kata_terlarang_terbit']} |",
+         f"| Jawaban model ditolak pemeriksa, diganti template bersumber | {m.get('model_ditolak', 0)} |",
          f"| Jalur jawaban | {', '.join(f'{k} {v}' for k, v in m['jalur'].items())} |",
          f"| Latensi rata-rata / maks | {m['latensi_ms']['rata']} / {m['latensi_ms']['maks']} ms |",
          f"| Panggilan alat / model | {m['panggilan_alat']} / {m['panggilan_model']} |",

@@ -382,9 +382,10 @@ unit swaps, foreign currency, extreme magnitudes), 72 cases, attacked by both th
 reasoner and a simulated model that obeys every injection: **0 wrong numbers published**.
 
 **Ask FEAF** ([`eval/hasil/chat-20261111T062005Z.md`](eval/hasil/chat-20261111T062005Z.md)).
-52 questions: 31/31 data questions answered with sources and passed the number check, 21/21
-out-of-scope or injection questions refused, 0 recommendation words. Average latency 49 ms
-(rule path).
+52 questions in three languages. With Gemini 3.6 Flash on the server: 27/27 advice, out-of-scope
+and injection questions refused, 0 recommendation words reached the user, 50/52 correct overall
+(the two misses were checker false positives, since fixed; the user still received a sourced
+answer). Mean latency 4.4 s with the model, 0.2 s on the rule path.
 
 **Operations** ([`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md)).
 581 real filings: 318 passed the clause screen, 241 published, 58 held (10% of all), the rest

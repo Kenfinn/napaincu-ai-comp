@@ -93,7 +93,8 @@ TOLAK = {
 
 # Recommendation wording. Word boundaries keep "penjualan" (sales) and "menjual" allowed.
 TERLARANG = re.compile(
-    r"\b(buy|sell|strong buy|beli|jual|akumulasi)\b|target price|price target|harga target"
+    # "buy back" / "beli kembali" = share repurchase (pasal 35), a fact, not advice.
+    r"\b(buy(?![\s-]?backs?\b)|sell|strong buy|beli(?!\s+kembali)|jual|akumulasi)\b|target price|price target|harga target"
     r"|買進|買入|賣出|建議買|建議賣|目標價", re.I)
 
 KODE_RE = re.compile(r"(?<![\d.])(\d{4}[A-Z]?)(?![\d.])")
@@ -359,6 +360,8 @@ def periksa_jawaban(teks: str, hasil_alat: list[dict], pertanyaan: str) -> dict:
             continue
         if float(v).is_integer() and 0 <= v <= 12:
             continue                                   # counts, quarters, list numbers
+        if float(v).is_integer() and 1912 <= v <= 2100 and (v - 1911) in dasar:
+            continue                                   # ROC year 108 written as 2019
         tol = 0.5 * 10 ** -_desimal(m)
         ok = any(abs(v - t) <= max(tol, abs(t) * 0.0005) or abs(v - t * 100) <= max(tol, abs(t * 100) * 0.0005)
                  for t in dasar)
