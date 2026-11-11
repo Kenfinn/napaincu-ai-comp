@@ -159,3 +159,31 @@ Kirim dua tautan:
 - **Riwayat hanya mulai dari hari deploy.** OpenAPI bursa hanya memuat pengumuman
   hari berjalan. Riwayat lama harus ditarik dari laptop di jaringan Taiwan.
 - **Antrean review manusia** belum dibangun.
+
+---
+
+## 8. Sebelum demo: Pemanasan Cache (Wajib)
+
+Agar demo berjalan mulus dan halaman valuasi emiten besar tampil dalam waktu kurang dari 2 detik tanpa jeda jaringan, jalankan pemanasan cache pada malam sebelum demo.
+
+1. Masuk ke terminal server dan cari ID container:
+   ```bash
+   docker ps | grep feaf
+   ```
+
+2. Jalankan skrip pemanasan cache di dalam container dengan folder data persisten:
+   ```bash
+   docker exec -it <container_id> python3 scripts/panaskan_cache.py --top 30 --data-dir /data
+   ```
+
+   Atau untuk emiten spesifik yang akan dibuka saat presentasi:
+   ```bash
+   docker exec -it <container_id> python3 scripts/panaskan_cache.py --kode 2330 2317 2454 2308 2382 --data-dir /data
+   ```
+
+3. **Perkiraan waktu dan jadwal:**
+   - Dijalankan pada malam sebelum demo.
+   - Pemanasan 30 emiten membutuhkan waktu sekitar 15–20 menit bila riwayat harga 25 bulan ditarik pertama kali (mematuhi jeda sopan 2 detik per permintaan resmi).
+   - Bila riwayat harga sudah tersimpan di cache, proses hanya butuh < 1 menit.
+   - Seluruh cache tersimpan di volume `/data` sehingga tetap aman dan langsung dipakai aplikasi web.
+

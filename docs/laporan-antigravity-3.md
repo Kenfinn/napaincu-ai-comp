@@ -17,8 +17,8 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 |---|---|---|---|---|---|---|
 | Q1 | Q1 | Persiapan dan status awal | ✅ | `0928446` | 0 | 187 tes lulus di langkah awal |
 | Q2 | G1 | Gold set mengenal semua jalur B1 | ✅ | `7ca88d8` | 9 tes | Akurasi 3 arah 75%, matriks 3x3 aktif, 196 tes lulus |
-| Q3 | V1 | Tab Valuation tidak menunggu beta | ✅ | terlampir | 6 tes | Akses emiten baru 2,02 detik (< 10s), retry 307/429 aktif |
-| Q4 | V2 | Skrip pemanasan cache emiten besar | ⏳ | - | - | - |
+| Q3 | V1 | Tab Valuation tidak menunggu beta | ✅ | `fd1b116` | 6 tes | Akses emiten baru 2,02s (< 10s), retry 307/429 aktif |
+| Q4 | V2 | Skrip pemanasan cache emiten besar | ✅ | terlampir | 5 tes | Buka tab valuasi 0,018s–0,073s (< 2s), 207 tes lulus |
 | Q5 | S1 | Cari emiten dengan nama | ⏳ | - | - | - |
 | Q6 | C1a | Tautan Tanya FEAF di menu dan saham | ⏳ | - | - | - |
 | Q7 | C1b | Uji Tanya FEAF | ⏳ | - | - | - |
@@ -62,7 +62,7 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 ### Q3. V1: Tab Valuation Cepat untuk Emiten Baru
 - Waktu: 12:41 - 12:49 CST
 - Status: ✅
-- Commit: terlampir di push berikutnya
+- Commit: `fd1b116`
 - Tes yang ditambah: 6 tes di `tests/test_v1_cepat.py` (semua lulus, total rangkaian 202 tes).
 - Hasil pemeriksa manual:
   - Pengujian langsung emiten baru tanpa cache (`MediaTek 2454`):
@@ -81,4 +81,29 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
   - `app/templates/saham.html`
   - `app/templates/valuasi.html`
   - `tests/test_v1_cepat.py`
+  - `docs/laporan-antigravity-3.md`
+
+### Q4. V2: Pemanasan Cache untuk Demo
+- Waktu: 12:49 - 12:55 CST
+- Status: ✅
+- Commit: terlampir di push berikutnya
+- Tes yang ditambah: 5 tes di `tests/test_panaskan_cache.py` (semua lulus, total rangkaian 207 tes).
+- Hasil pemeriksa manual:
+  - Menjalankan `python3 scripts/panaskan_cache.py --kode 2330 2317 2454` ke folder sementara:
+    | Kode | Nama Emiten | Status Valuasi | Beta | Waktu Pemanasan |
+    |---|---|---|---|---|
+    | 2330 | TSMC | ok | resmi (1.03) | 109,98s |
+    | 2317 | HON HAI | ok | resmi (1.04) | 51,56s |
+    | 2454 | MediaTek | ok | resmi (1.64) | 51,41s |
+    - Total waktu pemanasan: 212,9 detik (seluruh 3 emiten sukses 100%, 0 galat).
+  - Pengujian kecepatan buka tab Valuation setelah pemanasan di server lokal:
+    - Buka `/saham/2330?tab=valuasi`: **0,073 detik** (status 200)
+    - Buka `/saham/2317?tab=valuasi`: **0,018 detik** (status 200)
+    - Buka `/saham/2454?tab=valuasi`: **0,029 detik** (status 200)
+    - Seluruhnya jauh di bawah batas target 2 detik (< 0,1 detik).
+  - Dokumentasi prosedur pemanasan cache sebelum demo di Dokploy telah ditambahkan ke `docs/deploy-dokploy.md`.
+- Berkas diubah:
+  - `scripts/panaskan_cache.py`
+  - `tests/test_panaskan_cache.py`
+  - `docs/deploy-dokploy.md`
   - `docs/laporan-antigravity-3.md`
