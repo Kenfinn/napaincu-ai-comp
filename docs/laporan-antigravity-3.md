@@ -21,8 +21,8 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 | Q4 | V2 | Skrip pemanasan cache emiten besar | ✅ | `48a8ad6` | 5 tes | Buka tab valuasi 0,018s–0,073s (< 2s), 207 tes lulus |
 | Q5 | S1 | Cari emiten dengan nama | ✅ | `cc373a6` | 7 tes | 1.996 emiten terindeks (TWSE: 1.099, TPEx: 897), 10/10 kueri lolos, 214 tes lulus |
 | Q6 | C1a | Tautan Tanya FEAF di menu dan saham | ✅ | `a44bb2a` | 4 tes | Menu navigasi 3 bahasa, tombol /saham/{kode}, form terisi contoh, tangkapan layar c1a-*.png, 218 tes lulus |
-| Q7 | C1b | Uji Tanya FEAF | ✅ | terlampir | 0 tes baru | 52/52 (100%) kasus tepat, 0 angka karangan, 0 kata beli/jual, 6/6 injeksi gagal |
-| Q8 | K1 | Draf laporan keamanan | ⏳ | - | - | - |
+| Q7 | C1b | Uji Tanya FEAF | ✅ | `d256931` | 0 tes baru | 52/52 (100%) kasus tepat, 0 angka karangan, 0 kata beli/jual, 6/6 injeksi gagal |
+| Q8 | K1 | Draf laporan keamanan | ✅ | terlampir | 0 tes | Laporan 8 kategori risiko Pasal 14, 11 rujukan tes valid, 0 kebocoran PII/kunci |
 | Q9 | QA1 | Skrip QA halaman tiga bahasa | ⏳ | - | - | - |
 | Q10 | Q10 | Laporan akhir dan verifikasi | ⏳ | - | - | - |
 
@@ -204,6 +204,32 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
   - `eval/hasil/chat-20261111T062005Z.json`
   - `eval/hasil/chat-20261111T062005Z.md`
   - `docs/laporan-antigravity-3.md`
+
+### Q8. K1: Draf Laporan Keamanan
+- Waktu: 14:23 - 14:26 CST
+- Status: ✅
+- Commit: terlampir di push ini
+- Dokumen dibuat: `docs/laporan-keamanan.md`.
+- Hasil pemeriksa manual:
+  - Pembahasan lengkap 8 kategori risiko Pasal 14 Peraturan AAIC 2026: Prompt Injection, Pemanggilan Tool Tanpa Izin, Kebocoran Data Pribadi, Halusinasi Angka, Bias Investasi & Sektoral, Input Berbahaya, Risiko Rantai Pasok, dan Kegagalan Layanan Pihak Ketiga.
+  - Setiap kategori mencakup 5 elemen wajib: ancaman konkret, proteksi yang sudah berjalan di kode dengan nomor baris spesifik, mekanisme monitoring, strategi pemulihan mandiri, serta pengakuan jujur celah yang masih terbuka.
+  - Verifikasi seluruh rujukan bukti (100% valid):
+    - `tests/test_agent.py`: `TestPrompInjection`, `TestKeamananDanPrivasi`, `TestPemeriksaMenangkapHalusinasi`, `TestParitasKalkulator`, `test_model_utama_sibuk_pindah_ke_cadangan_sekali_jalan`.
+    - `tests/test_serangan.py`: `test_suite_serangan_luring_ambang_040_dan_055`.
+    - `tests/test_putaran2.py`: `test_r3_terkunci_tanpa_kode`.
+    - `tests/test_cari_nama.py`: `test_tidak_ada_data_pribadi_di_indeks`.
+    - `tests/test_c1a_tautan.py`: `test_kode_tidak_sah_tidak_dipantulkan`.
+    - `tests/test_valuasi_otomatis.py`: `test_emiten_keuangan_ditandai_tidak_berlaku`.
+    - `tests/test_v1_cepat.py`: `test_307_diulang_lalu_berhasil`.
+    - Seluruh 39 rujukan berkas ada di repositori lokal.
+  - Kebersihan data (Privasi & Kunci): 0 email pribadi, 0 nama pejabat/direksi, 0 API key, dan 0 kata sandi yang bocor di dalam dokumen.
+  - Dokumentasi insiden masa lalu: menguraikan kebocoran skema kolom profil TPEx sebelum commit `e4572d6` dan perbaikan tuntasnya menggunakan daftar izin ketat `PROFIL_DISIMPAN`.
+  - Matriks aliran data terangkum rapi (data apa yang dikirim ke Gemini, TWSE/TPEx, FinMind, dan peramban pengguna).
+  - Ditulis dengan panduan gaya /humanizer (kalimat pendek, lugas, tanpa klise generik AI).
+- Berkas diubah:
+  - `docs/laporan-keamanan.md`
+  - `docs/laporan-antigravity-3.md`
+
 
 
 
