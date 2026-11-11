@@ -19,7 +19,7 @@ Rincian dan kriteria QA tiap item ada di [`rencana-finalis.md`](./rencana-finali
 | B1 | Pemetaan pasal dari jawaban Patrice | ✅ terpasang (`472727e`). ⏳ cek ambang profil konservatif/agresif oleh tim |
 | B2 | DCF otomatis semua emiten non-keuangan | ✅ (Antigravity) |
 | B3 | Sitasi MOPS untuk angka laporan keuangan | ✅ (Antigravity). ⏳ uji tautan dari laptop Taiwan |
-| C1 | Chatbot "Tanya FEAF" | ✅ versi awal di `/tanya`. ⬜ tautan di menu, versi lengkap untuk 21 Nov |
+| C1 | Chatbot "Tanya FEAF" | ✅ versi awal + tautan menu. ⬜ filter jenis pengumuman, tolak injeksi di gerbang, uji dengan Gemini; versi lengkap 21 Nov |
 | D1 | Kandidat gold set dari arsip server | ✅ |
 | D2 | Gold set 30–50 + baseline menit manual | ⏳ Ferry & Patrice |
 | D3 | Set uji serangan | ✅ (Antigravity), 0 angka penyerang terbit |
@@ -51,9 +51,10 @@ Rincian dan kriteria QA tiap item ada di [`rencana-finalis.md`](./rencana-finali
 | 11 Nov | Daftar "Source of each input": kolom tidak tertimpa, URL dibungkus, teks Inggris | `8bc177c` |
 | 11 Nov | Deploy dengan env model Gemini | dicek Afinzaki |
 | 11 Nov | `/sehat` menampilkan mesin, panggilan model, galat model terakhir, sebab cadangan | `ae226ce`, `217e625` |
+| 11 Nov | Putaran 3 Antigravity: gold set B1, Valuation cepat (beta latar, 307 diulang), pemanasan cache, cari nama, tautan Tanya FEAF, draf laporan keamanan, skrip QA. Ditinjau dan diperbaiki Claude | `cc373a6`..`0a9f8f0` |
 | 11 Nov | Pasal 7 (auditor) dan 8 (pejabat kunci) jadi sinyal tata kelola, tanpa nama orang (jawaban Patrice) | lihat git log |
 
-Tes otomatis: 178, semua lulus, tanpa jaringan.
+Tes otomatis: 223, semua lulus, tanpa jaringan.
 
 Hasil evaluasi operasional terbaru (`eval/hasil/operasional-20261111T024832Z.md`, 581
 pengumuman asli 10 Nov, tanpa model): **241 terbit**, 58 ditahan untuk manusia (40 belum ada
