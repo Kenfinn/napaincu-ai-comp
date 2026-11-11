@@ -278,7 +278,7 @@
   <h2>{{ t('va.sumber_input') }}</h2>
   <div class="kartu">
     {% for k, v in r.sources.items() %}
-    <div class="cek {{ 'x' if k in r.incomplete_sources else 'ok' }}">
+    <div class="cek sumber {{ 'x' if k in r.incomplete_sources else 'ok' }}">
       <span class="tanda">{{ '✕' if k in r.incomplete_sources else '✓' }}</span>
       <span class="nama mono" style="font-size:11.5px;">{{ k }}</span>
       <span class="why">{{ v }}</span>
@@ -310,7 +310,7 @@
   <h2>{{ t('va.sumber_input') }}</h2>
   <div class="kartu">
     {% for k, v in va.sources.items() %}
-    <div class="cek ok">
+    <div class="cek sumber ok">
       <span class="tanda">✓</span>
       <span class="nama mono" style="font-size:11.5px;">{{ k }}</span>
       <span class="why">{{ v }}</span>

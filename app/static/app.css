@@ -221,3 +221,8 @@ table.fin td.kosong-sel { color: var(--abu); }
 .lencana.tk-info { background: #EEF0F4; color: var(--abu-2); }
 .lencana.tk-perhatian { background: #FBF2E3; color: #5F4409; }
 .lencana.tk-serius { background: #F9EAE8; color: var(--tolak); }
+
+/* daftar sumber input valuasi: kolom nama cukup lebar, URL panjang dibungkus */
+.cek.sumber .nama.mono { width: 200px; font-size: 11.5px; overflow-wrap: anywhere; }
+.cek.sumber .why { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 640px) { .cek.sumber { flex-wrap: wrap; } .cek.sumber .why { flex-basis: 100%; padding-left: 24px; } }

@@ -48,15 +48,15 @@ EQUITY_RISK_PREMIUM = 0.0501
 TERMINAL_GROWTH_CEILING = 0.035
 
 SUMBER_RF = (
-    "Imbal hasil obligasi pemerintah Taiwan 10 tahun (~1,94%) — "
+    "Taiwan 10-year government bond yield (~1.94%): "
     "https://ca.investing.com/rates-bonds/taiwan-10-year-bond-yield-historical-data"
 )
 SUMBER_ERP = (
-    "Damodaran country equity risk premium, Taiwan (~5,01%) — "
+    "Damodaran country equity risk premium, Taiwan (~5.01%): "
     "https://pages.stern.nyu.edu/adamodar/New_Home_Page/datafile/ctryprem.html"
 )
 SUMBER_G_CEILING = (
-    "Proyeksi pertumbuhan PDB nominal jangka panjang Taiwan (~3,5%, DGBAS / IMF WEO)"
+    "Taiwan long-run nominal GDP growth projection (~3.5%, DGBAS / IMF WEO)"
 )
 
 
@@ -616,18 +616,18 @@ def bangun(kode: str) -> dict:
             f"short_term_borrowings ({'+'.join(stb_pos) or 'none'})={short_term_borrowings:,.1f}M; "
             f"long_term_debt ({'+'.join(lt_pos) or 'none'})={long_term_debt:,.1f}M; "
             f"current_portion_lt_debt ({'+'.join(cp_pos) or 'folded into OtherCurrentLiabilities in FinMind'})="
-            f"{current_portion_lt_debt:,.1f}M. Sumber resmi MOPS: {sitasi.mops_laporan(kode, tgl_neraca, jenis='neraca')}"
+            f"{current_portion_lt_debt:,.1f}M. Official MOPS source: {sitasi.mops_laporan(kode, tgl_neraca, jenis='neraca')}"
         ),
         "cash_flow": (
             f"FinMind TaiwanStockCashFlowsStatement ({pasar.FINMIND_URL}, stock_id={kode}, "
             f"dates={', '.join(tiga_tgl)}, cumulative YTD as of Dec 31): "
             f"cfo=CashFlowsFromOperatingActivities, capex=abs(PropertyAndPlantAndEquipment), "
-            f"interest=({', '.join(pos_bunga_dipakai)}). Sumber resmi MOPS: {sitasi.mops_laporan(kode, tahun_fiskal, 4, jenis='arus')}"
+            f"interest=({', '.join(pos_bunga_dipakai)}). Official MOPS source: {sitasi.mops_laporan(kode, tahun_fiskal, 4, jenis='arus')}"
         ),
         "tax": (
             f"FinMind TaiwanStockFinancialStatements ({pasar.FINMIND_URL}, stock_id={kode}, "
             f"sum of {len(kuartal_lr)} single quarters in FY{tahun_fiskal}: {', '.join(kuartal_lr)}): "
-            f"TAX={tax_raw_m:,.1f}M, PreTaxIncome={pretax_raw_m:,.1f}M. Sumber resmi MOPS: {sitasi.mops_laporan(kode, tahun_fiskal, 4, jenis='lr')}"
+            f"TAX={tax_raw_m:,.1f}M, PreTaxIncome={pretax_raw_m:,.1f}M. Official MOPS source: {sitasi.mops_laporan(kode, tahun_fiskal, 4, jenis='lr')}"
         ),
         "risk_free_rate": SUMBER_RF,
         "beta": catatan_beta,
@@ -774,6 +774,22 @@ def baca_cache(kode: str, terima_basi: bool = True) -> dict | None:
         return None
     if not isinstance(data, dict) or data.get("versi_skema") != VERSI_SKEMA:
         return None
+    return _sumber_terkini(data)
+
+
+def _sumber_terkini(data: dict) -> dict:
+    """Teks sumber di cache lama disamakan dengan teks terkini (tanpa membangun ulang)."""
+    src = data.get("sources")
+    if isinstance(src, dict):
+        src = dict(src)
+        for k, v in (("risk_free_rate", SUMBER_RF), ("equity_risk_premium", SUMBER_ERP),
+                     ("terminal_growth_ceiling", SUMBER_G_CEILING)):
+            if k in src:
+                src[k] = v
+        for k, v in src.items():
+            if isinstance(v, str):
+                src[k] = v.replace("Sumber resmi MOPS:", "Official MOPS source:")
+        data = dict(data, sources=src)
     return data
 
 
