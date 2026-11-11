@@ -160,7 +160,7 @@ flowchart TD
 
   S(["Mulai"]):::cek --> A{"Buka /sehat<br/>keluar ok: true ?"}:::cek
   A -->|tidak| A1["Dokploy → Logs<br/>cari baris error terakhir<br/>cek Domain port 8000"]:::salah
-  A -->|ya| B{"Menu samping · Reasoning engine<br/>menampilkan gemini-2.5-flash ?"}:::cek
+  A -->|ya| B{"Menu samping · Reasoning engine<br/>menampilkan gemini-3.6-flash ?"}:::cek
   B -->|tidak, rule-based reasoner| B1["Cek nama env persis GEMINI_API_KEY<br/>lalu Deploy ulang"]:::salah
   B -->|ya| C{"Menu samping · Last fetch<br/>titik hijau, jam ≤ 10 menit lalu ?"}:::cek
   C -->|merah| C1["Watchlist → lihat kotak bawah<br/>diblokir? galat? → cek jaringan server"]:::salah
