@@ -402,6 +402,8 @@ def _gemini(contents: list[dict], bahasa: str) -> tuple[dict, dict]:
                 if percobaan == 0 and llm._cari_pengganti() and llm.model_dipakai() not in kandidat:
                     kandidat.insert(1, llm.model_dipakai())
                 continue
+            if e.code == 402:
+                raise llm.GagalModel(llm.GALAT_SALDO) from e
             if e.code in llm.KODE_SIBUK:
                 time.sleep(1.0)
                 continue

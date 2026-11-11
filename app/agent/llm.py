@@ -230,6 +230,8 @@ _jatah_sisa: int | None = None
 # kegagalan berturut-turut, atau lewat BATAS_DETIK_PER_JALAN, sisa pengumuman di jalan
 # itu memakai penalar aturan. Jalan berikutnya mencoba model lagi.
 GAGAL_BERUNTUN_MAKS = 3
+GALAT_SALDO = ("HTTP 402: saldo prabayar Gemini API habis. Isi saldo di AI Studio (Billing); "
+               "kredit Google Cloud baru terpakai setelah saldo prabayar di atas $0")
 BATAS_DETIK_PER_JALAN = 90.0
 _gagal_beruntun = 0
 _mulai_jalan_t: float | None = None
@@ -337,6 +339,9 @@ def _tanya_model(instruksi: str, dokumen: str) -> tuple[dict, dict]:
                                                     + (f" ({_galat_pengganti})" if _galat_pengganti else "")])) from e
             if e.code == 404:
                 raise GagalModel("; ".join(galat + [f"{GANTI_MAKS} model berturut-turut 404"])) from e
+            if e.code == 402:
+                # Saldo prabayar Gemini API habis: mengulang atau ganti model tidak menolong.
+                raise GagalModel("; ".join(galat + [GALAT_SALDO])) from e
             if e.code in (400, 401, 403):
                 raise GagalModel("; ".join(galat + ["kunci API ditolak atau tidak berizin"])) from e
         except (urllib.error.URLError, TimeoutError, GagalModel) as e:
