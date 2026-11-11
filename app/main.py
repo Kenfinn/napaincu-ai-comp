@@ -328,8 +328,31 @@ def akses(kode: str = ""):
 def sehat():
     """Untuk health check Dokploy/Docker: server hidup dan data terbaca."""
     detail, sumber = store.muat_detail()
+    with _kunci_cache:
+        h = list(_cache) if _cache is not None else None
+    agent = None
+    if h is not None:                      # jangan memicu proses: /sehat harus cepat
+        status: dict[str, int] = {}
+        for x in h:
+            status[x.get("status", "?")] = status.get(x.get("status", "?"), 0) + 1
+        agent = {
+            "diproses": len(h),
+            "status": status,
+            "panggilan_model": sum((x.get("ringkasan") or {}).get("panggilan_model", 0) for x in h),
+            "jawaban_cache": sum((x.get("ringkasan") or {}).get("jawaban_cache", 0) for x in h),
+        }
+    try:
+        n_valuasi = len(list(valuasi_otomatis.CACHE_DIR.glob("*.json")))
+    except OSError:
+        n_valuasi = 0
     return {"ok": True, "sumber": sumber, "pengumuman": len(detail),
-            "tarik_terakhir": (tarik.baca_status() or {}).get("waktu")}
+            "tarik_terakhir": (tarik.baca_status() or {}).get("waktu"),
+            "mesin": llm.nama_model() if llm.tersedia() else "aturan",
+            "model_utama": config.MODEL if llm.tersedia() else None,
+            "model_dicoret_404": sorted(llm._gagal_404),
+            "data_dir": str(config.DATA_DIR),
+            "valuasi_otomatis_tersimpan": n_valuasi,
+            "agent": agent}
 
 
 @app.post("/periksa", summary="Tarik pengumuman terbaru untuk watchlist, lalu proses ulang")

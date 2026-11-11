@@ -440,7 +440,10 @@ class TestDeploy(unittest.TestCase):
     def test_sehat(self):
         r = self.c.get("/sehat")
         self.assertEqual(r.status_code, 200)
-        self.assertTrue(r.json()["ok"])
+        b = r.json()
+        self.assertTrue(b["ok"])
+        for k in ("mesin", "model_dicoret_404", "valuasi_otomatis_tersimpan", "agent"):
+            self.assertIn(k, b)
 
 
 class TestHalamanSaham(unittest.TestCase):
