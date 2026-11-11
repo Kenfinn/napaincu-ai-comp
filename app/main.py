@@ -167,6 +167,42 @@ def pct(ctx, x, desimal: int = 2):
     return "—" if x is None else rb(ctx, x * 100, desimal) + "%"
 
 
+@pass_context
+def jejak_bahasa(ctx, obj, alasan_akhir=None):
+    """JSON mentah di halaman jejak: pesan agent ({kode, param, teks} dan pasangan X / X_i18n)
+    ditampilkan dalam bahasa halaman. /api/jejak tetap memberi data apa adanya."""
+    bahasa = ctx.get("bahasa", i18n.BAWAAN)
+
+    def ubah(o):
+        if isinstance(o, list):
+            return [ubah(x) for x in o]
+        if not isinstance(o, dict):
+            return o
+        if o.get("kode") and "teks" in o and isinstance(o.get("teks"), str):
+            return dict({k: ubah(v) for k, v in o.items()}, teks=i18n.tr(o, bahasa))
+        keluar = {k: ubah(v) for k, v in o.items()}
+        for k, v in o.items():
+            if not (k.endswith("_i18n") and k[:-5] in o and v):
+                continue
+            asal = o[k[:-5]]
+            if isinstance(asal, str):
+                keluar[k[:-5]] = i18n.tr(v, bahasa, asal)
+            elif isinstance(asal, list) and isinstance(v, list) and len(asal) == len(v):
+                keluar[k[:-5]] = [i18n.tr(x, bahasa, a) for x, a in zip(v, asal)]
+        if isinstance(o.get("klausa"), int) and isinstance(o.get("nama"), str):
+            nama = i18n.t(f"klausa.{o['klausa']}", bahasa)
+            if not nama.startswith("⟦"):
+                keluar["nama"] = nama                 # langkah saringan: nama pasal
+        return keluar
+    try:
+        if alasan_akhir and isinstance(obj, dict) and set(obj) == {"alasan"}:
+            return {"alasan": i18n.tr(alasan_akhir, bahasa, obj["alasan"])}   # langkah "Selesai"
+        return ubah(obj)
+    except Exception:                                  # noqa: BLE001 — tampilkan apa adanya
+        return obj
+
+
+tpl.env.filters["jejak_bahasa"] = jejak_bahasa
 tpl.env.filters["rb"] = rb
 tpl.env.filters["pct"] = pct
 tpl.env.globals["mops_laporan"] = sitasi.mops_laporan
