@@ -18,8 +18,8 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 | Q1 | Q1 | Persiapan dan status awal | ✅ | `0928446` | 0 | 187 tes lulus di langkah awal |
 | Q2 | G1 | Gold set mengenal semua jalur B1 | ✅ | `7ca88d8` | 9 tes | Akurasi 3 arah 75%, matriks 3x3 aktif, 196 tes lulus |
 | Q3 | V1 | Tab Valuation tidak menunggu beta | ✅ | `fd1b116` | 6 tes | Akses emiten baru 2,02s (< 10s), retry 307/429 aktif |
-| Q4 | V2 | Skrip pemanasan cache emiten besar | ✅ | terlampir | 5 tes | Buka tab valuasi 0,018s–0,073s (< 2s), 207 tes lulus |
-| Q5 | S1 | Cari emiten dengan nama | ⏳ | - | - | - |
+| Q4 | V2 | Skrip pemanasan cache emiten besar | ✅ | `48a8ad6` | 5 tes | Buka tab valuasi 0,018s–0,073s (< 2s), 207 tes lulus |
+| Q5 | S1 | Cari emiten dengan nama | ✅ | terlampir | 7 tes | 1.996 emiten terindeks (TWSE: 1.099, TPEx: 897), 10/10 kueri lolos, 214 tes lulus |
 | Q6 | C1a | Tautan Tanya FEAF di menu dan saham | ⏳ | - | - | - |
 | Q7 | C1b | Uji Tanya FEAF | ⏳ | - | - | - |
 | Q8 | K1 | Draf laporan keamanan | ⏳ | - | - | - |
@@ -107,3 +107,38 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
   - `tests/test_panaskan_cache.py`
   - `docs/deploy-dokploy.md`
   - `docs/laporan-antigravity-3.md`
+
+### Q5. S1: Cari Emiten dengan Nama
+- Waktu: 14:06 - 14:15 CST
+- Status: ✅
+- Commit: terlampir di push ini
+- Tes yang ditambah: 7 tes di `tests/test_cari_nama.py` (semua lulus, total rangkaian 214 tes lulus).
+- Hasil pemeriksa manual:
+  - Indeks resmi dari OpenAPI TWSE (`t187ap03_L`) dan TPEx (`mopsfin_t187ap03_O`): total 1.996 emiten (1.099 TWSE, 897 TPEx).
+  - Privasi data: hanya 4 atribut diizinkan (`kode`, `nama`, `nama_en`, `bursa`), 0 nama pejabat/direksi tersimpan di `DATA_DIR/indeks_nama.json`.
+  - Hasil 10 kueri uji nyata:
+    1. `TSMC` -> 2 hasil, peringkat #1: 2330:台積電(TSMC)
+    2. `台積電` -> 1 hasil: 2330:台積電(TSMC)
+    3. `MediaTek` -> 1 hasil: 2454:聯發科(MediaTek)
+    4. `聯發科` -> 1 hasil: 2454:聯發科(MediaTek)
+    5. `Hon Hai` -> 1 hasil: 2317:鴻海(HON HAI)
+    6. `鴻海` -> 1 hasil: 2317:鴻海(HON HAI)
+    7. `Fubon` -> 1 hasil: 2881:富邦金(Fubon Financial)
+    8. `富邦金` -> 1 hasil: 2881:富邦金(Fubon Financial)
+    9. `6488` -> 1 hasil: 6488:環球晶(GWC)
+    10. `環球晶` -> 1 hasil: 6488:環球晶(GWC)
+  - Endpoint `GET /api/cari?q=...` mengembalikan array JSON sesuai kontrak.
+  - Alihan `/saham?kode=...`:
+    - Cocok persis (kode atau nama/alias) -> HTTP 303 langsung ke `/saham/{kode}`.
+    - Banyak hasil -> halaman pilihan `cari_hasil.html`.
+    - Nol hasil -> kembali ke halaman pemanggil membawa pesan flash tiga bahasa.
+    - Fallback saat indeks kosong dan tanpa jaringan: kode angka tetap dialihkan ke `/saham/{kode}`.
+- Berkas diubah:
+  - `app/indeks_nama.py`
+  - `app/main.py`
+  - `app/teks/antigravity3.py`
+  - `app/templates/base.html`
+  - `app/templates/cari_hasil.html`
+  - `tests/test_cari_nama.py`
+  - `docs/laporan-antigravity-3.md`
+

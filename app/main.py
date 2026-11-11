@@ -27,7 +27,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import ambang_profil, config, i18n, pasar, review, ringkasan, sitasi, store, tarik, umpan_balik, valuasi_otomatis
+from . import ambang_profil, config, i18n, indeks_nama, pasar, review, ringkasan, sitasi, store, tarik, umpan_balik, valuasi_otomatis
 from .agent import llm, pipeline
 
 import sys
@@ -446,9 +446,34 @@ TAB_SAHAM = ("ringkasan", "stream", "stats", "keu", "valuasi", "profil")
 
 
 @app.get("/saham", include_in_schema=False)
-def cari_saham(kode: str = ""):
-    kode = kode.strip().upper()
-    return RedirectResponse(f"/saham/{kode}" if tarik.KODE_SAH.match(kode) else "/watchlist", status_code=303)
+def cari_saham(request: Request, kode: str = ""):
+    q = kode.strip()
+    if not q:
+        return RedirectResponse("/watchlist", status_code=303)
+
+    hasil = indeks_nama.cari(q, limit=10)
+
+    # Indeks belum ada dan jaringan gagal: kode angka tetap jalan seperti sekarang
+    if not hasil and tarik.KODE_SAH.match(q.upper()):
+        return RedirectResponse(f"/saham/{q.upper()}", status_code=303)
+
+    if not hasil:
+        # Nol hasil -> kembali dengan pesan "tidak ditemukan" tiga bahasa
+        ke = request.headers.get("referer") or "/watchlist"
+        if not ke.startswith("/") and not ke.startswith("http://127.0.0.1") and not ke.startswith("http://localhost"):
+            ke = "/watchlist"
+        return _balik(ke, i18n.pesan("sh.tidak_ditemukan", q=q), ok=False)
+
+    # Satu hasil atau cocok persis -> redirect ke /saham/{kode}
+    if len(hasil) == 1 or indeks_nama.apakah_cocok_persis(q, hasil[0]):
+        return RedirectResponse(f"/saham/{hasil[0]['kode']}", status_code=303)
+
+    # Banyak hasil -> halaman daftar pilihan sederhana (pakai gaya yang ada)
+    return tpl.TemplateResponse(
+        request=request,
+        name="cari_hasil.html",
+        context=konteks(request, "saham", kueri=q, hasil=hasil),
+    )
 
 
 @app.get("/saham/{kode}", response_class=HTMLResponse)
@@ -716,6 +741,11 @@ def api_valuasi(kode: str):
     if d is None:
         raise HTTPException(404, f"Belum ada berkas valuasi untuk {kode}")
     return JSONResponse(dcf.compute(d, forward_g=d.get("assumptions", {}).get("terminal_growth_ceiling")))
+
+
+@app.get("/api/cari", summary="Cari emiten berdasarkan kode angka atau nama")
+def api_cari(q: str = ""):
+    return JSONResponse(indeks_nama.cari(q, limit=10))
 
 
 # --- Ask FEAF (app/chat.py, milik Claude) ---------------------------------

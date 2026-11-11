@@ -14,7 +14,7 @@
     <span>{{ t('merek.sub') }}</span>
   </div>
   <form class="cari" method="get" action="/saham">
-    <input name="kode" placeholder="{{ t('sh.cari') }}" maxlength="6" autocomplete="off" aria-label="{{ t('sh.cari') }}">
+    <input name="kode" placeholder="{{ t('sh.cari_placeholder') }}" maxlength="40" autocomplete="off" aria-label="{{ t('sh.cari_placeholder') }}">
   </form>
   <div class="nav">
     <a href="/watchlist" class="{{ 'on' if halaman == 'watchlist' }}">{{ t('nav.watchlist') }}

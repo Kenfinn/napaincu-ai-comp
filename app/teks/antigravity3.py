@@ -25,4 +25,30 @@ T: dict[str, tuple[str, str, str]] = {
         "臨時 Beta 1.0（計算中...）",
         "Beta sementara 1,0 (sedang dihitung...)",
     ),
+    # S1: pencarian emiten berdasarkan kode atau nama
+    "sh.cari_placeholder": (
+        "Code or name (2330, TSMC, 台積電)",
+        "代號或名稱（2330、TSMC、台積電）",
+        "Kode atau nama (2330, TSMC, 台積電)",
+    ),
+    "sh.tidak_ditemukan": (
+        "Issuer '{q}' not found.",
+        "查無「{q}」相關上市櫃公司。",
+        "Emiten '{q}' tidak ditemukan.",
+    ),
+    "sh.hasil_cari": (
+        "Search results for '{q}'",
+        "「{q}」的搜尋結果",
+        "Hasil pencarian untuk '{q}'",
+    ),
+    "sh.pilih_emiten": (
+        "Select issuer:",
+        "請選擇上市櫃公司：",
+        "Pilih emiten:",
+    ),
+    "sh.ditemukan_n": (
+        "{n} issuers found",
+        "找到 {n} 家公司",
+        "Ditemukan {n} emiten",
+    ),
 }
