@@ -520,6 +520,14 @@ def nilai_chat(kasus: list[dict]) -> dict:
             tepat = h["jalur"] == "tolak" and (jenis is None or h["ditolak"] == jenis)
         else:
             tepat = h["jalur"] != "tolak" and bool(h["sumber"]) and bool((h.get("periksa") or {}).get("lolos"))
+            # "jawab:<alat>[:<jenis>]": jawaban juga harus memakai alat itu (dan jenis pengumuman
+            # itu). Tanpa ini, jawaban yang bersumber tetapi tidak menjawab pertanyaan ikut dihitung benar.
+            bagian = harap.split(":")
+            if tepat and len(bagian) > 1 and bagian[1]:
+                dipakai = [l for l in h["langkah"] if l.get("tahap") == "alat" and l.get("alat") == bagian[1]]
+                if len(bagian) > 2 and bagian[2]:
+                    dipakai = [l for l in dipakai if (l.get("args") or {}).get("jenis") == bagian[2]]
+                tepat = bool(dipakai)
         rinci.append({"pertanyaan": k["pertanyaan"], "bahasa": k.get("bahasa"), "harap": harap,
                       "jalur": h["jalur"], "ditolak": h["ditolak"], "tepat": tepat, "id": h["id"],
                       "durasi_ms": h["durasi_ms"], "panggilan_alat": h["panggilan_alat"],
