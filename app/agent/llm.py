@@ -235,6 +235,16 @@ _gagal_beruntun = 0
 _mulai_jalan_t: float | None = None
 
 
+# Galat model terakhir, untuk /sehat (tanpa kunci API: pesan HTTPError tidak memuat URL).
+galat_terakhir: dict | None = None
+
+
+def _catat_galat(pesan: str) -> None:
+    global galat_terakhir
+    pesan = re.sub(r"key=[^&\s]+", "key=***", pesan)
+    galat_terakhir = {"waktu": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "pesan": pesan[:400]}
+
+
 def mulai_jalan(maks: int) -> None:
     global _jatah_sisa, _gagal_beruntun, _mulai_jalan_t
     _jatah_sisa = maks
@@ -274,8 +284,9 @@ def tanya(instruksi: str, dokumen: str) -> tuple[dict, dict]:
         _jatah_sisa -= 1
     try:
         jawaban, meta = _tanya_model(instruksi, dokumen)
-    except GagalModel:
+    except GagalModel as e:
         _gagal_beruntun += 1
+        _catat_galat(str(e))
         raise
     _gagal_beruntun = 0
     # Kunci dihitung ulang: model bisa saja baru diganti di tengah panggilan (404).

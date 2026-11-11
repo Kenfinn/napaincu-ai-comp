@@ -103,6 +103,7 @@ def _hasil_awal_tanpa_model() -> None:
             baru = pipeline.jalankan_semua()
             with _kunci_cache:
                 _cache = baru
+            _tandai_jalan("awal_tanpa_model")
 
 
 @asynccontextmanager
@@ -162,6 +163,14 @@ _kunci_cache = threading.Lock()
 _kunci_jalan = threading.Lock()
 
 
+_jalan_terakhir: dict | None = None
+
+
+def _tandai_jalan(mode: str) -> None:
+    global _jalan_terakhir
+    _jalan_terakhir = {"waktu": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "mode": mode}
+
+
 def hasil(segarkan: bool = False) -> list[dict]:
     global _cache
     if segarkan:
@@ -170,6 +179,7 @@ def hasil(segarkan: bool = False) -> list[dict]:
             baru = pipeline.jalankan_semua()
             with _kunci_cache:
                 _cache = baru
+            _tandai_jalan("dengan_model")
             return _cache
 
     with _kunci_cache:
@@ -184,6 +194,7 @@ def hasil(segarkan: bool = False) -> list[dict]:
         baru = pipeline.jalankan_semua()
         with _kunci_cache:
             _cache = baru
+        _tandai_jalan("dengan_model")
         return _cache
 
 
@@ -324,6 +335,18 @@ def akses(kode: str = ""):
     return _balik("/", i18n.pesan("msg.akses_salah"), ok=False)
 
 
+def _sebab_cadangan(h: list[dict]) -> dict[str, int]:
+    """Kenapa penyari turun ke penalar aturan, dihitung per sebab (dipotong supaya ringkas)."""
+    n: dict[str, int] = {}
+    for x in h:
+        for l in x.get("jejak") or []:
+            sb = (l.get("meta") or {}).get("sebab_cadangan")
+            if sb:
+                k = sb[:120]
+                n[k] = n.get(k, 0) + 1
+    return n
+
+
 @app.get("/sehat", include_in_schema=False)
 def sehat():
     """Untuk health check Dokploy/Docker: server hidup dan data terbaca."""
@@ -340,12 +363,15 @@ def sehat():
             "status": status,
             "panggilan_model": sum((x.get("ringkasan") or {}).get("panggilan_model", 0) for x in h),
             "jawaban_cache": sum((x.get("ringkasan") or {}).get("jawaban_cache", 0) for x in h),
+            "sebab_cadangan": _sebab_cadangan(h),
         }
     try:
         n_valuasi = len(list(valuasi_otomatis.CACHE_DIR.glob("*.json")))
     except OSError:
         n_valuasi = 0
     return {"ok": True, "sumber": sumber, "pengumuman": len(detail),
+            "jalan_terakhir": _jalan_terakhir,
+            "galat_model_terakhir": llm.galat_terakhir,
             "tarik_terakhir": (tarik.baca_status() or {}).get("waktu"),
             "mesin": llm.nama_model() if llm.tersedia() else "aturan",
             "model_utama": config.MODEL if llm.tersedia() else None,
