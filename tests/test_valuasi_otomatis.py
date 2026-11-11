@@ -104,6 +104,8 @@ class _LingkunganOfflineMixin:
 
     def tearDown(self) -> None:
         main._cache = None
+        # Thread beta latar harus selesai selagi jaringan masih diblokir dan folder masih ada.
+        valuasi_otomatis.tunggu_beta_latar()
         for p in reversed(self._patches):
             p.stop()
         self._tmp.cleanup()

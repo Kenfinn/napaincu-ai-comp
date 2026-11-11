@@ -26,6 +26,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import logging
+import os
 import threading
 import time
 import urllib.parse
@@ -387,6 +388,14 @@ def pemicu_hitung_beta_latar(kode: str, bursa: str = "TWSE") -> threading.Thread
         _thread_aktif[kode] = t
         t.start()
         return t
+
+
+def tunggu_beta_latar(batas_detik: float = 10.0) -> None:
+    """Tunggu semua thread beta latar selesai (untuk tes dan skrip pemanasan)."""
+    with _kunci_thread_beta:
+        daftar = list(_thread_aktif.values())
+    for t in daftar:
+        t.join(batas_detik)
 
 
 def _pekerja_beta_latar(kode: str, bursa: str) -> None:
@@ -863,7 +872,11 @@ def simpan_cache(kode: str, data: dict) -> Path:
     Path(CACHE_DIR).mkdir(parents=True, exist_ok=True)
     f = _jalur_cache(kode)
     data = dict(data, versi_skema=VERSI_SKEMA)
-    f.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    # Tulis ke berkas sementara lalu ganti sekaligus: thread beta latar dan pembaca
+    # (halaman, pipeline) tidak boleh melihat JSON setengah jadi.
+    tmp = f.with_name(f"{f.name}.{threading.get_ident()}.tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    os.replace(tmp, f)
     return f
 
 

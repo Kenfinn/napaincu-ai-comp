@@ -206,7 +206,8 @@ class TestV1Cepat(unittest.TestCase):
 
         with patch("app.store.muat_valuasi", return_value=d_sementara), \
              patch("app.valuasi_otomatis.baca_cache", return_value=d_sementara), \
-             patch("app.pasar.harga", return_value={"tutup": 1200.0, "ubah": 0.0, "ubah_pct": 0.0, "nama": "MediaTek"}):
+             patch("app.pasar.harga", return_value={"tutup": 1200.0, "ubah": 0.0, "ubah_pct": 0.0, "nama": "MediaTek"}), \
+             patch("app.valuasi_otomatis.pemicu_hitung_beta_latar") as pemicu:
             # Test bahasa Indonesia
             resp_id = client.get("/saham/2454?tab=valuasi", cookies={"bahasa": "id"})
             self.assertEqual(resp_id.status_code, 200)
@@ -221,6 +222,8 @@ class TestV1Cepat(unittest.TestCase):
             resp_zh = client.get("/saham/2454?tab=valuasi", cookies={"bahasa": "zh"})
             self.assertEqual(resp_zh.status_code, 200)
             self.assertIn("Beta 正從官方每日收盤價計算中", resp_zh.text)
+            # Halaman memicu beta latar, tapi tes tidak boleh menjalankan thread yang ke jaringan.
+            pemicu.assert_called_with("2454", "TWSE")
 
     def test_tidak_ada_thread_kedua_untuk_kode_sama(self):
         """Memverifikasi bahwa pemicu_hitung_beta_latar tidak membuat thread kedua jika sudah ada thread berjalan."""
