@@ -48,6 +48,8 @@ Rincian dan kriteria QA tiap item ada di [`rencana-finalis.md`](./rencana-finali
 | 11 Nov | Versi skema cache valuasi otomatis | `ee737b0` |
 | 11 Nov | B1: jalur sinyal 22/23/11/35/31/1/3/40, ambang per profil, pasal 20 jadi skenario | `472727e` |
 | 11 Nov | Server: volume `/data` permanen (`feaf-data`) | dicek Afinzaki |
+| 11 Nov | Daftar "Source of each input": kolom tidak tertimpa, URL dibungkus, teks Inggris | `8bc177c` |
+| 11 Nov | Deploy dengan env model Gemini | dicek Afinzaki |
 
 Tes otomatis: 178, semua lulus, tanpa jaringan.
 
@@ -61,6 +63,7 @@ Sebelum B1 (10 Nov malam): 0 terbit.
 | Urutan | Pekerjaan | Selesai bila |
 |---|---|---|
 | 1 | Kesiapan demo: tab Valuation tidak menunggu beta (beta dihitung di latar), balasan 307 TWSE = tunggu lalu ulang, skrip pemanasan cache untuk emiten besar, cari emiten berdasarkan nama, tautan Tanya FEAF di menu dan di halaman saham | Emiten yang belum pernah dibuka tampil < 10 detik; "TSMC"/"台積電" ketemu |
+| 1b | Panduan gold set dan `evaluasi.py` mode gold diperbarui untuk jalur B1 (modal, laporan, berat), karena panduan lama hanya mengenal capex/debt/cash/risiko | Ferry & Patrice bisa melabeli semua jenis peringatan |
 | 2 | Cek server setelah deploy: Gemini jalan, "All Issuers" berisi data asli, valuasi otomatis tersimpan | `panggilan_model > 0`, folder `/data/valuasi_otomatis` ada |
 | 3 | D5: evaluasi akhir dengan model dan gold set, laporan keamanan, satu jejak audit asli dengan model | Semua metrik Appendix 2 terisi angka asli |
 | 4 | E1: README finalis | Bagian wajib lomba lengkap (arsitektur, instalasi, model & versi, env, lisensi, aliran data, izin, keterbatasan) |
@@ -70,7 +73,7 @@ Sebelum B1 (10 Nov malam): 0 terbit.
 
 | Siapa | Apa | Untuk |
 |---|---|---|
-| Afinzaki | Deploy versi terbaru; pastikan env `SENTINEL_MODEL=gemini-3.6-flash`, `SENTINEL_MODEL_CADANGAN=gemini-3.5-flash,gemini-3.8-flash`; cek Reasoning engine dan Model calls | 0, D5 |
+| Afinzaki | Cek Reasoning engine dan Model calls di `/sehat` setelah deploy (deploy sudah) | 0, D5 |
 | Afinzaki | Uji data bertahan: catat `/sehat`, Deploy, cek lagi | server |
 | Afinzaki | Tarik riwayat MOPS dari laptop Taiwan (data 8–10 Nov hilang sebelum volume dipasang) | data |
 | Afinzaki | Uji tautan MOPS dari laptop Taiwan | B3 |
