@@ -4,8 +4,7 @@ Penarik menyimpan SELURUH respons OpenAPI setiap kali memeriksa (data/raw/openap
 hanya emiten di watchlist. Arsip itu berisi ratusan pengumuman semua emiten per hari, jadi
 cukup untuk memilih 30–50 kasus uji yang seimbang:
 
-    - beberapa per pasal yang diusulkan relevan (docs/pemetaan-pasal.md)
-    - beberapa pasal yang seharusnya DILEWATI, supaya gold set juga menguji "tidak terbit"
+    - beberapa per jalur sinyal B1 (valuasi, risiko, modal, laporan, berat, tata_kelola, dilewati)
     - emiten dibuat beragam, pemilihan acak dengan seed tetap supaya bisa diulang
 """
 
@@ -18,14 +17,28 @@ import os
 import random
 
 from . import config, tarik
+from .agent import screen
 
 ARSIP_DIR = os.path.join(config.DATA_DIR, "raw", "openapi")
 
+JALUR_SEMUA = ("valuasi", "risiko", "modal", "laporan", "berat", "tata_kelola", "dilewati")
+
+# Daftar pasal historis untuk rujukan dan kompatibilitas
 PASAL_RELEVAN = (31, 20, 11, 35, 10, 22, 23, 1, 3, 40, 28, 26, 51, 53)
 PASAL_NEGATIF = (12, 14, 6, 8, 17, 43)
 
-KOLOM = ["source_url", "kode", "nama", "tanggal", "pasal", "judul", "ringkasan_butir",
-         "harus_terbit", "input", "nilai_juta_ntd", "butir_no", "pelabel", "catatan"]
+KOLOM = [
+    "source_url", "kode", "nama", "tanggal", "pasal", "judul", "ringkasan_butir",
+    "harus_terbit", "keputusan", "tingkat", "input", "nilai_juta_ntd", "butir_no", "pelabel", "catatan"
+]
+
+
+def jalur_pengumuman(d: dict) -> str:
+    """Tentukan jalur sinyal suatu pengumuman."""
+    s = screen.saring(d)
+    if not s.get("lolos"):
+        return "dilewati"
+    return s.get("jalur") or "dilewati"
 
 
 def muat_arsip(folder: str | None = None) -> list[dict]:
@@ -48,34 +61,58 @@ def muat_arsip(folder: str | None = None) -> list[dict]:
 
 
 def _ringkas(d: dict, maks: int = 6) -> str:
-    """Butir yang memuat angka, ringkas, supaya pelabel tidak perlu membuka MOPS untuk kasus mudah."""
+    """Butir yang memuat angka, ringkas, supaya pelabel tidak perlu membuka MOPS untuk kasus mudah.
+    
+    Nama orang (butir dengan label memuat 姓名) tidak pernah dimasukkan demi privasi.
+    """
     keluar = []
     for b in d.get("items", []):
         for x in [b] + b.get("sub", []):
+            lbl = x.get("label") or ""
+            induk_lbl = b.get("label") or ""
+            if "姓名" in lbl or "姓名" in induk_lbl:
+                continue
             v = x.get("value") or ""
             if any(c.isdigit() for c in v) and len(keluar) < maks:
                 sat = f"({x['satuan_label']})" if x.get("satuan_label") else ""
-                keluar.append(f"{x.get('no')}. {x['label'][:28]}{sat}: {v[:60]}")
+                keluar.append(f"{x.get('no')}. {lbl[:28]}{sat}: {v[:60]}")
     return " | ".join(keluar)
 
 
-def pilih(rek: list[dict], per_pasal: int = 4, negatif_per_pasal: int = 2, seed: int = 11) -> list[dict]:
+def pilih(
+    rek: list[dict],
+    per_jalur: int = 4,
+    per_pasal: int | None = None,
+    negatif_per_pasal: int | None = None,
+    seed: int = 11,
+) -> list[dict]:
+    """Pilih sampel seimbang per jalur (valuasi, risiko, modal, laporan, berat, tata_kelola, dilewati)."""
     acak = random.Random(seed)
-    per: dict[int, list[dict]] = {}
+    per: dict[str, list[dict]] = {j: [] for j in JALUR_SEMUA}
     for d in rek:
-        per.setdefault(d["clause"], []).append(d)
+        j = jalur_pengumuman(d)
+        if j in per:
+            per[j].append(d)
+        else:
+            per["dilewati"].append(d)
+
+    target = per_pasal if per_pasal is not None else per_jalur
+    target = max(1, target)
+
     hasil = []
-    for pasal, n in [(p, per_pasal) for p in PASAL_RELEVAN] + [(p, negatif_per_pasal) for p in PASAL_NEGATIF]:
-        calon = per.get(pasal, [])[:]
+    for j in JALUR_SEMUA:
+        calon = per.get(j, [])[:]
         acak.shuffle(calon)
         dipakai_emiten: set[str] = set()
+        count = 0
         for d in calon:
-            if len([h for h in hasil if h["clause"] == pasal]) >= n:
+            if count >= target:
                 break
-            if d["code"] in dipakai_emiten:
+            if d.get("code") in dipakai_emiten and len(calon) > target:
                 continue
-            dipakai_emiten.add(d["code"])
+            dipakai_emiten.add(d.get("code", ""))
             hasil.append(d)
+            count += 1
     return hasil
 
 
@@ -84,7 +121,21 @@ def csv_kandidat(rek: list[dict]) -> str:
     w = csv.DictWriter(buf, fieldnames=KOLOM)
     w.writeheader()
     for d in rek:
-        w.writerow({"source_url": d["source_url"], "kode": d["code"], "nama": d["name"],
-                    "tanggal": d["date"], "pasal": d["clause"], "judul": d["subject"],
-                    "ringkasan_butir": _ringkas(d)})
+        w.writerow({
+            "source_url": d.get("source_url", ""),
+            "kode": d.get("code", ""),
+            "nama": d.get("name", ""),
+            "tanggal": d.get("date", ""),
+            "pasal": d.get("clause", ""),
+            "judul": d.get("subject", ""),
+            "ringkasan_butir": _ringkas(d),
+            "harus_terbit": "",
+            "keputusan": "",
+            "tingkat": "",
+            "input": "",
+            "nilai_juta_ntd": "",
+            "butir_no": "",
+            "pelabel": "",
+            "catatan": "",
+        })
     return buf.getvalue()

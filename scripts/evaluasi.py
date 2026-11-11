@@ -85,7 +85,7 @@ MODE_SEMUA = ("aturan", "model", "tanpa-pemeriksa")
 # --------------------------------------------------------------------------- gold set
 
 def muat_gold(path: str) -> dict[str, dict]:
-    """source_url → {"harus_terbit": bool, "angka": [(input, nilai)], "kode": ..., ...}"""
+    """source_url → {"harus_terbit": bool, "keputusan": str, "tingkat": str|None, "angka": [(input, nilai)], "kode": ..., ...}"""
     gold: dict[str, dict] = {}
     with open(path, encoding="utf-8", newline="") as f:
         for no, baris in enumerate(csv.DictReader(f), start=2):
@@ -93,32 +93,92 @@ def muat_gold(path: str) -> dict[str, dict]:
             if not url:
                 continue
             ya = (baris.get("harus_terbit") or "").strip().lower()
-            if not ya:
+            kep = (baris.get("keputusan") or "").strip().lower()
+            tingkat = (baris.get("tingkat") or "").strip().lower()
+
+            # Tangani baris format lama 13 kolom yang bergeser bila header baru bertambah
+            if kep in ("capex", "debt", "cash", "risiko", "modal", "laporan", "berat", "tata_kelola"):
+                baris["catatan"] = baris.get("pelabel") or ""
+                baris["pelabel"] = baris.get("butir_no") or ""
+                baris["butir_no"] = baris.get("nilai_juta_ntd") or ""
+                baris["nilai_juta_ntd"] = baris.get("tingkat") or ""
+                baris["input"] = kep
+                kep = ""
+                tingkat = ""
+
+            if not ya and not kep:
                 continue                # kandidat yang belum dilabeli — dilewati, bukan galat
-            if ya not in ("ya", "tidak"):
+
+            if ya and ya not in ("ya", "tidak"):
                 raise ValueError(f"{path}:{no}: harus_terbit harus 'ya' atau 'tidak', bukan {ya!r}")
+            if kep and kep not in ("terbit", "tahan", "arsip"):
+                raise ValueError(f"{path}:{no}: keputusan harus 'terbit', 'tahan', atau 'arsip', bukan {kep!r}")
+
+            # Rekonsiliasi harus_terbit dan keputusan
+            if ya and kep:
+                ya_mapped = "terbit" if ya == "ya" else "arsip"
+                if kep != ya_mapped:
+                    raise ValueError(f"{path}:{no}: harus_terbit ({ya!r}) bertentangan dengan keputusan ({kep!r})")
+            elif ya and not kep:
+                kep = "terbit" if ya == "ya" else "arsip"
+            elif kep and not ya:
+                ya = "ya" if kep == "terbit" else "tidak"
+
+            if tingkat and tingkat not in ("info", "perhatian", "serius"):
+                raise ValueError(f"{path}:{no}: tingkat harus 'info', 'perhatian', atau 'serius', bukan {tingkat!r}")
+
+            inp = (baris.get("input") or "").strip().lower()
+            nilai = (baris.get("nilai_juta_ntd") or "").replace(",", "").strip()
+
+            if inp and inp not in ("capex", "debt", "cash", "risiko", "modal", "laporan", "berat", "tata_kelola"):
+                raise ValueError(f"{path}:{no}: input {inp!r} tidak dikenal")
+
+            if kep == "terbit":
+                if inp in ("capex", "debt", "cash"):
+                    if not nilai:
+                        raise ValueError(f"{path}:{no}: keputusan=terbit wajib mengisi input dan nilai_juta_ntd")
+                elif not inp:
+                    raise ValueError(f"{path}:{no}: keputusan=terbit wajib mengisi input")
+
             g = gold.setdefault(url, {
                 "kode": (baris.get("kode") or "").strip(),
-                "harus_terbit": ya == "ya",
+                "harus_terbit": kep == "terbit",
+                "keputusan": kep,
+                "tingkat": tingkat or None,
+                "input": inp or None,
                 "angka": [],
                 "pelabel": set(),
             })
-            if (ya == "ya") != g["harus_terbit"]:
-                raise ValueError(f"{path}:{no}: harus_terbit bertentangan dengan baris lain untuk URL yang sama")
+
+            if kep != g["keputusan"]:
+                raise ValueError(f"{path}:{no}: keputusan bertentangan dengan baris lain untuk URL yang sama")
+            if tingkat and g.get("tingkat") and g["tingkat"] != tingkat:
+                raise ValueError(f"{path}:{no}: tingkat bertentangan dengan baris lain untuk URL yang sama")
+
+            if inp and not g.get("input"):
+                g["input"] = inp
             g["pelabel"].add((baris.get("pelabel") or "").strip())
-            if ya == "ya":
-                inp = (baris.get("input") or "").strip()
-                nilai = (baris.get("nilai_juta_ntd") or "").replace(",", "").strip()
-                if inp == "risiko":
-                    # Sinyal risiko (pasal 22/23/1/3/40): yang dinilai keputusan terbit/tahan,
-                    # bukan satu angka input DCF.
-                    g["risiko"] = True
-                    continue
-                if not inp or not nilai:
-                    raise ValueError(f"{path}:{no}: harus_terbit=ya wajib mengisi input dan nilai_juta_ntd"
-                                     " (kecuali input=risiko)")
+            if inp == "risiko":
+                g["risiko"] = True
+            elif inp in ("capex", "debt", "cash") and nilai:
                 g["angka"].append((inp, float(nilai)))
+            elif inp in ("modal", "laporan", "berat", "tata_kelola") and nilai:
+                try:
+                    g["angka"].append((inp, float(nilai)))
+                except ValueError:
+                    pass
     return gold
+
+
+def status_ke_keputusan(st: str) -> str:
+    """Konversi status sistem (terbit/ditahan/dilewati) ke keputusan gold (terbit/tahan/arsip)."""
+    if st == "terbit":
+        return "terbit"
+    if st == "ditahan":
+        return "tahan"
+    if st == "dilewati":
+        return "arsip"
+    return st
 
 
 def _sama(a: float, b: float) -> bool:
@@ -133,14 +193,14 @@ def _tanpa_pemeriksa(detail: dict) -> dict:
     """Saringan + penyari, tanpa tahap pemeriksa. Apa pun yang tertarik dianggap terbit."""
     s = screen.saring(detail)
     if not s["lolos"]:
-        return {"status": "dilewati", "terbit": [], "meta": {}}
+        return {"status": "dilewati", "terbit": [], "meta": {}, "sinyal": None}
     temuan, meta = extract.sari(detail, s["input_mungkin"])
     angka = [(t["input"], t["nilai_juta_ntd"]) for t in temuan if t.get("nilai_juta_ntd") is not None]
     # Tanpa pemeriksa, angka yang tidak bisa dikonversi tetap "terbit" dalam bentuk
     # mentah — itulah yang dilakukan LLM polos. Dicatat sebagai angka tak terbandingkan.
     mentah = [(t["input"], None) for t in temuan if t.get("nilai_juta_ntd") is None]
     return {"status": "terbit" if (angka or mentah) else "ditahan",
-            "terbit": angka + mentah, "meta": meta}
+            "terbit": angka + mentah, "meta": meta, "sinyal": None}
 
 
 def _pipeline(detail: dict) -> dict:
@@ -150,8 +210,15 @@ def _pipeline(detail: dict) -> dict:
         for d in (h.get("muatan") or {}).get("diterima", []):
             terbit.append((d["temuan"]["input"], d["temuan"]["nilai_juta_ntd"]))
     r = h["ringkasan"]
-    return {"status": h["status"], "terbit": terbit, "meta": r, "state": h.get("state"),
-            "kategori": kategori(h), "sebab_cadangan": _sebab_cadangan(h)}
+    return {
+        "status": h["status"],
+        "terbit": terbit,
+        "meta": r,
+        "state": h.get("state"),
+        "kategori": kategori(h),
+        "sebab_cadangan": _sebab_cadangan(h),
+        "sinyal": (h.get("muatan") or {}).get("sinyal"),
+    }
 
 
 def kategori(h: dict) -> str:
@@ -208,16 +275,38 @@ def jalankan_mode(mode: str, data: list[dict]) -> list[dict]:
 # --------------------------------------------------------------------------- metrik
 
 def nilai(hasil: list[dict], gold: dict[str, dict]) -> dict:
+    from app import ambang_profil
     n = len(hasil)
     tepat = terbit_benar = salah_terbit = terlewat = ditahan = 0
     input_benar = input_total = 0
     harus_ya = sum(1 for h in hasil if gold[h["source_url"]]["harus_terbit"])
     rincian = []
+
+    keputusan_3arah_tepat = 0
+    matriks_3x3 = {gk: {pk: 0 for pk in ("terbit", "tahan", "arsip")} for gk in ("terbit", "tahan", "arsip")}
+    tingkat_cocok = 0
+    tingkat_total = 0
+
     for h in hasil:
         g = gold[h["source_url"]]
         terbit = h["status"] == "terbit"
         tepat += terbit == g["harus_terbit"]
         ditahan += h["status"] == "ditahan"
+
+        pred_kep = status_ke_keputusan(h["status"])
+        gold_kep = g.get("keputusan") or ("terbit" if g["harus_terbit"] else "arsip")
+        if pred_kep == gold_kep:
+            keputusan_3arah_tepat += 1
+        if gold_kep in matriks_3x3 and pred_kep in matriks_3x3[gold_kep]:
+            matriks_3x3[gold_kep][pred_kep] += 1
+
+        if g.get("tingkat"):
+            tingkat_total += 1
+            sinyal = h.get("sinyal")
+            res_tingkat = ambang_profil.tingkat(sinyal, "moderat") if sinyal else None
+            pred_tingkat = res_tingkat.get("tingkat") if res_tingkat else None
+            if pred_tingkat == g["tingkat"]:
+                tingkat_cocok += 1
 
         salah = [(i, v) for i, v in h["terbit"]
                  if v is None or not any(i == gi and _sama(v, gv) for gi, gv in g["angka"])]
@@ -234,6 +323,7 @@ def nilai(hasil: list[dict], gold: dict[str, dict]) -> dict:
             else:
                 terlewat += 1
         rincian.append({"id": h["id"], "status": h["status"], "harus_terbit": g["harus_terbit"],
+                        "keputusan": gold_kep, "pred_keputusan": pred_kep,
                         "terbit": h["terbit"], "angka_salah": salah})
 
     meta = [h["meta"] for h in hasil]
@@ -258,6 +348,9 @@ def nilai(hasil: list[dict], gold: dict[str, dict]) -> dict:
         "akurasi_input": [input_benar, input_total],
         "akurasi_nilai": [sum(1 for r in rincian for i, v in r["terbit"] if (i, v) not in r["angka_salah"]),
                           sum(len(r["terbit"]) for r in rincian)],
+        "keputusan_3arah_tepat": keputusan_3arah_tepat,
+        "matriks_3x3": matriks_3x3,
+        "kecocokan_tingkat": [tingkat_cocok, tingkat_total],
         "kategori": dict(collections.Counter(h.get("kategori", h["status"]) for h in hasil)),
         "rincian": rincian,
     }
@@ -301,9 +394,25 @@ def laporan(m_per_mode: dict[str, dict], sumber: str, gold_path: str, label_mode
         lambda x: f"{x['latensi_median_ms']} / {x.get('latensi_rata_ms', 0)} / {x.get('latensi_maks_ms', 0)} ms")
     row("Akurasi field: jenis input (capex/debt/cash)", lambda x: _persen(*x.get("akurasi_input", [0, 0])))
     row("Akurasi field: nilai (±0,5%)", lambda x: _persen(*x.get("akurasi_nilai", [0, 0])))
+    row("Akurasi keputusan 3 arah (terbit/tahan/arsip)",
+        lambda x: _persen(x.get("keputusan_3arah_tepat", 0), x["dokumen"]))
+    row("Kecocokan tingkat sinyal (moderat)",
+        lambda x: _persen(*x.get("kecocokan_tingkat", [0, 0])))
     if menit_manual is not None:
         row(f"Waktu manual setara (@{menit_manual:g} menit/dokumen)",
             lambda x: f"{x['dokumen'] * menit_manual:g} menit")
+
+    baris += ["", "## Matriks kebingungan keputusan 3 arah (Gold \\ Prediksi)", ""]
+    for m in mode:
+        mat = m_per_mode[m].get("matriks_3x3") or {}
+        baris.append(f"### Mode: {m} ({label_mode[m]})")
+        baris.append("")
+        baris.append("| Gold \\ Prediksi | terbit | tahan | arsip |")
+        baris.append("|---|---|---|---|")
+        for gk in ("terbit", "tahan", "arsip"):
+            r = mat.get(gk, {})
+            baris.append(f"| {gk} | {r.get('terbit', 0)} | {r.get('tahan', 0)} | {r.get('arsip', 0)} |")
+        baris.append("")
 
     baris += ["", "## Kasus yang salah atau terlewat", ""]
     ada = False
