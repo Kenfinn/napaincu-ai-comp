@@ -57,7 +57,7 @@ uvicorn app.main:app --reload
 ```
 
 開啟 <http://127.0.0.1:8000>。第一次執行時，動態頁會顯示標示為「範例」的公告。按下
-**立即檢查**（或在**觀察清單**加入股票）即可從證交所與櫃買中心取得今日的真實重大訊息。
+**立即檢查**（或在**自選股**加入股票）即可從證交所與櫃買中心取得今日的真實重大訊息。
 介面預設為英文，可在左側選單切換為「中文」。
 
 選用設定（在執行 `uvicorn` 前設定）：
@@ -86,7 +86,7 @@ uvicorn app.main:app --reload
 ```
 
 Buka <http://127.0.0.1:8000>. Saat pertama dijalankan, feed menampilkan pengumuman contoh
-yang diberi tanda jelas. Tekan **Check now** (atau tambah saham di **Watchlist**) untuk
+yang diberi tanda jelas. Tekan **Periksa sekarang** (atau tambah saham di **Watchlist**) untuk
 menarik pengumuman asli hari ini dari TWSE/TPEx. Tampilan bawaan berbahasa Inggris; ganti
 ke 中文 atau ID di menu kiri.
 
