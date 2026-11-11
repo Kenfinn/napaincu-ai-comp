@@ -13,7 +13,7 @@ Lanjutkan proyek FEAF. Sebelum menjawab atau mengubah apa pun:
    docs/pemetaan-pasal.md bagian "Keputusan tim" dan "Jawaban lanjutan Patrice",
    docs/hasil-gold-set.md (angka resmi vs angka di dalam sampel),
    docs/laporan-antigravity-3.md bagian "Tinjauan Claude".
-3. Cek commit sejak 85475d0 (git log --oneline 85475d0..HEAD) untuk perubahan dari
+3. Cek commit sejak b3cc0ee (git log --oneline b3cc0ee..HEAD) untuk perubahan dari
    Antigravity atau saya sendiri yang belum kamu ketahui.
 
 Lalu kerjakan "## 3. Berikutnya (Claude)" di docs/rencana-dan-status.md mulai urutan 1
