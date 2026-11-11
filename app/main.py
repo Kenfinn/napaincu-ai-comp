@@ -45,11 +45,34 @@ def _pemantau() -> None:
             # dibangun sesudahnya, lalu hasil diproses ulang sekali lagi.
             hasil(segarkan=True)
             _segarkan_valuasi_dari_laporan()
-            if valuasi_otomatis.panaskan(tarik.baca_watchlist()):
+            if valuasi_otomatis.panaskan(tarik.baca_watchlist() + _kode_perlu_valuasi()):
                 hasil(segarkan=True)
         except Exception as e:                        # noqa: BLE001
             print(f"[pemantau] gagal: {type(e).__name__}: {e}", flush=True)
         time.sleep(jeda)
+
+
+# Emiten di luar watchlist yang pengumumannya tertahan karena belum punya valuasi. Dibangun
+# bertahap supaya kuota FinMind (300/jam tanpa token) dan jeda sopan ke bursa tetap terjaga.
+VALUASI_BARU_PER_SIKLUS = 5
+_valuasi_dicoba: dict[str, float] = {}       # kode → waktu coba; yang gagal tidak dicoba ulang 6 jam
+
+
+def _kode_perlu_valuasi(maks: int = VALUASI_BARU_PER_SIKLUS) -> list[str]:
+    keluar: list[str] = []
+    for h in sorted(list(_cache or []), key=lambda x: x.get("tanggal") or "", reverse=True):
+        if h.get("status") != "ditahan" or ((h.get("muatan") or {}).get("tahan") or {}).get("jenis") != "tanpa_valuasi":
+            continue
+        kode = (h.get("emiten") or {}).get("kode") or ""
+        if not kode or kode in keluar or valuasi_otomatis.baca_cache(kode, terima_basi=True) is not None:
+            continue
+        if time.time() - _valuasi_dicoba.get(kode, 0) < 6 * 3600:
+            continue
+        _valuasi_dicoba[kode] = time.time()
+        keluar.append(kode)
+        if len(keluar) >= maks:
+            break
+    return keluar
 
 
 _laporan_diproses: set[str] = set()

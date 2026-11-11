@@ -146,6 +146,28 @@ def _cari_pengganti() -> str | None:
     return pilihan
 
 
+# Harga tier berbayar Gemini Developer API, USD per 1 juta token (masuk, keluar termasuk token
+# berpikir). Sumber: ai.google.dev/gemini-api/docs/pricing, dicek 11 Nov 2026; 3.6 Flash memakai
+# harga perkenalan sampai 31 Des 2026 (sesudahnya 1,50 / 7,50). Model yang tidak ada di tabel
+# dicatat biaya 0 dengan harga_dikenal=False di laporan. Bisa ditimpa: SENTINEL_HARGA_TOKEN="masuk,keluar".
+HARGA_PER_JUTA = {"gemini-3.6-flash": (0.75, 3.75)}
+
+
+def harga_token(model: str) -> tuple[float, float] | None:
+    env = os.environ.get("SENTINEL_HARGA_TOKEN", "")
+    if env:
+        a, b = (float(x) for x in env.split(","))
+        return a, b
+    return HARGA_PER_JUTA.get(model)
+
+
+def biaya_usd(model: str, masuk: int, keluar: int) -> float:
+    h = harga_token(model)
+    if not h:
+        return 0.0
+    return round(masuk * h[0] / 1e6 + keluar * h[1] / 1e6, 8)
+
+
 def _panggil_gemini(instruksi: str, dokumen: str) -> tuple[dict, dict]:
     url = f"{config.GEMINI_URL}/{model_dipakai()}:generateContent?key={config.API_KEY}"
     badan = {
@@ -170,12 +192,14 @@ def _panggil_gemini(instruksi: str, dokumen: str) -> tuple[dict, dict]:
         raise GagalModel(f"bentuk balasan tidak dikenali: {e}") from e
 
     pakai = jawaban.get("usageMetadata", {})
+    masuk = pakai.get("promptTokenCount", 0) or 0
+    keluar = pakai.get("candidatesTokenCount", 0) or 0
+    pikir = pakai.get("thoughtsTokenCount", 0) or 0          # ditagih sebagai token keluar
     meta = {
-        "token_masuk": pakai.get("promptTokenCount", 0),
-        "token_keluar": pakai.get("candidatesTokenCount", 0),
-        # Free tier — nol. Diisi eksplisit supaya kolomnya ada di jejak audit
-        # sejak awal, dan tinggal diisi kalau nanti pindah ke tier berbayar.
-        "biaya_usd": 0.0,
+        "token_masuk": masuk,
+        "token_keluar": keluar,
+        "token_pikir": pikir,
+        "biaya_usd": biaya_usd(model_dipakai(), masuk, keluar + pikir),
     }
     return _urai_json(teks), meta
 

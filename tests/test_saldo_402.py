@@ -28,3 +28,11 @@ class TestSaldo402(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestBiayaToken(unittest.TestCase):
+    def test_biaya_tarif_berbayar(self):
+        from app.agent import llm
+        # 7212 token masuk, 392 keluar → 0,005409 + 0,00147 = 0,006879 USD
+        self.assertAlmostEqual(llm.biaya_usd("gemini-3.6-flash", 7212, 392), 0.006879, places=6)
+        self.assertEqual(llm.biaya_usd("model-tak-dikenal", 1000, 1000), 0.0)

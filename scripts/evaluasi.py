@@ -377,6 +377,7 @@ def nilai(hasil: list[dict], gold: dict[str, dict]) -> dict:
         "retry": sum(m.get("retry", 0) for m in meta),
         "jatuh_ke_cadangan": sum(1 for m in meta if m.get("pakai_cadangan") or m.get("cadangan")),
         "jawaban_cache": sum(m.get("jawaban_cache", 0) for m in meta),
+        "token_pikir": sum(m.get("token_pikir", 0) for m in meta),
         "biaya_usd": round(sum(m.get("biaya_usd", 0) or 0 for m in meta), 6),
         "latensi_median_ms": int(statistics.median(latensi)) if latensi else 0,
         "latensi_rata_ms": int(statistics.mean(latensi)) if latensi else 0,
@@ -424,8 +425,9 @@ def laporan(m_per_mode: dict[str, dict], sumber: str, gold_path: str, label_mode
         lambda x: _persen(x["ditahan_untuk_manusia"], x["dokumen"]))
     row("Panggilan model", lambda x: str(x["panggilan_model"]))
     row("Jawaban model dari cache", lambda x: str(x.get("jawaban_cache", 0)))
-    row("Token masuk / keluar", lambda x: f"{x['token_masuk']} / {x['token_keluar']}")
-    row("Biaya model (USD, perkiraan)", lambda x: f"{x.get('biaya_usd', 0):.4f}")
+    row("Token masuk / keluar / berpikir",
+        lambda x: f"{x['token_masuk']} / {x['token_keluar']} / {x.get('token_pikir', 0)}")
+    row("Biaya model (USD, tarif berbayar di app/agent/llm.py)", lambda x: f"{x.get('biaya_usd', 0):.4f}")
     row("Retry", lambda x: str(x["retry"]))
     row("Jatuh ke penalar aturan", lambda x: str(x["jatuh_ke_cadangan"]))
     row("Latensi median / rata-rata / maks per dokumen",

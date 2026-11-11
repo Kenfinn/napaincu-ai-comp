@@ -369,6 +369,13 @@ These numbers were measured **before** tuning. The disagreements exposed two par
 were fixed afterwards. On the same 46 filings the tuned agent scores 43/46 and 29/29, but that
 is in-sample and is not reported as accuracy.
 
+**Model path on the server** (Gemini 3.6 Flash, fresh calls, 11 Nov): 0/46 wrong numbers
+published (without checker: 5/46), mean latency 0.7 s per filing (max 9.9 s), 5 model calls,
+7,212 input / 392 output tokens, about **USD 0.007 for all 46 filings** at paid-tier prices. Only
+clause-20 filings call the model; the other lanes are parsed deterministically. Full write-up
+with error categories, the live-server intervention rate (12% held) and an annotated
+operation trace: [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md).
+
 **Attack set** ([`eval/hasil/serangan-2026-11-10.md`](eval/hasil/serangan-2026-11-10.md)).
 12 attack types on real filings (injected instructions, invented numbers and quotes, fake labels,
 unit swaps, foreign currency, extreme magnitudes), 72 cases, attacked by both the rule-based
