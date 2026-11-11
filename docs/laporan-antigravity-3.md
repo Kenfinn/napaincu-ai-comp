@@ -22,9 +22,8 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 | Q5 | S1 | Cari emiten dengan nama | ✅ | `cc373a6` | 7 tes | 1.996 emiten terindeks (TWSE: 1.099, TPEx: 897), 10/10 kueri lolos, 214 tes lulus |
 | Q6 | C1a | Tautan Tanya FEAF di menu dan saham | ✅ | `a44bb2a` | 4 tes | Menu navigasi 3 bahasa, tombol /saham/{kode}, form terisi contoh, tangkapan layar c1a-*.png, 218 tes lulus |
 | Q7 | C1b | Uji Tanya FEAF | ✅ | `d256931` | 0 tes baru | 52/52 (100%) kasus tepat, 0 angka karangan, 0 kata beli/jual, 6/6 injeksi gagal |
-| Q8 | K1 | Draf laporan keamanan | ✅ | `0e12f2f` | 0 tes | Laporan 8 kategori risiko Pasal 14, 11 rujukan tes valid, 0 kebocoran PII/kunci |
-| Q9 | QA1 | Skrip QA halaman tiga bahasa | ✅ | terlampir di push ini | 5 tes | 78/78 halaman x bahasa lolos (0 gagal), 223 tes lulus |
-| Q10 | Q10 | Laporan akhir dan verifikasi | ⏳ | - | - | - |
+| Q9 | QA1 | Skrip QA halaman tiga bahasa | ✅ | `ad3195c` | 5 tes | 78/78 halaman x bahasa lolos (0 gagal), 223 tes lulus |
+| Q10 | Q10 | Laporan akhir dan verifikasi | ✅ | terlampir di push ini | 0 tes | 223/223 tes lulus, 78/78 QA halaman lolos, seluruh target Q1-Q10 terpenuhi |
 
 ---
 
@@ -86,7 +85,7 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 ### Q4. V2: Pemanasan Cache untuk Demo
 - Waktu: 12:49 - 12:55 CST
 - Status: ✅
-- Commit: terlampir di push berikutnya
+- Commit: `48a8ad6`
 - Tes yang ditambah: 5 tes di `tests/test_panaskan_cache.py` (semua lulus, total rangkaian 207 tes).
 - Hasil pemeriksa manual:
   - Menjalankan `python3 scripts/panaskan_cache.py --kode 2330 2317 2454` ke folder sementara:
@@ -111,7 +110,7 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 ### Q5. S1: Cari Emiten dengan Nama
 - Waktu: 14:06 - 14:15 CST
 - Status: ✅
-- Commit: terlampir di push ini
+- Commit: `cc373a6`
 - Tes yang ditambah: 7 tes di `tests/test_cari_nama.py` (semua lulus, total rangkaian 214 tes lulus).
 - Hasil pemeriksa manual:
   - Indeks resmi dari OpenAPI TWSE (`t187ap03_L`) dan TPEx (`mopsfin_t187ap03_O`): total 1.996 emiten (1.099 TWSE, 897 TPEx).
@@ -145,7 +144,7 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 ### Q6. C1a: Tautan Tanya FEAF
 - Waktu: 14:15 - 14:19 CST
 - Status: ✅
-- Commit: terlampir di push ini
+- Commit: `a44bb2a`
 - Tes yang ditambah: 4 tes di `tests/test_c1a_tautan.py` (semua lulus, total rangkaian 218 tes lulus).
 - Hasil pemeriksa manual:
   - Menu navigasi kiri memuat tautan `/tanya` di antara Feed dan Review dalam 3 bahasa ("Ask FEAF", "問 FEAF", "Tanya FEAF").
@@ -174,7 +173,7 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 ### Q7. C1b: Uji Tanya FEAF
 - Waktu: 14:19 - 14:23 CST
 - Status: ✅
-- Commit: terlampir di push ini
+- Commit: `d256931`
 - Hasil evaluasi:
   - Lingkungan pengujian: variabel `GEMINI_API_KEY` tidak tersedia di lingkungan saat ini (`bool(GEMINI_API_KEY) == False`). Pengujian dijalankan menggunakan jalur aturan deterministik (tanpa model) dengan `python3 scripts/evaluasi.py --chat --simpan`.
   - Kumpulan kasus uji (`eval/chat_uji.csv`) diperluas dari 27 baris menjadi **52 baris seimbang** tiga bahasa (EN, ZH, ID) mencakup: harga/statistik, valuasi, pengumuman, sinyal B1 (penjaminan, modal, auditor), penolakan terlarang (prediksi, order beli/jual, data pribadi direksi/pejabat), dan 6 variasi prompt injection.
@@ -208,7 +207,7 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 ### Q8. K1: Draf Laporan Keamanan
 - Waktu: 14:23 - 14:26 CST
 - Status: ✅
-- Commit: terlampir di push ini
+- Commit: `0e12f2f`
 - Dokumen dibuat: `docs/laporan-keamanan.md`.
 - Hasil pemeriksa manual:
   - Pembahasan lengkap 8 kategori risiko Pasal 14 Peraturan AAIC 2026: Prompt Injection, Pemanggilan Tool Tanpa Izin, Kebocoran Data Pribadi, Halusinasi Angka, Bias Investasi & Sektoral, Input Berbahaya, Risiko Rantai Pasok, dan Kegagalan Layanan Pihak Ketiga.
@@ -233,7 +232,7 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
 ### Q9. QA1: Skrip QA Halaman Tiga Bahasa
 - Waktu: 14:26 - 14:33 CST
 - Status: ✅
-- Commit: terlampir di push ini
+- Commit: `ad3195c`
 - Tes yang ditambah: 5 tes di `tests/test_qa_halaman.py` (semua lulus, total rangkaian 223 tes lulus).
 - Hasil pemeriksa manual:
   - Eksekusi `python3 scripts/qa_halaman.py` memindai 78 kombinasi halaman x bahasa secara luring:
@@ -252,3 +251,82 @@ Laporan kerja mandiri putaran 3 (Q1 sampai Q10) untuk proyek FEAF (Agentic AI In
   - `scripts/qa_halaman.py`
   - `tests/test_qa_halaman.py`
   - `docs/laporan-antigravity-3.md`
+
+### Q10. Laporan Akhir dan Verifikasi Rangkaian
+- Waktu: 14:33 - 14:40 CST
+- Status: ✅
+- Commit: terlampir di push ini
+- Tes baru: 0 tes baru (total akhir suite: 223 tes lulus dalam 5,6 detik, 100% luring).
+- Verifikasi akhir:
+  - Seluruh target Q1 sampai Q10 telah diselesaikan berurutan sesuai arahan prompt.
+  - Skrip QA halaman tiga bahasa memverifikasi 78 kombinasi halaman x bahasa (0 kegagalan).
+  - Skrip uji Tanya FEAF memverifikasi 52 kasus uji seimbang tiga bahasa (100% akurat, 0 angka karangan, 0 rekomendasi beli/jual, 0 injeksi lolos).
+  - Skrip pemanasan cache berfungsi penuh untuk memangkas latensi demo hingga < 0,1 detik.
+  - Laporan keamanan Pasal 14 aturan lomba AAIC 2026 terdokumentasi lengkap dengan 39 rujukan kode dan 11 rujukan tes valid.
+  - Kebersihan data dan privasi terpenuhi: 0 API key, 0 token, 0 data pribadi pejabat/direksi tersimpan di kode, berkas data, atau commit.
+- Berkas diubah:
+  - `docs/laporan-antigravity-3.md`
+
+---
+
+## Keputusan yang Saya Ambil Sendiri
+
+1. **Isolasi Thread Latar Valuasi pada Pemindaian QA (`scripts/qa_halaman.py`)**
+   Saat membuka tab `/saham/{kode}?tab=valuasi`, sistem memicu thread latar `pemicu_hitung_beta_latar`. Pada lingkungan pengujian luring dengan `TestClient`, thread latar ini dimock (`unittest.mock.patch`) agar tidak bersaing menggunakan mock jaringan atau memicu pemanggilan jaringan tak terduga.
+
+2. **Pola Angka Ketat pada Fallback Pencarian Saham (`app/indeks_nama.py`)**
+   Fallback pencarian saat berkas indeks lokal kosong diubah menggunakan pola angka ketat `^\d{4,6}$` (bukan alfanumerik `^[0-9A-Z]{4,6}$`). Tujuannya agar kueri singkatan alfabet (seperti "TSMC") tidak dipaksa dialihkan langsung ke URL `/saham/TSMC`, melainkan ditangani melalui halaman hasil pencarian atau pesan informasi.
+
+3. **Penyelarasan Alias Populer Statis (`app/indeks_nama.py`)**
+   Kata `"台積"` dihapus dari daftar alias persis untuk kode `2330`. Hal ini memungkinkan kueri `"台積"` diproses secara alami oleh pencocokan awalan (prefix match) yang mengembalikan nama resmi `台積電`, tanpa menyamarkannya sebagai kecocokan persis instan.
+
+4. **Pengisian Otomatis Tanpa Pengiriman Paksa pada Form Chat (`app/templates/chat.html`)**
+   Tautan "Tanya tentang {kode}" dari halaman saham hanya mengisi draf pertanyaan ke kotak input teks di halaman Tanya FEAF, tanpa langsung mengirimkannya secara otomatis. Pendekatan ini memberi kesempatan kepada pengguna untuk membaca, mengubah, atau melengkapi pertanyaan sebelum dieksekusi.
+
+5. **Pengayaan Kasus Uji Chat Seimbang dengan Variasi Prompt Injection (`eval/chat_uji.csv`)**
+   Kumpulan kasus uji diperluas menjadi 52 baris seimbang tiga bahasa, termasuk 6 variasi prompt injection (2 per bahasa: EN, ZH, ID) untuk memastikan guardrail penolakan teruji secara empiris dan terdokumentasi di laporan evaluasi.
+
+6. **Pengecualian Frase Penafian Resmi pada Audit Rekomendasi (`scripts/qa_halaman.py`)**
+   Pemeriksa kata rekomendasi investasi mengecualikan blok penafian resmi bersarang (`<div class="pita fixture">...</div>`) dan kalimat riset seperti "bukan sinyal jual" atau "not a sell signal", agar tidak terjadi false positive pada kata turunan atau kalimat sanggahan.
+
+---
+
+## Usulan untuk Claude
+
+1. **Filter Kategori pada Alat Pengumuman (`app/chat.py:140-180`)**
+   Tambahkan argumen `kategori: str | None = None` pada fungsi `alat_pengumuman`. Saat ini pertanyaan mengenai pengumuman spesifik (misalnya penjaminan utang pasal 22, perubahan modal pasal 11, atau pergantian auditor pasal 6) mengembalikan daftar pengumuman umum teratas tanpa memfilter jenis pasal.
+
+2. **Penolakan Injeksi Eksplisit di Gerbang Awal (`app/chat.py:70-85`)**
+   Tambahkan pola penolakan injeksi pada kamus `TOLAK["injeksi"]` untuk menangkap frase seperti `"ignore all previous instructions"`, `"abaikan instruksi"`, dan `"忽略所有先前的指示"`. Meskipun respons sistem saat ini aman dan tidak membocorkan rekomendasi investasi, sistem tetap memanggil alat pencarian data pasar alih-alih langsung menghentikan proses di guardrail awal.
+
+3. **Penambahan Parameter DCF pada Template Valuasi (`app/chat.py:420-460`)**
+   Perkaya kalimat respons template valuasi di `_ringkas_template` dengan menyertakan nilai WACC dan tingkat pertumbuhan terminal dari hasil kalkulator DCF agar jawaban untuk pertanyaan teknis valuasi lebih rinci.
+
+4. **Penyelarasan Status Internal Diagnostik (`app/main.py:614-630`)**
+   Pada rute `/sehat`, nilai status diagnostik internal memuat kata bahasa Indonesia seperti "Sumber" dan "tidak". Disarankan untuk menerjemahkan nilai status ini sesuai cookie bahasa atau menyajikannya murni sebagai struktur data teknis agar tidak memicu deteksi kebocoran bahasa pada audit tampilan.
+
+---
+
+## Yang Perlu Afinzaki Lakukan
+
+1. **Jalankan Pemanasan Cache di Server Dokploy Sebelum Demo**
+   Setelah proses deploy ke Dokploy selesai, jalankan perintah berikut di dalam terminal kontainer:
+   ```bash
+   python3 scripts/panaskan_cache.py --kode 2330 2317 2454
+   ```
+   Langkah ini menghitung dan menyimpan data beta historis serta valuasi emiten utama ke cache lokal, sehingga tab Valuation pada ketiga emiten demo dapat dibuka dalam waktu kurang dari 0,1 detik.
+
+2. **Kirim Panduan Gold Set ke Tim (Ferry & Patrice)**
+   Kirimkan dokumen `docs/panduan-gold-set.md` kepada Ferry dan Patrice untuk panduan anotasi 100 sampel pengumuman riil B1.
+
+3. **Kaji Draf Laporan Keamanan untuk Formulir Self-Assessment**
+   Gunakan dokumen `docs/laporan-keamanan.md` sebagai bahan pengisian formulir evaluasi mandiri keamanan AI sesuai ketentuan Pasal 14 Peraturan Lomba AAIC 2026.
+
+4. **Tinjau Bersama Claude Sebelum Deploy**
+   Mintakan Claude meninjau laporan ini dan usulan perubahan di `app/chat.py` sebelum melakukan rilis berikutnya ke Dokploy.
+
+---
+
+## Waktu Selesai
+- Jam selesai: Rabu 11 November 2026, 14:40 CST
+
