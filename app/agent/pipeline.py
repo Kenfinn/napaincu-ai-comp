@@ -195,7 +195,7 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
         j.catat(f"4a · Pemeriksa pra-hitung ({t['input']})",
                 "lolos" if v_awal["lolos"] else "tolak",
                 {"temuan": t}, {"cek": cek_awal, "vonis": v_awal}, t0=t0,
-                i18n=pesan("tahap.periksa_awal", input=t["input"]), state="VERIFIED · sumber")
+                i18n=pesan("tahap.periksa_awal", input=t["input"]), state="VERIFIED · source")
 
         if not v_awal["lolos"]:
             ditolak.append({"temuan": t, "sebab": v_awal["sebab"],
@@ -215,7 +215,7 @@ def jalankan(detail: dict, d_valuasi: dict | None) -> dict:
         j.catat(f"4b · Pemeriksa pasca-hitung ({t['input']})",
                 "lolos" if v_akhir["lolos"] else "tolak",
                 {"input": t["input"]}, {"cek": cek_akhir, "vonis": v_akhir}, t0=t0,
-                i18n=pesan("tahap.periksa_akhir", input=t["input"]), state="VERIFIED · hitungan")
+                i18n=pesan("tahap.periksa_akhir", input=t["input"]), state="VERIFIED · arithmetic")
 
         if v_akhir["lolos"]:
             diterima.append({"temuan": t, "hasil": hasil, "cek": cek_awal + cek_akhir})
@@ -280,7 +280,7 @@ def _jalur_sinyal(j: Jejak, detail: dict, saring: dict, d_valuasi: dict | None) 
     cek = sinyal.periksa_kutipan(s, dokumen)
     lolos = all(c["lolos"] for c in cek)
     j.catat("Pemeriksa kutipan sinyal", "lolos" if lolos else "tolak", {"kutipan": len(cek)}, {"cek": cek},
-            t0=t0, i18n=pesan("tahap.sinyal_cek"), state="VERIFIED · sumber")
+            t0=t0, i18n=pesan("tahap.sinyal_cek"), state="VERIFIED · source")
     tingkat_server = ambang_profil.tingkat(s, ambang_profil.PROFIL_SERVER)
     muatan = {"sinyal": s, "tingkat_server": tingkat_server}
     if not lolos:
