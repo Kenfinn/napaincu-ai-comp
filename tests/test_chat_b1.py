@@ -58,3 +58,19 @@ class TestChatB1(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPemeriksaPositifPalsu(unittest.TestCase):
+    """Temuan D5 di server: dua jawaban Gemini yang benar ditolak pemeriksa."""
+
+    def test_buy_back_bukan_rekomendasi(self):
+        from app import chat
+        self.assertEqual(chat.TERLARANG.findall("the board will buy back and cancel shares; buyback"), [])
+        self.assertTrue(chat.TERLARANG.findall("you should buy 2330"))
+        self.assertEqual(chat.TERLARANG.findall("perusahaan akan beli kembali saham"), [])
+
+    def test_tahun_minguo_ke_masehi(self):
+        from app import chat
+        alat = [{"judul": "補充本公司董事會民國108年11月12日核准資本預算案"}]
+        self.assertTrue(chat.periksa_jawaban("the budget approved in 2019", alat, "q")["lolos"])
+        self.assertFalse(chat.periksa_jawaban("the budget approved in 2021", alat, "q")["lolos"])
