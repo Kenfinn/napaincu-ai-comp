@@ -18,6 +18,7 @@ action plan di tiap item, dan patuhi batas berkasnya. Setelah tiap item: tes, co
 | QA-1 | Review feed: lencana jumlah, alasan teknis, arsip mendominasi, kotak cari, tombol, penafian | Selesai (`a565ac0`) |
 | QA-2 | Narasi AI tab ringkasan tidak muncul untuk profil konservatif dan agresif | Selesai (`cadb9e0`) |
 | QA-3 | Detail peringatan: kotak "Why it was held" sulit dibaca pemula (cek diulang, istilah teknis, lencana ganda) | Selesai (`da040df`) |
+| QA-4 | De-identifikasi: nama anggota tim di kode, README, dan dokumen yang diserahkan | Belum |
 
 ---
 
@@ -144,3 +145,28 @@ Commit: `UI: QA-3 alasan ditahan dalam bahasa polos`.
 
 **Cek setelah deploy.** Buka pengumuman 2330 di atas: kotak berisi satu kalimat yang bisa dipahami
 tanpa istilah teknis, satu lencana, detail teknis terlipat.
+
+## QA-4 · De-identifikasi materi yang diserahkan
+
+**Aturan.** FAQ final AAIC 2026 (A2): "all materials must be de-identified"; aturan umum melarang
+data pribadi yang belum di-deidentifikasi di dokumen maupun kode.
+
+**Temuan.** Nama depan anggota tim muncul di kode dan dokumen: "Afinzaki" (±23 berkas), "Ferry"
+(±17), "Patrice" (±20), termasuk `README.md`, `app/ringkasan.py`, `app/agent/screen.py`,
+`app/agent/sinyal.py`, `app/ambang_profil.py`, `app/teks/tata_kelola.py`, `design/README.md`.
+
+**Action plan** (hanya teks: komentar, docstring, dokumen; jangan ubah logika atau angka):
+1. Ganti nama dengan peran, konsisten di semua berkas yang **bukan** `docs/prompt-*`,
+   `docs/laporan-antigravity-*`, `docs/konteks-sesi.md`, `docs/rekap.md`, `docs/rencana-*`
+   (berkas kerja internal): "Afinzaki" → "team lead", "Ferry" / "Patrice" → "finance team member"
+   / "the finance team" (Bahasa Indonesia: "ketua tim", "anggota tim keuangan"). Prioritas:
+   `README.md`, `CHANGELOG.md`, `LICENSE`, semua `app/**`, `scripts/**`, `design/README.md`,
+   `docs/laporan-evaluasi.md`, `docs/hasil-gold-set.md`, `docs/pemetaan-pasal.md`,
+   `docs/pengungkapan-pihak-ketiga.md`, `docs/untuk-tim/*` (html; PDF/XLSX dibiarkan, catat di laporan).
+2. Teks yang tampil di aplikasi (`app/teks/*.py`, template) tidak boleh memuat nama anggota tim.
+3. `grep -rIn "Afinzaki\|Ferry\|Patrice" --exclude-dir=.git app scripts README.md CHANGELOG.md LICENSE design docs/laporan-evaluasi.md docs/hasil-gold-set.md docs/pemetaan-pasal.md docs/pengungkapan-pihak-ketiga.md`
+   harus kosong. Tambah tes `tests/test_deidentifikasi.py` yang menjalankan pemeriksaan yang sama
+   untuk `app/` dan `README.md`.
+4. Tes semua + QA halaman lulus.
+
+Commit: `Docs: QA-4 de-identifikasi nama anggota tim`.
