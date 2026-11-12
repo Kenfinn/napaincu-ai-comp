@@ -33,11 +33,11 @@ from app.main import app
 
 # Pola deteksi kunci terjemahan mentah
 POLA_KUNCI_MENTAH = re.compile(
-    r"\b((?:sn|tg|akhir|va|rk|ch|sh|wl|nav|merek|tombol|msg|sumber|status|pita)\.[a-z0-9_.]+)\b"
+    r"\b((?:ui|sn|tg|akhir|va|rk|ch|sh|wl|nav|merek|tombol|msg|sumber|status|pita)\.[a-z0-9_.]+)\b"
 )
 
 # Pola teks rusak / placeholder yang tidak boleh tampil
-KATA_RUSAK = ["GANTI", "TODO", "Traceback"]
+KATA_RUSAK = ["GANTI", "TODO", "Traceback", "⟦"]
 POLA_NONE_NAN = re.compile(r">\s*(None|nan|NaN)\s*<")
 
 # Kata rekomendasi investasi terlarang di luar penafian
@@ -152,6 +152,7 @@ def kumpulkan_halaman_uji() -> list[str]:
         "/ambang",
         "/tanya",
         "/sehat",
+        "/valuasi/2330",
     ]
 
     # Ambil 3 kode emiten watchlist (atau bawaan 2330, 2317, 2454)
@@ -198,6 +199,8 @@ def kumpulkan_halaman_uji() -> list[str]:
 
     for pid in peringatan_ids:
         rute.append(f"/peringatan/{pid}")
+    if peringatan_ids:
+        rute.append(f"/jejak/{peringatan_ids[0]}")
 
     return rute
 
