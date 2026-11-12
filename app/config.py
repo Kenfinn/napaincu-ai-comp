@@ -8,6 +8,7 @@ dan tidak pernah ikut tercetak di layar mana pun.
 from __future__ import annotations
 
 import os
+import secrets
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -73,3 +74,7 @@ SERTAKAN_CONTOH = os.environ.get("SENTINEL_SERTAKAN_CONTOH", "0") == "1"
 # --- proses semua emiten & jatah model ---------------------------------------
 PROSES_SEMUA = os.environ.get("SENTINEL_PROSES_SEMUA", "1") == "1"
 MODEL_MAKS_PER_JALAN = int(os.environ.get("SENTINEL_MODEL_MAKS_PER_JALAN", "40"))
+
+# --- tanda tangan riwayat percakapan chat (C1) -------------------------------
+CHAT_RAHASIA = os.environ.get("SENTINEL_CHAT_RAHASIA") or secrets.token_hex(32)
+

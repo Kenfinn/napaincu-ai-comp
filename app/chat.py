@@ -22,6 +22,8 @@ rest of the app.
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import os
 import re
@@ -44,7 +46,7 @@ router = APIRouter()
 MAX_STEPS = 5
 MAX_PER_HOUR = int(os.environ.get("SENTINEL_CHAT_MAKS_PER_JAM", "60"))
 TRACE_DIR_NAME = "traces_chat"
-PROMPT_VERSION = "chat-2026-11-11.2"
+PROMPT_VERSION = "chat-2026-11-12.1"
 
 SYSTEM = """You are the research assistant of FEAF, a monitoring tool for companies listed in
 Taiwan (TWSE and TPEx). You answer questions about listed companies using ONLY the tools
@@ -561,27 +563,98 @@ def _sumber(hasil_alat: list[dict]) -> list[str]:
     return keluar
 
 
+def _tautan(hasil_alat: list[dict]) -> list[str]:
+    keluar = []
+    for h in hasil_alat:
+        r = h.get("hasil") or {}
+        for k in ("sumber", "tautan_jejak"):
+            v = r.get(k)
+            if isinstance(v, str) and v.startswith("/"):
+                jalur = v.split()[0]
+                if jalur not in keluar:
+                    keluar.append(jalur)
+        for p in r.get("pengumuman") or []:
+            if isinstance(p, dict):
+                tj = p.get("tautan_jejak")
+                if isinstance(tj, str) and tj.startswith("/") and tj not in keluar:
+                    keluar.append(tj)
+    return keluar[:4]
+
+
+def tanda(pengenal: str, jawaban: str) -> str:
+    """32-hex HMAC-SHA256 signature over (id, jawaban) using CHAT_RAHASIA."""
+    kunci = str(config.CHAT_RAHASIA).encode("utf-8")
+    pesan = f"{pengenal}\n{jawaban}".encode("utf-8")
+    return hmac.new(kunci, pesan, hashlib.sha256).hexdigest()[:32]
+
+
+def _bersihkan_riwayat(riwayat) -> tuple[list[dict], int]:
+    """Validate untrusted browser history. Keep at most last 6 valid turns."""
+    if not isinstance(riwayat, list):
+        return [], 0
+    sah: list[dict] = []
+    dibuang = 0
+    for item in riwayat[-50:]:
+        if not isinstance(item, dict):
+            dibuang += 1
+            continue
+        peran = item.get("peran")
+        teks_asli = str(item.get("teks") or "")
+        teks = teks_asli.strip()[:1500]
+        if not teks:
+            dibuang += 1
+            continue
+        if peran == "asisten":
+            id_g = str(item.get("id") or "")
+            tanda_g = str(item.get("tanda") or "")
+            cocok = bool(id_g and tanda_g and (
+                hmac.compare_digest(tanda(id_g, teks_asli), tanda_g)
+                or hmac.compare_digest(tanda(id_g, teks), tanda_g)
+            ))
+            if not cocok:
+                dibuang += 1
+                continue
+            sah.append({"peran": "asisten", "teks": teks, "id": id_g, "tanda": tanda_g})
+        elif peran == "user":
+            if any(pola.search(teks) for pola in TOLAK.values()):
+                dibuang += 1
+                continue
+            sah.append({"peran": "user", "teks": teks})
+        else:
+            dibuang += 1
+    return sah[-6:], dibuang
+
+
 # --------------------------------------------------------------------------- main entry
-def tanya(pertanyaan: str, bahasa: str = "en") -> dict:
+def tanya(
+    pertanyaan: str,
+    bahasa: str = "en",
+    riwayat: list[dict] | None = None,
+    konteks: dict | None = None,
+    jenis: str | None = None,
+) -> dict:
     """Answer one question. Always returns a result with a trace; never raises."""
     bahasa = i18n.normal(bahasa)
     pertanyaan = (pertanyaan or "").strip()[:500]
+    konteks = konteks if isinstance(konteks, dict) else {}
     pengenal = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + secrets.token_hex(3)
     mulai = time.monotonic()
     langkah: list[dict] = [{"tahap": "pertanyaan", "teks": pertanyaan, "bahasa": bahasa, "waktu": _sekarang()}]
     hasil = {"id": pengenal, "pertanyaan": pertanyaan, "bahasa": bahasa, "jalur": None,
-             "jawaban": "", "sumber": [], "periksa": None, "ditolak": None, "langkah": langkah,
-             "versi_prompt": PROMPT_VERSION}
+             "jawaban": "", "sumber": [], "tautan": [], "tanda": None, "periksa": None,
+             "ditolak": None, "langkah": langkah, "versi_prompt": PROMPT_VERSION}
 
-    for jenis, pola in TOLAK.items():
+    for j_tolak, pola in TOLAK.items():
         if pola.search(pertanyaan):
-            hasil.update(jalur="tolak", ditolak=jenis, jawaban=i18n.t(f"ch.tolak.{jenis}", bahasa))
-            langkah.append({"tahap": "penjaga", "tolak": jenis})
+            hasil.update(jalur="tolak", ditolak=j_tolak, jawaban=i18n.t(f"ch.tolak.{j_tolak}", bahasa))
+            langkah.append({"tahap": "penjaga", "tolak": j_tolak})
             return _simpan(hasil, mulai)
-    if len(pertanyaan) < 2:
+    if len(pertanyaan) < 2 and (jenis or konteks.get("jenis")) != "recap":
         hasil.update(jalur="tolak", ditolak="kosong", jawaban=i18n.t("ch.tolak.kosong", bahasa))
         return _simpan(hasil, mulai)
     langkah.append({"tahap": "penjaga", "tolak": None})
+    riwayat_sah, jml_dibuang = _bersihkan_riwayat(riwayat)
+    langkah.append({"tahap": "riwayat", "dipakai": len(riwayat_sah), "dibuang": jml_dibuang})
 
     hasil_alat: list[dict] = []
     if llm.tersedia() and _boleh_model():
@@ -592,7 +665,8 @@ def tanya(pertanyaan: str, bahasa: str = "en") -> dict:
                 langkah.append({"tahap": "pemeriksa", **cek})
                 hasil["periksa"] = cek
                 if cek["lolos"]:
-                    hasil.update(jalur="model", jawaban=teks, sumber=_sumber(hasil_alat))
+                    hasil.update(jalur="model", jawaban=teks, sumber=_sumber(hasil_alat),
+                                 tautan=_tautan(hasil_alat))
                     return _simpan(hasil, mulai)
                 hasil["jawaban_model_ditolak"] = teks
         except llm.GagalModel as e:
@@ -614,7 +688,8 @@ def tanya(pertanyaan: str, bahasa: str = "en") -> dict:
     langkah.append({"tahap": "pemeriksa_template", **cek})
     ditolak_model = hasil.get("periksa") is not None
     hasil.update(jalur="template_setelah_tolak" if ditolak_model else "template",
-                 jawaban=jawaban, sumber=_sumber(hasil_alat), periksa_template=cek)
+                 jawaban=jawaban, sumber=_sumber(hasil_alat), tautan=_tautan(hasil_alat),
+                 periksa_template=cek)
     if not ditolak_model:
         hasil["periksa"] = cek
     return _simpan(hasil, mulai)
@@ -637,6 +712,8 @@ def _dir() -> str:
 
 
 def _simpan(hasil: dict, mulai: float) -> dict:
+    if hasil.get("jalur") != "tolak" and hasil.get("jawaban"):
+        hasil["tanda"] = tanda(hasil["id"], hasil["jawaban"])
     hasil["durasi_ms"] = int((time.monotonic() - mulai) * 1000)
     hasil["token_masuk"] = sum((l.get("meta") or {}).get("token_masuk", 0) for l in hasil["langkah"])
     hasil["token_keluar"] = sum((l.get("meta") or {}).get("token_keluar", 0) for l in hasil["langkah"])
@@ -681,9 +758,16 @@ async def api_tanya(request: Request):
         badan = json.loads((await request.body()).decode("utf-8") or "{}")
     except (UnicodeDecodeError, ValueError):
         raise HTTPException(400, "Body must be JSON: {\"pertanyaan\": ..., \"bahasa\": \"en|zh|id\"}")
-    h = tanya(str(badan.get("pertanyaan", "")), str(badan.get("bahasa", "en")))
-    return JSONResponse({k: h[k] for k in ("id", "jalur", "jawaban", "sumber", "periksa", "ditolak",
-                                            "durasi_ms", "panggilan_model", "panggilan_alat")})
+    if not isinstance(badan, dict):
+        raise HTTPException(400, "Body must be a JSON object")
+    riwayat = badan.get("riwayat") if isinstance(badan.get("riwayat"), list) else None
+    konteks = badan.get("konteks") if isinstance(badan.get("konteks"), dict) else None
+    jenis = str(badan.get("jenis") or "") or None
+    h = tanya(str(badan.get("pertanyaan", "")), str(badan.get("bahasa", "en")),
+              riwayat=riwayat, konteks=konteks, jenis=jenis)
+    return JSONResponse({k: h[k] for k in ("id", "jalur", "jawaban", "sumber", "tautan", "tanda",
+                                            "periksa", "ditolak", "durasi_ms", "panggilan_model",
+                                            "panggilan_alat")})
 
 
 @router.get("/api/tanya/jejak/{pengenal}", summary="Trace of one Ask FEAF answer")
