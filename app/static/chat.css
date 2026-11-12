@@ -1,0 +1,361 @@
+/* Ask FEAF floating chat panel & multi-turn conversation styles (C4).
+   All classes use the cp- prefix to avoid collisions with app.css. */
+
+.cp-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--navy, #003767);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.22);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.cp-fab:hover {
+  background: var(--navy-2, #1b4f82);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.cp-fab:focus-visible {
+  outline: 2px solid var(--navy, #003767);
+  outline-offset: 3px;
+}
+
+.cp-fab svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cp-latar {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.28);
+  z-index: 1000;
+}
+
+.cp-latar[hidden] {
+  display: none !important;
+}
+
+.cp-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  max-width: 100vw;
+  background: var(--surface, #ffffff);
+  border-left: 1px solid var(--border, #e2e8f0);
+  box-shadow: -8px 0 28px rgba(15, 23, 42, 0.14);
+  display: flex;
+  flex-direction: column;
+  z-index: 1001;
+  font-family: var(--font-sans, system-ui, sans-serif);
+  color: var(--text-1, #0f172a);
+}
+
+.cp-panel[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 639px) {
+  .cp-panel {
+    width: 100vw;
+    left: 0;
+    border-left: none;
+  }
+}
+
+.cp-kepala {
+  padding: 12px 14px;
+  background: var(--navy, #003767);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cp-judul-blok {
+  min-width: 0;
+}
+
+.cp-judul {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+  color: #ffffff;
+}
+
+.cp-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cp-aksi-kepala {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.cp-btn-kecil {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.cp-btn-kecil:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.cp-btn-tutup {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.cp-btn-tutup:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.cp-konteks {
+  padding: 6px 14px;
+  background: var(--surface-2, #f1f4f9);
+  border-bottom: 1px solid var(--border, #e2e8f0);
+  font-size: 11.5px;
+  color: var(--text-2, #475569);
+  font-family: var(--font-mono, monospace);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cp-daftar {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--ground, #f7f8fa);
+}
+
+.cp-kosong {
+  font-size: 12.5px;
+  color: var(--text-2, #475569);
+  line-height: 1.5;
+  padding: 10px 12px;
+  background: var(--surface, #ffffff);
+  border: 1px dashed var(--border-strong, #cbd5e1);
+  border-radius: 8px;
+}
+
+.cp-pesan {
+  max-width: 92%;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.cp-pesan-user {
+  align-self: flex-end;
+  background: var(--navy, #003767);
+  color: #ffffff;
+  border-bottom-right-radius: 3px;
+}
+
+.cp-pesan-asisten {
+  align-self: flex-start;
+  background: var(--surface, #ffffff);
+  color: var(--text-1, #0f172a);
+  border: 1px solid var(--border, #e2e8f0);
+  border-bottom-left-radius: 3px;
+}
+
+.cp-pesan-teks {
+  white-space: pre-line;
+}
+
+.cp-catatan-tolak {
+  margin-top: 6px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  background: var(--hold-bg, #fef3c7);
+  color: var(--hold-fg, #92400e);
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+
+.cp-tautan-baris {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.cp-pil-tautan {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: var(--navy-tint, #eaf1f8);
+  color: var(--navy, #003767);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid rgba(0, 55, 103, 0.18);
+}
+
+.cp-pil-tautan:hover {
+  background: #dce8f5;
+  text-decoration: none;
+}
+
+.cp-meta-baris {
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid var(--border, #e2e8f0);
+  font-size: 11px;
+  color: var(--text-3, #64748b);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.cp-meta-baris a {
+  color: var(--navy, #003767);
+  text-decoration: underline;
+}
+
+.cp-saran {
+  padding: 8px 14px;
+  background: var(--surface, #ffffff);
+  border-top: 1px solid var(--border, #e2e8f0);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cp-chip {
+  background: var(--surface-2, #f1f4f9);
+  color: var(--text-1, #0f172a);
+  border: 1px solid var(--border-strong, #cbd5e1);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.3;
+}
+
+.cp-chip:hover {
+  background: var(--navy-tint, #eaf1f8);
+  border-color: var(--navy, #003767);
+  color: var(--navy, #003767);
+}
+
+.cp-form {
+  padding: 10px 14px 8px;
+  background: var(--surface, #ffffff);
+  border-top: 1px solid var(--border, #e2e8f0);
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.cp-input {
+  flex: 1 1 auto;
+  resize: none;
+  border: 1px solid var(--border-strong, #cbd5e1);
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.4;
+  min-height: 36px;
+  max-height: 96px;
+  color: var(--text-1, #0f172a);
+  background: var(--surface, #ffffff);
+}
+
+.cp-input:focus {
+  outline: 2px solid var(--navy, #003767);
+  border-color: transparent;
+}
+
+.cp-kirim {
+  background: var(--navy, #003767);
+  color: #ffffff;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 13px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cp-kirim:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.cp-disclaimer {
+  padding: 4px 14px 8px;
+  background: var(--surface, #ffffff);
+  font-size: 10.5px;
+  line-height: 1.35;
+  color: var(--text-3, #64748b);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cp-halaman-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}

@@ -307,5 +307,41 @@ class TestChatPercakapanC3(unittest.TestCase):
         self.assertEqual(res["jenis"], "pejabat")
 
 
+class TestChatPercakapanC4(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self._data_asli = config.DATA_DIR
+        config.DATA_DIR = self._tmp.name
+        os.environ["SENTINEL_SERTAKAN_CONTOH"] = "1"
+        with main._kunci_cache:
+            main._cache = None
+        self.klien = TestClient(main.app)
+
+    def tearDown(self):
+        config.DATA_DIR = self._data_asli
+        self._tmp.cleanup()
+
+    def test_panel_hadir_di_semua_halaman_kecuali_tanya(self):
+        id_contoh = main.hasil()[0]["id"]
+        for jalur, hal, kode, id_p in [
+            ("/", "feed", "", ""),
+            ("/saham/2330", "saham", "2330", ""),
+            (f"/peringatan/{id_contoh}", "peringatan", "2330", id_contoh),
+            ("/review", "review", "", ""),
+        ]:
+            r = self.klien.get(jalur)
+            self.assertEqual(r.status_code, 200)
+            self.assertIn('id="cp-akar"', r.text)
+            self.assertIn(f'data-halaman="{hal}"', r.text)
+            self.assertIn(f'data-kode="{kode}"', r.text)
+            self.assertIn(f'data-id="{id_p}"', r.text)
+
+        # Di halaman /tanya, panel mengambang (#cp-akar) tidak ditampilkan
+        r_tanya = self.klien.get("/tanya")
+        self.assertEqual(r_tanya.status_code, 200)
+        self.assertNotIn('id="cp-akar"', r_tanya.text)
+        self.assertIn('id="cp-halaman-akar"', r_tanya.text)
+
+
 if __name__ == "__main__":
     unittest.main()

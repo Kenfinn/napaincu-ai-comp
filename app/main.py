@@ -287,6 +287,13 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
     wl_set = set(tarik.baca_watchlist())
     profil = request.query_params.get("risiko") or request.cookies.get("risiko")
     profil = ambang_profil.normal(profil)
+    pp = getattr(request, "path_params", None) or {}
+    h_obj = tambahan.get("h") if isinstance(tambahan.get("h"), dict) else {}
+    kode_chat = pp.get("kode") or tambahan.get("kode_saham") or tambahan.get("kode") or (h_obj.get("emiten") or {}).get("kode")
+    id_chat = pp.get("pengenal") or pp.get("id") or h_obj.get("id")
+    hal_chat = "peringatan" if request.url.path.startswith("/peringatan/") else (
+        "jejak" if request.url.path.startswith("/jejak/") else halaman
+    )
     dasar = {
         "profil_risiko": profil,
         "daftar_profil": ambang_profil.PROFIL,
@@ -310,6 +317,7 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
         "jml_terbit": sum(1 for h in hasil() if h["status"] == "terbit"),
         "jml_review": sum(1 for h in hasil() if h["status"] == "ditahan" and (h.get("contoh") or (h.get("emiten") or {}).get("kode") in wl_set)),
         "kode": None,
+        "konteks_chat": {"halaman": hal_chat, "kode": kode_chat, "id": id_chat},
     }
     dasar.update(tambahan)
     return dasar

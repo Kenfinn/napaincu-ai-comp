@@ -52,4 +52,33 @@
     <span class="v">{{ t('ch.ringkas', alat=jw.panggilan_alat, model=jw.panggilan_model, ms=jw.durasi_ms) }}</span></div>
 </div>
 {% endif %}
+
+<div class="kartu" id="cp-halaman-akar" style="margin-top:16px;"
+     data-halaman="tanya"
+     data-kode="{{ kode_awal or '' }}"
+     data-id=""
+     data-bahasa="{{ bahasa or 'en' }}"
+     data-teks-kosong="{{ t('cp.kosong') }}"
+     data-teks-memuat="{{ t('cp.memuat') }}"
+     data-teks-galat-jaringan="{{ t('cp.galat_jaringan') }}"
+     data-teks-galat-akses="{{ t('cp.galat_akses') }}"
+     data-teks-sumber="{{ t('cp.sumber') }}"
+     data-teks-buka-halaman="{{ t('cp.buka_halaman', jalur='{jalur}') }}"
+     data-teks-jejak="{{ t('cp.jejak') }}"
+     data-teks-catatan-tolak="{{ t('cp.catatan_tolak') }}">
+  <div class="cp-halaman-bar">
+    <strong>{{ t('cp.judul') }}</strong>
+    <div>
+      <button type="button" class="tombol abu cp-aksi-recap" data-q="{{ t('cp.recap') }}">{{ t('cp.recap') }}</button>
+      <button type="button" class="tombol abu cp-aksi-baru">{{ t('cp.baru') }}</button>
+    </div>
+  </div>
+  <div class="cp-daftar" style="max-height:360px; border:1px solid var(--border, #e2e8f0); border-radius:8px;" aria-live="polite"></div>
+  <form class="cp-form" action="/tanya" method="post" style="padding:10px 0 0; border-top:none;">
+    <textarea class="cp-input" name="pertanyaan" rows="1" maxlength="500" required
+              placeholder="{{ t('cp.placeholder') }}"></textarea>
+    <button type="submit" class="cp-kirim">{{ t('cp.kirim') }}</button>
+  </form>
+</div>
+
 {% endblock %}
