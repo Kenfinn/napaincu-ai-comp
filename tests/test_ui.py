@@ -107,6 +107,51 @@ class TestUI(unittest.TestCase):
         r_jejak = self.client.get(f"/jejak/{self.id_terbit}", cookies={"bahasa": "id"})
         self.assertIn("garis-waktu", r_jejak.text)
 
+    def test_alasan_ditahan_bahasa_polos(self) -> None:
+        """QA-3: kasus besaran gagal tidak memuat 'OUTSIDE the 0.20' di luar <details> dan memuat kalimat polos 3 bahasa."""
+        import copy
+        from app import main, store
+        from app.agent import pipeline
+
+        daftar_asli = list(hasil())
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "fixtures", "details.json"), encoding="utf-8") as f:
+            import json
+            d_asli = next(r for r in json.load(f) if r["_fixture"] == "kasus-1-capex-bersih")
+        d_kecil = copy.deepcopy(d_asli)
+        d_kecil["seq_no"] = "99"
+        d_kecil["time"] = "18:05:00"
+        d_kecil["items"][2]["value"] = "新台幣 60,400,000 仟元"
+        h_kecil = pipeline.jalankan(d_kecil, store.muat_valuasi("2330"))
+        self.assertEqual(h_kecil["status"], "ditahan")
+
+        import html
+        with unittest.mock.patch.object(main, "hasil", return_value=daftar_asli + [h_kecil]):
+            for bhs, frasa in (
+                ("en", "One announcement rarely moves a company's yearly figure"),
+                ("zh", "單一公告極少直接代表整年度規模"),
+                ("id", "Satu pengumuman jarang langsung menggantikan angka tahunan perusahaan"),
+            ):
+                r = self.client.get(f"/peringatan/{h_kecil['id']}", cookies={"bahasa": bhs})
+                self.assertEqual(r.status_code, 200)
+                teks = html.unescape(r.text)
+                self.assertNotIn("⟦", teks)
+                self.assertIn(frasa, teks)
+                tanpa_details = re.sub(r"<details\b.*?</details>", "", teks, flags=re.DOTALL)
+                self.assertNotIn("OUTSIDE the 0.20", tanpa_details)
+                self.assertNotIn("DI LUAR pita", tanpa_details)
+                self.assertNotIn("超出 0.2", tanpa_details)
+
+            for bhs, frasa_mu in (
+                ("en", "The amount is in USD. FEAF does not convert currencies"),
+                ("zh", "金額以 USD 計價。FEAF 不自動換算匯率"),
+                ("id", "Jumlah ini tercatat dalam mata uang USD. FEAF tidak mengonversi mata uang"),
+            ):
+                r_mu = self.client.get("/peringatan/2330-2026-09-19-4", cookies={"bahasa": bhs})
+                self.assertEqual(r_mu.status_code, 200)
+                teks_mu = html.unescape(r_mu.text)
+                self.assertNotIn("⟦", teks_mu)
+                self.assertIn(frasa_mu, teks_mu)
+
 
 if __name__ == "__main__":
     unittest.main()

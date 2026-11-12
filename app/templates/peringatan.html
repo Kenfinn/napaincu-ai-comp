@@ -21,14 +21,101 @@
 
 {% include "_penafian.html" %}
 
+{% set ns = namespace(
+  ditolak_list=(h.muatan.ditolak if h.muatan and h.muatan.ditolak else []),
+  urutan_kode=[],
+  grup={},
+  total_cek=0
+) %}
+{% for d in ns.ditolak_list %}
+  {% set inp = (d.temuan.input if d.temuan and d.temuan.input else 'capex') %}
+  {% for s in (d.sebab_i18n or []) %}
+    {% set ns.total_cek = ns.total_cek + 1 %}
+    {% set kode = (s.nama.kode if s.nama is mapping and s.nama.kode else '') %}
+    {% set prm = (s.alasan.param if s.alasan is mapping and s.alasan.param is mapping else {}) %}
+    {% if kode %}
+      {% if kode not in ns.grup %}
+        {% set ns.urutan_kode = ns.urutan_kode + [kode] %}
+        {% set _ = ns.grup.update({kode: {'nama': s.nama, 'alasan': s.alasan, 'input': inp, 'items': []}}) %}
+      {% endif %}
+      {% set _ = ns.grup[kode]['items'].append({'temuan': d.temuan, 'param': prm, 's': s}) %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
 <div class="kotak-artinya {{ h.status }}">
-  <div class="judul-kecil">{{ t('ui.al.artinya_judul') }}</div>
-  <p>{{ tr(h.alasan_i18n, h.alasan) if h.alasan_i18n else h.alasan }}</p>
+  {% if h.status == 'ditahan' %}
+    {% set jenis_tahan = (h.muatan.tahan.jenis if h.muatan and h.muatan.tahan and h.muatan.tahan.jenis else '') %}
+    <div class="judul-kecil">{{ t('rv.sebab') }}{% if jenis_tahan %} · {{ t('rv.jenis.' ~ jenis_tahan) }}{% endif %}</div>
+    {% if ns.urutan_kode %}
+      {% set ada_primer = ('cek.mu' in ns.urutan_kode or 'cek.satuan' in ns.urutan_kode) %}
+      {% for kode in ns.urutan_kode %}
+        {% set g = ns.grup[kode] %}
+        {% set inp_label = t('ui.input.' ~ g.input) %}
+        {% if inp_label.startswith('⟦') %}{% set inp_label = g.input %}{% endif %}
+        {% if kode == 'cek.besaran' %}
+          {% set v_list = [] %}
+          {% set r_list = [] %}
+          {% set l_list = [] %}
+          {% for it in g['items'] %}
+            {% if it.param.nilai is number %}
+              {% set _ = v_list.append(it.param.nilai) %}
+            {% endif %}
+            {% if it.param.rasio is number %}
+              {% set _ = r_list.append(it.param.rasio) %}
+            {% endif %}
+            {% if it.param.lama is number %}
+              {% set _ = l_list.append(it.param.lama) %}
+            {% endif %}
+          {% endfor %}
+          {% if v_list and l_list %}
+            {% set v_min = (v_list | min) %}
+            {% set v_max = (v_list | max) %}
+            {% set r_min = (r_list | min) if r_list else (v_min / l_list[0]) %}
+            {% set r_max = (r_list | max) if r_list else (v_max / l_list[0]) %}
+            {% set lama_str = (l_list[0] | rb) %}
+            {% if r_max > 3.0 %}
+              <p class="kalimat-polos">{{ t('ui.polos.cek.besaran.besar', n=(v_list | length), maks=(v_max | rb), x=(r_max | rb(1)), input=inp_label, lama=lama_str) }}</p>
+            {% else %}
+              <p class="kalimat-polos">{{ t('ui.polos.cek.besaran.kecil', n=(v_list | length), min=(v_min | rb), maks=(v_max | rb), pmin=((r_min * 100) | rb(1)), pmaks=((r_max * 100) | rb(1)), input=inp_label, lama=lama_str) }}</p>
+            {% endif %}
+          {% elif not ada_primer %}
+            <p class="kalimat-polos">{{ t('ui.polos.cek.konversi') }}</p>
+          {% endif %}
+        {% elif kode == 'cek.konversi' %}
+          {% if not ada_primer %}
+            <p class="kalimat-polos">{{ t('ui.polos.cek.konversi') }}</p>
+          {% endif %}
+        {% elif kode == 'cek.mu' %}
+          {% set p0 = g['items'][0].param %}
+          <p class="kalimat-polos">{{ t('ui.polos.cek.mu', mu=(p0.mu or g['items'][0].temuan.mata_uang or '—')) }}</p>
+        {% elif kode == 'cek.satuan' %}
+          {% set p0 = g['items'][0].param %}
+          <p class="kalimat-polos">{{ t('ui.polos.cek.satuan', satuan=(p0.satuan or g['items'][0].temuan.satuan or '—')) }}</p>
+        {% elif kode == 'cek.kutipan' %}
+          <p class="kalimat-polos">{{ t('ui.polos.cek.kutipan') }}</p>
+        {% elif kode == 'cek.angka' %}
+          {% set p0 = g['items'][0].param %}
+          <p class="kalimat-polos">{{ t('ui.polos.cek.angka', angka=(p0.angka or g['items'][0].temuan.nilai_mentah or '—')) }}</p>
+        {% elif kode == 'cek.label' %}
+          {% set p0 = g['items'][0].param %}
+          <p class="kalimat-polos">{{ t('ui.polos.cek.label', label=(p0.label or g['items'][0].temuan.label or '—'), input=inp_label) }}</p>
+        {% else %}
+          <p class="kalimat-polos">{{ tr(g.nama) }}</p>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <p class="kalimat-polos">{{ tr(h.alasan_i18n, h.alasan) if h.alasan_i18n else h.alasan }}</p>
+    {% endif %}
+    <div class="tindakan-ditahan">
+      <a href="/review">{{ t('ui.polos.tindakan') }}</a>
+    </div>
+  {% else %}
+    <div class="judul-kecil">{{ t('ui.al.artinya_judul') }}</div>
+    <p>{{ tr(h.alasan_i18n, h.alasan) if h.alasan_i18n else h.alasan }}</p>
+  {% endif %}
 </div>
 
-{% if h.status == 'ditahan' %}
-<div class="pita bahaya"><div class="pita-teks">{{ t('al.ditahan', sebab=((tr(h.alasan_i18n) if h.alasan_i18n else h.alasan) | e)) | safe }}</div></div>
-{% endif %}
 {% if h.muatan and h.muatan.skenario %}
 <div class="pita fixture"><div class="pita-teks">{{ t('sn.skenario') }}</div></div>
 {% endif %}
@@ -106,7 +193,7 @@
     </div>
   {% endfor %}
 
-  {% for d in (h.muatan.ditolak if h.muatan and h.muatan.ditolak else []) %}
+  {% for d in ns.ditolak_list %}
     <div class="kutip" style="margin-bottom:10px;">{{ d.temuan.kutipan }}</div>
   {% endfor %}
 
@@ -153,17 +240,45 @@
   </details>
 {% endfor %}
 
-{% for d in (h.muatan.ditolak if h.muatan and h.muatan.ditolak else []) %}
-  {% set sebab_list = (d.sebab_i18n or d.sebab) %}
-  <details class="kartu lipat" open>
-    <summary>{{ t('al.ditolak_input', input=d.temuan.input) }} ({{ sebab_list | length }})</summary>
+{% if ns.ditolak_list %}
+  <details class="kartu lipat">
+    <summary>
+      {{ t('ui.polos.detail_teknis_cek', n=(ns.total_cek or (ns.ditolak_list | length))) }}
+      {% if h.state %} · <span class="mono kecil redup">{{ h.state | state }}</span>{% endif %}
+    </summary>
     <div style="margin-top:8px;">
-      {% for s in sebab_list %}
-      <div class="cek x"><span class="tanda">✕</span><span class="why">{{ tr(s) }}</span></div>
-      {% endfor %}
+      {% if ns.urutan_kode %}
+        {% for kode in ns.urutan_kode %}
+          {% set g = ns.grup[kode] %}
+          <div class="cek x">
+            <span class="tanda">✕</span>
+            <span class="nama">{{ tr(g.nama) }} <span class="mono kecil redup">({{ g.input }})</span></span>
+            <span class="why">
+              {{ tr(g.alasan) }}
+              {% if (g['items'] | length) > 1 %}
+                <div class="mono kecil redup" style="margin-top:4px;">
+                  {% for it in g['items'] %}
+                    {% if it.param.nilai is number and it.param.lama is number %}
+                      <span>#{{ loop.index }}: {{ it.param.nilai | rb }} vs {{ it.param.lama | rb }} ({{ it.param.rasio | rb(2) }}×)</span>{% if not loop.last %} · {% endif %}
+                    {% elif it.temuan.nilai_mentah %}
+                      <span>#{{ loop.index }}: {{ it.temuan.nilai_mentah }} {{ it.temuan.satuan or '' }}</span>{% if not loop.last %} · {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </span>
+          </div>
+        {% endfor %}
+      {% else %}
+        {% for d in ns.ditolak_list %}
+          {% for s in (d.sebab_i18n or d.sebab) %}
+            <div class="cek x"><span class="tanda">✕</span><span class="why">{{ tr(s) }}</span></div>
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
     </div>
   </details>
-{% endfor %}
+{% endif %}
 
 {% if h.triase %}
 {% set tri = h.triase %}
