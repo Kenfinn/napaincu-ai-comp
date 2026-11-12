@@ -17,6 +17,7 @@ action plan di tiap item, dan patuhi batas berkasnya. Setelah tiap item: tes, co
 |---|---|---|
 | QA-1 | Review feed: lencana jumlah, alasan teknis, arsip mendominasi, kotak cari, tombol, penafian | Belum |
 | QA-2 | Narasi AI tab ringkasan tidak muncul untuk profil konservatif dan agresif | Belum |
+| QA-3 | Detail peringatan: kotak "Why it was held" sulit dibaca pemula (cek diulang, istilah teknis, lencana ganda) | Belum |
 
 ---
 
@@ -93,3 +94,53 @@ Commit: `Fix: QA-2 pemutus model hanya di thread pipeline; narasi AI untuk semua
 **Cek setelah deploy.** `/saham/2330?tab=ringkasan` → Conservative lalu Aggressive: kotak narasi
 muncul (panggilan pertama ±5 detik). Ulangi di emiten lain. Bila tetap tidak muncul, baris
 penjelasan sebab sekarang tampil; kirim isinya ke Claude.
+
+## QA-3 · "Why it was held" sulit dibaca pemula
+
+**Gejala** (`/peringatan/2330-2026-11-10-220514`, 補充…資本預算案之實際執行情形). Kotak "WHY IT WAS
+HELD: A VERIFIER CHECK FAILED" berisi kalimat teknis yang sama empat kali ("Magnitude plausible —
+60,400 vs 1,272,410 NT$ million = 0.05× (OUTSIDE the 0.20–3× band). A single filing that moves an
+input this far is almost certainly a unit or item error; …"). Di kanan atas ada dua lencana untuk hal
+yang sama: "Held for review" dan "HELD".
+
+**Penyebab.** Template menampilkan `alasan` gabungan (satu kalimat per cek gagal per angka) apa
+adanya. Tidak ada pengelompokan per jenis cek dan tidak ada versi bahasa awam. Lencana kedua adalah
+`state` mesin (label teknis).
+
+**Action plan** (batas: hanya `app/templates/peringatan.html`, `app/static/app.css`,
+`app/teks/ui.py`; jangan ubah Python lain, jangan ubah logika pemeriksa):
+1. Kotak "Kenapa ditahan" menampilkan **satu kalimat polos per jenis cek yang gagal** (kelompokkan
+   menurut kode cek di `muatan.ditolak[].cek[]` yang `lolos == false`, pakai `nama_i18n.kode` /
+   `alasan_i18n.kode` dan `alasan_i18n.param`), bukan per angka. Kunci baru di `app/teks/ui.py`,
+   tiga bahasa, misalnya:
+   - `ui.polos.cek.besaran.kecil`: "This filing lists {n} amount(s) of {min}–{maks} NT$ million, only
+     {pmin}–{pmaks}% of the company's yearly {input} ({lama} NT$ million). One announcement rarely
+     moves a company's yearly figure that much, so the agent did not use these amounts and asks an
+     analyst to check them." (rasio < 0.2)
+   - `ui.polos.cek.besaran.besar`: versi untuk rasio > 3 ("…{x} times the company's yearly {input}…
+     likely a unit mistake…").
+   - `ui.polos.cek.mu`: "The amount is in {mu}. FEAF does not convert currencies, so an analyst
+     checks it."
+   - `ui.polos.cek.satuan`, `ui.polos.cek.kutipan`, `ui.polos.cek.angka`, `ui.polos.cek.label`,
+     `ui.polos.cek.konversi`: satu kalimat polos masing-masing.
+   - Fallback: bila kode cek tidak dikenal, tampilkan `tr(nama_i18n)` saja (tanpa alasan teknis).
+   Hitung `n`, `min`, `maks`, `pmin`, `pmaks` di template dari parameter cek (nilai baru, nilai lama,
+   rasio) yang sudah ada; format angka dengan filter `rb`. Nama input (`capex`, `cash`, `debt`)
+   lewat kunci yang sudah ada atau kunci baru `ui.input.<nama>`.
+2. Di bawah kalimat polos: satu baris tindakan, "Yang bisa Anda lakukan: buka dokumen asli dan
+   bandingkan angkanya, lalu setujui atau tolak di Review →" (tautan `/review`).
+3. Kalimat teknis asli tetap ada tetapi dilipat: `<details>` "Detail teknis pemeriksaan (4)",
+   satu baris per cek, tanpa pengulangan kalimat penjelasan yang sama (tampilkan penjelasan sekali,
+   lalu daftar angkanya).
+4. Lencana: tampilkan hanya lencana status ("Held for review"). Label `state` mesin ("HELD")
+   dipindah ke bagian detail teknis / jejak audit.
+5. Uji tiga bahasa dengan: kasus contoh besaran (pengumuman 2330 di atas atau fixture yang gagal
+   `cek.besaran`), mata uang asing (fixture `2330-2026-09-19-4`), dan pengumuman terbit. Tambahkan
+   ke `tests/test_ui.py`: halaman detail kasus besaran tidak memuat "OUTSIDE the 0.20" di luar
+   `<details>`, dan memuat kalimat polos di tiga bahasa.
+6. Foto layar sebelum/sesudah (tiga bahasa, 1440 dan 390) ke `docs/ui/`.
+
+Commit: `UI: QA-3 alasan ditahan dalam bahasa polos`.
+
+**Cek setelah deploy.** Buka pengumuman 2330 di atas: kotak berisi satu kalimat yang bisa dipahami
+tanpa istilah teknis, satu lencana, detail teknis terlipat.
