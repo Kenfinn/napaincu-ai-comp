@@ -6,9 +6,137 @@
   --naik: #C6362C;  --turun: #17795E;   /* merah naik, hijau turun — konvensi bursa Taiwan */
   --tolak: #8A2F27;
   --ground: #EEF0F2; --surface: #FFFFFF; --ink: #101418;
-  --abu: #6B7683;   --abu-2: #4A535E;   --garis: #D3D8DE;
+  --abu: #5F6B78;   --abu-2: #4A535E;   --garis: #D3D8DE;
   --biru-mark: #2F74C0; --oranye-mark: #B5730C;
 }
+
+/* =====================================================================
+   Sistem desain (UI v1.1)
+   Satu set token dan komponen untuk semua halaman. Komponen halaman di
+   bawah bagian ini memakai token ini; jangan menulis warna atau jarak
+   lepas di template.
+   ===================================================================== */
+:root {
+  /* jarak */
+  --j-1: 4px; --j-2: 8px; --j-3: 12px; --j-4: 16px; --j-5: 24px; --j-6: 32px;
+  /* radius */
+  --r-1: 4px; --r-2: 6px; --r-3: 10px; --r-bulat: 999px;
+  /* bayangan: tipis saja (DESIGN.md: tanpa bayangan tebal) */
+  --bayang-1: 0 1px 2px rgba(16, 20, 24, .06);
+  --bayang-2: 0 2px 10px rgba(16, 20, 24, .10);
+  /* ukuran huruf: isi minimal 14px */
+  --h-kecil: 12px; --h-label: 13px; --h-isi: 14px; --h-sedang: 16px;
+  --h-besar: 20px; --h-judul: 24px; --h-angka: 28px;
+  /* netral tambahan */
+  --netral-50: #F7F8FA; --netral-100: #EEF0F2; --netral-200: #E2E6EB;
+  /* warna status agent dan tingkat sinyal. Sengaja bukan merah/hijau supaya
+     tidak tertukar dengan arah harga (merah naik, hijau turun). */
+  --st-terbit: #16324F;      --st-terbit-latar: #E6ECF3;
+  --st-tahan: #7A4E09;       --st-tahan-latar: #FBF2E3;  --st-tahan-garis: #C9922E;
+  --st-arsip: #4F5965;       --st-arsip-latar: #ECEFF2;
+  --tk-info: #2D4A68;        --tk-info-latar: #E8EEF5;
+  --tk-perhatian: #7A4E09;   --tk-perhatian-latar: #FBF2E3;
+  --tk-serius: #5B2C83;      --tk-serius-latar: #F1EAF7;
+  --fokus: #2F74C0;
+}
+
+/* fokus keyboard selalu terlihat */
+:focus-visible { outline: 2px solid var(--fokus); outline-offset: 2px; border-radius: var(--r-1); }
+
+/* --- tombol: utama (bawaan), .sekunder, .bahaya --- */
+.tombol { display: inline-flex; align-items: center; justify-content: center; gap: var(--j-2);
+          min-height: 40px; padding: 0 var(--j-4); border: 0; border-radius: var(--r-2);
+          font: 600 var(--h-isi)/1.2 "Instrument Sans", sans-serif; cursor: pointer;
+          background: var(--navy); color: #fff; text-decoration: none; white-space: nowrap; }
+.tombol:hover { background: var(--navy-3); }
+.tombol.sekunder, .tombol.abu { background: var(--surface); color: var(--navy);
+                                box-shadow: inset 0 0 0 1px var(--garis); }
+.tombol.sekunder:hover, .tombol.abu:hover { background: var(--netral-50); box-shadow: inset 0 0 0 1px var(--navy); }
+.tombol.bahaya, .tombol.tipis { background: var(--surface); color: var(--tolak);
+                                box-shadow: inset 0 0 0 1px #E2B8B2; }
+.tombol.bahaya:hover, .tombol.tipis:hover { background: #FBF1EF; }
+.tombol.kecil, .tombol.tipis { min-height: 32px; padding: 0 var(--j-3); font-size: var(--h-label); }
+.tombol.aktif { background: var(--navy); color: #fff; box-shadow: none; }
+.baris-tombol { display: flex; flex-wrap: wrap; gap: var(--j-2); align-items: center; }
+
+/* --- lencana: status agent dan tingkat sinyal --- */
+.lencana { display: inline-flex; align-items: center; gap: var(--j-1); padding: 3px var(--j-2);
+           border-radius: var(--r-1); font: 600 var(--h-kecil)/1.3 "Instrument Sans", sans-serif;
+           white-space: nowrap; background: var(--netral-100); color: var(--abu-2); }
+.lencana.besar { font-size: var(--h-label); padding: 5px var(--j-3); }
+.l-terbit   { background: var(--st-terbit); color: #fff; }
+.l-ditahan  { background: var(--st-tahan-latar); color: var(--st-tahan); box-shadow: inset 0 0 0 1px var(--st-tahan-garis); }
+.l-dilewati { background: var(--st-arsip-latar); color: var(--st-arsip); box-shadow: inset 0 0 0 1px #B4BCC6; }
+.l-ditolak  { background: var(--tk-serius-latar); color: var(--tk-serius); box-shadow: inset 0 0 0 1px #B79AD0; }
+.lencana.tk-info { background: var(--tk-info-latar); color: var(--tk-info); }
+.lencana.tk-perhatian { background: var(--tk-perhatian-latar); color: var(--tk-perhatian); }
+.lencana.tk-serius { background: var(--tk-serius-latar); color: var(--tk-serius); }
+
+/* --- kartu --- */
+.kartu { background: var(--surface); border-radius: var(--r-3); padding: var(--j-4) var(--j-4);
+         margin-bottom: var(--j-3); box-shadow: var(--bayang-1); }
+.kartu.rapat { padding: var(--j-3) var(--j-4); }
+a.kartu { display: block; color: inherit; text-decoration: none; }
+a.kartu:hover { box-shadow: 0 0 0 1.5px var(--navy); }
+.kartu-judul { font-size: var(--h-sedang); font-weight: 700; margin: 0 0 var(--j-2); }
+.grid-kartu { display: grid; gap: var(--j-3); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+              margin-bottom: var(--j-3); }
+.grid-kartu .kartu { margin: 0; }
+.dua-kolom { display: grid; gap: var(--j-3); grid-template-columns: 1fr 1fr; align-items: start; }
+@media (max-width: 760px) { .dua-kolom { grid-template-columns: 1fr; } }
+
+/* --- chip filter --- */
+.chips { display: flex; flex-wrap: wrap; gap: var(--j-2); margin: 0 0 var(--j-3); }
+.chip { display: inline-flex; align-items: center; gap: var(--j-1); min-height: 36px; padding: 0 var(--j-3);
+        border-radius: var(--r-bulat); border: 1px solid var(--garis); background: var(--surface);
+        color: var(--abu-2); font: 500 var(--h-label) "Instrument Sans", sans-serif; cursor: pointer;
+        text-decoration: none; }
+.chip:hover { border-color: var(--navy); color: var(--navy); }
+.chip[aria-pressed="true"], .chip.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+.chip .jml { font-family: "IBM Plex Mono", monospace; font-size: var(--h-kecil); opacity: .8; }
+
+/* --- tooltip ⓘ: hover/fokus di desktop, ketuk di ponsel (ui.js menambah .buka) --- */
+.info { position: relative; display: inline-flex; align-items: center; justify-content: center;
+        width: 18px; height: 18px; margin: 0 2px; padding: 0; vertical-align: -3px; cursor: help;
+        border: 1px solid #9AA5B1; border-radius: 50%; background: var(--surface); color: var(--abu-2);
+        font: italic 600 11px/1 Georgia, "Times New Roman", serif; }
+.info::before { content: ""; position: absolute; inset: -11px; }  /* target sentuh 40×40 */
+.info::after { content: attr(data-info); position: absolute; left: 50%; bottom: calc(100% + 8px);
+               transform: translateX(-50%); width: max-content; max-width: 280px; padding: var(--j-2) var(--j-3);
+               border-radius: var(--r-2); background: var(--ink); color: #fff; box-shadow: var(--bayang-2);
+               font: 400 var(--h-label)/1.45 "Instrument Sans", sans-serif; text-align: left; white-space: normal;
+               visibility: hidden; opacity: 0; pointer-events: none; z-index: 50; }
+.info:hover::after, .info:focus-visible::after, .info.buka::after { visibility: visible; opacity: 1; }
+@media (max-width: 600px) { .info::after { max-width: 220px; } }
+
+/* --- keadaan kosong: penjelasan + langkah berikutnya --- */
+.kosong { padding: var(--j-6) var(--j-5); text-align: center; color: var(--abu-2); font-size: var(--h-isi);
+          line-height: 1.55; }
+.kosong b { display: block; color: var(--ink); font-size: var(--h-sedang); margin-bottom: var(--j-1); }
+.kosong .baris-tombol { justify-content: center; margin-top: var(--j-4); }
+
+/* --- tab --- */
+.tab { display: flex; gap: var(--j-1); overflow-x: auto; scrollbar-width: thin; border-bottom: 1px solid var(--garis);
+       margin-bottom: var(--j-4); -webkit-overflow-scrolling: touch; }
+.tab a { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--j-4);
+         color: var(--abu-2); font-size: var(--h-isi); text-decoration: none; white-space: nowrap;
+         border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.tab a:hover { color: var(--navy); }
+.tab a.on, .tab a[aria-current="page"] { color: var(--navy); font-weight: 700; border-bottom-color: var(--navy); }
+
+/* --- teks bantu --- */
+.lede { font-size: var(--h-sedang); line-height: 1.55; margin: 0 0 var(--j-2); }
+.redup { color: var(--abu-2); }
+.kecil { font-size: var(--h-kecil); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+           clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.lipat > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: var(--j-2);
+                   min-height: 40px; font-weight: 600; }
+.lipat > summary::-webkit-details-marker { display: none; }
+.lipat > summary::before { content: "▸"; color: var(--abu); transition: none; }
+.lipat[open] > summary::before { content: "▾"; }
+/* ===================================================================== */
+
 * { box-sizing: border-box; }
 body {
   margin: 0; display: flex; min-height: 100vh;
@@ -48,17 +176,7 @@ a { color: var(--navy); }
 .kepala h1 { margin: 0; font-size: 22px; letter-spacing: -0.015em; }
 .kicker { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.1em;
           color: var(--abu); text-transform: uppercase; margin-bottom: 5px; }
-.kartu { background: var(--surface); border-radius: 8px; padding: 16px 18px; margin-bottom: 12px; }
-.kartu.rapat { padding: 13px 16px; }
 h2 { font-size: 15px; margin: 22px 0 10px; }
-
-/* ---- lencana status ---- */
-.lencana { display: inline-flex; align-items: center; gap: 5px; font-family: "IBM Plex Mono", monospace;
-           font-size: 10px; letter-spacing: 0.07em; padding: 3px 8px; border-radius: 3px; text-transform: uppercase; }
-.l-terbit   { background: var(--navy); color: #fff; }
-.l-ditolak  { background: #F9EAE8; color: var(--tolak); box-shadow: inset 0 0 0 1px var(--tolak); }
-.l-ditahan  { background: #FBF2E3; color: #8A560A; box-shadow: inset 0 0 0 1px var(--amber); }
-.l-dilewati { background: #E3E6EA; color: #5C6773; box-shadow: inset 0 0 0 1px #A8B0BA; }
 
 /* ---- pita sumber data ---- */
 .pita { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 6px;
@@ -117,15 +235,10 @@ pre { background: #F4F6F8; border-radius: 5px; padding: 10px 12px; overflow-x: a
 .sitasi { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; }
 .kutip { border-left: 3px solid var(--amber); background: #FBF7EF; padding: 9px 12px;
          font-size: 12.5px; line-height: 1.55; border-radius: 0 5px 5px 0; }
-.kosong { padding: 34px; text-align: center; color: var(--abu); font-size: 13px; }
 
 /* --- penarikan dinamis & watchlist --- */
 .titik.merah { background: #E0695C; }
 .nav .hit.abu { background: #2A4D72; }
-.tombol { font: 600 12.5px "Instrument Sans", sans-serif; background: var(--navy); color: #fff; border: 0;
-          border-radius: 5px; padding: 8px 13px; cursor: pointer; }
-.tombol:hover { background: var(--navy-3); }
-.tombol.tipis { background: transparent; color: var(--tolak); box-shadow: inset 0 0 0 1px #E2B8B2; padding: 5px 10px; font-size: 11.5px; }
 .isian { font: 500 14px "IBM Plex Mono", monospace; padding: 8px 10px; border: 1px solid var(--garis);
          border-radius: 5px; width: 140px; }
 table.wl { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -213,14 +326,8 @@ table.fin td.kosong-sel { color: var(--abu); }
 /* --- triase keyakinan + 👍/👎 (A2) --- */
 .triase-atas { display: flex; gap: 34px; align-items: flex-end; padding-bottom: 10px; border-bottom: 1px solid var(--garis); margin-bottom: 4px; }
 .angka-besar { font-size: 22px; }
-.tombol.abu { background: #EEF0F4; color: var(--navy); }
-.tombol.abu:hover { background: #E1E5EC; }
 .cek .nama.mono { width: 46px; }
 
-/* --- B1: tingkat sinyal per profil --- */
-.lencana.tk-info { background: #EEF0F4; color: var(--abu-2); }
-.lencana.tk-perhatian { background: #FBF2E3; color: #5F4409; }
-.lencana.tk-serius { background: #F9EAE8; color: var(--tolak); }
 
 /* daftar sumber input valuasi: kolom nama cukup lebar, URL panjang dibungkus */
 .cek.sumber .nama.mono { width: 200px; font-size: 11.5px; overflow-wrap: anywhere; }
