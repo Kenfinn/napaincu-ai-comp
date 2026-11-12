@@ -12,7 +12,7 @@
   <button type="button" class="tombol-menu" data-buka-menu aria-label="{{ t('ui.nav.buka_menu') }}">☰</button>
   <a href="/" class="merek-ponsel"><b>FEAF</b></a>
   <form class="cari cari-ponsel bungkus-saran" method="get" action="/saham">
-    <input name="kode" placeholder="{{ t('sh.cari_placeholder') }}" maxlength="40" autocomplete="off" aria-label="{{ t('sh.cari_placeholder') }}" data-cari-saran="saham">
+    <input name="kode" placeholder="{{ t('ui.nav.cari_pendek') }}" maxlength="40" autocomplete="off" aria-label="{{ t('ui.nav.cari_pendek') }}" data-cari-saran="saham">
   </form>
 </header>
 <div class="latar-laci" data-tutup-menu></div>
@@ -25,12 +25,13 @@
     <button type="button" class="tutup-laci" data-tutup-menu aria-label="{{ t('ui.nav.tutup_menu') }}">✕</button>
   </div>
   <form class="cari bungkus-saran" method="get" action="/saham">
-    <input name="kode" placeholder="{{ t('sh.cari_placeholder') }}" maxlength="40" autocomplete="off" aria-label="{{ t('sh.cari_placeholder') }}" data-cari-saran="saham">
+    <input name="kode" placeholder="{{ t('ui.nav.cari_pendek') }}" maxlength="40" autocomplete="off" aria-label="{{ t('ui.nav.cari_pendek') }}" data-cari-saran="saham">
   </form>
+  {% set jml_alert_ditahan = (daftar | selectattr('status', 'equalto', 'ditahan') | list | length) if (halaman == 'feed' and daftar is defined) else jml_review %}
   <div class="nav">
     <span class="nav-grup">{{ t('ui.nav.pantau') }}</span>
     <a href="/" class="{{ 'on' if halaman == 'feed' }}">{{ t('nav.feed') }}
-      {% if jml_terbit %}<span class="hit">{{ jml_terbit }}</span>{% endif %}</a>
+      {% if jml_alert_ditahan %}<span class="hit kuning-hit">{{ jml_alert_ditahan }}</span>{% endif %}</a>
     <a href="/watchlist" class="{{ 'on' if halaman == 'watchlist' }}">{{ t('nav.watchlist') }}
       <span class="hit abu">{{ jml_watchlist }}</span></a>
 

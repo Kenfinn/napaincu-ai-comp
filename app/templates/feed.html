@@ -8,10 +8,14 @@
     <p class="redup kecil">{{ t('feed.kicker') }}</p>
   </div>
   <div class="baris-tombol">
-    <a href="/?segarkan=1{{ '&lingkup=' ~ lingkup if lingkup == 'semua' else '' }}" class="tombol sekunder kecil">{{ t('tombol.proses_ulang') }}</a>
-    <form method="post" action="/periksa">
+    <span class="grup-tombol-info">
+      <a href="/?segarkan=1{{ '&lingkup=' ~ lingkup if lingkup == 'semua' else '' }}" class="tombol sekunder kecil" title="{{ t('ui.feed.info_proses_ulang') }}">{{ t('tombol.proses_ulang') }}</a>
+      <span class="info" tabindex="0" role="button" aria-label="{{ t('tombol.proses_ulang') }}" data-info="{{ t('ui.feed.info_proses_ulang') }}">i</span>
+    </span>
+    <form method="post" action="/periksa" class="grup-tombol-info">
       <input type="hidden" name="kembali" value="/{{ '?lingkup=semua' if lingkup == 'semua' else '' }}">
-      <button class="tombol" type="submit">{{ t('tombol.periksa') }}</button>
+      <button class="tombol" type="submit" title="{{ t('ui.feed.info_periksa') }}">{{ t('tombol.periksa') }}</button>
+      <span class="info" tabindex="0" role="button" aria-label="{{ t('tombol.periksa') }}" data-info="{{ t('ui.feed.info_periksa') }}">i</span>
     </form>
   </div>
 </div>
@@ -49,7 +53,13 @@
   </button>
 </div>
 
-{% include "_penafian.html" %}
+<details class="penafian-ringkas">
+  <summary>
+    <span class="penafian-singkat">ℹ {{ t('ui.feed.penafian_singkat') }}</span>
+    <span class="penafian-tautan">{{ t('ui.feed.selengkapnya') }}</span>
+  </summary>
+  <div class="penafian-isi">{{ t('rk.disclaimer') }}</div>
+</details>
 
 <div class="baris-filter-atas">
   <div class="segmen">
@@ -71,6 +81,7 @@
   <button type="button" class="chip" data-filter-jenis="laporan" aria-pressed="false">{{ t('ui.feed.filter_laporan') }}</button>
   <button type="button" class="chip" data-filter-jenis="tata_kelola" aria-pressed="false">{{ t('ui.feed.filter_tata_kelola') }}</button>
   <button type="button" class="chip" data-filter-jenis="berat" aria-pressed="false">{{ t('ui.feed.filter_berat') }}</button>
+  <button type="button" class="chip chip-arsip" data-tampil-arsip aria-pressed="false">{{ t('ui.feed.tampil_arsip', n=dilewati|length) }}</button>
 </div>
 
 {% set jn_map = {
@@ -96,6 +107,23 @@
     </div>
     {% for h in kelompok %}
     {% set jn_grup = jn_map.get(h.jenis, 'valuasi' if (h.muatan and h.muatan.diterima) else (h.jenis or 'lainnya')) %}
+    {% set ns_al = namespace(kode='') %}
+    {% if h.alasan_i18n is mapping %}
+      {% set ns_al.kode = h.alasan_i18n.get('kode', '') %}
+    {% elif h.alasan_i18n is sequence and h.alasan_i18n is not string and h.alasan_i18n|length > 0 %}
+      {% for item_al in h.alasan_i18n %}
+        {% if not ns_al.kode and item_al is mapping and item_al.get('nama') is mapping %}
+          {% set al_kd = (item_al.get('alasan') or {}).get('kode', '') if item_al.get('alasan') is mapping else '' %}
+          {% if al_kd.endswith('.x') %}
+            {% set ns_al.kode = item_al.nama.get('kode', '') %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% if not ns_al.kode and h.alasan_i18n[0] is mapping and h.alasan_i18n[0].get('nama') is mapping %}
+        {% set ns_al.kode = h.alasan_i18n[0].nama.get('kode', '') %}
+      {% endif %}
+    {% endif %}
+    {% set teks_polos = t('ui.alasan_polos.' ~ ns_al.kode) if ns_al.kode else '' %}
     <div class="baris" data-status="{{ h.status }}" data-jenis-grup="{{ jn_grup }}">
       <div class="kiri">
         <div class="emiten-baris">
@@ -107,7 +135,7 @@
       </div>
       <div class="tengah">
         <div class="judul"><a href="/peringatan/{{ h.id }}" class="tautan-utama">{{ h.judul }}</a></div>
-        <div class="sub">{{ tr(h.alasan_i18n, h.alasan) if h.alasan_i18n else h.alasan }}</div>
+        <div class="sub">{{ teks_polos if (teks_polos and not teks_polos.startswith('⟦')) else (tr(h.alasan_i18n, h.alasan) if h.alasan_i18n else h.alasan) }}</div>
       </div>
       <div class="kanan">
         <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>

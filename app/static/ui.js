@@ -50,17 +50,24 @@
     }
   });
 
-  /* 4. Filter sisi klien di Feed Peringatan (status + jenis) */
+  /* 4. Filter sisi klien di Feed Peringatan (status + jenis + sembunyikan arsip bawaan) */
   var barisFeed = Array.prototype.slice.call(document.querySelectorAll(".baris[data-status]"));
   if (barisFeed.length > 0) {
     var params = new URLSearchParams(window.location.search);
     var stAktif = params.get("status") || "semua";
     var jnAktif = params.get("jenis") || "semua";
+    var tampilArsip = params.get("arsip") === "1" || stAktif === "dilewati";
 
     function terapkanFilterFeed() {
       var tampil = 0;
       barisFeed.forEach(function (b) {
-        var cocokSt = stAktif === "semua" || b.getAttribute("data-status") === stAktif;
+        var stBaris = b.getAttribute("data-status");
+        var cocokSt;
+        if (stAktif === "semua") {
+          cocokSt = stBaris !== "dilewati" || tampilArsip;
+        } else {
+          cocokSt = stBaris === stAktif;
+        }
         var cocokJn = jnAktif === "semua" || b.getAttribute("data-jenis-grup") === jnAktif;
         var ok = cocokSt && cocokJn;
         b.hidden = !ok;
@@ -80,6 +87,11 @@
         el.classList.toggle("on", on);
         el.setAttribute("aria-pressed", on ? "true" : "false");
       });
+      document.querySelectorAll("[data-tampil-arsip]").forEach(function (el) {
+        var aktifArsip = tampilArsip || stAktif === "dilewati";
+        el.classList.toggle("on", aktifArsip);
+        el.setAttribute("aria-pressed", aktifArsip ? "true" : "false");
+      });
       var kosongFilter = document.getElementById("feed-kosong-filter");
       if (kosongFilter) kosongFilter.hidden = tampil > 0;
 
@@ -88,12 +100,26 @@
       else u.searchParams.delete("status");
       if (jnAktif && jnAktif !== "semua") u.searchParams.set("jenis", jnAktif);
       else u.searchParams.delete("jenis");
+      if (tampilArsip && stAktif === "semua") u.searchParams.set("arsip", "1");
+      else u.searchParams.delete("arsip");
       if (window.history && window.history.replaceState) {
         window.history.replaceState(null, "", u.pathname + u.search);
       }
     }
 
     document.addEventListener("click", function (e) {
+      var kArsip = e.target.closest("[data-tampil-arsip]");
+      if (kArsip) {
+        e.preventDefault();
+        if (stAktif === "dilewati") {
+          stAktif = "semua";
+          tampilArsip = false;
+        } else {
+          tampilArsip = !tampilArsip;
+        }
+        terapkanFilterFeed();
+        return;
+      }
       var kSt = e.target.closest("[data-filter-status]");
       if (kSt) {
         e.preventDefault();

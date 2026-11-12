@@ -314,4 +314,213 @@ T = {
         "技術指標（Token 數、費用、重試次數與原始檔）",
         "Metrik teknis (token, biaya, percobaan ulang, berkas mentah)",
     ),
+
+    # --- QA-1: Review tampilan feed & kotak cari ---
+    "ui.nav.cari_pendek": (
+        "Search code or name",
+        "搜尋代號或名稱",
+        "Cari kode atau nama",
+    ),
+    "ui.feed.info_proses_ulang": (
+        "Re-run: reprocess already stored filings without fetching from the exchange.",
+        "重新處理：重新分析已儲存的公告資料，不重新連線交易所。",
+        "Proses ulang: memproses ulang data yang sudah ada tanpa menarik dari bursa.",
+    ),
+    "ui.feed.info_periksa": (
+        "Check now: fetch today's new filings from the official TWSE/TPEx OpenAPI.",
+        "立即檢查：從證交所／櫃買中心官方 OpenAPI 擷取今日最新重大訊息。",
+        "Periksa sekarang: menarik pengumuman baru hari ini dari bursa.",
+    ),
+    "ui.feed.tampil_arsip": (
+        "Show archived ({n})",
+        "顯示已歸檔 ({n})",
+        "Tampilkan yang diarsip ({n})",
+    ),
+    "ui.feed.penafian_singkat": (
+        "Research & monitoring tool — investment decisions remain in your hands.",
+        "僅供研究與監控 — 投資決策由您自行做出。",
+        "Alat riset & pemantauan — keputusan investasi tetap di tangan Anda.",
+    ),
+    "ui.feed.selengkapnya": (
+        "More",
+        "展開全文",
+        "Selengkapnya",
+    ),
+    "ui.alasan_polos.cek.besaran": (
+        "Held for review: the reported amount is outside the normal range compared to the company's annual figure.",
+        "待人工審查：申報金額與公司年度數據相比超出正常範圍。",
+        "Ditahan untuk review: nilai yang dilaporkan di luar rentang wajar dibanding angka tahunan perusahaan.",
+    ),
+    "ui.alasan_polos.cek.mu": (
+        "Held for review: the amount is in a foreign currency and is not converted automatically.",
+        "待人工審查：金額為外幣計價，系統不自動換算匯率。",
+        "Ditahan untuk review: nilai dalam mata uang asing dan tidak dikonversi otomatis.",
+    ),
+    "ui.alasan_polos.cek.satuan": (
+        "Held for review: the unit of measurement could not be verified safely.",
+        "待人工審查：金額單位無法安全辨識。",
+        "Ditahan untuk review: satuan nilai belum dapat dipastikan dengan aman.",
+    ),
+    "ui.alasan_polos.cek.kutipan": (
+        "Held for review: the source quote could not be matched verbatim in the filing.",
+        "待人工審查：引文無法與原始公告逐字對照。",
+        "Ditahan untuk review: kutipan sumber tidak ditemukan persis di dokumen.",
+    ),
+    "ui.alasan_polos.cek.angka": (
+        "Held for review: the extracted number could not be found in the original filing.",
+        "待人工審查：原始公告中找不到擷取的數字。",
+        "Ditahan untuk review: angka yang ditarik tidak ditemukan di dokumen asli.",
+    ),
+    "ui.alasan_polos.cek.label": (
+        "Held for review: the figure came from a free-text note rather than a standard financial field.",
+        "待人工審查：數字來自自由文字備註而非標準財務欄位。",
+        "Ditahan untuk review: angka berasal dari catatan bebas, bukan kolom keuangan baku.",
+    ),
+    "ui.alasan_polos.cek.konversi": (
+        "Held for review: the amount could not be converted to NT$ million.",
+        "待人工審查：金額無法換算為百萬新台幣。",
+        "Ditahan untuk review: nilai belum dapat dikonversi ke juta NTD.",
+    ),
+    "ui.alasan_polos.akhir.di_bawah_ambang": (
+        "Archived: routine or small-impact filing below the triage threshold.",
+        "已歸檔：信心分數低於門檻之例行或小額公告。",
+        "Diarsipkan: pengumuman rutin atau berdampak kecil di bawah ambang triase.",
+    ),
+    "ui.alasan_polos.akhir.keyakinan_rendah": (
+        "Held for review: triage confidence is borderline and needs analyst confirmation.",
+        "待人工審查：分流信心分數接近門檻，需分析師確認。",
+        "Ditahan untuk review: skor keyakinan di perbatasan dan butuh konfirmasi analis.",
+    ),
+    "ui.alasan_polos.saring.di_luar": (
+        "Archived: this announcement clause does not affect valuation inputs.",
+        "已歸檔：此公告條款不影響評價模型輸入。",
+        "Diarsipkan: pasal pengumuman ini tidak mengubah input valuasi.",
+    ),
+    "ui.alasan_polos.akhir.tanpa_angka": (
+        "Held for review: no clear monetary amount with a source sentence was found.",
+        "待人工審查：未找到附帶原文句子的明確金額。",
+        "Ditahan untuk review: tidak ditemukan nilai uang yang jelas beserta kalimat sumbernya.",
+    ),
+    "ui.alasan_polos.tahan.tanpa_angka": (
+        "Held for review: no clear monetary amount with a source sentence was found.",
+        "待人工審查：未找到附帶原文句子的明確金額。",
+        "Ditahan untuk review: tidak ditemukan nilai uang yang jelas beserta kalimat sumbernya.",
+    ),
+    "ui.alasan_polos.akhir.tanpa_valuasi": (
+        "Held for review: figures were extracted, but the valuation model for this stock is not ready yet.",
+        "待人工審查：已擷取數字，但此個股尚無評價模型。",
+        "Ditahan untuk review: angka berhasil ditarik, tetapi model valuasi emiten ini belum tersedia.",
+    ),
+    "ui.alasan_polos.tahan.tanpa_valuasi": (
+        "Held for review: figures were extracted, but the valuation model for this stock is not ready yet.",
+        "待人工審查：已擷取數字，但此個股尚無評價模型。",
+        "Ditahan untuk review: angka berhasil ditarik, tetapi model valuasi emiten ini belum tersedia.",
+    ),
+    "ui.alasan_polos.akhir.modal_kecil": (
+        "Archived: capital change is below the materiality threshold.",
+        "已歸檔：資本變動規模低於重大性門檻。",
+        "Diarsipkan: perubahan modal berada di bawah ambang materialitas.",
+    ),
+    "ui.alasan_polos.akhir.modal_treasuri": (
+        "Archived: treasury share cancellation or transfer with no cash impact.",
+        "已歸檔：庫藏股註銷或轉讓，不影響現金流。",
+        "Diarsipkan: pembatalan atau pengalihan saham treasuri tanpa dampak kas.",
+    ),
+    "ui.alasan_polos.akhir.modal_lain": (
+        "Archived: general capital filing without direct dilution or cash impact.",
+        "已歸檔：一般資本公告，無直接稀釋或現金影響。",
+        "Diarsipkan: pengumuman modal umum tanpa dampak dilusi atau kas langsung.",
+    ),
+    "ui.alasan_polos.saring.antar_grup": (
+        "Archived: transaction with a 100%-owned subsidiary (cash stays within the group).",
+        "已歸檔：與 100% 持股子公司之內部交易（現金留存集團內）。",
+        "Diarsipkan: transaksi dengan anak usaha 100% (kas tetap di dalam grup).",
+    ),
+    "ui.alasan_polos.akhir.risiko_serius": (
+        "Held for review: guarantee or loan ratio crosses the serious risk threshold.",
+        "待人工審查：背書保證或資金貸與比例超過高風險門檻。",
+        "Ditahan untuk review: rasio penjaminan atau pinjaman melewati ambang risiko serius.",
+    ),
+    "ui.alasan_polos.akhir.tata_kelola_serius": (
+        "Held for review: key governance change (auditor or executive) flagged for review.",
+        "待人工審查：重要公司治理變動（會計師或高階主管異動）。",
+        "Ditahan untuk review: perubahan tata kelola penting (auditor atau pejabat utama).",
+    ),
+    "ui.alasan_polos.akhir.berat": (
+        "Held for review: severe distress or trading halt clause requires immediate analyst attention.",
+        "待人工審查：重大異常或暫停交易條款，需分析師立即確認。",
+        "Ditahan untuk review: pasal kondisi berat atau penghentian perdagangan butuh perhatian segera.",
+    ),
+    "ui.alasan_polos.akhir.skenario": (
+        "Published: verified capital or asset plan shown as a valuation scenario.",
+        "已發布：已通過驗證之資本或資產計畫，以評價情境呈現。",
+        "Terbit: rencana belanja modal atau aset terverifikasi, ditampilkan sebagai skenario valuasi.",
+    ),
+
+    # --- QA-3: Alasan ditahan bahasa polos di halaman detail peringatan ---
+    "ui.input.capex": (
+        "capital expenditure (capex)",
+        "資本支出 (capex)",
+        "belanja modal (capex)",
+    ),
+    "ui.input.cash": (
+        "cash balance",
+        "現金餘額",
+        "saldo kas",
+    ),
+    "ui.input.debt": (
+        "long-term debt",
+        "長期負債",
+        "utang jangka panjang",
+    ),
+    "ui.polos.cek.besaran.kecil": (
+        "This filing lists {n} amount(s) of {min}–{maks} NT$ million, only {pmin}–{pmaks}% of the company's yearly {input} ({lama} NT$ million). One announcement rarely moves a company's yearly figure that much, so the agent did not use these amounts and asks an analyst to check them.",
+        "此公告列出 {n} 筆金額（{min}–{maks} 百萬新台幣），僅佔公司年度{input}（{lama} 百萬新台幣）的 {pmin}–{pmaks}%。單一公告極少直接代表整年度規模，因此代理未套用這些金額，並請分析師確認。",
+        "Pengumuman ini memuat {n} nilai sebesar {min}–{maks} juta NTD, hanya {pmin}–{pmaks}% dari {input} tahunan perusahaan ({lama} juta NTD). Satu pengumuman jarang langsung menggantikan angka tahunan perusahaan, sehingga agent tidak memakai nilai ini dan meminta analis memeriksanya.",
+    ),
+    "ui.polos.cek.besaran.besar": (
+        "This filing lists {n} amount(s) up to {maks} NT$ million ({x} times the company's yearly {input} of {lama} NT$ million). A jump this large is likely a unit mistake, so an analyst checks it before publishing.",
+        "此公告列出 {n} 筆金額，最高達 {maks} 百萬新台幣（為公司年度{input} {lama} 百萬新台幣的 {x} 倍）。變動幅度異常龐大，極可能是單位誤判，需由分析師確認。",
+        "Pengumuman ini memuat {n} nilai hingga {maks} juta NTD ({x} kali {input} tahunan perusahaan sebesar {lama} juta NTD). Lonjakan sebesar ini kemungkinan salah satuan, sehingga perlu diperiksa analis sebelum diterbitkan.",
+    ),
+    "ui.polos.cek.mu": (
+        "The amount is in {mu}. FEAF does not convert currencies, so an analyst checks it.",
+        "金額以 {mu} 計價。FEAF 不自動換算匯率，因此交由分析師確認。",
+        "Jumlah ini tercatat dalam mata uang {mu}. FEAF tidak mengonversi mata uang, sehingga perlu diperiksa analis.",
+    ),
+    "ui.polos.cek.satuan": (
+        "The unit '{satuan}' could not be recognised or matched safely to the filing text, so an analyst checks it.",
+        "單位「{satuan}」無法安全辨識或與公告文字對照，因此交由分析師確認。",
+        "Satuan '{satuan}' tidak dikenali atau belum dapat dicocokkan dengan aman pada teks pengumuman, sehingga diperiksa analis.",
+    ),
+    "ui.polos.cek.kutipan": (
+        "The quoted sentence could not be found word-for-word in the official filing, so the agent stopped to prevent fabrication.",
+        "引用的句子無法在官方公告中逐字找到，代理已自動停止以防捏造。",
+        "Kalimat kutipan tidak ditemukan kata demi kata di dokumen resmi, sehingga agent berhenti untuk mencegah karangan.",
+    ),
+    "ui.polos.cek.angka": (
+        "The extracted figure ({angka}) does not appear in the source filing text, so the agent rejected it.",
+        "擷取的數字（{angka}）未出現在原始公告文字中，代理已予以拒絕。",
+        "Angka yang ditarik ({angka}) tidak tertulis di teks dokumen sumber, sehingga ditolak oleh agent.",
+    ),
+    "ui.polos.cek.label": (
+        "The figure was taken from field '{label}', which is outside the valid fields for {input}.",
+        "數字取自欄位「{label}」，不在 {input} 的有效財務欄位清單中。",
+        "Angka diambil dari butir '{label}' yang berada di luar daftar butir sah untuk {input}.",
+    ),
+    "ui.polos.cek.konversi": (
+        "The amount could not be converted into NT$ million because the currency or unit check above did not pass.",
+        "因上述幣別或單位檢查未通過，金額無法換算為百萬新台幣。",
+        "Nilai belum dapat dikonversi ke juta NTD karena pemeriksaan mata uang atau satuan di atas tidak lolos.",
+    ),
+    "ui.polos.tindakan": (
+        "What you can do: open the original filing and compare the figures, then approve or reject in Review →",
+        "您可以採取的行動：開啟原始公告比對數字，接著前往人工審查核准或歸檔 →",
+        "Yang bisa Anda lakukan: buka dokumen asli dan bandingkan angkanya, lalu setujui atau tolak di Review →",
+    ),
+    "ui.polos.detail_teknis_cek": (
+        "Technical check details ({n})",
+        "驗證檢查技術詳情（{n}）",
+        "Detail teknis pemeriksaan ({n})",
+    ),
 }

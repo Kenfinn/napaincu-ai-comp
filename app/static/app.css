@@ -479,3 +479,84 @@ table.fin td.kosong-sel { color: var(--abu); }
   background: var(--st-arsip-latar); color: var(--st-arsip);
 }
 
+/* --- QA-1 & QA-3: kotak cari, penafian 1 baris, grup tombol info, alasan ditahan polos --- */
+.cari input {
+  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  text-overflow: ellipsis;
+}
+.grup-tombol-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.penafian-ringkas {
+  background: var(--netral-50);
+  border: 1px solid var(--garis);
+  border-radius: var(--r-2);
+  padding: 8px 14px;
+  margin-bottom: var(--j-3);
+  font-size: var(--h-kecil);
+  color: var(--abu-2);
+}
+.penafian-ringkas summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.penafian-ringkas summary::-webkit-details-marker {
+  display: none;
+}
+.penafian-tautan {
+  color: var(--navy);
+  font-weight: 600;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+.penafian-isi {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--garis);
+  line-height: 1.5;
+  color: var(--ink);
+}
+.chip-arsip {
+  margin-left: auto;
+  border-style: dashed;
+}
+.kotak-alasan-polos {
+  background: #FFFBF3;
+  border: 1px solid #EBD494;
+  border-left: 4px solid var(--amber);
+  border-radius: var(--r-2);
+  padding: 14px 18px;
+  margin-bottom: var(--j-3);
+}
+.kotak-alasan-polos ul {
+  margin: 6px 0 10px;
+  padding-left: 18px;
+}
+.kotak-alasan-polos li {
+  margin-bottom: 6px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.tindakan-ditahan {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #EBD494;
+  font-size: var(--h-kecil);
+  font-weight: 600;
+}
+.tindakan-ditahan a {
+  color: var(--navy);
+  text-decoration: none;
+}
+.tindakan-ditahan a:hover {
+  text-decoration: underline;
+}
+
+
