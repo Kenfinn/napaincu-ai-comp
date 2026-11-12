@@ -614,6 +614,129 @@ def laporan_chat(m: dict) -> str:
     return "\n".join(b) + "\n"
 
 
+CHAT_PERCAKAPAN_DEFAULT = os.path.join(ROOT, "eval", "chat_percakapan.csv")
+
+
+def muat_chat_percakapan(path: str = CHAT_PERCAKAPAN_DEFAULT) -> list[dict]:
+    with open(path, encoding="utf-8", newline="") as f:
+        return [r for r in csv.DictReader(f) if (r.get("skenario") or "").strip()]
+
+
+def nilai_chat_percakapan(baris_csv: list[dict]) -> dict:
+    from app import chat
+    chat._jam.clear()
+    per_skenario: dict[str, list[dict]] = collections.OrderedDict()
+    for b in baris_csv:
+        sk = (b.get("skenario") or "").strip()
+        per_skenario.setdefault(sk, []).append(b)
+    for sk in per_skenario:
+        per_skenario[sk].sort(key=lambda x: int(x.get("giliran") or 0))
+
+    rinci = []
+    skenario_tepat = 0
+    total_dibuang = 0
+    for sk, daftar_g in per_skenario.items():
+        riwayat: list[dict] = []
+        semua_g_tepat = True
+        for b in daftar_g:
+            pertanyaan = (b.get("pertanyaan") or "").strip()
+            bahasa = (b.get("bahasa") or "en").strip()
+            harap = (b.get("harap") or "jawab").strip()
+            konteks = {
+                "kode": (b.get("konteks_kode") or "").strip(),
+                "id": (b.get("konteks_id") or "").strip(),
+            }
+            h = chat.tanya(pertanyaan, bahasa, riwayat=riwayat, konteks=konteks)
+            tahap_rw = next((l for l in h["langkah"] if l.get("tahap") == "riwayat"), {})
+            total_dibuang += int(tahap_rw.get("dibuang") or 0)
+
+            if harap.startswith("tolak"):
+                jenis = harap.split(":", 1)[1] if ":" in harap else None
+                tepat = h["jalur"] == "tolak" and (jenis is None or h["ditolak"] == jenis)
+            elif harap == "recap":
+                cek = h.get("periksa_template") if h["jalur"] == "recap_template" else h.get("periksa")
+                tepat = h["jalur"] in ("recap", "recap_template") and bool((cek or {}).get("lolos", True))
+            else:
+                cek = h.get("periksa_template") if h["jalur"] == "template_setelah_tolak" else h.get("periksa")
+                tepat = h["jalur"] != "tolak" and bool(h["sumber"]) and bool((cek or {}).get("lolos"))
+                bagian = harap.split(":")
+                if tepat and len(bagian) > 1 and bagian[1]:
+                    dipakai = [l for l in h["langkah"] if l.get("tahap") == "alat" and l.get("alat") == bagian[1]]
+                    if len(bagian) > 2 and bagian[2]:
+                        dipakai = [l for l in dipakai if (l.get("args") or {}).get("jenis") == bagian[2]]
+                    tepat = bool(dipakai)
+
+            if not tepat:
+                semua_g_tepat = False
+
+            # Teruskan ke riwayat skenario seperti perilaku panel browser
+            riwayat.append({"peran": "user", "teks": pertanyaan})
+            if h["jalur"] != "tolak" and h.get("tanda"):
+                riwayat.append({
+                    "peran": "asisten",
+                    "teks": h["jawaban"],
+                    "id": h["id"],
+                    "tanda": h["tanda"],
+                })
+
+            rinci.append({
+                "skenario": sk,
+                "giliran": int(b.get("giliran") or 0),
+                "bahasa": bahasa,
+                "pertanyaan": pertanyaan,
+                "harap": harap,
+                "jalur": h["jalur"],
+                "ditolak": h["ditolak"],
+                "tepat": tepat,
+                "id": h["id"],
+                "durasi_ms": h["durasi_ms"],
+                "panggilan_alat": h["panggilan_alat"],
+                "panggilan_model": h["panggilan_model"],
+                "kata_terlarang": (h.get("periksa") or {}).get("kata_terlarang", []) if h["jalur"] in ("model", "recap") else [],
+                "jawaban": h["jawaban"][:300],
+            })
+        if semua_g_tepat:
+            skenario_tepat += 1
+
+    lat = [r["durasi_ms"] for r in rinci]
+    return {
+        "skenario_total": len(per_skenario),
+        "skenario_tepat": skenario_tepat,
+        "giliran_total": len(rinci),
+        "giliran_tepat": sum(1 for r in rinci if r["tepat"]),
+        "jalur": dict(collections.Counter(r["jalur"] for r in rinci)),
+        "kata_terlarang_terbit": sum(len(r["kata_terlarang"]) for r in rinci),
+        "riwayat_dibuang": total_dibuang,
+        "latensi_ms": {"rata": int(statistics.mean(lat)) if lat else 0, "maks": max(lat) if lat else 0},
+        "panggilan_alat": sum(r["panggilan_alat"] for r in rinci),
+        "panggilan_model": sum(r["panggilan_model"] for r in rinci),
+        "rincian": rinci,
+    }
+
+
+def laporan_chat_percakapan(m: dict) -> str:
+    b = [
+        "# Evaluasi Tanya FEAF — Percakapan Multi-Giliran (C6)", "",
+        f"- Waktu: {datetime.now(timezone.utc).isoformat(timespec='seconds')}",
+        f"- Model: **{config.MODEL if config.API_KEY else 'tanpa model (jalur aturan)'}**", "",
+        "| Metrik | Nilai |", "|---|---|",
+        f"| Giliran tepat / total | {_persen(m['giliran_tepat'], m['giliran_total'])} |",
+        f"| Skenario tepat semua giliran | {_persen(m['skenario_tepat'], m['skenario_total'])} |",
+        f"| Kata rekomendasi yang lolos | {m['kata_terlarang_terbit']} |",
+        f"| Riwayat tidak sah / injeksi yang dibuang | {m['riwayat_dibuang']} |",
+        f"| Jalur jawaban | {', '.join(f'{k} {v}' for k, v in m['jalur'].items())} |",
+        f"| Latensi rata-rata / maks per giliran | {m['latensi_ms']['rata']} / {m['latensi_ms']['maks']} ms |",
+        f"| Panggilan alat / model | {m['panggilan_alat']} / {m['panggilan_model']} |",
+        "", "## Giliran yang tidak tepat", "",
+    ]
+    salah = [r for r in m["rincian"] if not r["tepat"]]
+    b += [
+        f"- `{r['skenario']}#{r['giliran']}` ({r['bahasa']}) \"{r['pertanyaan']}\": harap `{r['harap']}`, jalur `{r['jalur']}`"
+        for r in salah
+    ] or ["Tidak ada."]
+    return "\n".join(b) + "\n"
+
+
 def _simpan_laporan(nama: str, teks: str, data: dict) -> None:
     _tulis_hasil(nama, datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"), teks, data)
 
@@ -648,6 +771,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--operasional", action="store_true", help="metrik operasi atas semua pengumuman, tanpa gold set")
     ap.add_argument("--chat", nargs="?", const=CHAT_UJI_DEFAULT, default=None,
                     help="evaluasi Tanya FEAF dengan set pertanyaan uji (bawaan eval/chat_uji.csv)")
+    ap.add_argument("--chat-percakapan", nargs="?", const=CHAT_PERCAKAPAN_DEFAULT, default=None,
+                    help="evaluasi percakapan multi-giliran Tanya FEAF (bawaan eval/chat_percakapan.csv)")
     ap.add_argument("--arsip-dir", default=None,
                     help="folder arsip mentah OpenAPI selain DATA_DIR/raw/openapi (nama berkas memuat twse/tpex)")
     ap.add_argument("--tanpa-salinan", action="store_true",
@@ -662,6 +787,15 @@ def main(argv: list[str] | None = None) -> int:
         from app.agent import llm
         llm.CACHE_DIR = tempfile.mkdtemp(prefix="feaf-eval-cache-")
     harga_token = tuple(float(x) for x in a.harga_token.split(",")) if a.harga_token else None
+
+    if a.chat_percakapan:
+        with _Terisolasi():
+            m = nilai_chat_percakapan(muat_chat_percakapan(a.chat_percakapan))
+        teks = laporan_chat_percakapan(m)
+        print(teks)
+        if a.simpan:
+            _simpan_laporan("chat-percakapan", teks, m)
+        return 0
 
     if a.chat:
         with _Terisolasi():

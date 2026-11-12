@@ -764,7 +764,11 @@ NIAT_JENIS = {
 
 
 NIAT_MENU = {
-    "feed": re.compile(r"latest alerts|what'?s new|peringatan terbaru|apa yang baru|最新|今天.*公告", re.I),
+    "feed": re.compile(
+        r"latest alerts|what'?s new|peringatan terbaru|apa yang baru"
+        r"|最新(?!股價|價格|收盤|財報|營收|估值|評價)|今天.*公告",
+        re.I,
+    ),
     "review": re.compile(r"\breview\b|\bheld\b|ditahan|antrean|待審|審查", re.I),
     "ambang": re.compile(r"threshold|ambang|門檻", re.I),
     "watchlist": re.compile(r"watchlist|daftar pantau|自選股", re.I),

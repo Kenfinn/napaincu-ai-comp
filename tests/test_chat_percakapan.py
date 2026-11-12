@@ -466,5 +466,39 @@ class TestChatPercakapanC5Keamanan(unittest.TestCase):
             self.assertNotIn("姓名", teks)
 
 
+class TestChatPercakapanC6Evaluasi(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self._data_asli = config.DATA_DIR
+        config.DATA_DIR = self._tmp.name
+        os.environ["SENTINEL_SERTAKAN_CONTOH"] = "1"
+        chat._jam.clear()
+        with main._kunci_cache:
+            main._cache = None
+
+    def tearDown(self):
+        config.DATA_DIR = self._data_asli
+        with main._kunci_cache:
+            main._cache = None
+        self._tmp.cleanup()
+
+    @patch.object(chat.llm, "tersedia", return_value=False)
+    @patch.object(pasar, "harga", side_effect=_mock_harga)
+    @patch.object(pasar, "statistik", side_effect=_mock_statistik)
+    def test_evaluasi_percakapan_12_skenario_3_bahasa(self, *_):
+        from scripts import evaluasi
+        baris = evaluasi.muat_chat_percakapan()
+        skenario = {b["skenario"] for b in baris}
+        bahasa = {b["bahasa"] for b in baris}
+        self.assertGreaterEqual(len(skenario), 12)
+        self.assertEqual(bahasa, {"en", "zh", "id"})
+        hasil = evaluasi.nilai_chat_percakapan(baris)
+        self.assertEqual(hasil["giliran_tepat"], hasil["giliran_total"])
+        self.assertEqual(hasil["skenario_tepat"], hasil["skenario_total"])
+        self.assertEqual(hasil["kata_terlarang_terbit"], 0)
+        self.assertGreaterEqual(hasil["riwayat_dibuang"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()
+
