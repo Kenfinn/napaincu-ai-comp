@@ -4,12 +4,12 @@
 
 <div class="kepala">
   <div>
-    <div class="kicker">{{ t('feed.kicker') }}</div>
     <h1>{{ t('feed.judul') }}</h1>
+    <p class="redup kecil">{{ t('feed.kicker') }}</p>
   </div>
-  <div style="display:flex; gap:14px; align-items:center;">
-    <a href="/?segarkan=1{{ '&lingkup=' ~ lingkup if lingkup == 'semua' else '' }}" class="mono" style="font-size:12px;">{{ t('tombol.proses_ulang') }}</a>
-    <form method="post" action="/periksa" style="margin:0;">
+  <div class="baris-tombol">
+    <a href="/?segarkan=1{{ '&lingkup=' ~ lingkup if lingkup == 'semua' else '' }}" class="tombol sekunder kecil">{{ t('tombol.proses_ulang') }}</a>
+    <form method="post" action="/periksa">
       <input type="hidden" name="kembali" value="/{{ '?lingkup=semua' if lingkup == 'semua' else '' }}">
       <button class="tombol" type="submit">{{ t('tombol.periksa') }}</button>
     </form>
@@ -20,57 +20,138 @@
 {% set ditahan = daftar | selectattr('status','equalto','ditahan') | list %}
 {% set dilewati = daftar | selectattr('status','equalto','dilewati') | list %}
 
-<div class="kartu rapat" style="display:flex; gap:28px;">
-  <div><div class="kicker">{{ t('st.terbit') }}</div><b class="mono" style="font-size:19px;">{{ terbit|length }}</b></div>
-  <div><div class="kicker">{{ t('st.ditahan') }}</div><a href="/review{{ '?lingkup=semua' if lingkup == 'semua' else '' }}" class="mono" style="font-size:19px; font-weight:700; color:var(--amber);">{{ ditahan|length }}</a></div>
-  <div><div class="kicker">{{ t('st.dilewati') }}</div><b class="mono" style="font-size:19px; color:var(--abu);">{{ dilewati|length }}</b></div>
-  <div style="margin-left:auto; text-align:right; max-width:330px;">
-    <div class="kicker">{{ t('feed.kenapa') }}</div>
-    <small style="color:var(--abu-2); line-height:1.5;">{{ t('feed.kenapa_isi') }}</small>
-  </div>
+<div class="grid-ringkasan" role="group" aria-label="{{ t('feed.judul') }}">
+  <button type="button" class="kartu-filter" data-filter-status="terbit" aria-pressed="false">
+    <div class="atas">
+      <span class="lencana l-terbit">{{ t('st.terbit') }}</span>
+      <span class="angka">{{ terbit|length }}</span>
+    </div>
+    <div class="arti">{{ t('ui.feed.arti_terbit') }}</div>
+  </button>
+
+  <button type="button" class="kartu-filter" data-filter-status="ditahan" aria-pressed="false">
+    <div class="atas">
+      <span class="lencana l-ditahan">{{ t('st.ditahan') }}</span>
+      <span class="angka">{{ ditahan|length }}</span>
+    </div>
+    <div class="arti">{{ t('ui.feed.arti_ditahan') }}</div>
+  </button>
+
+  <button type="button" class="kartu-filter" data-filter-status="dilewati" aria-pressed="false">
+    <div class="atas">
+      <span class="lencana l-dilewati">{{ t('st.dilewati') }}</span>
+      <span class="angka">{{ dilewati|length }}</span>
+    </div>
+    <div class="arti">
+      {{ t('ui.feed.arti_dilewati') }}
+      <span class="info" tabindex="0" role="button" aria-label="{{ t('ui.feed.kenapa_label') }}" data-info="{{ t('feed.kenapa_isi') }}">i</span>
+    </div>
+  </button>
 </div>
 
 {% include "_penafian.html" %}
 
-<div style="display:flex; justify-content:space-between; align-items:center; margin:14px 2px 8px;">
+<div class="baris-filter-atas">
   <div class="segmen">
     <a href="/?lingkup=watchlist" class="{{ 'on' if lingkup != 'semua' }}">{{ t('feed.lingkup.watchlist') }}</a>
     <a href="/?lingkup=semua" class="{{ 'on' if lingkup == 'semua' }}">{{ t('feed.lingkup.semua') }}</a>
   </div>
   {% if lingkup == 'semua' %}
-    <span class="mono" style="font-size:12px; color:var(--abu-2);">
+    <span class="mono kecil redup">
       {{ t('feed.tampil_dari', n=jml_tampil, total=total_semua) }}
     </span>
   {% endif %}
 </div>
 
-{% for h in daftar %}
-<a class="baris" href="/peringatan/{{ h.id }}">
-  <div class="kiri">
-    <div class="kode">{{ h.emiten.kode }}</div>
-    {% if h.contoh and sumber_data == 'nyata' %}<span class="lencana l-dilewati" style="margin-top:4px;">{{ t('label.contoh') }}</span>{% endif %}
-    <div class="tgl">{{ h.tanggal }}</div>
+<div class="chips" role="group" aria-label="Filter">
+  <button type="button" class="chip on" data-filter-jenis="semua" aria-pressed="true">{{ t('ui.feed.filter_semua') }}</button>
+  <button type="button" class="chip" data-filter-jenis="valuasi" aria-pressed="false">{{ t('ui.feed.filter_valuasi') }}</button>
+  <button type="button" class="chip" data-filter-jenis="risiko" aria-pressed="false">{{ t('ui.feed.filter_risiko') }}</button>
+  <button type="button" class="chip" data-filter-jenis="modal" aria-pressed="false">{{ t('ui.feed.filter_modal') }}</button>
+  <button type="button" class="chip" data-filter-jenis="laporan" aria-pressed="false">{{ t('ui.feed.filter_laporan') }}</button>
+  <button type="button" class="chip" data-filter-jenis="tata_kelola" aria-pressed="false">{{ t('ui.feed.filter_tata_kelola') }}</button>
+  <button type="button" class="chip" data-filter-jenis="berat" aria-pressed="false">{{ t('ui.feed.filter_berat') }}</button>
+</div>
+
+{% set jn_map = {
+  'skenario': 'valuasi',
+  'valuasi': 'valuasi',
+  'risiko': 'risiko',
+  'penjaminan': 'risiko',
+  'pinjaman': 'risiko',
+  'modal': 'modal',
+  'laporan': 'laporan',
+  'auditor': 'tata_kelola',
+  'pejabat': 'tata_kelola',
+  'tata_kelola': 'tata_kelola',
+  'berat': 'berat'
+} %}
+{% set tgl_acuan = (status_tarik.waktu[:10] if status_tarik and status_tarik.waktu else '') %}
+
+{% if daftar %}
+  {% for tgl, kelompok in daftar | groupby('tanggal') | reverse %}
+  <section class="kelompok-tanggal" data-tanggal="{{ tgl }}">
+    <div class="judul-tanggal">
+      <span class="mono">{{ t('ui.feed.hari_ini') ~ ' · ' ~ tgl if tgl == tgl_acuan else tgl }}</span>
+    </div>
+    {% for h in kelompok %}
+    {% set jn_grup = jn_map.get(h.jenis, 'valuasi' if (h.muatan and h.muatan.diterima) else (h.jenis or 'lainnya')) %}
+    <div class="baris" data-status="{{ h.status }}" data-jenis-grup="{{ jn_grup }}">
+      <div class="kiri">
+        <div class="emiten-baris">
+          <a href="/saham/{{ h.emiten.kode }}" class="kode">{{ h.emiten.kode }}</a>
+          {% if h.emiten.nama %}<span class="nama-emiten">{{ h.emiten.nama }}</span>{% endif %}
+        </div>
+        {% if h.contoh and sumber_data == 'nyata' %}<span class="lencana l-dilewati">{{ t('label.contoh') }}</span>{% endif %}
+        <div class="tgl">{{ h.tanggal }}</div>
+      </div>
+      <div class="tengah">
+        <div class="judul"><a href="/peringatan/{{ h.id }}" class="tautan-utama">{{ h.judul }}</a></div>
+        <div class="sub">{{ tr(h.alasan_i18n, h.alasan) if h.alasan_i18n else h.alasan }}</div>
+      </div>
+      <div class="kanan">
+        <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
+        {% if h.jenis %}
+          {% set tg = tingkat_sinyal(h) %}
+          <span class="lencana {{ ('tk-' ~ tg.tingkat) if tg else 'l-dilewati' }}">{{ t('jenis.' ~ h.jenis) }}{% if tg %} · {{ t('tk.' ~ tg.tingkat) }}{% endif %}</span>
+        {% endif %}
+        {% if h.status == 'terbit' and h.muatan and h.muatan.diterima %}
+          {% set d = h.muatan.diterima[0].hasil %}
+          <span class="delta-netral">
+            g {{ d.sebelum.implied_growth | pct }} → {{ d.sesudah.implied_growth | pct }}
+          </span>
+        {% endif %}
+        {% if h.status == 'ditahan' %}
+          <a href="/review{{ '?lingkup=semua' if lingkup == 'semua' else '' }}" class="tindakan-kecil">{{ t('ui.feed.tindakan_review') }}</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+  {% endfor %}
+  <div id="feed-kosong-filter" class="kartu kosong" hidden>
+    <b>{{ t('ui.feed.kosong_judul') }}</b>
+    <div>{{ t('ui.feed.kosong_isi') }}</div>
+    <div class="baris-tombol">
+      <a href="/watchlist" class="tombol sekunder">{{ t('ui.feed.tambah_wl') }}</a>
+      <form method="post" action="/periksa">
+        <input type="hidden" name="kembali" value="/">
+        <button class="tombol" type="submit">{{ t('tombol.periksa') }}</button>
+      </form>
+    </div>
   </div>
-  <div class="tengah">
-    <div class="judul">{{ h.judul }}</div>
-    <div class="sub">{{ tr(h.alasan_i18n, h.alasan) if h.alasan_i18n else h.alasan }}</div>
-  </div>
-  <div class="kanan">
-    <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
-    {% if h.jenis %}
-      {% set tg = tingkat_sinyal(h) %}
-      <span class="lencana {{ ('tk-' ~ tg.tingkat) if tg else 'l-dilewati' }}">{{ t('jenis.' ~ h.jenis) }}{% if tg %} · {{ t('tk.' ~ tg.tingkat) }}{% endif %}</span>
-    {% endif %}
-    {% if h.status == 'terbit' and h.muatan and h.muatan.diterima %}
-      {% set d = h.muatan.diterima[0].hasil %}
-      <span class="delta {{ 'naik' if d.delta.g_tersirat > 0 else 'turun' }}">
-        g {{ d.sebelum.implied_growth | pct }} → {{ d.sesudah.implied_growth | pct }}
-      </span>
-    {% endif %}
-  </div>
-</a>
 {% else %}
-<div class="kartu kosong">{{ t('feed.kosong') }}</div>
-{% endfor %}
+<div class="kartu kosong">
+  <b>{{ t('feed.kosong') }}</b>
+  <div>{{ t('ui.feed.kosong_isi') }}</div>
+  <div class="baris-tombol">
+    <a href="/watchlist" class="tombol sekunder">{{ t('ui.feed.tambah_wl') }}</a>
+    <form method="post" action="/periksa">
+      <input type="hidden" name="kembali" value="/">
+      <button class="tombol" type="submit">{{ t('tombol.periksa') }}</button>
+    </form>
+  </div>
+</div>
+{% endif %}
 
 {% endblock %}

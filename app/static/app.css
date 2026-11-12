@@ -408,8 +408,13 @@ table.fin td.kosong-sel { color: var(--abu); }
 .judul-tanggal { font: 600 var(--h-label) "Instrument Sans", sans-serif; color: var(--abu-2);
                  margin: 14px 2px 8px; display: flex; align-items: center; gap: 8px; }
 .baris .emiten-baris { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.baris a.kode { color: var(--navy); text-decoration: none; }
+.baris a.kode:hover { text-decoration: underline; }
 .baris .nama-emiten { font-size: var(--h-kecil); color: var(--abu-2); font-weight: 500; }
-.tindakan-kecil { font-size: var(--h-kecil); font-weight: 600; color: var(--st-tahan); margin-top: 2px; }
+.tautan-utama { color: var(--ink); text-decoration: none; }
+.tautan-utama:hover { color: var(--navy); text-decoration: underline; }
+.tindakan-kecil { font-size: var(--h-kecil); font-weight: 600; color: var(--st-tahan); margin-top: 2px; text-decoration: none; }
+.tindakan-kecil:hover { text-decoration: underline; }
 .delta-netral { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
                 color: var(--navy); background: var(--st-terbit-latar); padding: 2px 7px; border-radius: var(--r-1); }
 @media (max-width: 640px) {
