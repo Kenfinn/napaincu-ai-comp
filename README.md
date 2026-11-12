@@ -8,6 +8,9 @@ came from.
 Built for the NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), SYSTEX track:
 *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
+**Version 1.0.0** (git tag `v1.0.0`, finalist package). Changes: [`CHANGELOG.md`](CHANGELOG.md).
+`GET /sehat` reports the running version.
+
 > **Not a trading tool.** There is no broker connection and no order execution, and the agent
 > gives no buy or sell advice. It screens, explains and cites; a person decides.
 

@@ -29,6 +29,7 @@ from fastapi.templating import Jinja2Templates
 
 from . import ambang_profil, config, i18n, indeks_nama, pasar, review, ringkasan, sitasi, store, tarik, umpan_balik, valuasi_otomatis
 from .agent import llm, pipeline
+from . import versi as _versi
 
 import sys
 sys.path.insert(0, os.path.join(config.ROOT, "scripts"))
@@ -145,7 +146,7 @@ app = FastAPI(
     title="FEAF · Agentic AI Investment Assistant",
     description="Agent pemantau pengumuman MOPS yang menghitung ulang valuasi "
                 "dan menolak angka yang tidak bisa ditelusuri ke dokumen sumbernya.",
-    version="0.1.0",
+    version=_versi.VERSI,
 )
 HERE = os.path.dirname(os.path.abspath(__file__))
 app.mount("/static", StaticFiles(directory=os.path.join(HERE, "static")), name="static")
@@ -451,7 +452,7 @@ def sehat():
         n_valuasi = len(list(valuasi_otomatis.CACHE_DIR.glob("*.json")))
     except OSError:
         n_valuasi = 0
-    return {"ok": True, "versi_kode": VERSI_KODE, "sumber": sumber, "pengumuman": len(detail),
+    return {"ok": True, "versi": _versi.VERSI, "versi_kode": VERSI_KODE, "sumber": sumber, "pengumuman": len(detail),
             "jalan_terakhir": _jalan_terakhir,
             "galat_model_terakhir": llm.galat_terakhir,
             "tarik_terakhir": (tarik.baca_status() or {}).get("waktu"),
