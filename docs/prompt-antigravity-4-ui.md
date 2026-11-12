@@ -45,7 +45,7 @@ tapi dilipat.
 **Yang TIDAK BOLEH disentuh:**
 - `app/agent/*`, `app/*.py` selain `app/teks/ui.py` (logika, rute, data), `scripts/dcf.py`,
   `eval/*`, `valuation/*`
-- Milik Claude (sedang dikerjakan paralel): `app/templates/_panel_chat.html`,
+- Milik putaran chat (`docs/prompt-antigravity-5-chat.md`, bisa jalan paralel): `app/templates/_panel_chat.html`,
   `app/templates/chat.html`, `app/static/chat.js`, `app/static/chat.css`, `app/chat.py`,
   `app/teks/chat.py`
 - Di `app/templates/base.html`, baris `{% include "_panel_chat.html" %}` tepat sebelum
