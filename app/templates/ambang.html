@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 {% block judul %}{{ t('amb.judul') }} · FEAF{% endblock %}
+{% block remah %}
+<nav class="remah" aria-label="Breadcrumb">
+  <a href="/">{{ t('nav.feed') }}</a>
+  <span class="pemisah">›</span>
+  <span>{{ t('ui.remah.ambang') }}</span>
+</nav>
+{% endblock %}
+
 {% block isi %}
 
 <div class="kepala">
@@ -8,20 +16,58 @@
     <h1>{{ t('amb.judul') }}</h1>
   </div>
 </div>
-<p class="catatan" style="margin:-6px 2px 14px;">{{ t('amb.isi') }} {{ t('tb.cara') }}</p>
 
-<div class="kartu">
+<div class="kotak-artinya">
+  <div class="label-artinya">{{ t('amb.judul') }}</div>
+  <p>{{ t('ui.amb.lede_1') }} {{ t('ui.amb.lede_2') }}</p>
+  <p style="font-size:12px; color:var(--abu-2); margin-top:6px;">{{ t('amb.isi') }} {{ t('tb.cara') }}</p>
+</div>
+
+<h2>{{ t('ui.amb.profil_judul') }}</h2>
+<div class="grid-ringkas" style="margin-bottom:var(--j-4);">
+  {% for p_kunci in ['konservatif', 'moderat', 'agresif'] %}
+  <a href="/ambang?risiko={{ p_kunci }}" class="kartu-ringkas {{ 'aktif' if profil_risiko == p_kunci }}" style="text-decoration:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span class="label" style="font-size:var(--ukuran-isi); color:var(--tinta);">{{ t('rk.risiko.' ~ p_kunci) }}</span>
+      {% if profil_risiko == p_kunci %}<span class="lencana l-terbit">✓</span>{% endif %}
+    </div>
+    <div class="ket" style="margin-top:6px;">{{ t('ui.amb.profil_' ~ p_kunci) }}</div>
+  </a>
+  {% endfor %}
+</div>
+
+<div class="kartu tabel-geser">
   {% if data.ambang %}
   <table class="wl">
-    <tr><th>{{ t('amb.k_pasal') }}</th><th>{{ t('amb.k_nilai') }}</th><th>👎</th><th>👍</th>
-        <th>{{ t('amb.k_status') }}</th><th></th></tr>
-    {% for a in data.ambang %}
     <tr>
-      <td class="mono">{{ a.pasal }}</td>
-      <td class="mono"><b>{{ a.nilai | rb(2) }}</b>{% if a.nilai != a.dasar %} <span style="color:var(--abu);">({{ a.dasar | rb(2) }})</span>{% endif %}</td>
+      <th>{{ t('amb.k_pasal') }}</th>
+      <th>{{ t('ui.amb.nama_pasal') }}</th>
+      <th>{{ t('amb.k_nilai') }}</th>
+      <th>👎</th>
+      <th>👍</th>
+      <th>{{ t('amb.k_status') }}</th>
+      <th></th>
+    </tr>
+    {% for a in data.ambang %}
+    {% set nama_kl = t('klausa.' ~ a.pasal) %}
+    {% set pct_bar = ((a.nilai or 0) * 100) | round(0) | int %}
+    <tr>
+      <td class="mono" style="font-weight:700;">{{ a.pasal }}</td>
+      <td>{{ nama_kl if not nama_kl.startswith('⟦') else '—' }}</td>
+      <td class="mono">
+        <div>
+          <b>{{ a.nilai | rb(2) }}</b>
+          {% if a.nilai != a.dasar %}<span style="color:var(--abu);">({{ a.dasar | rb(2) }})</span>{% endif %}
+        </div>
+        <span class="bar-ambang" aria-hidden="true"><span class="isi" style="width:{{ pct_bar }}%;"></span></span>
+      </td>
       <td class="mono">{{ a.bawah }}</td>
       <td class="mono">{{ a.atas }}</td>
-      <td>{{ t('tb.terkunci') if a.terkunci else t('amb.bebas') }}</td>
+      <td>
+        <span class="lencana {{ 'l-ditahan' if a.terkunci else 'l-terbit' }}">
+          {{ t('tb.terkunci') if a.terkunci else t('amb.bebas') }}
+        </span>
+      </td>
       <td style="text-align:right; white-space:nowrap;">
         <form method="post" action="/ambang/{{ a.pasal }}/{{ 'buka' if a.terkunci else 'kunci' }}" style="display:inline;">
           <button class="tombol abu" type="submit">{{ t('amb.buka') if a.terkunci else t('amb.kunci') }}</button></form>
@@ -37,24 +83,26 @@
 </div>
 
 {% if data.riwayat %}
-<h2>{{ t('amb.riwayat') }}</h2>
-<div class="kartu">
-  <table class="wl">
-    <tr><th>{{ t('rv.k_waktu') }}</th><th>{{ t('amb.k_pasal') }}</th><th>{{ t('amb.k_peristiwa') }}</th>
-        <th>{{ t('amb.k_dari_ke') }}</th></tr>
-    {% for r in data.riwayat %}
-    <tr>
-      <td class="mono" style="font-size:12px;">{{ r.waktu[:16] | replace('T',' ') }}</td>
-      <td class="mono">{{ r.pasal }}</td>
-      <td>{{ t('amb.p.' ~ r.peristiwa) }}
-        {% if r.peristiwa == 'suara' %}
-          {{ '👍' if r.suara == 'atas' else ('👎' if r.suara == 'bawah' else '—') }}
-          {% if r.h %}<a href="/peringatan/{{ r.id }}" class="mono">{{ r.h.emiten.kode }}</a>{% endif %}
-        {% endif %}</td>
-      <td class="mono">{{ r.dari | rb(2) }} → {{ r.ke | rb(2) }}</td>
-    </tr>
-    {% endfor %}
-  </table>
-</div>
+<details class="kartu lipat" style="margin-top:var(--j-4);">
+  <summary>{{ t('amb.riwayat') }} ({{ data.riwayat | length }})</summary>
+  <div class="isi-lipat tabel-geser">
+    <table class="wl">
+      <tr><th>{{ t('rv.k_waktu') }}</th><th>{{ t('amb.k_pasal') }}</th><th>{{ t('amb.k_peristiwa') }}</th>
+          <th>{{ t('amb.k_dari_ke') }}</th></tr>
+      {% for r in data.riwayat %}
+      <tr>
+        <td class="mono" style="font-size:12px;">{{ r.waktu[:16] | replace('T',' ') }}</td>
+        <td class="mono">{{ r.pasal }}</td>
+        <td>{{ t('amb.p.' ~ r.peristiwa) }}
+          {% if r.peristiwa == 'suara' %}
+            {{ '👍' if r.suara == 'atas' else ('👎' if r.suara == 'bawah' else '—') }}
+            {% if r.h %}<a href="/peringatan/{{ r.id }}" class="mono">{{ r.h.emiten.kode }}</a>{% endif %}
+          {% endif %}</td>
+        <td class="mono">{{ r.dari | rb(2) }} → {{ r.ke | rb(2) }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</details>
 {% endif %}
 {% endblock %}

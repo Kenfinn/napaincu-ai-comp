@@ -1,11 +1,20 @@
 {% extends "base.html" %}
 {% block judul %}{{ t('rv.judul') }} · FEAF{% endblock %}
+{% block remah %}
+<nav class="remah" aria-label="Breadcrumb">
+  <a href="/">{{ t('nav.feed') }}</a>
+  <span class="pemisah">›</span>
+  <span>{{ t('ui.remah.review') }}</span>
+</nav>
+{% endblock %}
+
 {% block isi %}
 
 <div class="kepala">
   <div>
     <div class="kicker">{{ t('rv.kicker') }}</div>
-    <h1>{{ t('rv.judul') }} <span class="mono" style="color:var(--amber);">{{ menunggu | length }}</span></h1>
+    <h1>{{ t('rv.judul') }} <span class="mono" style="color:var(--tinta-ditahan);">{{ menunggu | length }}</span></h1>
+    <p class="sub">{{ t('ui.rv.lede') }}</p>
   </div>
   <div class="segmen">
     <a href="/review?lingkup=watchlist" class="{{ 'on' if lingkup != 'semua' }}">{{ t('rv.lingkup.watchlist') }}</a>
@@ -13,42 +22,95 @@
   </div>
 </div>
 
-<p class="catatan" style="margin:-6px 2px 14px;">{{ t('rv.isi') }}</p>
+<p class="catatan" style="margin:-4px 0 var(--j-3);">{{ t('rv.isi') }}</p>
+
+{% if menunggu %}
+<div class="baris-chip" role="region" aria-label="Filter reason">
+  <button type="button" class="chip aktif" data-filter-sebab="semua" aria-pressed="true">{{ t('ui.rv.filter_semua') }}</button>
+  {% for j in ['verifikasi', 'keyakinan', 'tanpa_angka', 'risiko_berat', 'risiko_serius'] %}
+  <button type="button" class="chip" data-filter-sebab="{{ j }}" aria-pressed="false">{{ t('rv.jenis.' ~ j) }}</button>
+  {% endfor %}
+</div>
+{% endif %}
 
 {% for h in menunggu %}
   {% set tahan = (h.muatan or {}).get('tahan') or {} %}
-  <div class="kartu">
-    <div style="display:flex; justify-content:space-between; gap:14px; align-items:flex-start;">
+  {% set sebab_kunci = tahan.jenis or 'verifikasi' %}
+  <div class="kartu" data-sebab-review="{{ sebab_kunci }}">
+    <div style="display:flex; justify-content:space-between; gap:14px; align-items:flex-start; flex-wrap:wrap;">
       <div>
-        <div class="kicker"><a href="/saham/{{ h.emiten.kode }}">{{ h.emiten.kode }} {{ h.emiten.nama or '' }}</a> · {{ h.tanggal }} {{ h.jam or '' }}</div>
-        <b style="font-size:14px;">{{ h.judul }}</b>
+        <div class="kicker">
+          <a href="/saham/{{ h.emiten.kode }}" class="mono" style="font-weight:700;">{{ h.emiten.kode }}</a>
+          {{ h.emiten.nama or '' }} · {{ h.tanggal }} {{ h.jam or '' }}
+        </div>
+        <div style="font-size:var(--ukuran-sub); font-weight:700; margin-top:2px;">
+          <a href="/peringatan/{{ h.id }}" style="color:var(--tinta); text-decoration:none;">{{ h.judul }}</a>
+        </div>
       </div>
-      <span class="lencana l-ditahan">HELD</span>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span class="lencana l-ditahan">{{ t('st.ditahan') }}</span>
+        <span class="lencana l-dilewati mono">HELD</span>
+      </div>
     </div>
-    <div class="kv" style="margin-top:8px;"><span class="k">{{ t('rv.sebab') }}</span>
-      <span class="v" style="font-weight:500; text-align:right; max-width:70%;">{{ t('rv.jenis.' ~ (tahan.jenis or 'verifikasi')) }}</span></div>
-    <div class="cek x"><span class="tanda">!</span><span class="why">{{ tr(h.alasan_i18n) if h.alasan_i18n else h.alasan }}</span></div>
-    {% set kutip = ((h.muatan.ditolak | map(attribute='temuan') | list) if h.muatan and h.muatan.ditolak else [])
-                  + ((h.muatan.temuan | list) if h.muatan and h.muatan.temuan else []) %}
-    {% for k in kutip | map(attribute='kutipan') | unique %}
-      <div class="kutip" style="margin:6px 0;">{{ k }}</div>
-    {% endfor %}
-    <p style="margin:8px 0; font-size:12px;">
-      <a href="/peringatan/{{ h.id }}">{{ t('al.jejak') }} / detail →</a>
-      {% if h.mops_url %} · <a href="{{ h.mops_url }}" target="_blank" rel="noopener">{{ t('al.cocokkan') }}</a>{% endif %}
-    </p>
+
+    <div class="kotak-artinya" style="margin-top:var(--j-3); margin-bottom:var(--j-3);">
+      <div class="label-artinya">{{ t('rv.sebab') }}: {{ t('rv.jenis.' ~ sebab_kunci) }}</div>
+      <p>{{ tr(h.alasan_i18n) if h.alasan_i18n else h.alasan }}</p>
+    </div>
+
+    {% set semua_temuan = ((h.muatan.ditolak | map(attribute='temuan') | list) if h.muatan and h.muatan.ditolak else [])
+                        + ((h.muatan.temuan | list) if h.muatan and h.muatan.temuan else []) %}
+    {% if semua_temuan %}
+    <div style="margin:var(--j-2) 0;">
+      <div class="kicker" style="margin-bottom:6px;">{{ t('ui.rv.angka_ditarik') }}</div>
+      {% for tm in semua_temuan %}
+        {% if tm and (tm.label or tm.nilai is not none) %}
+        <div class="kv">
+          <span class="k">{{ tm.label or '—' }}</span>
+          <span class="v mono">{{ tm.nilai | rb if tm.nilai is number else (tm.nilai or '—') }} {{ tm.satuan or '' }}</span>
+        </div>
+        {% endif %}
+      {% endfor %}
+      {% for k in semua_temuan | map(attribute='kutipan') | select | unique %}
+        <div class="kutip" style="margin:6px 0;">{{ k }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:var(--j-2) 0; font-size:var(--ukuran-kecil);">
+      <a href="/peringatan/{{ h.id }}" style="font-weight:600;">{{ t('al.jejak') }} / detail →</a>
+      {% if h.mops_url %}
+        <a href="{{ h.mops_url }}" target="_blank" rel="noopener noreferrer" style="font-weight:600;">{{ t('al.cocokkan') }}</a>
+      {% endif %}
+    </div>
+
     {% if tahan.jenis == 'keyakinan' %}
-      <div class="pita nyata" style="margin:6px 0;"><div>{{ t('rv.keyakinan_info') }}</div></div>
+      <div class="pita nyata" style="margin:8px 0;"><div>{{ t('rv.keyakinan_info') }}</div></div>
     {% endif %}
     {% if not tahan.boleh_setujui %}
-      <div class="pita fixture" style="margin:6px 0;"><div>{{ t('rv.tanpa_angka') if tahan.jenis == 'tanpa_angka' else t('rv.hanya_arsip') }}</div></div>
+      <div class="pita fixture" style="margin:8px 0;"><div>{{ t('rv.tanpa_angka') if tahan.jenis == 'tanpa_angka' else t('rv.hanya_arsip') }}</div></div>
     {% endif %}
-    <form method="post" action="/review/{{ h.id }}" class="form-review">
-      <input class="isian lebar" name="catatan" placeholder="{{ t('rv.catatan') }}" maxlength="500" required>
-      {% if tahan.boleh_setujui %}
-      <button class="tombol" type="submit" name="keputusan" value="setujui">{{ t('rv.lanjut') if tahan.jenis == 'keyakinan' else t('rv.setujui') }}</button>
-      {% endif %}
-      <button class="tombol tipis" type="submit" name="keputusan" value="arsipkan">{{ t('rv.arsipkan') }}</button>
+
+    <form method="post" action="/review/{{ h.id }}" style="margin-top:var(--j-3); padding-top:var(--j-3); border-top:1px solid var(--garis);">
+      <div style="margin-bottom:var(--j-2);">
+        <input class="isian lebar" style="width:100%;" name="catatan" placeholder="{{ t('rv.catatan') }}" maxlength="500" required>
+      </div>
+      <div class="dua-kolom" style="gap:var(--j-2);">
+        {% if tahan.boleh_setujui %}
+        <div>
+          <button class="tombol utama" style="width:100%;" type="submit" name="keputusan" value="setujui">
+            {{ t('rv.lanjut') if tahan.jenis == 'keyakinan' else t('rv.setujui') }}
+          </button>
+          <small style="display:block; color:var(--abu); font-size:11.5px; margin-top:4px; line-height:1.4;">{{ t('ui.rv.konsekuensi_setujui') }}</small>
+        </div>
+        {% endif %}
+        <div>
+          <button class="tombol bahaya" style="width:100%;" type="submit" name="keputusan" value="arsipkan">
+            {{ t('rv.arsipkan') }}
+          </button>
+          <small style="display:block; color:var(--abu); font-size:11.5px; margin-top:4px; line-height:1.4;">{{ t('ui.rv.konsekuensi_arsip') }}</small>
+        </div>
+      </div>
     </form>
   </div>
 {% else %}
@@ -56,19 +118,21 @@
 {% endfor %}
 
 {% if riwayat %}
-<h2>{{ t('rv.riwayat') }}</h2>
-<div class="kartu">
-  <table class="wl">
-    <tr><th>{{ t('rv.k_waktu') }}</th><th>{{ t('wl.k_kode') }}</th><th>{{ t('rv.k_keputusan') }}</th><th>{{ t('rv.catatan') }}</th></tr>
-    {% for r in riwayat %}
-    <tr>
-      <td class="mono" style="font-size:12px;">{{ r.waktu[:16] | replace('T',' ') }}</td>
-      <td class="mono"><a href="/peringatan/{{ r.id }}">{{ r.h.emiten.kode if r.h else r.id }}</a></td>
-      <td>{{ t('rv.kp.' ~ r.keputusan) }}</td>
-      <td>{{ r.catatan }}</td>
-    </tr>
-    {% endfor %}
-  </table>
-</div>
+<details class="kartu lipat" style="margin-top:var(--j-4);">
+  <summary>{{ t('rv.riwayat') }} ({{ riwayat | length }})</summary>
+  <div class="isi-lipat tabel-geser">
+    <table class="wl">
+      <tr><th>{{ t('rv.k_waktu') }}</th><th>{{ t('wl.k_kode') }}</th><th>{{ t('rv.k_keputusan') }}</th><th>{{ t('rv.catatan') }}</th></tr>
+      {% for r in riwayat %}
+      <tr>
+        <td class="mono" style="font-size:12px;">{{ r.waktu[:16] | replace('T',' ') }}</td>
+        <td class="mono"><a href="/peringatan/{{ r.id }}">{{ r.h.emiten.kode if r.h else r.id }}</a></td>
+        <td>{{ t('rv.kp.' ~ r.keputusan) }}</td>
+        <td>{{ r.catatan }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</details>
 {% endif %}
 {% endblock %}
