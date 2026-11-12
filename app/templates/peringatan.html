@@ -1,149 +1,211 @@
 {% extends "base.html" %}
 {% block judul %}{{ h.emiten.kode }} · {{ t('st.' ~ h.status) }} · FEAF{% endblock %}
+{% block remah %}
+<nav class="remah" aria-label="Breadcrumb">
+  <a href="/">{{ t('ui.remah.peringatan') }}</a>
+  <span class="pemisah">›</span>
+  <a href="/saham/{{ h.emiten.kode }}" class="mono">{{ h.emiten.kode }}</a>
+  <span class="pemisah">›</span>
+  <span>{{ h.judul }}</span>
+</nav>
+{% endblock %}
 {% block isi %}
 
 <div class="kepala">
   <div>
-    <div class="kicker"><a href="/saham/{{ h.emiten.kode }}">{{ h.emiten.kode }} {{ h.emiten.nama }}</a> · {{ h.tanggal }}</div>
+    <div class="kicker"><a href="/saham/{{ h.emiten.kode }}">{{ h.emiten.kode }} {{ h.emiten.nama }}</a> · {{ h.tanggal }}{% if h.jam %} {{ h.jam }}{% endif %}</div>
     <h1>{{ h.judul }}</h1>
   </div>
-  <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
+  <span class="lencana besar l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
 </div>
 
 {% include "_penafian.html" %}
 
+<div class="kotak-artinya {{ h.status }}">
+  <div class="judul-kecil">{{ t('ui.al.artinya_judul') }}</div>
+  <p>{{ tr(h.alasan_i18n, h.alasan) if h.alasan_i18n else h.alasan }}</p>
+</div>
+
 {% if h.status == 'ditahan' %}
-<div class="pita bahaya"><div>{{ t('al.ditahan', sebab=((tr(h.alasan_i18n) if h.alasan_i18n else h.alasan) | e)) | safe }}</div></div>
+<div class="pita bahaya"><div class="pita-teks">{{ t('al.ditahan', sebab=((tr(h.alasan_i18n) if h.alasan_i18n else h.alasan) | e)) | safe }}</div></div>
 {% endif %}
 {% if h.muatan and h.muatan.skenario %}
-<div class="pita fixture"><div>{{ t('sn.skenario') }}</div></div>
+<div class="pita fixture"><div class="pita-teks">{{ t('sn.skenario') }}</div></div>
 {% endif %}
 {% if h.keputusan_manusia and h.status == 'terbit' %}
-<div class="pita nyata"><div>{{ t('al.disetujui_manusia', catatan=(h.keputusan_manusia.catatan | e)) | safe }}</div></div>
+<div class="pita nyata"><div class="pita-teks">{{ t('al.disetujui_manusia', catatan=(h.keputusan_manusia.catatan | e)) | safe }}</div></div>
 {% endif %}
-
 {% if injeksi %}
 <div class="pita fixture">
-  <div>{{ t('al.injeksi', penanda='<span class="mono">' ~ (injeksi.masukan.penanda | join(' · ') | e) ~ '</span>') | safe }}</div>
+  <div class="pita-teks">{{ t('al.injeksi', penanda='<span class="mono">' ~ (injeksi.masukan.penanda | join(' · ') | e) ~ '</span>') | safe }}</div>
 </div>
 {% endif %}
 
-<div class="kartu">
-  <div class="kv"><span class="k">{{ t('al.sumber') }}</span>
-    <span class="v">
-    {% if h.mops_url %}
-      {{ h.sumber_data }}<br>
-      <a class="sitasi" href="{{ h.mops_url }}" target="_blank" rel="noopener">{{ t('al.cocokkan') }}</a>
-      <span style="font-weight:400;">{{ t('al.kode_tgl', kode=h.emiten.kode, tgl=h.tanggal ~ ' ' ~ (h.jam or '')) }}</span>
-    {% else %}
-      <a class="sitasi" href="{{ h.sumber_url }}" target="_blank" rel="noopener">{{ t('al.mops_asli') }}</a>
-    {% endif %}
-    </span></div>
-  <div class="kv"><span class="k">{{ t('al.pii') }}</span>
-    <span class="v">{{ h.pii_dibuang | join(' · ') if h.pii_dibuang else '—' }}</span></div>
-  <div class="kv"><span class="k">{{ t('al.jejak') }}</span>
-    <span class="v"><a href="/jejak/{{ h.id }}">{{ t('al.lihat_langkah', n=h.ringkasan.langkah) }}</a></span></div>
-</div>
+{# 3. Angka kunci dalam 2–4 kartu kecil #}
+{% for d in (h.muatan.diterima if h.muatan and h.muatan.diterima else []) %}
+  {% set r = d.hasil %}
+  <h2>{{ t('ui.al.angka_kunci') }} · {{ t('al.hitung_ulang', input=r.input) }}</h2>
+  <div class="grid-kartu">
+    <div class="kartu-angka">
+      <div class="lbl-angka">{{ tr(r.arti_i18n, r.arti) if r.arti_i18n else r.arti }}</div>
+      <div class="nilai-angka">{{ r.nilai_lama | rb }} → {{ r.nilai_baru | rb }}</div>
+      <div class="sub-angka">{{ t('al.juta_ntd') }}</div>
+    </div>
+    <div class="kartu-angka">
+      <div class="lbl-angka">
+        {{ t('al.fcff0') }}
+        <span class="info" tabindex="0" role="button" aria-label="FCFF" data-info="{{ t('ui.info.fcff') }}">i</span>
+      </div>
+      <div class="nilai-angka">{{ r.sebelum.fcff0 | rb }} → {{ r.sesudah.fcff0 | rb }}</div>
+      <div class="sub-angka">{{ t('al.juta_ntd') }}</div>
+    </div>
+    <div class="kartu-angka">
+      <div class="lbl-angka">
+        {{ t('al.g_pasar') }}
+        <span class="info" tabindex="0" role="button" aria-label="g" data-info="{{ t('ui.info.g_tersirat') }}">i</span>
+      </div>
+      <div class="nilai-angka">{{ r.sebelum.implied_growth | pct }} → {{ r.sesudah.implied_growth | pct }}</div>
+      <div class="sub-angka">{{ t('al.harga') }}: {{ r.sebelum.price_per_share | rb }} NTD</div>
+    </div>
+    <div class="kartu-angka">
+      <div class="lbl-angka">{{ t('al.wajar_g', g=(r.g_skenario | pct(1))) }}</div>
+      <div class="nilai-angka">{{ r.sebelum.forward.fair_value | rb }} → {{ r.sesudah.forward.fair_value | rb }}</div>
+      <div class="sub-angka">NTD</div>
+    </div>
+  </div>
+  {% if r.melampaui_batas.sesudah %}
+  <div class="pita fixture">
+    <div class="pita-teks">{{ t('al.melampaui', g=(r.sesudah.implied_growth | pct), batas=(r.sesudah.terminal_growth_ceiling | pct)) | safe }}</div>
+  </div>
+  {% endif %}
+{% endfor %}
 
 {% if h.muatan and h.muatan.sinyal %}{% include "_sinyal.html" %}{% endif %}
 
-{% if h.triase %}
-{% set tri = h.triase %}
-<h2>{{ t('tb.judul') }}</h2>
+{# 4. Dari dokumen asli: kutipan + tautan MOPS #}
+<h2>{{ t('ui.al.dokumen_asli') }}</h2>
 <div class="kartu">
-  <div class="triase-atas">
-    <div><div class="kicker">{{ t('tb.judul') }}</div><b class="mono angka-besar">{{ tri.skor | rb(2) }}</b></div>
-    <div><div class="kicker">{{ t('tb.ambang', k=tri.pasal) }}</div>
-      <b class="mono angka-besar">{{ tri.ambang | rb(2) }}</b>
-      {% if tri.terkunci %}<span class="lencana l-dilewati">{{ t('tb.terkunci') }}</span>{% endif %}
-      <div class="mono" style="font-size:11px; color:var(--abu);">{{ t('tb.asal', bawah=tri.bawah, atas=tri.atas, dasar=((tri.dasar or 0.55) | rb(2))) }}</div></div>
-  </div>
-  {% for k in tri.komponen %}
-  <div class="cek {{ 'ok' if k.nilai > 0 else ('x' if k.nilai < 0 else '') }}">
-    <span class="tanda">{{ '+' if k.nilai > 0 else ('−' if k.nilai < 0 else '·') }}</span>
-    <span class="nama mono">{{ (k.nilai | abs) | rb(2) }}</span>
-    <span class="why">{{ tr(k.pesan) }}</span>
-  </div>
-  {% endfor %}
-  <form method="post" action="/umpan-balik/{{ h.id }}" class="form-review">
-    <span style="font-size:12.5px; font-weight:600;">{{ t('tb.tanya') }}</span>
-    <input type="hidden" name="kembali" value="/peringatan/{{ h.id }}">
-    <button class="tombol {{ '' if suara == 'atas' else 'abu' }}" type="submit" name="suara" value="atas">{{ t('tb.atas') }}</button>
-    <button class="tombol {{ '' if suara == 'bawah' else 'abu' }}" type="submit" name="suara" value="bawah">{{ t('tb.bawah') }}</button>
-    {% if suara %}<button class="tombol tipis" type="submit" name="suara" value="hapus">{{ t('tb.hapus') }}</button>{% endif %}
-    <a href="/ambang" style="font-size:12px; margin-left:auto;">{{ t('tb.semua') }}</a>
-  </form>
-  <p class="catatan" style="margin:8px 0 0;">{{ t('tb.cara') }}</p>
-</div>
-{% endif %}
-
-{% for d in (h.muatan.diterima if h.muatan and h.muatan.diterima else []) %}
-  {% set r = d.hasil %}
-  <h2>{{ t('al.hitung_ulang', input=r.input) }}</h2>
-  <div class="kartu">
-    <div class="kutip" style="margin-bottom:14px;">{{ d.temuan.kutipan }}
-      <div style="margin-top:6px; color:var(--abu); font-size:11.5px;">
+  {% for d in (h.muatan.diterima if h.muatan and h.muatan.diterima else []) %}
+    <div class="kutip" style="margin-bottom:10px;">
+      {{ d.temuan.kutipan }}
+      <div class="kecil redup" style="margin-top:6px;">
         {{ t('al.butir', no=d.temuan.butir_no) }} · {{ d.temuan.nilai_mentah }} {{ d.temuan.satuan }}
         {{ d.temuan.mata_uang or t('al.konvensi') }}
-        → {{ d.temuan.nilai_juta_ntd | rb }} {{ t('al.juta_ntd') }}</div>
+        → {{ d.temuan.nilai_juta_ntd | rb }} {{ t('al.juta_ntd') }}
+      </div>
     </div>
+  {% endfor %}
 
-    <div class="kv"><span class="k">{{ tr(r.arti_i18n, r.arti) if r.arti_i18n else r.arti }}</span>
-      <span class="v">{{ r.nilai_lama | rb }} → {{ r.nilai_baru | rb }}</span></div>
-    <div class="kv"><span class="k">{{ t('al.fcff0') }}</span>
-      <span class="v">{{ r.sebelum.fcff0 | rb }} → {{ r.sesudah.fcff0 | rb }}</span></div>
-    <div class="kv"><span class="k">{{ t('al.g_pasar') }}</span>
-      <span class="v delta {{ 'naik' if r.delta.g_tersirat > 0 else 'turun' }}">
-        {{ r.sebelum.implied_growth | pct }} → {{ r.sesudah.implied_growth | pct }}</span></div>
-    <div class="kv"><span class="k">{{ t('al.wajar_g', g=(r.g_skenario | pct(1))) }}</span>
-      <span class="v">{{ r.sebelum.forward.fair_value | rb }} → {{ r.sesudah.forward.fair_value | rb }} NTD</span></div>
-    <div class="kv"><span class="k">{{ t('al.harga') }}</span>
-      <span class="v">{{ r.sebelum.price_per_share | rb }} NTD</span></div>
-
-    {% if r.melampaui_batas.sesudah %}
-    <div class="pita fixture" style="margin:14px 0 0;">
-      <div>{{ t('al.melampaui', g=(r.sesudah.implied_growth | pct), batas=(r.sesudah.terminal_growth_ceiling | pct)) | safe }}</div>
-    </div>
-    {% endif %}
-  </div>
-
-  <h2>{{ t('al.pemeriksaan', lolos=(d.cek | selectattr('lolos') | list | length), total=(d.cek | length)) }}</h2>
-  <div class="kartu">
-    {% for c in d.cek %}
-    <div class="cek {{ 'ok' if c.lolos else 'x' }}">
-      <span class="tanda">{{ '✓' if c.lolos else '✕' }}</span>
-      <span class="nama">{{ tr(c.nama_i18n) if c.nama_i18n else c.nama }}</span>
-      <span class="why">{{ tr(c.alasan_i18n) if c.alasan_i18n else c.alasan }}</span>
-    </div>
-    {% endfor %}
-  </div>
-{% endfor %}
-
-{% for tm in (h.muatan.disetujui if h.muatan and h.muatan.disetujui and h.status == 'terbit' else []) %}
-  <h2>{{ t('al.angka_disetujui') }} · {{ tm.input }}</h2>
-  <div class="kartu">
-    <div class="kutip">{{ tm.kutipan }}
-      <div style="margin-top:6px; color:var(--abu); font-size:11.5px;">
+  {% for tm in (h.muatan.disetujui if h.muatan and h.muatan.disetujui and h.status == 'terbit' else []) %}
+    <div class="kutip" style="margin-bottom:10px;">
+      {{ tm.kutipan }}
+      <div class="kecil redup" style="margin-top:6px;">
         {{ t('al.butir', no=tm.butir_no) }} · {{ tm.nilai_mentah }} {{ tm.satuan or '' }} {{ tm.mata_uang or t('al.konvensi') }}
-        {% if tm.nilai_juta_ntd is not none %}→ {{ tm.nilai_juta_ntd | rb }} {{ t('al.juta_ntd') }}{% endif %}</div>
+        {% if tm.nilai_juta_ntd is not none %}→ {{ tm.nilai_juta_ntd | rb }} {{ t('al.juta_ntd') }}{% endif %}
+      </div>
     </div>
+  {% endfor %}
+
+  {% for d in (h.muatan.ditolak if h.muatan and h.muatan.ditolak else []) %}
+    <div class="kutip" style="margin-bottom:10px;">{{ d.temuan.kutipan }}</div>
+  {% endfor %}
+
+  <div class="kv">
+    <span class="k">{{ t('al.sumber') }}</span>
+    <span class="v">
+      {% if h.mops_url %}
+        {{ h.sumber_data }} ·
+        <a class="sitasi" href="{{ h.mops_url }}" target="_blank" rel="noopener">{{ t('al.cocokkan') }}</a>
+        <span style="font-weight:400;">{{ t('al.kode_tgl', kode=h.emiten.kode, tgl=h.tanggal ~ ' ' ~ (h.jam or '')) }}</span>
+      {% else %}
+        <a class="sitasi" href="{{ h.sumber_url }}" target="_blank" rel="noopener">{{ t('al.mops_asli') }}</a>
+      {% endif %}
+    </span>
   </div>
+  <div class="kv">
+    <span class="k">{{ t('al.pii') }}</span>
+    <span class="v">{{ h.pii_dibuang | join(' · ') if h.pii_dibuang else '—' }}</span>
+  </div>
+</div>
+
+{# 5. Pemeriksaan: dilipat, cek gagal di atas #}
+{% for d in (h.muatan.diterima if h.muatan and h.muatan.diterima else []) %}
+  {% set lolos_jml = (d.cek | selectattr('lolos') | list | length) %}
+  {% set total_jml = (d.cek | length) %}
+  {% set gagal_list = (d.cek | rejectattr('lolos') | list) %}
+  <details class="kartu lipat">
+    <summary>
+      {% if gagal_list %}
+        {{ t('ui.al.cek_ringkas_gagal', gagal=(gagal_list | length), total=total_jml, daftar=(gagal_list | map(attribute='nama') | join(', '))) }}
+      {% else %}
+        {{ t('al.pemeriksaan', lolos=lolos_jml, total=total_jml) }}
+      {% endif %}
+    </summary>
+    <div style="margin-top:8px;">
+      {% for c in d.cek | sort(attribute='lolos') %}
+      <div class="cek {{ 'ok' if c.lolos else 'x' }}">
+        <span class="tanda">{{ '✓' if c.lolos else '✕' }}</span>
+        <span class="nama">{{ tr(c.nama_i18n) if c.nama_i18n else c.nama }}</span>
+        <span class="why">{{ tr(c.alasan_i18n) if c.alasan_i18n else c.alasan }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </details>
 {% endfor %}
 
 {% for d in (h.muatan.ditolak if h.muatan and h.muatan.ditolak else []) %}
-  <h2>{{ t('al.ditolak_input', input=d.temuan.input) }}</h2>
-  <div class="kartu">
-    <div class="kutip" style="margin-bottom:12px;">{{ d.temuan.kutipan }}</div>
-    {% for s in (d.sebab_i18n or d.sebab) %}
-    <div class="cek x"><span class="tanda">✕</span><span class="why">{{ tr(s) }}</span></div>
-    {% endfor %}
-  </div>
+  {% set sebab_list = (d.sebab_i18n or d.sebab) %}
+  <details class="kartu lipat" open>
+    <summary>{{ t('al.ditolak_input', input=d.temuan.input) }} ({{ sebab_list | length }})</summary>
+    <div style="margin-top:8px;">
+      {% for s in sebab_list %}
+      <div class="cek x"><span class="tanda">✕</span><span class="why">{{ tr(s) }}</span></div>
+      {% endfor %}
+    </div>
+  </details>
 {% endfor %}
 
-{% if h.status in ('dilewati', 'ditahan') and not (h.muatan and h.muatan.ditolak) %}
-<div class="kartu">
-  <div class="cek"><span class="tanda">—</span><span class="why">{{ tr(h.alasan_i18n) if h.alasan_i18n else h.alasan }}</span></div>
-</div>
+{% if h.triase %}
+{% set tri = h.triase %}
+<details class="kartu lipat">
+  <summary>{{ t('tb.judul') }} · <span class="mono">{{ tri.skor | rb(2) }} / {{ tri.ambang | rb(2) }}</span></summary>
+  <div style="margin-top:10px;">
+    <div class="triase-atas">
+      <div><div class="kicker">{{ t('tb.judul') }}</div><b class="mono angka-besar">{{ tri.skor | rb(2) }}</b></div>
+      <div>
+        <div class="kicker">{{ t('tb.ambang', k=tri.pasal) }}</div>
+        <b class="mono angka-besar">{{ tri.ambang | rb(2) }}</b>
+        {% if tri.terkunci %}<span class="lencana l-dilewati">{{ t('tb.terkunci') }}</span>{% endif %}
+        <div class="mono kecil redup">{{ t('tb.asal', bawah=tri.bawah, atas=tri.atas, dasar=((tri.dasar or 0.55) | rb(2))) }}</div>
+      </div>
+    </div>
+    {% for k in tri.komponen %}
+    <div class="cek {{ 'ok' if k.nilai > 0 else ('x' if k.nilai < 0 else '') }}">
+      <span class="tanda">{{ '+' if k.nilai > 0 else ('−' if k.nilai < 0 else '·') }}</span>
+      <span class="nama mono">{{ (k.nilai | abs) | rb(2) }}</span>
+      <span class="why">{{ tr(k.pesan) }}</span>
+    </div>
+    {% endfor %}
+    <form method="post" action="/umpan-balik/{{ h.id }}" class="form-review">
+      <span style="font-size:12.5px; font-weight:600;">{{ t('tb.tanya') }}</span>
+      <input type="hidden" name="kembali" value="/peringatan/{{ h.id }}">
+      <button class="tombol kecil {{ '' if suara == 'atas' else 'abu' }}" type="submit" name="suara" value="atas">{{ t('tb.atas') }}</button>
+      <button class="tombol kecil {{ '' if suara == 'bawah' else 'abu' }}" type="submit" name="suara" value="bawah">{{ t('tb.bawah') }}</button>
+      {% if suara %}<button class="tombol tipis" type="submit" name="suara" value="hapus">{{ t('tb.hapus') }}</button>{% endif %}
+      <a href="/ambang" class="kecil" style="margin-left:auto;">{{ t('tb.semua') }}</a>
+    </form>
+    <p class="catatan" style="margin:8px 0 0;">{{ t('tb.cara') }}</p>
+  </div>
+</details>
 {% endif %}
+
+{# 6. Tombol aksi utama #}
+<div class="baris-tombol" style="margin-top:16px;">
+  {% if h.status == 'ditahan' %}
+    <a href="/review" class="tombol">{{ t('ui.al.buka_review') }}</a>
+  {% endif %}
+  <a href="/saham/{{ h.emiten.kode }}" class="tombol sekunder">{{ t('ui.al.buka_saham', kode=h.emiten.kode) }}</a>
+  <a href="/jejak/{{ h.id }}" class="tombol sekunder">{{ t('al.lihat_langkah', n=h.ringkasan.langkah) }}</a>
+</div>
 
 {% endblock %}
