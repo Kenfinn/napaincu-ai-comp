@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 {% block judul %}{{ kode_saham }} {{ nama_saham or '' }} · FEAF{% endblock %}
+{% block remah %}
+<nav class="remah" aria-label="Breadcrumb">
+  <a href="/">{{ t('nav.feed') }}</a>
+  <span class="pemisah">›</span>
+  <a href="/saham/{{ kode_saham }}">{{ t('ui.remah.saham') }} {{ kode_saham }}</a>
+  <span class="pemisah">›</span>
+  <span>{{ t('sh.tab.' ~ tab) }}</span>
+</nav>
+{% endblock %}
+
 {% block isi %}
 
 {% macro url(tab_=tab, lap_=lap, per_=per, mode_=mode, risiko_=risiko) -%}
@@ -24,7 +34,7 @@
       <small>{{ t('sh.tanpa_harga') }}</small>
     {% endif %}
   </div>
-  <div style="display:flex; gap:8px; align-items:center;">
+  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
     <a href="/tanya?kode={{ kode_saham }}" class="tombol tipis" style="text-decoration:none;">{{ t('sh.tanya_tentang', kode=kode_saham) }}</a>
     {% if di_watchlist %}
       <span class="lencana l-terbit">✔ {{ t('sh.di_watchlist') }}</span>
@@ -32,13 +42,13 @@
       <form method="post" action="/watchlist/tambah" style="margin:0;">
         <input type="hidden" name="kode" value="{{ kode_saham }}">
         <input type="hidden" name="kembali" value="/saham/{{ kode_saham }}">
-        <button class="tombol" type="submit">{{ t('sh.tambah_wl') }}</button>
+        <button class="tombol utama" type="submit">{{ t('sh.tambah_wl') }}</button>
       </form>
     {% endif %}
   </div>
 </div>
 
-<nav class="tab-saham">
+<nav class="tab-saham lengket">
   {% for k in ['ringkasan', 'stream', 'stats', 'keu', 'valuasi', 'profil'] %}
   <a href="{{ url(tab_=k) }}" class="{{ 'on' if tab == k }}">{{ t('sh.tab.' ~ k) }}</a>
   {% endfor %}
@@ -48,6 +58,7 @@
 
 {# --------------------------------------------------------------- RINGKASAN #}
 {% if tab == 'ringkasan' %}
+  <p class="sub" style="margin:0 0 var(--j-3); color:var(--abu); font-size:var(--ukuran-kecil);">{{ t('ui.sh.ringkasan_lede') }}</p>
   <div class="kontrol" style="align-items:center;">
     <span style="font-size:12.5px; color:var(--abu-2);">{{ t('rk.profil_label') }}</span>
     <div class="segmen">
@@ -70,18 +81,26 @@
   </div>
   {% endif %}
 
-  <div style="display:flex; gap:12px; align-items:flex-start;">
-    <div style="flex:1;">
+  <div class="dua-kolom">
+    <div>
       <h2>{{ t('rk.kuat_judul') }}</h2>
       <div class="kartu">
-        {% for f in rk.kuat %}<div class="cek ok"><span class="tanda">+</span><span class="why">{{ f.teks }}</span></div>
+        {% for f in rk.kuat %}
+        <div class="cek ok">
+          <span class="tanda">+</span>
+          <span class="why">{{ f.teks }} {% if f.tab %}<a href="{{ url(tab_=f.tab) }}" style="white-space:nowrap;">{{ t('rk.sumber') }} ({{ t('sh.tab.' ~ f.tab) }}) →</a>{% endif %}</span>
+        </div>
         {% else %}<div class="cek"><span class="tanda">—</span><span class="why">—</span></div>{% endfor %}
       </div>
     </div>
-    <div style="flex:1;">
+    <div>
       <h2>{{ t('rk.awas_judul') }}</h2>
       <div class="kartu">
-        {% for f in rk.awas %}<div class="cek x"><span class="tanda">!</span><span class="why">{{ f.teks }}</span></div>
+        {% for f in rk.awas %}
+        <div class="cek x">
+          <span class="tanda">!</span>
+          <span class="why">{{ f.teks }} {% if f.tab %}<a href="{{ url(tab_=f.tab) }}" style="white-space:nowrap;">{{ t('rk.sumber') }} ({{ t('sh.tab.' ~ f.tab) }}) →</a>{% endif %}</span>
+        </div>
         {% else %}<div class="cek"><span class="tanda">—</span><span class="why">—</span></div>{% endfor %}
       </div>
     </div>
@@ -99,7 +118,9 @@
     {% for f in rk.fakta %}
     <div class="cek {{ 'ok' if f.arah > 0 else ('x' if f.arah < 0 else '') }}">
       <span class="tanda">{{ '+' if f.arah > 0 else ('!' if f.arah < 0 else '·') }}</span>
-      <span class="nama">{{ t('rk.aspek.' ~ f.aspek) }}</span>
+      <span class="nama">
+        <span class="lencana {{ 'l-rendah' if f.arah > 0 else ('l-tinggi' if f.arah < 0 else 'l-sedang') }}" style="margin-right:4px;">{{ t('rk.aspek.' ~ f.aspek) }}</span>
+      </span>
       <span class="why">{{ f.teks }} <a href="{{ url(tab_=f.tab) }}" style="white-space:nowrap;">{{ t('rk.sumber') }} →</a></span>
     </div>
     {% endfor %}
@@ -132,8 +153,8 @@
 
 {# ------------------------------------------------------------------- STATS #}
 {% elif tab == 'stats' %}
-  <div style="display:flex; gap:12px; align-items:flex-start;">
-    <div style="flex:1;">
+  <div class="dua-kolom">
+    <div>
       <h2>{{ t('st.pasar') }}</h2>
       <div class="kartu">
         {% set h = s.harga %}{% set r = s.rasio %}
@@ -150,17 +171,23 @@
         <div class="kv"><span class="k">{{ t('st.yield') }}</span><span class="v">{{ (r.yield | rb(2)) ~ '%' if r and r.yield is not none else '—' }}</span></div>
       </div>
     </div>
-    <div style="flex:1;">
+    <div>
       <h2>{{ t('st.fundamental') }}</h2>
       <div class="kartu">
         {% if s.ttm_sampai %}<div class="kicker" style="margin-bottom:6px;">{{ t('st.ttm', tgl=s.ttm_sampai) }}</div>{% endif %}
         <div class="kv"><span class="k">{{ t('st.pendapatan') }}</span><span class="v">{{ ((s.pendapatan_ttm / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.pendapatan_ttm else '—' }}</span></div>
         <div class="kv"><span class="k">{{ t('st.laba') }}</span><span class="v">{{ ((s.laba_bersih_ttm / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.laba_bersih_ttm else '—' }}</span></div>
-        <div class="kv"><span class="k">{{ t('st.eps') }}</span><span class="v">{{ s.eps_ttm | rb(2) if s.eps_ttm is not none else '—' }}</span></div>
+        <div class="kv">
+          <span class="k">{{ t('st.eps') }} <button type="button" class="info" data-tip="{{ t('ui.info.eps') }}" aria-label="Info">i</button></span>
+          <span class="v">{{ s.eps_ttm | rb(2) if s.eps_ttm is not none else '—' }}</span>
+        </div>
         <div class="kv"><span class="k">{{ t('st.mk') }}</span><span class="v">{{ s.margin_kotor | pct(1) }}</span></div>
         <div class="kv"><span class="k">{{ t('st.mu') }}</span><span class="v">{{ s.margin_usaha | pct(1) }}</span></div>
         <div class="kv"><span class="k">{{ t('st.mb') }}</span><span class="v">{{ s.margin_bersih | pct(1) }}</span></div>
-        <div class="kv"><span class="k">{{ t('st.roe') }}</span><span class="v">{{ s.roe | pct(1) }}</span></div>
+        <div class="kv">
+          <span class="k">{{ t('st.roe') }} <button type="button" class="info" data-tip="{{ t('ui.info.roe') }}" aria-label="Info">i</button></span>
+          <span class="v">{{ s.roe | pct(1) }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -204,7 +231,12 @@
       <tr class="{{ 'tebal' if b.tebal }}">
         <td class="pos">
           {% if bahasa == 'zh' %}{{ b.nama_zh }}{% else %}{{ t('pos.' ~ b.kunci) }}<small>{{ b.nama_zh }}</small>{% endif %}
-          {% if b.turunan %}<span class="lencana l-dilewati">{{ t('sh.fcf_catatan') }}</span>{% endif %}
+          {% if b.kunci == 'eps' %}
+            <button type="button" class="info" data-tip="{{ t('ui.info.eps') }}" aria-label="Info">i</button>
+          {% elif b.kunci == 'fcf' or b.turunan %}
+            <span class="lencana l-dilewati">{{ t('sh.fcf_catatan') }}</span>
+            <button type="button" class="info" data-tip="{{ t('ui.info.fcf') }}" aria-label="Info">i</button>
+          {% endif %}
         </td>
         {% for v in b.sel %}
           {% if v is none %}<td class="num kosong-sel">—</td>
@@ -217,7 +249,14 @@
     </table>
   </div>
   {% else %}
-  <div class="pita bahaya"><div>{{ t('sh.keu_kosong', galat=tb.info.galat or '—') }}</div></div>
+  <div class="kartu kosong">
+    <p style="font-weight:600; color:var(--tinta); margin-bottom:6px;">{{ t('sh.keu_kosong', galat=tb.info.galat or '—') }}</p>
+    <p>{{ t('ui.sh.keu_langkah') }}</p>
+    <div class="aksi">
+      <a href="{{ url() }}" class="tombol tipis" style="text-decoration:none;">↻</a>
+      <a href="{{ mops_laporan(kode_saham, None, None, lap) }}" target="_blank" rel="noopener noreferrer" class="tombol" style="text-decoration:none;">{{ t('sh.tautan_mops') }}</a>
+    </div>
+  </div>
   {% endif %}
   <p class="catatan">{{ t('sh.sumber_resmi_mops') }}</p>
 
@@ -225,10 +264,50 @@
 {% elif tab == 'valuasi' %}
   {% if va and va.beta_sementara %}
   <div class="pita fixture" style="margin:0 0 12px;">
-    <div>{{ t('va.beta_sementara_pita') }}</div>
+    <div>
+      <strong>{{ t('ui.sh.valuasi_langkah_beta') }}</strong>
+      <div style="font-size:12px; margin-top:2px; opacity:0.85;">{{ t('va.beta_sementara_pita') }}</div>
+    </div>
   </div>
   {% endif %}
   {% if r %}
+  <div class="kotak-artinya">
+    <div class="label-artinya">{{ t('sh.tab.valuasi') }} · {{ kode_saham }}</div>
+    <p>{{ t('ui.sh.valuasi_kalimat', harga=(r.price_per_share | rb), g=(r.implied_growth | pct), wacc=(r.wacc | pct), batas=(r.terminal_growth_ceiling | pct)) }}</p>
+  </div>
+
+  <div class="grid-angka-kunci">
+    <div class="kartu-angka">
+      <div class="label-angka">{{ t('va.harga') }}</div>
+      <div class="nilai-angka">{{ r.price_per_share | rb }} <small style="font-size:12px; font-weight:normal;">NTD</small></div>
+      <div class="sub-angka">{{ t('va.per', tgl=r.as_of) }}</div>
+    </div>
+    <div class="kartu-angka">
+      <div class="label-angka">
+        {{ t('va.g_pasar') }}
+        <button type="button" class="info" data-tip="{{ t('ui.info.g_pasar') }}" aria-label="Info">i</button>
+      </div>
+      <div class="nilai-angka">{{ r.implied_growth | pct }}</div>
+      <div class="sub-angka">{{ t('va.batas_g') }}: {{ r.terminal_growth_ceiling | pct }} <button type="button" class="info" data-tip="{{ t('ui.info.batas_g') }}" aria-label="Info">i</button></div>
+    </div>
+    <div class="kartu-angka">
+      <div class="label-angka">
+        WACC
+        <button type="button" class="info" data-tip="{{ t('ui.info.wacc') }}" aria-label="Info">i</button>
+      </div>
+      <div class="nilai-angka">{{ r.wacc | pct }}</div>
+      <div class="sub-angka">{{ t('va.beta_label') }}: {{ r.wacc_inputs.beta | rb(2) }} <button type="button" class="info" data-tip="{{ t('ui.info.beta') }}" aria-label="Info">i</button></div>
+    </div>
+    <div class="kartu-angka">
+      <div class="label-angka">
+        FCFF {{ r.latest_year }}
+        <button type="button" class="info" data-tip="{{ t('ui.info.fcff') }}" aria-label="Info">i</button>
+      </div>
+      <div class="nilai-angka">{{ r.fcff0 | rb(1) }}</div>
+      <div class="sub-angka">{{ t('al.juta_ntd') }}</div>
+    </div>
+  </div>
+
   <div class="kartu">
     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
       {% if va and va.asumsi_dari == 'manual' %}
@@ -250,12 +329,12 @@
     </div>
     <div class="kv"><span class="k">{{ t('va.harga') }}</span><span class="v">{{ r.price_per_share | rb }} NTD · {{ t('va.per', tgl=r.as_of) }}</span></div>
     <div class="kv"><span class="k">{{ t('va.kapitalisasi') }}</span><span class="v">{{ r.market_cap | rb(1) }} {{ t('al.juta_ntd') }}</span></div>
-    <div class="kv"><span class="k">FCFF {{ r.latest_year }}</span><span class="v">{{ r.fcff0 | rb(1) }} {{ t('al.juta_ntd') }}</span></div>
-    <div class="kv"><span class="k">{{ t('va.g_pasar') }}</span><span class="v">{{ r.implied_growth | pct }}</span></div>
-    <div class="kv"><span class="k">{{ t('va.batas_g') }}</span><span class="v">{{ r.terminal_growth_ceiling | pct }}</span></div>
-    <div class="kv"><span class="k">WACC</span><span class="v">{{ r.wacc | pct }}</span></div>
+    <div class="kv"><span class="k">FCFF {{ r.latest_year }} <button type="button" class="info" data-tip="{{ t('ui.info.fcff') }}" aria-label="Info">i</button></span><span class="v">{{ r.fcff0 | rb(1) }} {{ t('al.juta_ntd') }}</span></div>
+    <div class="kv"><span class="k">{{ t('va.g_pasar') }} <button type="button" class="info" data-tip="{{ t('ui.info.g_pasar') }}" aria-label="Info">i</button></span><span class="v">{{ r.implied_growth | pct }}</span></div>
+    <div class="kv"><span class="k">{{ t('va.batas_g') }} <button type="button" class="info" data-tip="{{ t('ui.info.batas_g') }}" aria-label="Info">i</button></span><span class="v">{{ r.terminal_growth_ceiling | pct }}</span></div>
+    <div class="kv"><span class="k">WACC <button type="button" class="info" data-tip="{{ t('ui.info.wacc') }}" aria-label="Info">i</button></span><span class="v">{{ r.wacc | pct }}</span></div>
     <div class="kv">
-      <span class="k">{{ t('va.beta_label') }}</span>
+      <span class="k">{{ t('va.beta_label') }} <button type="button" class="info" data-tip="{{ t('ui.info.beta') }}" aria-label="Info">i</button></span>
       <span class="v">
         {% if va and va.beta_sementara %}
           {{ t('va.beta_sementara_label') }}
@@ -269,7 +348,7 @@
       </span>
     </div>
     {% if r.exceeds_ceiling %}<div class="pita fixture" style="margin:12px 0 0;"><div>{{ t('va.melampaui') }}</div></div>{% endif %}
-    <p style="margin:12px 0 0;"><a href="/valuasi/{{ kode_saham }}">{{ t('va.buka') }}</a></p>
+    <p style="margin:12px 0 0;"><a href="/valuasi/{{ kode_saham }}" class="tombol tipis" style="text-decoration:none;">{{ t('va.buka') }}</a></p>
   </div>
 
   {% if va and va.peringatan %}
@@ -285,16 +364,18 @@
   {% endif %}
 
   {% if r.sources %}
-  <h2>{{ t('va.sumber_input') }}</h2>
-  <div class="kartu">
-    {% for k, v in r.sources.items() %}
-    <div class="cek sumber {{ 'x' if k in r.incomplete_sources else 'ok' }}">
-      <span class="tanda">{{ '✕' if k in r.incomplete_sources else '✓' }}</span>
-      <span class="nama mono" style="font-size:11.5px;">{{ k }}</span>
-      <span class="why">{{ v }}</span>
+  <details class="kartu lipat" style="margin-top:var(--j-3);">
+    <summary>{{ t('ui.sh.sumber_lipat') }} ({{ t('va.sumber_input') }})</summary>
+    <div class="isi-lipat">
+      {% for k, v in r.sources.items() %}
+      <div class="cek sumber {{ 'x' if k in r.incomplete_sources else 'ok' }}">
+        <span class="tanda">{{ '✕' if k in r.incomplete_sources else '✓' }}</span>
+        <span class="nama mono" style="font-size:11.5px;">{{ k }}</span>
+        <span class="why">{{ v }}</span>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
+  </details>
   {% endif %}
 
   {% elif va and va.tidak_berlaku %}
@@ -317,16 +398,18 @@
     <p style="margin:0; line-height:1.55;">{{ tr(va.alasan_i18n, va.alasan) }}</p>
   </div>
   {% if va.sources %}
-  <h2>{{ t('va.sumber_input') }}</h2>
-  <div class="kartu">
-    {% for k, v in va.sources.items() %}
-    <div class="cek sumber ok">
-      <span class="tanda">✓</span>
-      <span class="nama mono" style="font-size:11.5px;">{{ k }}</span>
-      <span class="why">{{ v }}</span>
+  <details class="kartu lipat" style="margin-top:var(--j-3);">
+    <summary>{{ t('ui.sh.sumber_lipat') }} ({{ t('va.sumber_input') }})</summary>
+    <div class="isi-lipat">
+      {% for k, v in va.sources.items() %}
+      <div class="cek sumber ok">
+        <span class="tanda">✓</span>
+        <span class="nama mono" style="font-size:11.5px;">{{ k }}</span>
+        <span class="why">{{ v }}</span>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
+  </details>
   {% endif %}
 
   {% else %}

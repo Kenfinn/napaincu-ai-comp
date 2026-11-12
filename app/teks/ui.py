@@ -189,6 +189,11 @@ T = {
         "請嘗試切換季報／年報，或直接開啟公開資訊觀測站（MOPS）原始財報核對。",
         "Coba ganti periode Kuartalan/Tahunan atau buka langsung laporan resmi di MOPS.",
     ),
+    "ui.sh.sumber_lipat": (
+        "Technical input sources & provenance",
+        "技術輸入來源與資料出處",
+        "Sumber input teknis & asal data",
+    ),
     "ui.info.eps": (
         "Earnings Per Share (EPS): net profit divided by total common shares outstanding.",
         "每股盈餘 (EPS)：稅後淨利除以流通在外普通股股數。",
@@ -198,6 +203,26 @@ T = {
         "Return on Equity (ROE): net income as a percentage of shareholders' equity.",
         "股東權益報酬率 (ROE)：稅後淨利佔股東權益的百分比，衡量自有資本獲利效率。",
         "Return on Equity (ROE): laba bersih dibagi ekuitas pemegang saham.",
+    ),
+    "ui.info.fcf": (
+        "Free Cash Flow (FCF): operating cash flow minus capital expenditures.",
+        "自由現金流 (FCF)：營業活動現金流量扣除資本支出。",
+        "Arus Kas Bebas (FCF): arus kas operasi dikurangi belanja modal.",
+    ),
+    "ui.info.g_pasar": (
+        "Market implied growth (g): perpetual annual FCFF growth rate implied by the current stock price.",
+        "市場隱含成長率 (g)：目前股價所隱含的未來每年企業自由現金流永續成長率。",
+        "Pertumbuhan tersirat pasar (g): laju pertumbuhan tahunan FCFF selamanya yang tersirat pada harga saham saat ini.",
+    ),
+    "ui.info.batas_g": (
+        "Terminal growth ceiling: maximum long-run growth assumption (capped near long-term nominal GDP / risk-free rate).",
+        "終值成長率上限：長期永續成長率之合理上限（通常不超過長期名目 GDP 或無風險利率）。",
+        "Batas pertumbuhan terminal: batas atas asumsi pertumbuhan jangka panjang (di dekat pertumbuhan ekonomi jangka panjang).",
+    ),
+    "ui.info.beta": (
+        "Beta measures how sensitive the stock's weekly returns are relative to the TAIEX market index.",
+        "Beta 係數衡量個股每週報酬率相對於台灣加權指數（TAIEX）的波動敏感度。",
+        "Beta mengukur kepekaan imbal hasil mingguan saham terhadap pergerakan indeks pasar TAIEX.",
     ),
     "ui.info.per": (
         "Price-to-Earnings Ratio (P/E): share price divided by trailing 12-month EPS.",
