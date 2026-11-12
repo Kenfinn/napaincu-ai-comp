@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 {% block judul %}{{ t('nav.valuasi', kode=r.code) }} · FEAF{% endblock %}
+{% block remah %}
+<nav class="remah" aria-label="Breadcrumb">
+  <a href="/">{{ t('nav.feed') }}</a>
+  <span class="pemisah">›</span>
+  <a href="/saham/{{ r.code }}">{{ t('ui.remah.saham') }} {{ r.code }}</a>
+  <span class="pemisah">›</span>
+  <span>{{ t('ui.remah.valuasi') }}</span>
+</nav>
+{% endblock %}
+
 {% block isi %}
 
 <div class="kepala">
@@ -26,9 +36,49 @@
 
 {% include "_penafian.html" %}
 
+<div class="kotak-artinya">
+  <div class="label-artinya">{{ t('ui.remah.valuasi') }} · {{ r.code }}</div>
+  <p>{{ t('ui.sh.valuasi_kalimat', harga=(r.price_per_share | rb), g=(r.implied_growth | pct), wacc=(r.wacc | pct), batas=(r.terminal_growth_ceiling | pct)) }}</p>
+</div>
+
+<div class="grid-angka-kunci">
+  <div class="kartu-angka">
+    <div class="label-angka">{{ t('va.harga') }}</div>
+    <div class="nilai-angka">{{ r.price_per_share | rb }} <small style="font-size:12px; font-weight:normal;">NTD</small></div>
+    <div class="sub-angka">{{ t('va.per', tgl=r.as_of) }}</div>
+  </div>
+  <div class="kartu-angka">
+    <div class="label-angka">
+      {{ t('va.g_pasar') }}
+      <button type="button" class="info" data-tip="{{ t('ui.info.g_pasar') }}" aria-label="Info">i</button>
+    </div>
+    <div class="nilai-angka">{{ r.implied_growth | pct }}</div>
+    <div class="sub-angka">{{ t('va.batas_g') }}: {{ r.terminal_growth_ceiling | pct }} <button type="button" class="info" data-tip="{{ t('ui.info.batas_g') }}" aria-label="Info">i</button></div>
+  </div>
+  <div class="kartu-angka">
+    <div class="label-angka">
+      WACC
+      <button type="button" class="info" data-tip="{{ t('ui.info.wacc') }}" aria-label="Info">i</button>
+    </div>
+    <div class="nilai-angka">{{ r.wacc | pct }}</div>
+    <div class="sub-angka">{{ t('va.beta_label') }}: {{ r.wacc_inputs.beta | rb(2) }} <button type="button" class="info" data-tip="{{ t('ui.info.beta') }}" aria-label="Info">i</button></div>
+  </div>
+  <div class="kartu-angka">
+    <div class="label-angka">
+      FCFF {{ r.latest_year }}
+      <button type="button" class="info" data-tip="{{ t('ui.info.fcff') }}" aria-label="Info">i</button>
+    </div>
+    <div class="nilai-angka">{{ (r.fcff0/1000) | rb(1) }}</div>
+    <div class="sub-angka">{{ t('va.miliar') }}</div>
+  </div>
+</div>
+
 {% if r.wacc_inputs and r.wacc_inputs.beta_sementara %}
 <div class="pita fixture" style="margin:0 0 12px;">
-  <div>{{ t('va.beta_sementara_pita') }}</div>
+  <div>
+    <strong>{{ t('ui.sh.valuasi_langkah_beta') }}</strong>
+    <div style="font-size:12px; margin-top:2px; opacity:0.85;">{{ t('va.beta_sementara_pita') }}</div>
+  </div>
 </div>
 {% endif %}
 
@@ -38,8 +88,8 @@
 </div>
 {% endif %}
 
-<div style="display:flex; gap:12px; align-items:flex-start;">
-  <div style="flex:1;">
+<div class="dua-kolom">
+  <div>
     <h2>{{ t('va.jembatan') }}</h2>
     <div class="kartu">
       <div class="kv"><span class="k">{{ t('va.kapitalisasi') }}</span><span class="v">{{ (r.market_cap/1000000) | rb(3) }} {{ t('va.triliun') }}</span></div>
@@ -53,10 +103,10 @@
       <div class="kv"><span class="k">{{ t('va.ke') }}</span><span class="v">{{ r.cost_of_equity | pct }}</span></div>
       <div class="kv"><span class="k">{{ t('va.kd') }}</span><span class="v">{{ r.cost_of_debt | pct }}</span></div>
       <div class="kv"><span class="k">{{ t('va.we') }}</span><span class="v">{{ r.equity_weight | pct }}</span></div>
-      <div class="kv"><span class="k"><b>WACC</b></span><span class="v">{{ r.wacc | pct }}</span></div>
+      <div class="kv"><span class="k"><b>WACC</b> <button type="button" class="info" data-tip="{{ t('ui.info.wacc') }}" aria-label="Info">i</button></span><span class="v">{{ r.wacc | pct }}</span></div>
       <div class="kv"><span class="k">{{ t('va.pajak') }}</span><span class="v">{{ r.tax_rate | pct }}</span></div>
       <div class="kv">
-        <span class="k">{{ t('va.beta_label') }}</span>
+        <span class="k">{{ t('va.beta_label') }} <button type="button" class="info" data-tip="{{ t('ui.info.beta') }}" aria-label="Info">i</button></span>
         <span class="v">
           {% if r.wacc_inputs.beta_sementara %}
             {{ t('va.beta_sementara_label') }}
@@ -72,8 +122,8 @@
     </div>
   </div>
 
-  <div style="flex:1;">
-    <h2>{{ t('va.fcf') }}</h2>
+  <div>
+    <h2>{{ t('va.fcf') }} <button type="button" class="info" data-tip="{{ t('ui.info.fcff') }}" aria-label="Info">i</button></h2>
     <div class="kartu">
       {% for th, v in r.fcff_series.items() %}
       <div class="kv"><span class="k">FCFF {{ th }}{{ t('va.dipakai') if r.basis == 'latest' and th == r.latest_year }}</span>
@@ -85,9 +135,9 @@
 
     <h2>Reverse DCF</h2>
     <div class="kartu">
-      <div class="kv"><span class="k">{{ t('va.g_pasar') }}</span>
+      <div class="kv"><span class="k">{{ t('va.g_pasar') }} <button type="button" class="info" data-tip="{{ t('ui.info.g_pasar') }}" aria-label="Info">i</button></span>
         <span class="v" style="font-size:15px;">{{ r.implied_growth | pct }}</span></div>
-      <div class="kv"><span class="k">{{ t('va.batas_g') }}</span>
+      <div class="kv"><span class="k">{{ t('va.batas_g') }} <button type="button" class="info" data-tip="{{ t('ui.info.batas_g') }}" aria-label="Info">i</button></span>
         <span class="v">{{ r.terminal_growth_ceiling | pct }}</span></div>
       <div class="kv"><span class="k">{{ t('va.sirkular') }}</span>
         <span class="v">{{ t('va.selisih', d=('%.2e' | format(r.circularity.drift_pct))) }}</span></div>
@@ -100,7 +150,7 @@
 </div>
 
 <h2>{{ t('va.sensitivitas') }}</h2>
-<div class="kartu">
+<div class="kartu tabel-geser">
   <table>
     <tr><th>WACC</th>{% for g in r.sensitivity.g_axis %}<th>g = {{ g | pct }}</th>{% endfor %}</tr>
     {% for w in r.sensitivity.wacc_axis %}

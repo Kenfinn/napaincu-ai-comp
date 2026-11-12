@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 {% block judul %}{{ t('wl.judul') }} · FEAF{% endblock %}
+{% block remah %}
+<nav class="remah" aria-label="Breadcrumb">
+  <a href="/">{{ t('nav.feed') }}</a>
+  <span class="pemisah">›</span>
+  <span>{{ t('ui.remah.watchlist') }}</span>
+</nav>
+{% endblock %}
+
 {% block isi %}
 
 <div class="kepala">
@@ -14,27 +22,71 @@
 </div>
 
 <div class="kartu">
-  <form method="post" action="/watchlist/tambah" style="display:flex; gap:10px; align-items:center; margin:0;">
-    <label for="kode" style="font-size:13px;">{{ t('wl.kode') }}</label>
-    <input class="isian" id="kode" name="kode" placeholder="{{ t('wl.contoh') }}" maxlength="6" autocomplete="off" required>
-    <button class="tombol" type="submit">{{ t('wl.tambah') }}</button>
+  <form method="post" action="/watchlist/tambah" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:0;">
+    <label for="kode" style="font-size:13px; font-weight:600;">{{ t('wl.kode') }}</label>
+    <div class="bungkus-cari" style="flex:1; min-width:220px;">
+      <input class="isian lebar" style="width:100%;" id="kode" name="kode" placeholder="{{ t('ui.wl.placeholder_cari') }}" maxlength="40" autocomplete="off" data-cari-saran="kode" required>
+    </div>
+    <button class="tombol utama" type="submit">{{ t('wl.tambah') }}</button>
   </form>
+  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:var(--j-3); padding-top:var(--j-2); border-top:1px solid var(--garis);">
+    <span style="font-size:12px; color:var(--abu);">{{ t('ui.wl.populer') }}:</span>
+    {% for k_pop, n_pop in [('2330', '台積電'), ('2317', '鴻海'), ('2454', '聯發科')] %}
+    <form method="post" action="/watchlist/tambah" style="margin:0; display:inline;">
+      <input type="hidden" name="kode" value="{{ k_pop }}">
+      <button type="submit" class="chip" style="padding:3px 10px; font-size:12px;">+ <span class="mono">{{ k_pop }}</span> {{ n_pop }}</button>
+    </form>
+    {% endfor %}
+  </div>
 </div>
 
-<div class="kartu">
+{% set peta_samping = {} %}
+{% if saham_samping %}
+  {% for s_item in saham_samping %}
+    {% set _ = peta_samping.update({s_item.kode: s_item}) %}
+  {% endfor %}
+{% endif %}
+
+<div class="kartu tabel-geser">
   {% if baris %}
   <table class="wl">
-    <tr><th>{{ t('wl.k_kode') }}</th><th>{{ t('wl.k_nama') }}</th><th>{{ t('wl.k_valuasi') }}</th>
-        <th>{{ t('wl.k_jumlah') }}</th><th>{{ t('wl.k_terakhir') }}</th><th></th></tr>
-    {% for b in baris %}
     <tr>
-      <td class="mono" style="font-weight:600;"><a href="/saham/{{ b.kode }}">{{ b.kode }}</a></td>
-      <td>{{ b.nama or '—' }}</td>
-      <td>{% if b.valuasi %}<a href="/valuasi/{{ b.kode }}">{{ t('wl.dcf') }}</a>{% else %}<span style="color:var(--abu);">{{ t('wl.angka_saja') }}</span>{% endif %}</td>
+      <th>{{ t('wl.k_kode') }}</th>
+      <th>{{ t('wl.k_nama') }}</th>
+      <th>{{ t('ui.wl.k_harga') }}</th>
+      <th>{{ t('wl.k_valuasi') }}</th>
+      <th>{{ t('wl.k_jumlah') }}</th>
+      <th>{{ t('wl.k_terakhir') }}</th>
+      <th></th>
+    </tr>
+    {% for b in baris %}
+    {% set info_s = peta_samping.get(b.kode) or {} %}
+    <tr>
+      <td class="mono" style="font-weight:700;"><a href="/saham/{{ b.kode }}">{{ b.kode }}</a></td>
+      <td><a href="/saham/{{ b.kode }}" style="color:var(--tinta); text-decoration:none;">{{ b.nama or '—' }}</a></td>
+      <td class="mono">
+        {% if b.harga is defined and b.harga is not none %}
+          {{ b.harga | rb(2) }}
+        {% endif %}
+        {% if info_s.ubah_pct is defined and info_s.ubah_pct is not none %}
+          <span class="delta {{ 'naik' if info_s.ubah_pct > 0 else ('turun' if info_s.ubah_pct < 0 else '') }}">
+            {{ '+' if info_s.ubah_pct > 0 else '' }}{{ (info_s.ubah_pct * 100) | round(1) }}%
+          </span>
+        {% elif b.harga is not defined or b.harga is none %}
+          <span style="color:var(--abu);">—</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if b.valuasi %}
+          <a href="/valuasi/{{ b.kode }}" class="lencana l-terbit" style="text-decoration:none;">{{ t('wl.dcf') }}</a>
+        {% else %}
+          <span class="lencana l-dilewati">{{ t('wl.angka_saja') }}</span>
+        {% endif %}
+      </td>
       <td class="mono">{{ b.jumlah }}</td>
       <td class="mono" style="font-size:12px;">{{ b.terakhir or t('wl.belum') }}</td>
       <td style="text-align:right;">
-        <form method="post" action="/watchlist/hapus/{{ b.kode }}" style="margin:0;">
+        <form method="post" action="/watchlist/hapus/{{ b.kode }}" style="margin:0;" data-konfirmasi="{{ t('ui.wl.konfirmasi_hapus', kode=b.kode) }}">
           <button class="tombol tipis" type="submit">{{ t('wl.hapus') }}</button>
         </form>
       </td>
@@ -42,7 +94,17 @@
     {% endfor %}
   </table>
   {% else %}
-  <div class="kosong">{{ t('wl.kosong') }}</div>
+  <div class="kosong">
+    <p>{{ t('wl.kosong') }}</p>
+    <div class="aksi">
+      {% for k_pop, n_pop in [('2330', '台積電'), ('2317', '鴻海'), ('2454', '聯發科')] %}
+      <form method="post" action="/watchlist/tambah" style="margin:0; display:inline;">
+        <input type="hidden" name="kode" value="{{ k_pop }}">
+        <button type="submit" class="tombol tipis">+ {{ k_pop }} {{ n_pop }}</button>
+      </form>
+      {% endfor %}
+    </div>
+  </div>
   {% endif %}
 </div>
 

@@ -289,7 +289,8 @@ T = {
     ),
     "ui.wl.label_cari": ("Stock code or company name", "股票代號或公司名稱", "Kode atau nama saham"),
     "ui.wl.placeholder": ("e.g. 2330, TSMC, 台積電, MediaTek", "例：2330、TSMC、台積電、聯發科", "mis. 2330, TSMC, 台積電, MediaTek"),
-    "ui.wl.k_harga": ("Price (NTD)", "股價 (NTD)", "Harga (NTD)"),
+    "ui.wl.placeholder_cari": ("e.g. 2330, TSMC, 台積電, MediaTek", "例：2330、TSMC、台積電、聯發科", "mis. 2330, TSMC, 台積電, MediaTek"),
+    "ui.wl.k_harga": ("Price / Change", "股價／漲跌", "Harga / Perubahan"),
     "ui.wl.k_ubah": ("Change", "漲跌幅", "Perubahan"),
     "ui.wl.konfirmasi_hapus": (
         "Remove {kode} from your watchlist?",
@@ -297,12 +298,18 @@ T = {
         "Hapus {kode} dari watchlist Anda?",
     ),
     "ui.wl.contoh_judul": ("Popular Taiwan stocks to try:", "常見台灣代表性個股：", "Contoh saham populer untuk dicoba:"),
+    "ui.wl.populer": ("Quick add popular issuers", "快速加入常見個股", "Tambah cepat emiten populer"),
     "ui.jj.ringkasan_polos": (
-        "The agent completed {langkah} steps in {detik} s, called the language model {panggilan} time(s), and ended as {status}: {alasan}",
-        "代理於 {detik} 秒內完成 {langkah} 個步驟，呼叫語言模型 {panggilan} 次，最終狀態為「{status}」：{alasan}",
-        "Agent menyelesaikan {langkah} langkah dalam {detik} detik, memanggil model {panggilan} kali, dan berakhir {status}: {alasan}",
+        "Completed in {durasi} ms · {langkah} steps · {panggilan} model call(s) · cost ${biaya}",
+        "於 {durasi} 毫秒內完成 · 共 {langkah} 個步驟 · {panggilan} 次模型呼叫 · 費用 ${biaya}",
+        "Selesai dalam {durasi} ms · {langkah} langkah · {panggilan} panggilan model · biaya ${biaya}",
     ),
     "ui.jj.meta_teknis": (
+        "Technical metrics (tokens, cost, retries, raw file)",
+        "技術指標（Token 數、費用、重試次數與原始檔）",
+        "Metrik teknis (token, biaya, percobaan ulang, berkas mentah)",
+    ),
+    "ui.jj.detail_teknis": (
         "Technical metrics (tokens, cost, retries, raw file)",
         "技術指標（Token 數、費用、重試次數與原始檔）",
         "Metrik teknis (token, biaya, percobaan ulang, berkas mentah)",

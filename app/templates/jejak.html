@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 {% block judul %}{{ t('al.jejak') }} {{ h.id }} · FEAF{% endblock %}
+{% block remah %}
+<nav class="remah" aria-label="Breadcrumb">
+  <a href="/">{{ t('nav.feed') }}</a>
+  <span class="pemisah">›</span>
+  <a href="/peringatan/{{ h.id }}">{{ h.emiten.kode }}</a>
+  <span class="pemisah">›</span>
+  <span>{{ t('ui.remah.jejak') }}</span>
+</nav>
+{% endblock %}
+
 {% block isi %}
 
 <div class="kepala">
@@ -7,19 +17,12 @@
     <div class="kicker">{{ t('jj.kicker') }}</div>
     <h1>{{ t('jj.judul', kode=h.emiten.kode) }}</h1>
   </div>
-  <span class="lencana l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
+  <span class="lencana besar l-{{ h.status }}">{{ t('st.' ~ h.status) }}</span>
 </div>
 
-<div class="kartu rapat" style="display:flex; gap:26px; flex-wrap:wrap;">
-  <div><div class="kicker">{{ t('jj.durasi') }}</div><b class="mono">{{ h.ringkasan.durasi_total_ms }} ms</b></div>
-  <div><div class="kicker">{{ t('jj.langkah') }}</div><b class="mono">{{ h.ringkasan.langkah }}</b></div>
-  <div><div class="kicker">{{ t('jj.panggilan') }}</div><b class="mono">{{ h.ringkasan.panggilan_model }}</b></div>
-  <div><div class="kicker">{{ t('jj.cache') }}</div><b class="mono">{{ h.ringkasan.jawaban_cache or 0 }}</b></div>
-  <div><div class="kicker">{{ t('jj.token_masuk') }}</div><b class="mono">{{ h.ringkasan.token_masuk | rb }}</b></div>
-  <div><div class="kicker">{{ t('jj.token_keluar') }}</div><b class="mono">{{ h.ringkasan.token_keluar | rb }}</b></div>
-  <div><div class="kicker">{{ t('jj.biaya') }}</div><b class="mono">${{ h.ringkasan.biaya_usd | rb(4) }}</b></div>
-  <div><div class="kicker">{{ t('jj.retry') }}</div><b class="mono">{{ h.ringkasan.retry }}</b></div>
-  <div><div class="kicker">{{ t('jj.cadangan') }}</div><b class="mono">{{ t('ya') if h.ringkasan.pakai_cadangan else t('tidak') }}</b></div>
+<div class="kotak-artinya">
+  <div class="label-artinya">{{ t('ui.remah.jejak') }} · {{ h.id }}</div>
+  <p>{{ t('ui.jj.ringkasan_polos', durasi=h.ringkasan.durasi_total_ms, langkah=h.ringkasan.langkah, panggilan=h.ringkasan.panggilan_model, biaya=(h.ringkasan.biaya_usd | rb(4))) }}</p>
 </div>
 
 {% if h.ringkasan.pakai_cadangan %}
@@ -28,30 +31,58 @@
 
 <h2>{{ t('jj.langkah') }}</h2>
 <div class="kartu">
-{% for l in h.jejak %}
-  <div class="langkah {{ l.status }}">
-    <span class="no">{{ l.urutan }}</span>
-    <div style="flex:1; min-width:0;">
-      <div style="display:flex; justify-content:space-between; gap:12px;">
-        <b style="font-size:13px;">{% if l.state %}<span class="state">{{ l.state | state }}</span> {% endif %}{{ tr(l.tahap_i18n) if l.tahap_i18n else l.tahap }}</b>
+  <div class="garis-waktu">
+  {% for l in h.jejak %}
+    {% set kelas_waktu = 'ok' if l.status in ('lanjut', 'terbit', 'ok') else ('gagal' if l.status in ('ditolak', 'gagal', 'x') else 'henti') %}
+    {% set ikon_waktu = '✓' if kelas_waktu == 'ok' else ('✕' if kelas_waktu == 'gagal' else '■') %}
+    <div class="langkah-waktu {{ kelas_waktu }} langkah {{ l.status }}">
+      <span class="titik-waktu" aria-hidden="true">{{ ikon_waktu }}</span>
+      <div style="display:flex; justify-content:space-between; gap:12px; align-items:baseline; flex-wrap:wrap;">
+        <b style="font-size:var(--ukuran-isi);">
+          <span class="mono" style="color:var(--abu); font-size:12px; margin-right:4px;">#{{ l.urutan }}</span>
+          {% if l.state %}<span class="state">{{ l.state | state }}</span> {% endif %}
+          {{ tr(l.tahap_i18n) if l.tahap_i18n else l.tahap }}
+        </b>
         {% set st_kunci = ('st.' ~ l.status) if l.status in ('terbit','ditolak','ditahan','dilewati') else ('jst.' ~ l.status) %}
-        <span class="mono" style="font-size:11px; color:var(--abu);">{{ t(st_kunci) if not t(st_kunci).startswith('⟦') else l.status }} · {{ l.durasi_ms }} ms</span>
+        <span class="mono" style="font-size:11.5px; color:var(--abu);">
+          {{ t(st_kunci) if not t(st_kunci).startswith('⟦') else l.status }} · {{ l.durasi_ms }} ms
+        </span>
       </div>
       {% if l.meta and l.meta.model %}
-      <div class="mono" style="font-size:10.5px; color:var(--abu); margin-top:3px;">
+      <div class="mono" style="font-size:11px; color:var(--abu); margin-top:4px;">
         {{ l.meta.model }} · prompt {{ l.meta.versi_prompt }}
         {%- if l.meta.cadangan %} · {{ t('jj.cadangan_sebab', sebab=l.meta.sebab_cadangan) }}{% endif %}
       </div>
       {% endif %}
-      <details class="data-jejak"><summary>{{ t('jj.data') }}</summary>
-        <pre>{{ l.keluaran | jejak_bahasa(h.alasan_i18n) | tojson(indent=2) }}</pre></details>
+      <details class="data-jejak" style="margin-top:6px;">
+        <summary>{{ t('jj.data') }}</summary>
+        <pre>{{ l.keluaran | jejak_bahasa(h.alasan_i18n) | tojson(indent=2) }}</pre>
+      </details>
     </div>
+  {% endfor %}
   </div>
-{% endfor %}
 </div>
 
-<div class="kartu rapat">
-  <small style="color:var(--abu-2); line-height:1.55;">{{ t('jj.berkas', id=(h.id | e)) | safe }}</small>
+<details class="kartu lipat">
+  <summary>{{ t('ui.jj.detail_teknis') }}</summary>
+  <div class="isi-lipat">
+    <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:var(--j-3);">
+      <div><div class="kicker">{{ t('jj.durasi') }}</div><b class="mono">{{ h.ringkasan.durasi_total_ms }} ms</b></div>
+      <div><div class="kicker">{{ t('jj.langkah') }}</div><b class="mono">{{ h.ringkasan.langkah }}</b></div>
+      <div><div class="kicker">{{ t('jj.panggilan') }}</div><b class="mono">{{ h.ringkasan.panggilan_model }}</b></div>
+      <div><div class="kicker">{{ t('jj.cache') }}</div><b class="mono">{{ h.ringkasan.jawaban_cache or 0 }}</b></div>
+      <div><div class="kicker">{{ t('jj.token_masuk') }}</div><b class="mono">{{ h.ringkasan.token_masuk | rb }}</b></div>
+      <div><div class="kicker">{{ t('jj.token_keluar') }}</div><b class="mono">{{ h.ringkasan.token_keluar | rb }}</b></div>
+      <div><div class="kicker">{{ t('jj.biaya') }}</div><b class="mono">${{ h.ringkasan.biaya_usd | rb(4) }}</b></div>
+      <div><div class="kicker">{{ t('jj.retry') }}</div><b class="mono">{{ h.ringkasan.retry }}</b></div>
+      <div><div class="kicker">{{ t('jj.cadangan') }}</div><b class="mono">{{ t('ya') if h.ringkasan.pakai_cadangan else t('tidak') }}</b></div>
+    </div>
+    <small style="color:var(--abu-2); line-height:1.55;">{{ t('jj.berkas', id=(h.id | e)) | safe }}</small>
+  </div>
+</details>
+
+<div style="margin-top:var(--j-3);">
+  <a href="/peringatan/{{ h.id }}" class="tombol tipis" style="text-decoration:none;">← {{ h.emiten.kode }} · {{ h.judul[:40] }}</a>
 </div>
 
 {% endblock %}
