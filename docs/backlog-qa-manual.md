@@ -15,9 +15,9 @@ action plan di tiap item, dan patuhi batas berkasnya. Setelah tiap item: tes, co
 
 | No | Temuan | Status |
 |---|---|---|
-| QA-1 | Review feed: lencana jumlah, alasan teknis, arsip mendominasi, kotak cari, tombol, penafian | Belum |
-| QA-2 | Narasi AI tab ringkasan tidak muncul untuk profil konservatif dan agresif | Belum |
-| QA-3 | Detail peringatan: kotak "Why it was held" sulit dibaca pemula (cek diulang, istilah teknis, lencana ganda) | Belum |
+| QA-1 | Review feed: lencana jumlah, alasan teknis, arsip mendominasi, kotak cari, tombol, penafian | Selesai (`a565ac0`) |
+| QA-2 | Narasi AI tab ringkasan tidak muncul untuk profil konservatif dan agresif | Selesai (`cadb9e0`) |
+| QA-3 | Detail peringatan: kotak "Why it was held" sulit dibaca pemula (cek diulang, istilah teknis, lencana ganda) | Selesai (`da040df`) |
 
 ---
 

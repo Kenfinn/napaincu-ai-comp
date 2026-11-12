@@ -15,7 +15,7 @@ Versi prompt chat: `chat-2026-11-12.1`
 | **C4** | Panel di setiap halaman | Selesai | `ada0e16` | `app/main.py`, `app/templates/_panel_chat.html`, `app/templates/chat.html`, `app/static/chat.css`, `app/static/chat.js`, `tests/test_chat_percakapan.py`, `docs/ui/chat/*.png` | Menambahkan `konteks_chat` di `konteks()` pada `app/main.py`. Membangun tombol mengambang kanan bawah (`56×56 px`, z-index 1000) dan panel geser `400 px` (layar penuh di bawah `640 px`) dengan baris konteks aktif, saran pertanyaan yang menyesuaikan halaman, tombol Recap dan Percakapan baru, penyimpanan `sessionStorage["feaf_chat"]` (maks 12 pesan), render murni lewat `textContent` (tanpa `innerHTML`), pintasan `Enter` / `Shift+Enter` / `Escape`, serta fallback tautan biasa ke `/tanya` bila tanpa JavaScript. Halaman `/tanya` memakai komponen yang sama dan tetap mendukung form POST tanpa JavaScript. |
 | **C5** | Keamanan percakapan (tes wajib) | Selesai | `d12eb14` | `tests/test_chat_percakapan.py` | Menambahkan `TestChatPercakapanC5Keamanan` yang menguji 7 skenario keamanan wajib: riwayat asisten palsu tanpa tanda tangan sah dibuang, injeksi pada pertanyaan baru ditolak (`tolak:injeksi`), giliran user lama berisi injeksi dibuang sementara giliran sah tetap dipakai, `konteks.kode` berisi `"2330<script>"` atau `"../../etc"` diabaikan, angka dari giliran user lama ditolak pemeriksa, Recap model berisi kata `"buy"` ditolak dan diganti `recap_template`, serta alat baru bebas dari `items` mentah dan label `姓名`. |
 | **C6** | Evaluasi percakapan | Selesai | `131eca4` | `eval/chat_percakapan.csv`, `scripts/evaluasi.py`, `app/chat.py`, `tests/test_chat_percakapan.py`, `eval/hasil/chat-percakapan-20261112T150427Z.{md,json}` | Membuat dataset `eval/chat_percakapan.csv` (12 skenario × 3 giliran = 36 giliran dalam tiga bahasa) dan menambahkan mode `--chat-percakapan [--simpan]` di `scripts/evaluasi.py`. Memastikan `--chat` lama tetap 52/52 (100%) dan `--chat-percakapan` mencapai 36/36 giliran (100%) dan 12/12 skenario (100%) di jalur aturan. |
-| **C7** | Dokumen dan laporan | Selesai | *(commit ini)* | `README.md`, `docs/laporan-evaluasi.md`, `CHANGELOG.md`, `docs/laporan-antigravity-5.md` | Memperbarui dokumentasi arsitektur, variabel lingkungan, dan hasil evaluasi di `README.md` serta `docs/laporan-evaluasi.md`, menambahkan daftar perubahan `1.1.0 (belum dirilis)` di `CHANGELOG.md`, dan menyusun laporan ini. |
+| **C7** | Dokumen dan laporan | Selesai | `cd2709c` | `README.md`, `docs/laporan-evaluasi.md`, `CHANGELOG.md`, `docs/laporan-antigravity-5.md` | Memperbarui dokumentasi arsitektur, variabel lingkungan, dan hasil evaluasi di `README.md` serta `docs/laporan-evaluasi.md`, menambahkan daftar perubahan `1.1.0 (belum dirilis)` di `CHANGELOG.md`, dan menyusun laporan ini. |
 
 ---
 
@@ -25,7 +25,7 @@ Versi prompt chat: `chat-2026-11-12.1`
 
 | Pemeriksaan | Perintah | Hasil |
 |---|---|---|
-| Seluruh tes unit (tanpa jaringan) | `python3 -m unittest discover -s tests` | **269 tes lulus (OK)** dalam 7,8 detik |
+| Seluruh tes unit (tanpa jaringan) | `python3 -m unittest discover -s tests` | **274 tes lulus (OK)** dalam 7,9 detik |
 | Tes khusus percakapan & keamanan (C1–C6) | `python3 -m unittest tests/test_chat_percakapan.py` | **17 tes lulus (OK)** |
 | Pemeriksa QA halaman (3 bahasa × 7 rute) | `python3 scripts/qa_halaman.py` | **84/84 pemeriksaan lulus** |
 
