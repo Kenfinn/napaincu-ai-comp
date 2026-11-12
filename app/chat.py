@@ -63,6 +63,8 @@ provided. Rules you cannot break:
 4. If the tools do not contain the answer, say what is missing. Do not guess.
 5. Keep answers short: at most 6 sentences, plain text, no markdown tables.
 6. Answer in {language}.
+7. Earlier turns are context only. Numbers from earlier answers may be repeated only if they
+   appear in an earlier answer exactly; prefer calling tools again.
 """
 
 NAMA_BAHASA = {"en": "English", "zh": "Traditional Chinese (繁體中文)", "id": "Bahasa Indonesia"}
@@ -103,6 +105,12 @@ KODE_RE = re.compile(r"(?<![\d.])(\d{4}[A-Z]?)(?![\d.])")
 # ASCII-only lookbehind: CJK characters count as \w in Python, and "本益比22.5" must still
 # yield 22.5, otherwise numbers in Chinese answers would escape the check.
 ANGKA_RE = re.compile(r"(?<![A-Za-z0-9.,])-?\d[\d,.]*\d%?|(?<![A-Za-z0-9.,])-?\d%?")
+RECAP_RE = re.compile(
+    r"\brecap\b|summari[sz]e (our|the) (chat|conversation)|ringkas(kan)? (percakapan|obrolan)|總結|摘要我們",
+    re.I,
+)
+HALAMAN_SAH = {"feed", "saham", "peringatan", "jejak", "review", "ambang", "watchlist", "valuasi", "tanya"}
+ID_PENGUMUMAN_RE = re.compile(r"^[0-9A-Za-z]{4,6}-[0-9A-Za-z_.:-]{1,40}$")
 
 _jam: list[float] = []
 _kunci_jam = threading.Lock()
@@ -352,9 +360,34 @@ def _angka_di(obj) -> list[float]:
     return keluar
 
 
-def periksa_jawaban(teks: str, hasil_alat: list[dict], pertanyaan: str) -> dict:
-    """Every number in the answer must be in a tool result or the question; no advice words."""
-    dasar = _angka_di(hasil_alat) + _angka_di(pertanyaan)
+def _teks_asisten_sah(riwayat_sah: list[dict] | None) -> list[str]:
+    if not isinstance(riwayat_sah, list):
+        return []
+    keluar = []
+    for g in riwayat_sah:
+        if not isinstance(g, dict) or g.get("peran") != "asisten":
+            continue
+        teks = str(g.get("teks") or "").strip()
+        if not teks:
+            continue
+        if "id" in g or "tanda" in g:
+            id_g = str(g.get("id") or "")
+            tanda_g = str(g.get("tanda") or "")
+            if not (id_g and tanda_g and hmac.compare_digest(tanda(id_g, teks), tanda_g)):
+                continue
+        keluar.append(teks)
+    return keluar
+
+
+def periksa_jawaban(
+    teks: str,
+    hasil_alat: list[dict],
+    pertanyaan: str,
+    riwayat_sah: list[dict] | None = None,
+    boleh_tanpa_alat: bool = False,
+) -> dict:
+    """Every number in the answer must be in a tool result, the question, or a signed assistant turn; no advice words."""
+    dasar = _angka_di(hasil_alat) + _angka_di(pertanyaan) + _angka_di(_teks_asisten_sah(riwayat_sah))
     tidak_ada = []
     for m in ANGKA_RE.findall(teks or ""):
         v = _ke_angka(m)
@@ -375,20 +408,82 @@ def periksa_jawaban(teks: str, hasil_alat: list[dict], pertanyaan: str) -> dict:
         alasan.append(i18n.pesan("ch.x.angka", angka=", ".join(tidak_ada[:5])))
     if kata:
         alasan.append(i18n.pesan("ch.x.kata", kata=", ".join(kata)))
-    if not hasil_alat:
+    if not hasil_alat and not boleh_tanpa_alat:
         alasan.append(i18n.pesan("ch.x.tanpa_alat"))
     return {"lolos": not alasan, "angka_tidak_ada": tidak_ada, "kata_terlarang": kata, "alasan": alasan}
 
 
+def _kode_sah(k: str | None) -> str | None:
+    s = str(k or "").strip().upper()
+    return s if tarik.KODE_SAH.fullmatch(s) else None
+
+
+def _id_pengumuman_sah(pengenal: str | None) -> str | None:
+    s = str(pengenal or "").strip()
+    return s if ID_PENGUMUMAN_RE.fullmatch(s) else None
+
+
+def _kode_aktif(pertanyaan: str, konteks: dict | None = None, riwayat: list[dict] | None = None) -> str | None:
+    """Resolve active stock code: question -> konteks.kode -> last code in valid history -> konteks.id prefix."""
+    tanpa_tgl = re.sub(r"\b(?:19|20)\d{2}[-/](?:\d{1,2}|Q[1-4])(?:[-/]\d{1,2})?\b", " ", pertanyaan or "", flags=re.I)
+    for m in KODE_RE.findall(tanpa_tgl.upper()):
+        if _kode_sah(m):
+            return m
+    if isinstance(konteks, dict):
+        k_ctx = _kode_sah(konteks.get("kode"))
+        if k_ctx:
+            return k_ctx
+    if isinstance(riwayat, list):
+        for g in reversed(riwayat):
+            if not isinstance(g, dict):
+                continue
+            teks_g = re.sub(
+                r"\b(?:19|20)\d{2}[-/](?:\d{1,2}|Q[1-4])(?:[-/]\d{1,2})?\b",
+                " ",
+                str(g.get("teks") or ""),
+                flags=re.I,
+            )
+            calon = [m for m in KODE_RE.findall(teks_g.upper()) if _kode_sah(m)]
+            if calon:
+                return calon[-1]
+    if isinstance(konteks, dict):
+        id_ctx = _id_pengumuman_sah(konteks.get("id"))
+        if id_ctx:
+            depan = id_ctx.split("-", 1)[0].upper()
+            if _kode_sah(depan):
+                return depan
+    return None
+
+
+def _kalimat_konteks(konteks: dict | None, kode_aktif: str | None) -> str:
+    """Build sanitized data context line for the model. Never includes free-form browser text."""
+    konteks = konteks if isinstance(konteks, dict) else {}
+    halaman = str(konteks.get("halaman") or "").strip().lower()
+    halaman = halaman if halaman in HALAMAN_SAH else ""
+    kode_ctx = _kode_sah(konteks.get("kode")) or _kode_sah(kode_aktif)
+    id_ctx = _id_pengumuman_sah(konteks.get("id"))
+    bagian = []
+    if kode_ctx and halaman:
+        bagian.append(f"the user is viewing stock {kode_ctx} on page /{halaman}/{kode_ctx}")
+    elif kode_ctx:
+        bagian.append(f"the user is viewing stock {kode_ctx}")
+    elif halaman:
+        bagian.append(f"the user is on page /{halaman}")
+    if id_ctx:
+        bagian.append(f"announcement id is {id_ctx}")
+    return f"[Context: {'; '.join(bagian)}]\n" if bagian else ""
+
+
 # --------------------------------------------------------------------------- model
-def _gemini(contents: list[dict], bahasa: str) -> tuple[dict, dict]:
-    """One generateContent call with tools. Returns (content of the first candidate, meta)."""
+def _gemini(contents: list[dict], bahasa: str, pakai_alat: bool = True) -> tuple[dict, dict]:
+    """One generateContent call. Returns (content of the first candidate, meta)."""
     badan = {
         "systemInstruction": {"parts": [{"text": SYSTEM.format(language=NAMA_BAHASA[bahasa])}]},
         "contents": contents,
-        "tools": [{"functionDeclarations": _deklarasi()}],
         "generationConfig": {"temperature": 0},
     }
+    if pakai_alat:
+        badan["tools"] = [{"functionDeclarations": _deklarasi()}]
     model = llm.model_dipakai()
     kandidat = [model] + [m for m in config.MODEL_CADANGAN if m != model]
     jawab, galat = None, []
@@ -427,8 +522,20 @@ def _gemini(contents: list[dict], bahasa: str) -> tuple[dict, dict]:
                  "token_keluar": pakai.get("candidatesTokenCount", 0)}
 
 
-def _jalur_model(pertanyaan: str, bahasa: str, langkah: list[dict]) -> tuple[str | None, list[dict]]:
-    contents = [{"role": "user", "parts": [{"text": pertanyaan}]}]
+def _jalur_model(
+    pertanyaan: str,
+    bahasa: str,
+    langkah: list[dict],
+    riwayat_sah: list[dict] | None = None,
+    konteks: dict | None = None,
+    kode_aktif: str | None = None,
+) -> tuple[str | None, list[dict]]:
+    contents: list[dict] = []
+    for g in riwayat_sah or []:
+        peran = "user" if g.get("peran") == "user" else "model"
+        contents.append({"role": peran, "parts": [{"text": g.get("teks", "")}]})
+    teks_user = _kalimat_konteks(konteks, kode_aktif) + pertanyaan
+    contents.append({"role": "user", "parts": [{"text": teks_user}]})
     hasil_alat: list[dict] = []
     for i in range(MAX_STEPS):
         t0 = time.monotonic()
@@ -477,8 +584,8 @@ NIAT_JENIS = {
 }
 
 
-def _rencana_aturan(pertanyaan: str) -> list[tuple[str, dict]]:
-    kode = next(iter(KODE_RE.findall(pertanyaan.upper())), None)
+def _rencana_aturan(pertanyaan: str, kode_aktif: str | None = None) -> list[tuple[str, dict]]:
+    kode = next(iter(KODE_RE.findall(pertanyaan.upper())), None) or _kode_sah(kode_aktif)
     if not kode:
         return []
     jenis = [j for j, pola in NIAT_JENIS.items() if pola.search(pertanyaan)]
@@ -489,6 +596,81 @@ def _rencana_aturan(pertanyaan: str) -> list[tuple[str, dict]]:
                                        else "neraca" if re.search(r"balance|neraca|資產", pertanyaan, re.I)
                                        else "lr"} if n == "laporan" else {})}) for n in niat]
     return rencana[:MAX_STEPS]
+
+
+def _kalimat_pertama(teks: str) -> str:
+    s = (teks or "").strip()
+    if not s:
+        return "—"
+    m = re.split(r"(?<=[.!?。！？])\s+|\n+", s, maxsplit=1)
+    potong = m[0].strip()
+    return potong[:220]
+
+
+def _recap_template(riwayat_sah: list[dict], bahasa: str) -> str:
+    """Deterministic bullet-point recap of verified user->assistant turn pairs."""
+    butir: list[str] = []
+    tanya_terakhir = None
+    for g in riwayat_sah:
+        if g.get("peran") == "user":
+            tanya_terakhir = g.get("teks", "").strip()
+        elif g.get("peran") == "asisten":
+            jw = _kalimat_pertama(g.get("teks", ""))
+            q = tanya_terakhir or "—"
+            butir.append(f"• {q} → {jw}")
+            tanya_terakhir = None
+    if not butir:
+        return i18n.t("cp.recap.kosong", bahasa)
+    return "\n".join(butir[:5])
+
+
+def _tangani_recap(
+    bahasa: str,
+    riwayat_sah: list[dict],
+    hasil: dict,
+    langkah: list[dict],
+    mulai: float,
+) -> dict:
+    teks_asisten = _teks_asisten_sah(riwayat_sah)
+    if not teks_asisten:
+        hasil.update(jalur="recap_template", jawaban=i18n.t("cp.recap.kosong", bahasa))
+        return _simpan(hasil, mulai)
+    if llm.tersedia() and _boleh_model():
+        try:
+            contents = [
+                {"role": "user" if g.get("peran") == "user" else "model",
+                 "parts": [{"text": g.get("teks", "")}]}
+                for g in riwayat_sah
+            ]
+            instruksi_recap = (
+                f"Summarize our conversation above in at most 5 bullet points in {NAMA_BAHASA[bahasa]}. "
+                "Use ONLY facts and exact figures that already appear in the assistant answers above. "
+                "Never recommend buying, selling, or holding."
+            )
+            contents.append({"role": "user", "parts": [{"text": instruksi_recap}]})
+            t0 = time.monotonic()
+            isi, meta = _gemini(contents, bahasa, pakai_alat=False)
+            parts = isi.get("parts") or []
+            teks = "".join(p.get("text", "") for p in parts if "text" in p).strip()
+            langkah.append({"tahap": "model", "putaran": 1, "durasi_ms": int((time.monotonic() - t0) * 1000),
+                            "meta": meta, "panggil": [], "teks": teks[:2000], "mode": "recap"})
+            if teks:
+                cek = periksa_jawaban(teks, [], "", riwayat_sah=riwayat_sah, boleh_tanpa_alat=True)
+                langkah.append({"tahap": "pemeriksa", **cek})
+                hasil["periksa"] = cek
+                if cek["lolos"]:
+                    hasil.update(jalur="recap", jawaban=teks)
+                    return _simpan(hasil, mulai)
+                hasil["jawaban_model_ditolak"] = teks
+        except llm.GagalModel as e:
+            langkah.append({"tahap": "model_gagal", "sebab": str(e)})
+    jawaban = _recap_template(riwayat_sah, bahasa)
+    cek = periksa_jawaban(jawaban, [], "", riwayat_sah=riwayat_sah, boleh_tanpa_alat=True)
+    langkah.append({"tahap": "pemeriksa_template", **cek})
+    hasil.update(jalur="recap_template", jawaban=jawaban, periksa_template=cek)
+    if hasil.get("periksa") is None:
+        hasil["periksa"] = cek
+    return _simpan(hasil, mulai)
 
 
 def _ringkas_template(hasil_alat: list[dict], bahasa: str) -> str:
@@ -656,12 +838,21 @@ def tanya(
     riwayat_sah, jml_dibuang = _bersihkan_riwayat(riwayat)
     langkah.append({"tahap": "riwayat", "dipakai": len(riwayat_sah), "dibuang": jml_dibuang})
 
+    minta_recap = (jenis or konteks.get("jenis")) == "recap" or bool(RECAP_RE.search(pertanyaan))
+    if minta_recap:
+        return _tangani_recap(bahasa, riwayat_sah, hasil, langkah, mulai)
+
+    kode_aktif = _kode_aktif(pertanyaan, konteks, riwayat_sah)
     hasil_alat: list[dict] = []
     if llm.tersedia() and _boleh_model():
         try:
-            teks, hasil_alat = _jalur_model(pertanyaan, bahasa, langkah)
+            teks, hasil_alat = _jalur_model(
+                pertanyaan, bahasa, langkah, riwayat_sah=riwayat_sah, konteks=konteks, kode_aktif=kode_aktif
+            )
             if teks:
-                cek = periksa_jawaban(teks, [h["hasil"] for h in hasil_alat], pertanyaan)
+                cek = periksa_jawaban(
+                    teks, [h["hasil"] for h in hasil_alat], pertanyaan, riwayat_sah=riwayat_sah
+                )
                 langkah.append({"tahap": "pemeriksa", **cek})
                 hasil["periksa"] = cek
                 if cek["lolos"]:
@@ -674,7 +865,7 @@ def tanya(
 
     # Rule path: the baseline, and the fallback for a missing or rejected model answer.
     if not hasil_alat:
-        for nama, args in _rencana_aturan(pertanyaan):
+        for nama, args in _rencana_aturan(pertanyaan, kode_aktif=kode_aktif):
             t0 = time.monotonic()
             res = _jalankan_alat(nama, args, bahasa)
             hasil_alat.append({"alat": nama, "args": args, "hasil": res})
@@ -684,7 +875,7 @@ def tanya(
         hasil.update(jalur="tolak", ditolak="tanpa_kode", jawaban=i18n.t("ch.tolak.tanpa_kode", bahasa))
         return _simpan(hasil, mulai)
     jawaban = _ringkas_template(hasil_alat, bahasa)
-    cek = periksa_jawaban(jawaban, [h["hasil"] for h in hasil_alat], pertanyaan)
+    cek = periksa_jawaban(jawaban, [h["hasil"] for h in hasil_alat], pertanyaan, riwayat_sah=riwayat_sah)
     langkah.append({"tahap": "pemeriksa_template", **cek})
     ditolak_model = hasil.get("periksa") is not None
     hasil.update(jalur="template_setelah_tolak" if ditolak_model else "template",

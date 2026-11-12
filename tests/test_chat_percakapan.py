@@ -117,5 +117,67 @@ class TestChatPercakapanC1(unittest.TestCase):
         self.assertEqual(tahap_riwayat["dibuang"], 1)
 
 
+class TestChatPercakapanC2(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self._data_asli = config.DATA_DIR
+        config.DATA_DIR = self._tmp.name
+        os.environ["SENTINEL_SERTAKAN_CONTOH"] = "1"
+        chat._jam.clear()
+
+    def tearDown(self):
+        config.DATA_DIR = self._data_asli
+        self._tmp.cleanup()
+
+    @patch.object(chat.llm, "tersedia", return_value=False)
+    def test_lanjutan_pakai_konteks_kode_untuk_valuasi(self, *_):
+        h = chat.tanya("What about its valuation?", "en", konteks={"halaman": "saham", "kode": "2330"})
+        self.assertEqual(h["jalur"], "template")
+        alat_dipanggil = [l["alat"] for l in h["langkah"] if l["tahap"] == "alat"]
+        self.assertIn("valuasi", alat_dipanggil)
+        self.assertIn("2330", h["jawaban"])
+
+    @patch.object(chat.llm, "tersedia", return_value=False)
+    @patch.object(pasar, "harga", side_effect=_mock_harga)
+    def test_kode_dari_riwayat_dipakai_bila_konteks_kosong(self, *_):
+        h1 = chat.tanya("What is the price of 2330?", "en")
+        riwayat = [
+            {"peran": "user", "teks": "What is the price of 2330?"},
+            {"peran": "asisten", "teks": h1["jawaban"], "id": h1["id"], "tanda": h1["tanda"]},
+        ]
+        h2 = chat.tanya("What about its valuation?", "en", riwayat=riwayat, konteks={})
+        self.assertEqual(h2["jalur"], "template")
+        alat_dipanggil = [l["alat"] for l in h2["langkah"] if l["tahap"] == "alat"]
+        self.assertEqual(alat_dipanggil, ["valuasi"])
+        self.assertIn("2330", h2["jawaban"])
+
+    @patch.object(chat.llm, "tersedia", return_value=False)
+    def test_recap_tanpa_riwayat_mengembalikan_pesan_kosong(self, *_):
+        from app import i18n
+        h = chat.tanya("Recap", "en", riwayat=[])
+        self.assertEqual(h["jalur"], "recap_template")
+        self.assertEqual(h["jawaban"], i18n.t("cp.recap.kosong", "en"))
+
+    @patch.object(chat.llm, "tersedia", return_value=True)
+    @patch.object(pasar, "harga", side_effect=_mock_harga)
+    def test_recap_memuat_angka_di_luar_riwayat_sah_ditolak_pemeriksa(self, *_):
+        with patch.object(chat.llm, "tersedia", return_value=False):
+            h1 = chat.tanya("What is the price of 2330?", "en")
+        riwayat = [
+            {"peran": "user", "teks": "What is the price of 2330?"},
+            {"peran": "asisten", "teks": h1["jawaban"], "id": h1["id"], "tanda": h1["tanda"]},
+        ]
+        # Mock model returning a number (9999) not in the signed assistant turn
+        palsu_isi = {"parts": [{"text": "• 2330 closed at NT$ 1,080 and fair value is NT$ 9,999."}]}
+        palsu_meta = {"model": "mock-gemini", "token_masuk": 50, "token_keluar": 20}
+        with patch.object(chat, "_gemini", return_value=(palsu_isi, palsu_meta)):
+            h_recap = chat.tanya("Summarize our chat", "en", riwayat=riwayat)
+        self.assertEqual(h_recap["jalur"], "recap_template")
+        self.assertFalse(h_recap["periksa"]["lolos"])
+        self.assertIn("9,999", h_recap["periksa"]["angka_tidak_ada"])
+        self.assertNotIn("9,999", h_recap["jawaban"])
+        self.assertIn("• What is the price of 2330?", h_recap["jawaban"])
+
+
 if __name__ == "__main__":
     unittest.main()
