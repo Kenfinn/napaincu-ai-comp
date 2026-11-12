@@ -8,23 +8,41 @@
 <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
-<nav class="rail">
-  <div class="merek">
-    <b>FEAF</b>
-    <span>{{ t('merek.sub') }}</span>
+<header class="bilah-atas">
+  <button type="button" class="tombol-menu" data-buka-menu aria-label="{{ t('ui.nav.buka_menu') }}">☰</button>
+  <a href="/" class="merek-ponsel"><b>FEAF</b></a>
+  <form class="cari cari-ponsel bungkus-saran" method="get" action="/saham">
+    <input name="kode" placeholder="{{ t('sh.cari_placeholder') }}" maxlength="40" autocomplete="off" aria-label="{{ t('sh.cari_placeholder') }}" data-cari-saran="saham">
+  </form>
+</header>
+<div class="latar-laci" data-tutup-menu></div>
+<nav class="rail" aria-label="Main navigation">
+  <div class="merek-baris">
+    <div class="merek">
+      <b>FEAF</b>
+      <span>{{ t('merek.sub') }}</span>
+    </div>
+    <button type="button" class="tutup-laci" data-tutup-menu aria-label="{{ t('ui.nav.tutup_menu') }}">✕</button>
   </div>
-  <form class="cari" method="get" action="/saham">
-    <input name="kode" placeholder="{{ t('sh.cari_placeholder') }}" maxlength="40" autocomplete="off" aria-label="{{ t('sh.cari_placeholder') }}">
+  <form class="cari bungkus-saran" method="get" action="/saham">
+    <input name="kode" placeholder="{{ t('sh.cari_placeholder') }}" maxlength="40" autocomplete="off" aria-label="{{ t('sh.cari_placeholder') }}" data-cari-saran="saham">
   </form>
   <div class="nav">
-    <a href="/watchlist" class="{{ 'on' if halaman == 'watchlist' }}">{{ t('nav.watchlist') }}
-      <span class="hit abu">{{ jml_watchlist }}</span></a>
+    <span class="nav-grup">{{ t('ui.nav.pantau') }}</span>
     <a href="/" class="{{ 'on' if halaman == 'feed' }}">{{ t('nav.feed') }}
       {% if jml_terbit %}<span class="hit">{{ jml_terbit }}</span>{% endif %}</a>
-    <a href="/tanya" class="{{ 'on' if halaman == 'tanya' }}">{{ t('nav.tanya') }}</a>
+    <a href="/watchlist" class="{{ 'on' if halaman == 'watchlist' }}">{{ t('nav.watchlist') }}
+      <span class="hit abu">{{ jml_watchlist }}</span></a>
+
+    <span class="nav-grup">{{ t('ui.nav.tinjau') }}</span>
     <a href="/review" class="{{ 'on' if halaman == 'review' }}">{{ t('nav.review') }}
       {% if jml_review %}<span class="hit kuning-hit">{{ jml_review }}</span>{% endif %}</a>
     <a href="/ambang" class="{{ 'on' if halaman == 'ambang' }}">{{ t('nav.ambang') }}</a>
+
+    <span class="nav-grup">{{ t('ui.nav.asisten') }}</span>
+    <a href="/tanya" class="{{ 'on' if halaman == 'tanya' }}">{{ t('nav.tanya') }}</a>
+
+    <span class="nav-grup">{{ t('ui.nav.lainnya') }}</span>
     <a href="/docs">{{ t('nav.api') }}</a>
   </div>
   <div class="daftar-saham">
@@ -51,38 +69,43 @@
     </div>
   </div>
   <div class="status-kotak">
-    <span class="lbl">{{ t('status.mesin') }}</span>
+    <span class="lbl">{{ t('ui.status.judul') }}</span>
     <div class="mesin">
       <span class="titik {{ '' if pakai_model else 'kuning' }}"></span>
-      <span>{{ model if pakai_model else t('status.aturan') }}</span>
+      <span>{{ t('ui.status.model_polos', model=model) if pakai_model else t('ui.status.aturan_polos') }}</span>
     </div>
     <small>
-      {{ t('status.model_aktif') if pakai_model else t('status.tanpa_kunci') }}
-      {{ t('status.sumber') }} <b>{{ t('sumber.' ~ sumber_data) }}</b>.
-    </small>
-    <span class="lbl" style="margin-top:10px;">{{ t('status.tarik') }}</span>
-    <div class="mesin">
-      {% if status_tarik %}
-      <span class="titik {{ '' if status_tarik.ok else 'merah' }}"></span>
-      <span>{{ status_tarik.waktu[:16] | replace('T', ' ') }} UTC</span>
+      {{ t('ui.status.sumber_nyata') if sumber_data == 'nyata' else t('ui.status.sumber_fixture') }} ·
+      {% if status_tarik and status_tarik.waktu %}
+        {{ t('ui.status.tarik_waktu', waktu=(status_tarik.waktu[:16] | replace('T', ' '))) }}
       {% else %}
-      <span class="titik kuning"></span><span>{{ t('status.belum') }}</span>
+        {{ t('ui.status.tarik_belum') }}
       {% endif %}
-    </div>
+    </small>
     {% if status_tarik and not status_tarik.ok %}
-    <small>{{ t('status.tarik_gagal') }}</small>
+    <small class="status-galat">{{ t('status.tarik_gagal') }}</small>
     {% endif %}
   </div>
 </nav>
 <main class="isi">
   {% if sumber_data == 'fixture' %}
-  <div class="pita fixture"><div>{{ t('pita.fixture') | safe }}</div></div>
+  <div class="pita fixture" role="status">
+    <span class="pita-ikon" aria-hidden="true">ℹ</span>
+    <div class="pita-teks">{{ t('pita.fixture') | safe }}</div>
+    <button type="button" class="pita-tutup" data-tutup-pita aria-label="{{ t('ui.tutup') }}">✕</button>
+  </div>
   {% endif %}
   {% if pesan %}
-  <div class="pita {{ 'nyata' if pesan_ok else 'bahaya' }}"><div>{{ pesan }}</div></div>
+  <div class="pita {{ 'nyata' if pesan_ok else 'bahaya' }}" role="alert">
+    <span class="pita-ikon" aria-hidden="true">{{ '✓' if pesan_ok else '!' }}</span>
+    <div class="pita-teks">{{ pesan }}</div>
+    <button type="button" class="pita-tutup" data-tutup-pita aria-label="{{ t('ui.tutup') }}">✕</button>
+  </div>
   {% endif %}
+  {% block remah %}{% endblock %}
   {% block isi %}{% endblock %}
 </main>
+<script src="/static/ui.js" defer></script>
 {# Panel Tanya FEAF di setiap halaman. Milik Claude (app/templates/_panel_chat.html,
    app/static/chat.js, app/static/chat.css). Baris ini jangan dipindah atau dihapus. #}
 {% include "_panel_chat.html" %}

@@ -147,43 +147,100 @@ body {
 .mono, .num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
 a { color: var(--navy); }
 
+/* ---- bilah atas ponsel & laci ---- */
+.bilah-atas { display: none; align-items: center; gap: var(--j-3); padding: var(--j-2) var(--j-4);
+              background: var(--navy); color: #fff; position: sticky; top: 0; z-index: 300; }
+.tombol-menu, .tutup-laci { display: inline-flex; align-items: center; justify-content: center;
+                            width: 40px; height: 40px; border: 1px solid #2A4D72; border-radius: var(--r-2);
+                            background: var(--navy-2); color: #fff; font-size: 18px; cursor: pointer; flex: none; }
+.tutup-laci { display: none; }
+.merek-ponsel { color: #fff; text-decoration: none; font-size: 16px; letter-spacing: -0.01em; flex: none; }
+.cari-ponsel { flex: 1; margin: 0 !important; }
+.latar-laci { display: none; position: fixed; inset: 0; background: rgba(16, 20, 24, .45); z-index: 390; }
+.latar-laci.buka { display: block; }
+.merek-baris { display: flex; align-items: center; justify-content: space-between; gap: var(--j-2); }
+
 /* ---- rail ---- */
-.rail { width: 224px; flex: none; background: var(--navy); padding: 24px 16px;
-        display: flex; flex-direction: column; gap: 26px; }
+.rail { width: 240px; flex: none; background: var(--navy); padding: 22px 16px;
+        display: flex; flex-direction: column; gap: 18px; }
 .merek { display: flex; flex-direction: column; gap: 3px; padding-left: 8px; }
-.merek b { font-size: 15px; color: #fff; letter-spacing: -0.01em; }
-.merek span { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.09em;
-               color: #7E9BB8; text-transform: uppercase; }
+.merek b { font-size: 16px; color: #fff; letter-spacing: -0.01em; }
+.merek span { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.08em;
+               color: #8CA8C4; text-transform: uppercase; }
 .nav { display: flex; flex-direction: column; gap: 2px; }
-.nav a { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 5px;
-         color: #A9C0D6; text-decoration: none; font-size: 13.5px; }
-.nav a:hover { background: #1D3E60; color: #DCE7F0; }
+.nav-grup { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.08em;
+            color: #8CA8C4; text-transform: uppercase; padding: 10px 10px 4px; }
+.nav-grup:first-child { padding-top: 0; }
+.nav a { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 8px 10px; border-radius: var(--r-2);
+         color: #C2D4E6; text-decoration: none; font-size: var(--h-isi); }
+.nav a:hover { background: #1D3E60; color: #fff; }
 .nav a.on { background: var(--navy-3); color: #fff; font-weight: 600; }
 .nav .hit { margin-left: auto; font-family: "IBM Plex Mono", monospace; font-size: 11px;
-            font-weight: 600; background: var(--naik); color: #fff; padding: 1px 6px; border-radius: 9px; }
-.status-kotak { margin-top: auto; background: var(--navy-2); border-radius: 6px; padding: 12px;
-                display: flex; flex-direction: column; gap: 7px; }
-.status-kotak .lbl { font-family: "IBM Plex Mono", monospace; font-size: 9.5px; letter-spacing: 0.09em;
-                     color: #7E9BB8; text-transform: uppercase; }
-.status-kotak .mesin { font-size: 12.5px; color: #DCE7F0; display: flex; align-items: baseline; gap: 6px; }
-.status-kotak small { font-size: 11.5px; color: #7E9BB8; line-height: 1.45; }
-.titik { width: 7px; height: 7px; border-radius: 50%; background: #45C08D; flex: none; }
+            font-weight: 600; background: #2F74C0; color: #fff; padding: 1px 7px; border-radius: 9px; }
+.status-kotak { margin-top: auto; background: var(--navy-2); border-radius: var(--r-2); padding: 12px;
+                display: flex; flex-direction: column; gap: 6px; }
+.status-kotak .lbl { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.08em;
+                     color: #8CA8C4; text-transform: uppercase; }
+.status-kotak .mesin { font-size: 13px; color: #E6EEF6; display: flex; align-items: center; gap: 7px; line-height: 1.35; }
+.status-kotak small { font-size: 12px; color: #9FB7CE; line-height: 1.45; }
+.status-kotak small.status-galat { color: #F5B5AC; }
+.titik { width: 8px; height: 8px; border-radius: 50%; background: #45C08D; flex: none; }
 .titik.kuning { background: #E8B872; }
 
-/* ---- isi ---- */
-.isi { flex: 1; padding: 26px 32px 48px; min-width: 0; }
-.kepala { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
-.kepala h1 { margin: 0; font-size: 22px; letter-spacing: -0.015em; }
-.kicker { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.1em;
-          color: var(--abu); text-transform: uppercase; margin-bottom: 5px; }
-h2 { font-size: 15px; margin: 22px 0 10px; }
+/* ---- isi & remah roti ---- */
+.isi { flex: 1; padding: 26px 32px 72px; min-width: 0; max-width: 1180px; }
+.remah { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 var(--j-2);
+         font-size: var(--h-label); color: var(--abu-2); }
+.remah a { color: var(--navy); text-decoration: none; font-weight: 500; }
+.remah a:hover { text-decoration: underline; }
+.remah .pemisah { color: var(--abu); }
+.kepala { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+          margin-bottom: var(--j-4); flex-wrap: wrap; }
+.kepala h1 { margin: 0; font-size: var(--h-judul); letter-spacing: -0.015em; line-height: 1.25; }
+.kicker { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.06em;
+          color: var(--abu); text-transform: uppercase; margin-bottom: 4px; }
+h2 { font-size: var(--h-sedang); margin: 22px 0 10px; }
 
-/* ---- pita sumber data ---- */
-.pita { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 6px;
-        font-size: 12px; line-height: 1.5; margin-bottom: 16px; }
+/* ---- pita sumber data & pesan kilat ---- */
+.pita { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: var(--r-2);
+        font-size: var(--h-label); line-height: 1.5; margin-bottom: var(--j-3); }
+.pita-ikon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px;
+             border-radius: 50%; font: 700 12px/1 "IBM Plex Mono", monospace; flex: none; margin-top: 1px;
+             background: rgba(16, 20, 24, .08); }
+.pita-teks { flex: 1; min-width: 0; }
+.pita-tutup { background: transparent; border: 0; color: inherit; opacity: .7; cursor: pointer;
+              width: 28px; height: 28px; border-radius: var(--r-1); font-size: 13px; flex: none; }
+.pita-tutup:hover { opacity: 1; background: rgba(16, 20, 24, .08); }
 .pita.fixture { background: #FBF2E3; color: #5F4409; border-left: 3px solid var(--amber); }
 .pita.nyata   { background: #EFF7F3; color: #12604A; border-left: 3px solid var(--turun); }
 .pita.bahaya  { background: #F9EAE8; color: #6B2620; border-left: 3px solid var(--tolak); }
+
+/* ---- saran otomatis pencarian ---- */
+.bungkus-saran { position: relative; }
+.daftar-saran { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 450;
+                background: var(--surface); border: 1px solid var(--garis); border-radius: var(--r-2);
+                box-shadow: var(--bayang-2); max-height: 280px; overflow-y: auto; }
+.item-saran { display: flex; align-items: center; gap: var(--j-2); width: 100%; min-height: 40px;
+              padding: 8px 12px; border: 0; border-bottom: 1px solid var(--netral-100);
+              background: var(--surface); color: var(--ink); text-align: left; cursor: pointer;
+              font: 400 var(--h-label) "Instrument Sans", sans-serif; }
+.item-saran:last-child { border-bottom: 0; }
+.item-saran:hover, .item-saran:focus-visible { background: var(--netral-50); }
+.item-saran .kd { font-weight: 700; color: var(--navy); min-width: 48px; }
+.item-saran .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item-saran .bursa { font-size: 11px; color: var(--abu); }
+
+/* ---- responsif di bawah 900px (ponsel & tablet kecil) ---- */
+@media (max-width: 900px) {
+  body { flex-direction: column; }
+  .bilah-atas { display: flex; }
+  .tutup-laci { display: inline-flex; }
+  .rail { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; max-width: 86vw; z-index: 400;
+          transform: translateX(-102%); transition: transform .18s ease-out; overflow-y: auto; }
+  .rail.buka { transform: translateX(0); box-shadow: var(--bayang-2); }
+  .isi { padding: 16px 14px 80px; }
+  .kepala h1 { font-size: 20px; }
+}
 
 /* ---- baris feed ---- */
 .baris { display: flex; align-items: flex-start; gap: 14px; padding: 13px 16px; background: var(--surface);
@@ -333,3 +390,82 @@ table.fin td.kosong-sel { color: var(--abu); }
 .cek.sumber .nama.mono { width: 200px; font-size: 11.5px; overflow-wrap: anywhere; }
 .cek.sumber .why { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 @media (max-width: 640px) { .cek.sumber { flex-wrap: wrap; } .cek.sumber .why { flex-basis: 100%; padding-left: 24px; } }
+
+/* --- U3: kartu ringkasan filter feed & pengelompokan tanggal --- */
+.grid-ringkasan { display: grid; gap: var(--j-3); grid-template-columns: repeat(3, 1fr); margin-bottom: var(--j-3); }
+@media (max-width: 720px) { .grid-ringkasan { grid-template-columns: 1fr; } }
+.kartu-filter { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: var(--r-3);
+                background: var(--surface); border: 1.5px solid var(--garis); cursor: pointer; text-align: left;
+                font-family: "Instrument Sans", sans-serif; color: var(--ink); box-shadow: var(--bayang-1); }
+.kartu-filter:hover { border-color: var(--navy); }
+.kartu-filter.on { border-color: var(--navy); box-shadow: 0 0 0 1.5px var(--navy); background: #F7FAFD; }
+.kartu-filter .atas { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.kartu-filter .angka { font: 700 22px/1.1 "IBM Plex Mono", monospace; }
+.kartu-filter .arti { font-size: var(--h-kecil); color: var(--abu-2); line-height: 1.4; }
+.baris-filter-atas { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+                     gap: var(--j-3); margin: 12px 0 10px; }
+.kelompok-tanggal { margin-bottom: var(--j-4); }
+.judul-tanggal { font: 600 var(--h-label) "Instrument Sans", sans-serif; color: var(--abu-2);
+                 margin: 14px 2px 8px; display: flex; align-items: center; gap: 8px; }
+.baris .emiten-baris { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.baris .nama-emiten { font-size: var(--h-kecil); color: var(--abu-2); font-weight: 500; }
+.tindakan-kecil { font-size: var(--h-kecil); font-weight: 600; color: var(--st-tahan); margin-top: 2px; }
+.delta-netral { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+                color: var(--navy); background: var(--st-terbit-latar); padding: 2px 7px; border-radius: var(--r-1); }
+@media (max-width: 640px) {
+  .baris { flex-direction: column; gap: 8px; }
+  .baris .kiri { width: auto; display: flex; align-items: center; gap: 10px; }
+  .baris .kanan { align-items: flex-start; text-align: left; flex-direction: row; flex-wrap: wrap; }
+}
+
+/* --- U4: detail peringatan (kotak artinya & kartu angka kunci) --- */
+.kotak-artinya { border-left: 4px solid var(--navy); background: var(--surface); border-radius: var(--r-3);
+                 padding: 16px 18px; margin-bottom: var(--j-3); box-shadow: var(--bayang-1); }
+.kotak-artinya.ditahan { border-left-color: var(--amber); background: #FFFBF3; }
+.kotak-artinya.dilewati { border-left-color: var(--abu); background: var(--netral-50); }
+.kotak-artinya .judul-kecil { font-size: var(--h-kecil); font-weight: 700; color: var(--abu-2);
+                              text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.kotak-artinya p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink); }
+.kartu-angka { background: var(--surface); border: 1px solid var(--garis); border-radius: var(--r-2);
+               padding: 12px 14px; }
+.kartu-angka .lbl-angka { font-size: var(--h-kecil); color: var(--abu-2); margin-bottom: 4px; }
+.kartu-angka .nilai-angka { font: 700 18px/1.25 "IBM Plex Mono", monospace; color: var(--ink); }
+.kartu-angka .sub-angka { font-size: 11.5px; color: var(--abu); margin-top: 3px; }
+
+/* --- U5: halaman saham (kepala responsif & tab lengket) --- */
+.tab-saham.lengket, .tab.lengket { position: sticky; top: 0; z-index: 150; background: var(--surface); }
+@media (max-width: 900px) {
+  .tab-saham.lengket, .tab.lengket { top: 56px; }
+  .kepala-saham { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .harga-besar { align-items: flex-start; }
+}
+
+/* --- U6: review & ambang --- */
+.baris-konsekuensi { font-size: var(--h-kecil); color: var(--abu-2); margin-top: 6px; line-height: 1.45; }
+.bar-ambang-bungkus { display: flex; align-items: center; gap: 10px; min-width: 140px; }
+.bar-ambang { flex: 1; height: 8px; background: var(--netral-200); border-radius: var(--r-bulat); overflow: hidden; }
+.bar-ambang > span { display: block; height: 100%; background: var(--navy); border-radius: var(--r-bulat); }
+.grid-profil { display: grid; gap: var(--j-3); grid-template-columns: repeat(3, 1fr); margin-bottom: var(--j-3); }
+@media (max-width: 760px) { .grid-profil { grid-template-columns: 1fr; } }
+.kartu-profil { display: block; padding: 14px 16px; border-radius: var(--r-2); border: 1.5px solid var(--garis);
+                background: var(--surface); color: var(--ink); text-decoration: none; }
+.kartu-profil:hover { border-color: var(--navy); }
+.kartu-profil.on { border-color: var(--navy); background: #F7FAFD; box-shadow: 0 0 0 1px var(--navy); }
+.kartu-profil b { display: block; font-size: var(--h-isi); margin-bottom: 4px; color: var(--navy); }
+.kartu-profil span { font-size: var(--h-kecil); color: var(--abu-2); line-height: 1.45; display: block; }
+
+/* --- U7: garis waktu jejak audit --- */
+.garis-waktu { position: relative; padding-left: 8px; }
+.langkah-waktu { position: relative; display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--garis); }
+.langkah-waktu:last-child { border-bottom: 0; }
+.ikon-langkah { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center;
+                justify-content: center; font: 700 12px/1 "IBM Plex Mono", monospace; flex: none;
+                background: var(--st-terbit-latar); color: var(--st-terbit); }
+.langkah-waktu.tolak .ikon-langkah, .langkah-waktu.ditolak .ikon-langkah {
+  background: var(--tk-serius-latar); color: var(--tk-serius);
+}
+.langkah-waktu.ditahan .ikon-langkah { background: var(--st-tahan-latar); color: var(--st-tahan); }
+.langkah-waktu.berhenti .ikon-langkah, .langkah-waktu.dilewati .ikon-langkah {
+  background: var(--st-arsip-latar); color: var(--st-arsip);
+}
+
