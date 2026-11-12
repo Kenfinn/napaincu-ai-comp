@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.1.0 (belum dirilis)
+
+- Ask FEAF slide-over panel on every page (`_panel_chat.html`, `app/static/chat.js`,
+  `app/static/chat.css`) with page-aware suggestion chips and `sessionStorage` conversation
+  persistence across pages.
+- Multi-turn chat API (`POST /api/tanya` accepting `riwayat` and `konteks`) with 32-hex
+  HMAC-SHA256 signing (`tanda(id, jawaban)` via `SENTINEL_CHAT_RAHASIA`); unsigned or altered
+  assistant turns and injected user turns are dropped and logged in the trace.
+- Follow-up question resolution without repeating the stock code (from question, page context,
+  last verified turn, or announcement prefix) and conversation **Recap** (`recap` /
+  `recap_template` verified against signed assistant turns).
+- Six read-only menu tools (`feed`, `peringatan`, `jejak`, `review`, `ambang`, `watchlist`)
+  alongside the six stock tools, with internal navigation links (`tautan`) and zero PII / zero
+  file mutation.
+- Multi-turn chat evaluation (`eval/chat_percakapan.csv`, `scripts/evaluasi.py --chat-percakapan`:
+  36/36 turns and 12/12 scenarios in three languages on the rule path) and 7 mandatory
+  conversation security tests (`tests/test_chat_percakapan.py`).
+- UI and accessibility refinements across feed, stock detail, alert detail, valuation, review,
+  thresholds, watchlist, trace, and plain-language hold reasons.
+
 ## 1.0.0 · 12 Nov 2026 · finalist package (AAIC 2026)
 
 The version submitted with the finalist package. Evaluation numbers in the README and

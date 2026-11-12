@@ -146,9 +146,9 @@ survive redeploys. `GET /sehat` is the health check; its `versi_kode` field is a
 python3 -m unittest discover -s tests
 ```
 
-236 tests, no network access needed. They include the attack set, the rule that API keys never
-reach a file, page or trace, and the rule that personal names never reach the model or the
-gold-set export.
+269 tests, no network access needed. They include the attack set, multi-turn chat security, the
+rule that API keys never reach a file, page or trace, and the rule that personal names never
+reach the model or the gold-set export.
 
 ---
 
@@ -219,10 +219,28 @@ Financial companies (banks, insurers) get no DCF.
 
 ### Ask FEAF (chat)
 
-`/tanya` answers questions about filings, signals and valuations **only from tool results**
-(`app/chat.py`). Every number in an answer is checked against the tool output before it is
-shown. Questions asking for buy/sell advice, price predictions, or containing injected
-instructions are refused. Limited to 60 questions per hour per server.
+Ask FEAF is available as a slide-over panel on every page (`_panel_chat.html`, `chat.js`,
+`chat.css`) and on the full `/tanya` page (which also works via plain HTML form POST when
+JavaScript is off). Answers come **only from read-only tool results** (`app/chat.py`):
+
+- **12 read-only tools**: 6 stock tools (`harga`, `statistik`, `laporan`, `pengumuman`,
+  `valuasi`, `ringkasan`) and 6 menu tools (`feed`, `peringatan`, `jejak`, `review`, `ambang`,
+  `watchlist`). No tool modifies the watchlist, review queue, or thresholds, and no tool returns
+  raw `items` or officer/spokesperson names.
+- **Multi-turn conversation with signed history**: the browser keeps up to 12 messages in
+  `sessionStorage["feaf_chat"]` across page navigation, and the server accepts at most the last
+  6 verified turns. Every assistant answer is signed with a 32-hex HMAC-SHA256 tag
+  (`tanda(id, jawaban)` using `SENTINEL_CHAT_RAHASIA`). Unsigned or modified assistant turns and
+  any user turn matching `TOLAK` are dropped before reaching the model or checker and logged in
+  the trace (`tahap: "riwayat"`).
+- **Follow-ups and Recap**: follow-up questions resolve the active stock code from the question,
+  page context (`konteks.kode`), the last verified turn, or the announcement prefix
+  (`konteks.id`). **Recap** summarizes verified turns in at most 5 bullet points; every number
+  is checked against signed assistant turns, falling back to `recap_template` if rejected.
+- **Verification and refusal**: every number in an answer must exist in the current tool output,
+  the question, or a signed assistant turn (never an unverified old user turn). Questions asking
+  for buy/sell advice, price predictions, order placement, personal data, or containing prompt
+  injections are refused before any tool or model call. Model calls are capped at 60 per hour.
 
 ### Pages
 
@@ -272,7 +290,7 @@ The interface is available in English, 繁體中文 and Bahasa Indonesia.
 | Main model | `gemini-3.6-flash`, temperature 0 |
 | Backup model | `gemini-3.5-flash`, used only when the main model is busy (429/5xx) after retries |
 | Pipeline prompt version | `VERSI_PROMPT` in `app/agent/llm.py` (currently `2026-11-10.1`) |
-| Chat prompt version | `PROMPT_VERSION` in `app/chat.py` (currently `chat-2026-11-11.2`) |
+| Chat prompt version | `PROMPT_VERSION` in `app/chat.py` (currently `chat-2026-11-12.1`) |
 | Baseline | Rule-based reasoner in `app/agent/screen.py` / `extract.py` |
 
 Safeguards around the model: answers are cached per filing and prompt version; each run is
@@ -336,6 +354,7 @@ repository.
 | `SENTINEL_KUNCI_BACA` | no | `0` | `1` = access code also required for reading |
 | `SENTINEL_SERTAKAN_CONTOH` | no | `0` | `1` = show the four sample filings next to real data |
 | `SENTINEL_CHAT_MAKS_PER_JAM` | no | `60` | Ask FEAF questions per hour |
+| `SENTINEL_CHAT_RAHASIA` | no | per-process random hex | Secret for HMAC-SHA256 signing of assistant chat turns |
 | `FINMIND_TOKEN` | no | — | Higher FinMind quota for financial statements |
 
 ---
@@ -343,9 +362,10 @@ repository.
 ## Evaluation
 
 ```bash
-python3 scripts/evaluasi.py --simpan            # gold set: agent vs no checker
-python3 scripts/evaluasi.py --chat --simpan     # Ask FEAF test set
-python3 scripts/uji_serangan.py --simpan        # attack set
+python3 scripts/evaluasi.py --simpan                    # gold set: agent vs no checker
+python3 scripts/evaluasi.py --chat --simpan             # Ask FEAF single-turn set (52 questions)
+python3 scripts/evaluasi.py --chat-percakapan --simpan  # Ask FEAF multi-turn set (12 scenarios, 36 turns)
+python3 scripts/uji_serangan.py --simpan                # attack set
 ```
 
 Reports are written to `eval/hasil/` (inside the Docker image, where `/app` is read-only, to
@@ -384,11 +404,19 @@ operation trace: [`docs/laporan-evaluasi.md`](docs/laporan-evaluasi.md).
 unit swaps, foreign currency, extreme magnitudes), 72 cases, attacked by both the rule-based
 reasoner and a simulated model that obeys every injection: **0 wrong numbers published**.
 
-**Ask FEAF** ([`eval/hasil/chat-20261111T062005Z.md`](eval/hasil/chat-20261111T062005Z.md)).
-52 questions in three languages. With Gemini 3.6 Flash on the server: 27/27 advice, out-of-scope
-and injection questions refused, 0 recommendation words reached the user, 50/52 correct overall
-(the two misses were checker false positives, since fixed; the user still received a sourced
-answer). Mean latency 4.4 s with the model, 0.2 s on the rule path.
+**Ask FEAF** ([`eval/hasil/chat-20261111T062005Z.md`](eval/hasil/chat-20261111T062005Z.md),
+[`eval/hasil/chat-percakapan-20261112T150427Z.md`](eval/hasil/chat-percakapan-20261112T150427Z.md)).
+- Single-turn set (52 questions in three languages): with Gemini 3.6 Flash on the server, 27/27
+  advice, out-of-scope and injection questions refused, 0 recommendation words reached the user,
+  50/52 correct overall (the two misses were checker false positives, since fixed; the user still
+  received a sourced answer), 52/52 on the rule path. Mean latency 4.4 s with the model, 0.2 s on
+  the rule path.
+- Multi-turn conversation set (`eval/chat_percakapan.csv`, 12 scenarios × 3 turns = 36 turns in
+  English, 繁體中文 and Bahasa Indonesia, covering page-context follow-ups, history follow-ups,
+  Recap, menu tools `feed`/`review`/`ambang`/`watchlist`/`peringatan`/`jejak`, mid-conversation
+  prompt injection, and turn-3 buy/order/prediction refusals): **36/36 turns and 12/12 scenarios
+  correct** on the rule path, **0 recommendation words**, **1 injected history turn dropped**, mean
+  latency 2 ms (max 42 ms).
 
 **Operations** ([`eval/hasil/operasional-20261111T024832Z.md`](eval/hasil/operasional-20261111T024832Z.md)).
 581 real filings: 318 passed the clause screen, 241 published, 58 held (10% of all), the rest

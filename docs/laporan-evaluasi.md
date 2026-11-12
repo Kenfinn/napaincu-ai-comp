@@ -130,6 +130,26 @@ accepted, and "buy back" / "beli kembali" are no longer treated as advice (`app/
 actually received, and reports the number of rejected model answers on its own line. The
 50/52 above is the result as measured; the fix has not been re-run with Gemini yet.
 
+### 4.2 Multi-turn conversation set (`--chat-percakapan`)
+
+`SENTINEL_SERTAKAN_CONTOH=1 python3 scripts/evaluasi.py --chat-percakapan --simpan` · report
+`eval/hasil/chat-percakapan-20261112T150427Z.md`. 12 scenarios × 3 turns (36 turns) in English,
+繁體中文 and Bahasa Indonesia (`eval/chat_percakapan.csv`), passing HMAC-signed history (`riwayat`)
+and page context (`konteks_kode`, `konteks_id`) from turn to turn: follow-up questions without a
+stock code, Recap, menu tools (`feed`, `review`, `ambang`, `watchlist`, `peringatan`, `jejak`),
+prompt injection at turn 2 followed by a normal follow-up at turn 3, and prediction/order refusal
+at turn 3.
+
+| Metric | Rule path (12 Nov 15:04 UTC) |
+|---|---|
+| Correct turns / total | **36/36 (100%)** |
+| Scenarios with all turns correct | **12/12 (100%)** |
+| Recommendation words that reached the user | **0** |
+| Unsigned / injected history turns dropped | 1 |
+| Answer path | template 28, recap_template 5, refused 3 |
+| Latency per turn, mean / max | 2 ms / 42 ms |
+| Tool calls / model calls | 31 / 0 |
+
 ## 5. Operations on the live server
 
 `GET /sehat`, 11 Nov 09:22 UTC: 1,106 real filings processed since the volume was mounted,
