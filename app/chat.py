@@ -269,6 +269,173 @@ def alat_cari(nama: str) -> dict:
     return {"cocok": cocok[:5], "sumber": "TWSE/TPEx OpenAPI daily quotes"}
 
 
+def alat_feed(status: str | None = None, n: int = 5, bahasa: str = "en") -> dict:
+    bahasa = i18n.normal(bahasa)
+    semua = _hasil_agent()
+    jumlah_status = {"terbit": 0, "ditahan": 0, "dilewati": 0}
+    for h in semua:
+        st = h.get("status")
+        if st in jumlah_status:
+            jumlah_status[st] += 1
+    status_norm = (status or "").strip().lower() or None
+    if status_norm in jumlah_status:
+        daftar = [h for h in semua if h.get("status") == status_norm]
+    else:
+        status_norm = None
+        daftar = list(semua)
+    daftar.sort(key=lambda h: (h.get("tanggal") or "", h.get("jam") or ""), reverse=True)
+    batas = max(1, min(int(n or 5), 10))
+    terbaru = []
+    for h in daftar[:batas]:
+        em = h.get("emiten") or {}
+        terbaru.append({
+            "id": h["id"],
+            "kode": em.get("kode"),
+            "nama": em.get("nama"),
+            "tanggal": h.get("tanggal"),
+            "judul": h.get("judul"),
+            "status": h.get("status"),
+            "jenis": h.get("jenis"),
+            "alasan": i18n.tr(h.get("alasan_i18n"), bahasa, h.get("alasan") or ""),
+        })
+    return {
+        "total": len(semua),
+        "jumlah_per_status": jumlah_status,
+        "status_diminta": status_norm,
+        "terbaru": terbaru,
+        "sumber": "/",
+    }
+
+
+def alat_peringatan(id: str, bahasa: str = "en") -> dict:
+    from . import ambang_profil
+    bahasa = i18n.normal(bahasa)
+    id_sah = _id_pengumuman_sah(id)
+    if not id_sah:
+        return {"galat": "unknown announcement id"}
+    h = next((x for x in _hasil_agent() if x.get("id") == id_sah), None)
+    if h is None:
+        return {"galat": "unknown announcement id"}
+    muatan = h.get("muatan") or {}
+    tg = ambang_profil.tingkat(muatan.get("sinyal"), "moderat")
+    temuan = []
+    for d in muatan.get("diterima") or []:
+        klaim = d.get("klaim") or {}
+        label = str(klaim.get("label") or "")
+        if "姓名" in label:
+            continue
+        temuan.append({
+            "input": d.get("input"),
+            "nilai_juta_ntd": (d.get("konversi") or {}).get("nilai_juta"),
+            "kutipan": str(klaim.get("kutipan") or "")[:200],
+        })
+    pemeriksaan = muatan.get("pemeriksaan") or []
+    lolos = sum(1 for p in pemeriksaan for c in (p.get("cek") or []) if c.get("lolos"))
+    gagal = sum(1 for p in pemeriksaan for c in (p.get("cek") or []) if not c.get("lolos"))
+    cek_gagal = [
+        i18n.tr(c.get("nama_i18n"), bahasa, c.get("nama") or "")
+        for p in pemeriksaan
+        for c in (p.get("cek") or [])
+        if not c.get("lolos")
+    ]
+    return {
+        "id": h["id"],
+        "kode": (h.get("emiten") or {}).get("kode"),
+        "tanggal": h.get("tanggal"),
+        "judul": h.get("judul"),
+        "status": h.get("status"),
+        "state": h.get("state"),
+        "jenis": h.get("jenis"),
+        "alasan": i18n.tr(h.get("alasan_i18n"), bahasa, h.get("alasan") or ""),
+        "tingkat_moderat": (tg or {}).get("tingkat"),
+        "angka_sinyal": _angka_sinyal(h),
+        "temuan": temuan,
+        "ringkasan_cek": {"lolos": lolos, "gagal": gagal, "total": lolos + gagal, "cek_gagal": cek_gagal},
+        "tautan_mops": h.get("sumber_url"),
+        "tautan_jejak": f"/jejak/{h['id']}",
+        "sumber": f"/peringatan/{h['id']}",
+    }
+
+
+def alat_jejak(id: str, bahasa: str = "en") -> dict:
+    bahasa = i18n.normal(bahasa)
+    id_sah = _id_pengumuman_sah(id)
+    if not id_sah:
+        return {"galat": "unknown announcement id"}
+    h = next((x for x in _hasil_agent() if x.get("id") == id_sah), None)
+    if h is None:
+        return {"galat": "unknown announcement id"}
+    rk = h.get("ringkasan") or {}
+    jejak_langkah = h.get("jejak") or []
+    sebab_cad = [
+        (l.get("meta") or {}).get("sebab_cadangan")
+        for l in jejak_langkah
+        if (l.get("meta") or {}).get("sebab_cadangan")
+    ]
+    states = [l.get("state") for l in jejak_langkah if l.get("state")]
+    return {
+        "id": h["id"],
+        "kode": (h.get("emiten") or {}).get("kode"),
+        "jumlah_langkah": rk.get("langkah", len(jejak_langkah)),
+        "durasi_ms": rk.get("durasi_ms", 0),
+        "panggilan_model": rk.get("panggilan_model", 0),
+        "token_masuk": rk.get("token_masuk", 0),
+        "token_keluar": rk.get("token_keluar", 0),
+        "cadangan": bool(rk.get("mode_cadangan") or sebab_cad),
+        "sebab_cadangan": sebab_cad[0] if sebab_cad else None,
+        "states": states,
+        "sumber": f"/jejak/{h['id']}",
+    }
+
+
+def alat_review(n: int = 5, bahasa: str = "en") -> dict:
+    bahasa = i18n.normal(bahasa)
+    menunggu = [h for h in _hasil_agent() if h.get("status") == "ditahan"]
+    batas = max(1, min(int(n or 5), 10))
+    antrean = []
+    for h in menunggu[:batas]:
+        tahan = (h.get("muatan") or {}).get("tahan") or {}
+        antrean.append({
+            "id": h["id"],
+            "kode": (h.get("emiten") or {}).get("kode"),
+            "judul": h.get("judul"),
+            "jenis_sebab": tahan.get("jenis") or "",
+            "alasan": i18n.tr(h.get("alasan_i18n"), bahasa, h.get("alasan") or ""),
+        })
+    return {"jumlah": len(menunggu), "antrean": antrean, "sumber": "/review"}
+
+
+def alat_ambang(bahasa: str = "en") -> dict:
+    from . import ambang_profil, umpan_balik
+    pasal_terlihat = sorted({h["triase"]["pasal"] for h in _hasil_agent() if h.get("triase")})
+    data = umpan_balik.semua(pasal_terlihat)
+    moderat = ambang_profil.AMBANG["moderat"]
+    return {
+        "pasal": [
+            {"pasal": p["pasal"], "nilai_persen": round(p["nilai"] * 100, 1), "dikunci": p["dikunci"]}
+            for p in data.get("pasal") or []
+        ],
+        "riwayat_terakhir": (data.get("riwayat") or [])[:5],
+        "profil_risiko": list(ambang_profil.PROFIL),
+        "ambang_moderat": {
+            "jamin_ekuitas_waspada_persen": round(moderat["ekuitas"] * 100, 1),
+            "pemakaian_limit_waspada_persen": round(moderat["limit"] * 100, 1),
+            "utang_waspada_persen": round(moderat["utang"] * 100, 1),
+        },
+        "sumber": "/ambang",
+    }
+
+
+def alat_watchlist() -> dict:
+    from .main import _saham_samping
+    daftar = _saham_samping()
+    return {
+        "jumlah": len(daftar),
+        "saham": [{"kode": s["kode"], "nama": s.get("nama")} for s in daftar],
+        "sumber": "/watchlist",
+    }
+
+
 ALAT = {
     "harga": (alat_harga, "Latest closing price and daily change of a listed stock.",
               {"kode": "Stock code, e.g. 2330"}),
@@ -284,6 +451,18 @@ ALAT = {
     "ringkasan": (alat_ringkasan, "The FEAF per-aspect assessment of the company (strengths, watch-outs, conclusion). No buy/sell labels.",
                   {"kode": "Stock code"}),
     "cari": (alat_cari, "Find stock codes by company name.", {"nama": "Company name or part of it"}),
+    "feed": (alat_feed, "Summary of the alerts feed: counts by status (terbit/ditahan/dilewati) and latest processed announcements.",
+             {"status": "Optional status filter: terbit | ditahan | dilewati", "n": "How many, 1-10"}),
+    "peringatan": (alat_peringatan, "Details of a single announcement alert by id: status, state, signal numbers, accepted findings, and verifier checks.",
+                   {"id": "Announcement id, e.g. 2330-2026-09-18-1"}),
+    "jejak": (alat_jejak, "Audit trail (operation trace) summary of a single announcement by id: steps, duration, model calls, tokens, fallback status, and state sequence.",
+              {"id": "Announcement id, e.g. 2330-2026-09-18-1"}),
+    "review": (alat_review, "Items currently waiting in the human review queue (HELD FOR REVIEW) and why each was held.",
+               {"n": "How many, 1-10"}),
+    "ambang": (alat_ambang, "Current triage confidence thresholds per clause, recent threshold history, and moderate risk profile thresholds.",
+               {}),
+    "watchlist": (alat_watchlist, "List of stock codes and names currently on the watchlist.",
+                  {}),
 }
 
 
@@ -291,7 +470,7 @@ def _deklarasi() -> list[dict]:
     keluar = []
     for nama, (_, desk, param) in ALAT.items():
         props = {k: {"type": "INTEGER" if k == "n" else "STRING", "description": v} for k, v in param.items()}
-        wajib = [k for k in param if k in ("kode", "nama")]
+        wajib = [k for k in param if k in ("kode", "nama", "id")]
         keluar.append({"name": nama, "description": desk,
                        "parameters": {"type": "OBJECT", "properties": props, "required": wajib}})
     return keluar
@@ -306,7 +485,7 @@ def _jalankan_alat(nama: str, args: dict, bahasa: str) -> dict:
         args["kode"] = str(args["kode"]).strip().upper()
         if not tarik.KODE_SAH.match(args["kode"]):
             return {"galat": "invalid stock code"}
-    if nama == "ringkasan":
+    if nama in ("ringkasan", "feed", "peringatan", "jejak", "review", "ambang"):
         args["bahasa"] = bahasa
     try:
         return fn(**args)
@@ -584,8 +763,42 @@ NIAT_JENIS = {
 }
 
 
-def _rencana_aturan(pertanyaan: str, kode_aktif: str | None = None) -> list[tuple[str, dict]]:
-    kode = next(iter(KODE_RE.findall(pertanyaan.upper())), None) or _kode_sah(kode_aktif)
+NIAT_MENU = {
+    "feed": re.compile(r"latest alerts|what'?s new|peringatan terbaru|apa yang baru|最新|今天.*公告", re.I),
+    "review": re.compile(r"\breview\b|\bheld\b|ditahan|antrean|待審|審查", re.I),
+    "ambang": re.compile(r"threshold|ambang|門檻", re.I),
+    "watchlist": re.compile(r"watchlist|daftar pantau|自選股", re.I),
+}
+NIAT_INI = re.compile(r"\b(this|why|trace)\b|ini|kenapa|jejak|這|為什麼|稽核", re.I)
+NIAT_JEJAK = re.compile(r"\btrace\b|jejak|稽核", re.I)
+
+
+def _rencana_aturan(
+    pertanyaan: str,
+    kode_aktif: str | None = None,
+    konteks: dict | None = None,
+) -> list[tuple[str, dict]]:
+    konteks = konteks if isinstance(konteks, dict) else {}
+    id_ctx = _id_pengumuman_sah(konteks.get("id"))
+    if id_ctx and NIAT_INI.search(pertanyaan):
+        if NIAT_JEJAK.search(pertanyaan):
+            return [("jejak", {"id": id_ctx})]
+        if NIAT["valuasi"].search(pertanyaan):
+            kode_id = _kode_sah(kode_aktif) or _kode_sah(id_ctx.split("-", 1)[0])
+            rencana_id = [("peringatan", {"id": id_ctx})]
+            if kode_id:
+                rencana_id.append(("valuasi", {"kode": kode_id}))
+            return rencana_id
+        return [("peringatan", {"id": id_ctx})]
+
+    tanpa_tgl = re.sub(r"\b(?:19|20)\d{2}[-/](?:\d{1,2}|Q[1-4])(?:[-/]\d{1,2})?\b", " ", pertanyaan or "", flags=re.I)
+    kode_eksplisit = next((m for m in KODE_RE.findall(tanpa_tgl.upper()) if _kode_sah(m)), None)
+    if not kode_eksplisit:
+        menu = [m for m, pola in NIAT_MENU.items() if pola.search(pertanyaan)]
+        if menu:
+            return [(m, {}) for m in menu][:MAX_STEPS]
+
+    kode = kode_eksplisit or _kode_sah(kode_aktif)
     if not kode:
         return []
     jenis = [j for j, pola in NIAT_JENIS.items() if pola.search(pertanyaan)]
@@ -684,7 +897,8 @@ def _ringkas_template(hasil_alat: list[dict], bahasa: str) -> str:
     for h in hasil_alat:
         r = h["hasil"]
         if r.get("galat") or r.get("ada") is False:
-            kalimat.append(t("ch.tpl.tidak_ada", alat=h["alat"], kode=(h.get("args") or {}).get("kode", "")))
+            args_h = h.get("args") or {}
+            kalimat.append(t("ch.tpl.tidak_ada", alat=h["alat"], kode=args_h.get("kode") or args_h.get("id") or ""))
             continue
         if h["alat"] == "harga":
             kalimat.append(t("ch.tpl.harga", kode=r["kode"], nama=r.get("nama") or "", tgl=r.get("tanggal") or "",
@@ -733,6 +947,71 @@ def _ringkas_template(hasil_alat: list[dict], bahasa: str) -> str:
                 kalimat.append(t("ch.tpl.awas", isi="; ".join(x.rstrip(".。") for x in r["perlu_diperhatikan"][:3])))
         elif h["alat"] == "cari":
             kalimat.append(t("ch.tpl.cari", isi=", ".join(f"{c['kode']} {c['nama']}" for c in r["cocok"]) or "—"))
+        elif h["alat"] == "feed":
+            if not r.get("terbaru"):
+                kalimat.append(t("cp.tpl.feed_kosong"))
+            else:
+                js = r.get("jumlah_per_status") or {}
+                isi = "; ".join(
+                    f"{x.get('kode')} ({x.get('tanggal')}): {x.get('judul')} [{x.get('status')}]"
+                    for x in r["terbaru"][:3]
+                )
+                kalimat.append(t("cp.tpl.feed", total=a(r.get("total", 0)),
+                                 terbit=a(js.get("terbit", 0)), ditahan=a(js.get("ditahan", 0)),
+                                 dilewati=a(js.get("dilewati", 0)), isi=isi))
+        elif h["alat"] == "peringatan":
+            rc = r.get("ringkasan_cek") or {}
+            butir_angka = []
+            for tm in r.get("temuan") or []:
+                if tm.get("nilai_juta_ntd") is not None:
+                    butir_angka.append(f"{tm.get('input')}: {a(tm.get('nilai_juta_ntd'))}")
+            for k_s, v_s in (r.get("angka_sinyal") or {}).items():
+                if isinstance(v_s, (int, float)) and not isinstance(v_s, bool):
+                    butir_angka.append(f"{k_s}: {a(v_s)}")
+            angka_teks = f" ({'; '.join(butir_angka)})" if butir_angka else ""
+            kalimat.append(t(
+                "cp.tpl.peringatan",
+                id=r.get("id") or "",
+                kode=r.get("kode") or "",
+                tgl=r.get("tanggal") or "",
+                judul=r.get("judul") or "",
+                status=r.get("status") or "",
+                state=r.get("state") or "",
+                jenis=r.get("jenis") or "—",
+                tingkat=t(f"tk.{r['tingkat_moderat']}") if r.get("tingkat_moderat") else "—",
+                alasan=r.get("alasan") or "—",
+                lolos=a(rc.get("lolos", 0)),
+                total_cek=a(rc.get("total", 0)),
+                angka_teks=angka_teks,
+            ))
+        elif h["alat"] == "jejak":
+            kalimat.append(t(
+                "cp.tpl.jejak",
+                id=r.get("id") or "",
+                langkah=a(r.get("jumlah_langkah", 0)),
+                durasi=a(r.get("durasi_ms", 0)),
+                model=a(r.get("panggilan_model", 0)),
+                token_masuk=a(r.get("token_masuk", 0)),
+                token_keluar=a(r.get("token_keluar", 0)),
+                cadangan=t("ya") if r.get("cadangan") else t("tidak"),
+                states=" → ".join(r.get("states") or []) or "—",
+            ))
+        elif h["alat"] == "review":
+            if not r.get("antrean"):
+                kalimat.append(t("cp.tpl.review_kosong"))
+            else:
+                isi = "; ".join(f"{x.get('id')} ({x.get('kode')}): {x.get('alasan')}" for x in r["antrean"][:3])
+                kalimat.append(t("cp.tpl.review", jumlah=a(r.get("jumlah", 0)), isi=isi))
+        elif h["alat"] == "ambang":
+            isi = "; ".join(f"clause {p['pasal']}: {a(p['nilai_persen'], 1)}%" for p in r.get("pasal") or []) or "—"
+            jamin_pct = a((r.get("ambang_moderat") or {}).get("jamin_ekuitas_waspada_persen"), 1)
+            kalimat.append(t("cp.tpl.ambang", isi=isi, jamin_pct=jamin_pct))
+        elif h["alat"] == "watchlist":
+            if not r.get("saham"):
+                kalimat.append(t("cp.tpl.watchlist_kosong"))
+            else:
+                isi = ", ".join(f"{s['kode']} {s.get('nama') or ''}".strip() for s in r["saham"][:10])
+                kalimat.append(t("cp.tpl.watchlist", jumlah=a(r.get("jumlah", 0)), isi=isi))
     return " ".join(kalimat)
 
 
@@ -865,7 +1144,7 @@ def tanya(
 
     # Rule path: the baseline, and the fallback for a missing or rejected model answer.
     if not hasil_alat:
-        for nama, args in _rencana_aturan(pertanyaan, kode_aktif=kode_aktif):
+        for nama, args in _rencana_aturan(pertanyaan, kode_aktif=kode_aktif, konteks=konteks):
             t0 = time.monotonic()
             res = _jalankan_alat(nama, args, bahasa)
             hasil_alat.append({"alat": nama, "args": args, "hasil": res})

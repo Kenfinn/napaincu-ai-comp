@@ -179,5 +179,133 @@ class TestChatPercakapanC2(unittest.TestCase):
         self.assertIn("• What is the price of 2330?", h_recap["jawaban"])
 
 
+class TestChatPercakapanC3(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self._data_asli = config.DATA_DIR
+        config.DATA_DIR = self._tmp.name
+        os.environ["SENTINEL_SERTAKAN_CONTOH"] = "1"
+        chat._jam.clear()
+        with main._kunci_cache:
+            main._cache = None
+
+    def tearDown(self):
+        config.DATA_DIR = self._data_asli
+        self._tmp.cleanup()
+
+    def _snapshot_data_dir(self) -> dict[str, bytes]:
+        snap = {}
+        for root, _, files in os.walk(config.DATA_DIR):
+            for fn in files:
+                p = os.path.join(root, fn)
+                rel = os.path.relpath(p, config.DATA_DIR)
+                with open(p, "rb") as f:
+                    snap[rel] = f.read()
+        return snap
+
+    @patch.object(chat.llm, "tersedia", return_value=False)
+    def test_semua_alat_menu_dengan_data_fixture_dan_tanpa_mengubah_data_dir(self, *_):
+        semua = main.hasil()
+        self.assertTrue(len(semua) >= 4)
+        id_contoh = semua[0]["id"]
+
+        # Ambil snapshot DATA_DIR setelah cache pipeline siap
+        sebelum = self._snapshot_data_dir()
+
+        r_feed = chat.alat_feed(n=3, bahasa="en")
+        self.assertEqual(r_feed["sumber"], "/")
+        self.assertEqual(r_feed["total"], len(semua))
+        self.assertTrue(len(r_feed["terbaru"]) <= 3)
+
+        r_per = chat.alat_peringatan(id_contoh, bahasa="en")
+        self.assertEqual(r_per["id"], id_contoh)
+        self.assertEqual(r_per["sumber"], f"/peringatan/{id_contoh}")
+        self.assertIn("ringkasan_cek", r_per)
+
+        r_jj = chat.alat_jejak(id_contoh, bahasa="en")
+        self.assertEqual(r_jj["id"], id_contoh)
+        self.assertEqual(r_jj["sumber"], f"/jejak/{id_contoh}")
+        self.assertTrue(r_jj["jumlah_langkah"] >= 1)
+
+        r_rev = chat.alat_review(n=5, bahasa="en")
+        self.assertEqual(r_rev["sumber"], "/review")
+        self.assertIn("antrean", r_rev)
+
+        r_amb = chat.alat_ambang(bahasa="en")
+        self.assertEqual(r_amb["sumber"], "/ambang")
+        self.assertIn("ambang_moderat", r_amb)
+
+        r_wl = chat.alat_watchlist()
+        self.assertEqual(r_wl["sumber"], "/watchlist")
+        self.assertIn("saham", r_wl)
+
+        # Pastikan keenam alat menu sama sekali tidak mengubah berkas di DATA_DIR
+        sesudah = self._snapshot_data_dir()
+        self.assertEqual(sebelum, sesudah)
+
+        # Uji jalur aturan tanya() untuk pertanyaan menu + tautan
+        h_feed = chat.tanya("What are the latest alerts?", "en")
+        self.assertEqual(h_feed["jalur"], "template")
+        self.assertIn("/", h_feed["tautan"])
+
+        h_rev = chat.tanya("What items are held for review?", "en")
+        self.assertEqual(h_rev["jalur"], "template")
+        self.assertIn("/review", h_rev["tautan"])
+
+        h_amb = chat.tanya("What are the current triage thresholds?", "en")
+        self.assertEqual(h_amb["jalur"], "template")
+        self.assertIn("/ambang", h_amb["tautan"])
+
+        h_wl = chat.tanya("Show my watchlist", "en")
+        self.assertEqual(h_wl["jalur"], "template")
+        self.assertIn("/watchlist", h_wl["tautan"])
+
+        h_ini = chat.tanya("Why was this held?", "en", konteks={"halaman": "peringatan", "id": id_contoh})
+        self.assertEqual(h_ini["jalur"], "template")
+        self.assertIn(f"/peringatan/{id_contoh}", h_ini["tautan"])
+
+        h_tr = chat.tanya("Show the trace of this filing", "en", konteks={"halaman": "peringatan", "id": id_contoh})
+        self.assertEqual(h_tr["jalur"], "template")
+        self.assertIn(f"/jejak/{id_contoh}", h_tr["tautan"])
+
+    def test_id_pengumuman_tak_dikenal_ditolak(self):
+        self.assertEqual(chat.alat_peringatan("9999-2026-01-01-1"), {"galat": "unknown announcement id"})
+        self.assertEqual(chat.alat_peringatan("../../etc/passwd"), {"galat": "unknown announcement id"})
+        self.assertEqual(chat.alat_jejak("9999-2026-01-01-1"), {"galat": "unknown announcement id"})
+        self.assertEqual(chat.alat_jejak("<script>alert(1)</script>"), {"galat": "unknown announcement id"})
+
+    @patch.object(chat.llm, "tersedia", return_value=False)
+    def test_peringatan_pasal_8_tanpa_nama_orang_atau_items_mentah(self, *_):
+        import json as _json
+        from app.agent import pipeline
+        rec_pasal_8 = {
+            "id": "2330-2026-11-10-8",
+            "code": "2330",
+            "name": "TSMC",
+            "date": "2026-11-10",
+            "time": "17:00:00",
+            "seq_no": "8",
+            "clause": 8,
+            "title": "公告本公司財務主管異動",
+            "items": [
+                {"label": "人員變動別", "value": "財務主管"},
+                {"label": "發生變動日期", "value": "115/11/10"},
+                {"label": "舊任者姓名及簡歷", "value": "王大明 本公司財務長"},
+                {"label": "新任者姓名及簡歷", "value": "李小華 本公司資深副總"},
+                {"label": "異動情形", "value": "辭職"},
+                {"label": "異動原因", "value": "個人生涯規劃"},
+            ],
+        }
+        h_p8 = pipeline.jalankan(rec_pasal_8, None)
+        with patch.object(chat, "_hasil_agent", return_value=[h_p8]):
+            res = chat.alat_peringatan("2330-2026-11-10-8", bahasa="zh")
+        teks_json = _json.dumps(res, ensure_ascii=False)
+        self.assertNotIn("王大明", teks_json)
+        self.assertNotIn("李小華", teks_json)
+        self.assertNotIn("姓名", teks_json)
+        self.assertNotIn("items", res)
+        self.assertEqual(res["jenis"], "pejabat")
+
+
 if __name__ == "__main__":
     unittest.main()
