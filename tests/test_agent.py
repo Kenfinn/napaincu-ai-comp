@@ -819,14 +819,11 @@ class TestModelPengganti(unittest.TestCase):
             n.append(1)
             raise urllib.error.HTTPError("u", 503, "busy", {}, io.BytesIO(b""))
         self.llm._panggil_gemini = panggil
-        self.llm.mulai_jalan(40)
-        try:
+        with self.llm.jalan(40):
             for i in range(6):
                 with self.assertRaises(self.llm.GagalModel):
                     self.llm.tanya("i", f"d{i}")
             self.assertEqual(len(n), 3, "setelah 3 gagal beruntun model tidak dipanggil lagi")
-        finally:
-            self.llm._jatah_sisa = None
 
     def test_sebab_listmodels_gagal_tercatat(self):
         import io

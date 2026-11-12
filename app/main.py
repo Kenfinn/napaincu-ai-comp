@@ -123,8 +123,8 @@ def _hasil_awal_tanpa_model() -> None:
     global _cache
     with _kunci_jalan:
         if _cache is None:
-            llm.mulai_jalan(0)
-            baru = pipeline.jalankan_semua()
+            with llm.jalan(0):
+                baru = pipeline.jalankan_semua()
             with _kunci_cache:
                 _cache = baru
             _tandai_jalan("awal_tanpa_model")
@@ -239,8 +239,8 @@ def hasil(segarkan: bool = False) -> list[dict]:
     global _cache
     if segarkan:
         with _kunci_jalan:
-            llm.mulai_jalan(config.MODEL_MAKS_PER_JALAN)
-            baru = pipeline.jalankan_semua()
+            with llm.jalan(config.MODEL_MAKS_PER_JALAN):
+                baru = pipeline.jalankan_semua()
             with _kunci_cache:
                 _cache = baru
             _tandai_jalan("dengan_model")
@@ -254,8 +254,8 @@ def hasil(segarkan: bool = False) -> list[dict]:
         with _kunci_cache:
             if _cache is not None:
                 return _cache
-        llm.mulai_jalan(config.MODEL_MAKS_PER_JALAN)
-        baru = pipeline.jalankan_semua()
+        with llm.jalan(config.MODEL_MAKS_PER_JALAN):
+            baru = pipeline.jalankan_semua()
         with _kunci_cache:
             _cache = baru
         _tandai_jalan("dengan_model")

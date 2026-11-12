@@ -247,7 +247,10 @@ def _tulis_cache(kunci: str, jawaban: dict, meta: dict) -> None:
     os.replace(tmp, os.path.join(CACHE_DIR, f"{kunci}.json"))
 
 
-_jatah_sisa: int | None = None
+import contextlib
+import threading
+
+_lokal = threading.local()
 
 # Pemutus per jalan: model yang sibuk atau mati tidak boleh membuat satu kali proses
 # berjalan bermenit-menit (halaman menunggu hasilnya). Setelah GAGAL_BERUNTUN_MAKS
@@ -257,8 +260,6 @@ GAGAL_BERUNTUN_MAKS = 3
 GALAT_SALDO = ("HTTP 402: saldo prabayar Gemini API habis. Isi saldo di AI Studio (Billing); "
                "kredit Google Cloud baru terpakai setelah saldo prabayar di atas $0")
 BATAS_DETIK_PER_JALAN = 90.0
-_gagal_beruntun = 0
-_mulai_jalan_t: float | None = None
 
 
 # Galat model terakhir, untuk /sehat (tanpa kunci API: pesan HTTPError tidak memuat URL).
@@ -272,10 +273,24 @@ def _catat_galat(pesan: str) -> None:
 
 
 def mulai_jalan(maks: int) -> None:
-    global _jatah_sisa, _gagal_beruntun, _mulai_jalan_t
-    _jatah_sisa = maks
-    _gagal_beruntun = 0
-    _mulai_jalan_t = time.monotonic()
+    _lokal.jatah_sisa = maks
+    _lokal.gagal_beruntun = 0
+    _lokal.mulai_jalan_t = time.monotonic()
+
+
+def selesai_jalan() -> None:
+    _lokal.jatah_sisa = None
+    _lokal.gagal_beruntun = 0
+    _lokal.mulai_jalan_t = None
+
+
+@contextlib.contextmanager
+def jalan(maks: int):
+    mulai_jalan(maks)
+    try:
+        yield
+    finally:
+        selesai_jalan()
 
 
 def tanya(instruksi: str, dokumen: str) -> tuple[dict, dict]:
@@ -299,22 +314,26 @@ def tanya(instruksi: str, dokumen: str) -> tuple[dict, dict]:
             "token_masuk_asli": asli.get("token_masuk", 0),
             "token_keluar_asli": asli.get("token_keluar", 0),
         }
-    global _jatah_sisa, _gagal_beruntun
-    if _jatah_sisa is not None:
-        if _jatah_sisa <= 0:
+    jatah_sisa = getattr(_lokal, "jatah_sisa", None)
+    gagal_beruntun = getattr(_lokal, "gagal_beruntun", 0)
+    mulai_jalan_t = getattr(_lokal, "mulai_jalan_t", None)
+    if jatah_sisa is not None:
+        if jatah_sisa <= 0:
             raise GagalModel("jatah panggilan model per jalan habis")
-        if _gagal_beruntun >= GAGAL_BERUNTUN_MAKS:
-            raise GagalModel(f"pemutus: {_gagal_beruntun} kegagalan model berturut-turut di jalan ini")
-        if _mulai_jalan_t is not None and time.monotonic() - _mulai_jalan_t > BATAS_DETIK_PER_JALAN:
+        if gagal_beruntun >= GAGAL_BERUNTUN_MAKS:
+            raise GagalModel(f"pemutus: {gagal_beruntun} kegagalan model berturut-turut di jalan ini")
+        if mulai_jalan_t is not None and time.monotonic() - mulai_jalan_t > BATAS_DETIK_PER_JALAN:
             raise GagalModel(f"pemutus: batas waktu model per jalan ({BATAS_DETIK_PER_JALAN:.0f} detik) habis")
-        _jatah_sisa -= 1
+        _lokal.jatah_sisa = jatah_sisa - 1
     try:
         jawaban, meta = _tanya_model(instruksi, dokumen)
     except GagalModel as e:
-        _gagal_beruntun += 1
+        if jatah_sisa is not None:
+            _lokal.gagal_beruntun = gagal_beruntun + 1
         _catat_galat(str(e))
         raise
-    _gagal_beruntun = 0
+    if jatah_sisa is not None:
+        _lokal.gagal_beruntun = 0
     # Kunci dihitung ulang: model bisa saja baru diganti di tengah panggilan (404).
     _tulis_cache(_kunci_cache(instruksi, dokumen), jawaban, meta)
     return jawaban, meta

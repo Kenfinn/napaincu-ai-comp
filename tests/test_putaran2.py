@@ -323,7 +323,7 @@ class TestDaSemuaEmiten(unittest.TestCase):
             setattr(config, n, v)
         llm.CACHE_DIR = self._asli_llm_cache
         llm._tanya_model = self._asli_tanya_model
-        llm._jatah_sisa = None
+        llm.selesai_jalan()
         self.tmp.cleanup()
 
     def test_da_semua_emiten_disimpan(self):

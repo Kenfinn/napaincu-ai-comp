@@ -79,6 +79,8 @@
     <p style="font-size:14px; line-height:1.6; margin:6px 0 8px;">{{ rk.narasi.teks }}</p>
     <small style="color:var(--abu);">{{ t('rk.narasi_model', model=rk.narasi.model) }}</small>
   </div>
+  {% elif rk.narasi.alasan_kode %}
+  <p class="catatan" style="margin:6px 0 10px;">{{ t('rk.narasi_template', alasan=t(rk.narasi.alasan_kode)) }}</p>
   {% endif %}
 
   <div class="dua-kolom">
@@ -125,10 +127,6 @@
     </div>
     {% endfor %}
   </div>
-
-  {% if not rk.narasi.teks %}
-  <p class="catatan">{{ t('rk.narasi_template', alasan=t(rk.narasi.alasan_kode)) }}{% if rk.narasi.alasan %} ({{ rk.narasi.alasan }}){% endif %}</p>
-  {% endif %}
   {% else %}
   <div class="kartu kosong">{{ t('rk.kosong') }}</div>
   {% endif %}
