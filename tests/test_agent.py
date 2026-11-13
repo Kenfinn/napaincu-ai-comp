@@ -656,13 +656,99 @@ class TestRingkasanAnalisis(TestHalamanSaham):
         self.assertIn("Points to watch", kons["kecocokan"])
         self.assertNotIn("Points to watch", agr["kecocokan"])
 
+    def test_kuat_dan_awas_berubah_mengikuti_profil_risiko(self):
+        import unittest.mock
+        import dcf
+        from app import i18n, ringkasan, store
+
+        def tabel_palsu(yoy_th: float, rasio_utang: float):
+            def _tb(_kode, lap, _per="q", _mode="nilai"):
+                if lap == "lr":
+                    return {"kolom": [{"label": "2025"}], "baris": [{"kunci": "Revenue", "sel": [yoy_th]}]}
+                if lap == "neraca":
+                    return {"kolom": [{"label": "Q4 2025"}],
+                            "baris": [{"kunci": "Liabilities", "sel": [rasio_utang * 100.0]},
+                                      {"kunci": "TotalAssets", "sel": [100.0]}]}
+                return {"kolom": [{"label": "2025"}], "baris": [{"kunci": "FreeCashFlow", "sel": [10.0]}]}
+            return _tb
+
+        def jalankan_kasus(g_val: float, per_val: float, yoy_val: float, roe_val: float, utang_val: float):
+            hasil = {}
+            with (
+                unittest.mock.patch.object(self.pasar, "statistik", return_value={
+                    "harga": {"tutup": 100.0}, "rasio": {"per": per_val},
+                    "roe": roe_val, "margin_bersih": 0.15,
+                }),
+                unittest.mock.patch.object(self.pasar, "profil", return_value={"keuangan": False}),
+                unittest.mock.patch.object(self.pasar, "per_industri", return_value={
+                    "industri_kode": "24", "industri": "半導體業", "median": 20.0, "jumlah": 10,
+                }),
+                unittest.mock.patch.object(self.pasar, "tabel", side_effect=tabel_palsu(yoy_val, utang_val)),
+                unittest.mock.patch.object(store, "muat_valuasi", return_value={
+                    "assumptions": {"terminal_growth_ceiling": 0.035}, "market": {},
+                }),
+                unittest.mock.patch.object(dcf, "compute", return_value={
+                    "implied_growth": g_val, "terminal_growth_ceiling": 0.035,
+                }),
+            ):
+                for p in ("konservatif", "moderat", "agresif"):
+                    rk = ringkasan.susun("2330", "id", p, [])
+                    hasil[p] = {
+                        "rk": rk,
+                        "arah": {f["aspek"]: f["arah"] for f in rk["fakta"]},
+                        "kunci": {f["aspek"]: f["kunci"] for f in rk["fakta"]},
+                    }
+            return hasil
+
+        # Kasus zona antara: g=3.2%, PER=1.20x median, tumbuh=12%, ROE=14%, utang=45%
+        k1 = jalankan_kasus(g_val=0.032, per_val=24.0, yoy_val=0.12, roe_val=0.14, utang_val=0.45)
+        self.assertEqual(k1["konservatif"]["kunci"]["valuasi"], "rk.dcf.ketat")
+        self.assertEqual(k1["konservatif"]["arah"], {
+            "valuasi": 0, "valuasi_relatif": -1, "pertumbuhan": 0, "profitabilitas": 0, "utang": -1, "arus_kas": 1, "pengumuman": 0,
+        })
+        self.assertEqual(k1["moderat"]["arah"], {
+            "valuasi": 1, "valuasi_relatif": 0, "pertumbuhan": 1, "profitabilitas": 0, "utang": 0, "arus_kas": 1, "pengumuman": 0,
+        })
+        self.assertEqual(k1["agresif"]["arah"], {
+            "valuasi": 1, "valuasi_relatif": 0, "pertumbuhan": 1, "profitabilitas": 1, "utang": 0, "arus_kas": 1, "pengumuman": 0,
+        })
+        self.assertEqual(len(k1["konservatif"]["rk"]["kuat"]), 1)
+        self.assertEqual(len(k1["konservatif"]["rk"]["awas"]), 2)
+        self.assertEqual(len(k1["moderat"]["rk"]["kuat"]), 3)
+        self.assertEqual(len(k1["moderat"]["rk"]["awas"]), 0)
+        self.assertEqual(len(k1["agresif"]["rk"]["kuat"]), 4)
+        self.assertEqual(len(k1["agresif"]["rk"]["awas"]), 0)
+
+        # Kasus batas toleransi agresif: g=4.5%, PER=1.45x, tumbuh=-3%, ROE=7%, utang=58%
+        k2 = jalankan_kasus(g_val=0.045, per_val=29.0, yoy_val=-0.03, roe_val=0.07, utang_val=0.58)
+        self.assertEqual(k2["moderat"]["arah"]["valuasi"], -1)
+        self.assertEqual(k2["moderat"]["arah"]["utang"], -1)
+        self.assertEqual(k2["moderat"]["arah"]["pertumbuhan"], -1)
+        self.assertEqual(k2["moderat"]["arah"]["profitabilitas"], -1)
+        self.assertEqual(k2["agresif"]["kunci"]["valuasi"], "rk.dcf.toleran")
+        self.assertEqual(k2["agresif"]["arah"]["valuasi"], 0)
+        self.assertEqual(k2["agresif"]["arah"]["utang"], 0)
+        self.assertEqual(k2["agresif"]["arah"]["pertumbuhan"], 0)
+        self.assertEqual(k2["agresif"]["arah"]["profitabilitas"], 0)
+        self.assertEqual(len(k2["agresif"]["rk"]["awas"]), 0)
+
+        # Kunci DCF baru bersih dari kata terlarang & terjemahan mentah di 3 bahasa
+        kata_larang = tuple(ringkasan.KATA_TERLARANG) + ("aman", "safe", "安全", "cocok", "suitable", "適合")
+        for kunci in ("rk.dcf.ketat", "rk.dcf.toleran"):
+            for bhs in ("en", "zh", "id"):
+                teks = i18n.t(kunci, bhs, g="3.2%", batas="3.5%")
+                self.assertNotIn("⟦", teks)
+                for kt in kata_larang:
+                    self.assertNotIn(kt.lower(), teks.lower(), f"{kunci} ({bhs}): {kt}")
+
     def test_tidak_ada_kata_beli_jual_di_tiga_bahasa(self):
         from app import ringkasan
         for bhs in ("en", "zh", "id"):
-            _, r = self._r(bhs)
-            teks = " ".join([f["teks"] for f in r["fakta"]] + [r["kesimpulan"], r["kecocokan"]] + r["cek"])
-            for k in ringkasan.KATA_TERLARANG:
-                self.assertNotIn(k.lower(), teks.lower(), f"{bhs}: {k}")
+            for risiko in ringkasan.PROFIL_RISIKO:
+                _, r = self._r(bhs, risiko)
+                teks = " ".join([f["teks"] for f in r["fakta"]] + [r["kesimpulan"], r["kecocokan"]] + r["cek"])
+                for k in ringkasan.KATA_TERLARANG:
+                    self.assertNotIn(k.lower(), teks.lower(), f"{bhs}/{risiko}: {k}")
 
     def test_pemeriksa_narasi(self):
         ringkasan, r = self._r()

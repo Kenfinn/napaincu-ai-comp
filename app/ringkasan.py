@@ -24,20 +24,52 @@ import os
 import re
 import sys
 
-from . import config, i18n, pasar, store
+from . import ambang_profil, config, i18n, pasar, store
 from .agent import llm
 
-AMBANG = {
-    "per_tinggi": 1.3,      # PER > 1,3 × median industri → mahal dibanding sesama
-    "per_rendah": 0.8,      # PER < 0,8 × median industri → lebih murah dari sesama
-    "tumbuh_kuat": 0.10,    # pendapatan tahunan YoY > 10 %
-    "roe_kuat": 0.15,       # ROE TTM ≥ 15 %
-    "roe_lemah": 0.08,      # ROE TTM < 8 %
-    "utang_tinggi": 0.60,   # total liabilitas / total aset > 60 %
-    "utang_rendah": 0.40,
-}
+PROFIL_RISIKO = ambang_profil.PROFIL
 
-PROFIL_RISIKO = ("konservatif", "moderat", "agresif")
+# Ambang klasifikasi Strengths (+1) vs Watch-outs (-1) per profil risiko.
+# Utang tinggi mengikuti kalibrasi gold set di app/ambang_profil.py (40% / 50% / 65%).
+AMBANG_PROFIL: dict[str, dict[str, float]] = {
+    "konservatif": {
+        "dcf_wajar_potong": 0.005,   # butuh >= 0,5% jarak di bawah batas agar jadi Strength
+        "dcf_toleransi": 0.0,        # di atas batas langsung Watch-out
+        "per_tinggi": 1.15,
+        "per_rendah": 0.75,
+        "tumbuh_kuat": 0.15,
+        "tumbuh_turun": 0.0,
+        "roe_kuat": 0.18,
+        "roe_lemah": 0.10,
+        "utang_tinggi": float(ambang_profil.AMBANG["konservatif"]["utang"]),
+        "utang_rendah": 0.35,
+    },
+    "moderat": {
+        "dcf_wajar_potong": 0.0,
+        "dcf_toleransi": 0.0,
+        "per_tinggi": 1.30,
+        "per_rendah": 0.80,
+        "tumbuh_kuat": 0.10,
+        "tumbuh_turun": 0.0,
+        "roe_kuat": 0.15,
+        "roe_lemah": 0.08,
+        "utang_tinggi": float(ambang_profil.AMBANG["moderat"]["utang"]),
+        "utang_rendah": 0.40,
+    },
+    "agresif": {
+        "dcf_wajar_potong": 0.0,
+        "dcf_toleransi": 0.015,      # toleransi +1,5% di atas batas sebelum Watch-out
+        "per_tinggi": 1.60,
+        "per_rendah": 0.90,
+        "tumbuh_kuat": 0.08,
+        "tumbuh_turun": -0.05,       # penurunan ringan s/d -5% tetap netral
+        "roe_kuat": 0.12,
+        "roe_lemah": 0.05,
+        "utang_tinggi": float(ambang_profil.AMBANG["agresif"]["utang"]),
+        "utang_rendah": 0.45,
+    },
+}
+AMBANG = AMBANG_PROFIL["moderat"]
 
 # Kata yang tidak boleh muncul di narasi model (lintas tiga bahasa).
 KATA_TERLARANG = ("beli", "jual", "buy", "sell", "買進", "買入", "賣出", "建議買", "建議賣",
@@ -69,6 +101,7 @@ def _baris_terakhir(tb: dict, kunci: str) -> tuple[str | None, float | None]:
 def susun(kode: str, bahasa: str, risiko: str = "moderat", hasil_agent: list[dict] | None = None) -> dict:
     bahasa = i18n.normal(bahasa)
     risiko = risiko if risiko in PROFIL_RISIKO else "moderat"
+    amb = AMBANG_PROFIL[risiko]
     fakta: list[dict] = []
 
     s = pasar.statistik(kode)
@@ -93,11 +126,19 @@ def susun(kode: str, bahasa: str, risiko: str = "moderat", hasil_agent: list[dic
         r = dcf.compute(d, forward_g=d.get("assumptions", {}).get("terminal_growth_ceiling"))
         g, batas = r.get("implied_growth"), r.get("terminal_growth_ceiling")
         if g is not None and batas is not None:
-            if g > batas:
-                fakta.append(_fakta("valuasi", -1, "rk.dcf.tinggi", bahasa, "valuasi",
+            wajar_maks = batas - amb["dcf_wajar_potong"]
+            toleran_maks = batas + amb["dcf_toleransi"]
+            if g <= wajar_maks:
+                fakta.append(_fakta("valuasi", 1, "rk.dcf.wajar", bahasa, "valuasi",
+                                    g=_pct(g, bahasa), batas=_pct(batas, bahasa)))
+            elif g <= batas:
+                fakta.append(_fakta("valuasi", 0, "rk.dcf.ketat", bahasa, "valuasi",
+                                    g=_pct(g, bahasa), batas=_pct(batas, bahasa)))
+            elif g <= toleran_maks:
+                fakta.append(_fakta("valuasi", 0, "rk.dcf.toleran", bahasa, "valuasi",
                                     g=_pct(g, bahasa), batas=_pct(batas, bahasa)))
             else:
-                fakta.append(_fakta("valuasi", 1, "rk.dcf.wajar", bahasa, "valuasi",
+                fakta.append(_fakta("valuasi", -1, "rk.dcf.tinggi", bahasa, "valuasi",
                                     g=_pct(g, bahasa), batas=_pct(batas, bahasa)))
 
     # 2 — PER dibanding median industri di bursa
@@ -108,9 +149,9 @@ def susun(kode: str, bahasa: str, risiko: str = "moderat", hasil_agent: list[dic
         nama_ind = i18n.t(f"ind.{ind['industri_kode']}", bahasa)
         prm = dict(per=_n(per, bahasa, 2), median=_n(ind["median"], bahasa, 2),
                    n=ind["jumlah"], industri=ind["industri"] if nama_ind.startswith("⟦") else nama_ind)
-        if rasio > AMBANG["per_tinggi"]:
+        if rasio > amb["per_tinggi"]:
             fakta.append(_fakta("valuasi_relatif", -1, "rk.per.tinggi", bahasa, "stats", **prm))
-        elif rasio < AMBANG["per_rendah"]:
+        elif rasio < amb["per_rendah"]:
             fakta.append(_fakta("valuasi_relatif", 1, "rk.per.rendah", bahasa, "stats", **prm))
         else:
             fakta.append(_fakta("valuasi_relatif", 0, "rk.per.sejalan", bahasa, "stats", **prm))
@@ -121,20 +162,21 @@ def susun(kode: str, bahasa: str, risiko: str = "moderat", hasil_agent: list[dic
     if yoy_th is not None:
         prm = dict(th=th, yoy=_pct(yoy_th, bahasa),
                    q=q or "—", yoy_q=_pct(yoy_q, bahasa) if yoy_q is not None else "—")
-        if yoy_th > AMBANG["tumbuh_kuat"]:
+        if yoy_th > amb["tumbuh_kuat"]:
             fakta.append(_fakta("pertumbuhan", 1, "rk.tumbuh.kuat", bahasa, "keu", **prm))
         elif yoy_th >= 0:
             fakta.append(_fakta("pertumbuhan", 0, "rk.tumbuh.sedang", bahasa, "keu", **prm))
         else:
-            fakta.append(_fakta("pertumbuhan", -1, "rk.tumbuh.turun", bahasa, "keu", **prm))
+            arah_turun = -1 if yoy_th < amb["tumbuh_turun"] else 0
+            fakta.append(_fakta("pertumbuhan", arah_turun, "rk.tumbuh.turun", bahasa, "keu", **prm))
 
     # 4 — profitabilitas
     roe, mb = s.get("roe"), s.get("margin_bersih")
     if roe is not None:
         prm = dict(roe=_pct(roe, bahasa), mb=_pct(mb, bahasa) if mb is not None else "—")
-        if roe >= AMBANG["roe_kuat"]:
+        if roe >= amb["roe_kuat"]:
             fakta.append(_fakta("profitabilitas", 1, "rk.roe.kuat", bahasa, "stats", **prm))
-        elif roe < AMBANG["roe_lemah"]:
+        elif roe < amb["roe_lemah"]:
             fakta.append(_fakta("profitabilitas", -1, "rk.roe.lemah", bahasa, "stats", **prm))
         else:
             fakta.append(_fakta("profitabilitas", 0, "rk.roe.sedang", bahasa, "stats", **prm))
@@ -147,9 +189,9 @@ def susun(kode: str, bahasa: str, risiko: str = "moderat", hasil_agent: list[dic
         if liab is not None and aset:
             rasio = liab / aset
             prm = dict(rasio=_pct(rasio, bahasa), q=kol)
-            if rasio > AMBANG["utang_tinggi"]:
+            if rasio > amb["utang_tinggi"]:
                 fakta.append(_fakta("utang", -1, "rk.utang.tinggi", bahasa, "keu", **prm))
-            elif rasio < AMBANG["utang_rendah"]:
+            elif rasio < amb["utang_rendah"]:
                 fakta.append(_fakta("utang", 1, "rk.utang.rendah", bahasa, "keu", **prm))
             else:
                 fakta.append(_fakta("utang", 0, "rk.utang.sedang", bahasa, "keu", **prm))
