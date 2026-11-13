@@ -124,6 +124,18 @@ def muat_valuasi(kode: str) -> dict | None:
 
 
 def emiten_tervaluasi() -> list[str]:
-    if not os.path.isdir(config.VALUATION_DIR):
-        return []
-    return sorted(f[:-5] for f in os.listdir(config.VALUATION_DIR) if f.endswith(".json"))
+    from . import valuasi_otomatis
+
+    kode: set[str] = set()
+    if os.path.isdir(config.VALUATION_DIR):
+        kode.update(f[:-5] for f in os.listdir(config.VALUATION_DIR) if f.endswith(".json"))
+
+    cache_dir = str(valuasi_otomatis.CACHE_DIR)
+    if os.path.isdir(cache_dir):
+        for f in os.listdir(cache_dir):
+            if not f.endswith(".json"):
+                continue
+            k = f[:-5]
+            if k not in kode and valuasi_otomatis.dari_cache_untuk_pipeline(k) is not None:
+                kode.add(k)
+    return sorted(kode)

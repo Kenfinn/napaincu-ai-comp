@@ -567,6 +567,30 @@ def cari_saham(request: Request, kode: str = ""):
     )
 
 
+def _muat_atau_bangun_valuasi(kode: str, butuh_layak_dcf: bool = False) -> dict | None:
+    """Muat valuasi manual/cache; bangun otomatis on-demand bila belum ada atau basi."""
+    d = store.muat_valuasi(kode)
+    if d is None or (d.get("otomatis") and valuasi_otomatis.baca_cache(kode, terima_basi=False) is None):
+        d_ambil = valuasi_otomatis.ambil(kode)
+        d = store.muat_valuasi(kode) or d_ambil
+    if d and d.get("beta_sementara"):
+        valuasi_otomatis.pemicu_hitung_beta_latar(kode, d.get("bursa", "TWSE"))
+    if butuh_layak_dcf and not valuasi_otomatis.layak_dcf(d):
+        return None
+    return d
+
+
+def _siapkan_valuasi_dcf(kode: str) -> tuple[str, dict]:
+    """Normalisasi kode dan muat/bangun data valuasi yang siap untuk dcf.compute()."""
+    kode_bersih = kode.strip().upper()
+    if not tarik.KODE_SAH.match(kode_bersih):
+        raise HTTPException(404, "Kode saham tidak dikenal")
+    d = _muat_atau_bangun_valuasi(kode_bersih, butuh_layak_dcf=True)
+    if d is None:
+        raise HTTPException(404, f"Belum ada berkas valuasi untuk {kode_bersih}")
+    return kode_bersih, d
+
+
 @app.get("/saham/{kode}", response_class=HTMLResponse)
 def saham(request: Request, kode: str, tab: str = "ringkasan", lap: str = "lr",
           per: str = "q", mode: str = "nilai", risiko: str = ""):
@@ -593,12 +617,7 @@ def saham(request: Request, kode: str, tab: str = "ringkasan", lap: str = "lr",
     elif tab == "keu":
         ctx["tb"] = pasar.tabel(kode, lap, per, mode)
     elif tab == "valuasi":
-        d = store.muat_valuasi(kode)
-        if d is None or (d.get("otomatis") and valuasi_otomatis.baca_cache(kode, terima_basi=False) is None):
-            d_ambil = valuasi_otomatis.ambil(kode)
-            d = store.muat_valuasi(kode) or d_ambil
-        if d and d.get("beta_sementara"):
-            valuasi_otomatis.pemicu_hitung_beta_latar(kode, d.get("bursa", "TWSE"))
+        d = _muat_atau_bangun_valuasi(kode)
         ctx["va"] = d
         if valuasi_otomatis.layak_dcf(d):
             ctx["r"] = dcf.compute(d, forward_g=d.get("assumptions", {}).get("terminal_growth_ceiling"))
@@ -798,9 +817,7 @@ def jejak(request: Request, pengenal: str):
 
 @app.get("/valuasi/{kode}", response_class=HTMLResponse)
 def valuasi(request: Request, kode: str):
-    d = store.muat_valuasi(kode)
-    if d is None:
-        raise HTTPException(404, f"Belum ada berkas valuasi untuk {kode}")
+    kode, d = _siapkan_valuasi_dcf(kode)
     g = d.get("assumptions", {}).get("terminal_growth_ceiling")
     return tpl.TemplateResponse(
         request=request, name="valuasi.html",
@@ -828,9 +845,7 @@ def api_jejak(pengenal: str):
 
 @app.get("/api/valuasi/{kode}", summary="Keluaran kalkulator DCF untuk satu emiten")
 def api_valuasi(kode: str):
-    d = store.muat_valuasi(kode)
-    if d is None:
-        raise HTTPException(404, f"Belum ada berkas valuasi untuk {kode}")
+    _, d = _siapkan_valuasi_dcf(kode)
     return JSONResponse(dcf.compute(d, forward_g=d.get("assumptions", {}).get("terminal_growth_ceiling")))
 
 

@@ -13,7 +13,7 @@ from unittest import mock
 
 from fastapi.testclient import TestClient
 
-from app import config, harga_resmi, i18n, main, pasar, store, valuasi_otomatis
+from app import config, harga_resmi, i18n, main, pasar, store, tarik, valuasi_otomatis
 from app.agent import pipeline
 from scripts import dcf
 
@@ -368,6 +368,49 @@ class TestValuasiOtomatis(_LingkunganOfflineMixin, unittest.TestCase):
             self.assertEqual(r_na.status_code, 200)
             self.assertIn(label_na, r_na.text)
             self.assertNotIn("⟦", r_na.text)
+
+    def test_watchlist_tampilkan_dcf_dari_cache_otomatis(self):
+        """store.emiten_tervaluasi() dan /watchlist mencakup cache otomatis yang layak_dcf saja."""
+        self._salin_keuangan_sampel("2454")
+        valuasi_otomatis.panaskan(["2330", "2454", "2881"], jeda=0)
+        # Berkas .tmp tidak boleh dianggap kode emiten tervaluasi
+        (self.va_cache / "2317.json.999.tmp").write_text("{}", encoding="utf-8")
+
+        tervaluasi = store.emiten_tervaluasi()
+        self.assertEqual(tervaluasi, ["2330", "2454"])
+        self.assertNotIn("2881", tervaluasi)
+
+        with mock.patch.object(tarik, "WATCHLIST_FILE", str(self.tmp_path / "watchlist.json")), \
+                mock.patch.object(valuasi_otomatis, "pemicu_hitung_beta_latar", return_value=None):
+            klien = TestClient(main.app)
+            r = klien.get("/watchlist?lang=id")
+        self.assertEqual(r.status_code, 200)
+        self.assertIn('href="/valuasi/2330"', r.text)
+        self.assertIn('href="/valuasi/2454"', r.text)
+        self.assertNotIn('href="/valuasi/2881"', r.text)
+        self.assertIn(i18n.t("wl.dcf", "id"), r.text)
+
+    def test_valuasi_route_bangun_otomatis_dan_tolak_non_dcf(self):
+        """/valuasi/{kode} dan /api/valuasi/{kode} membangun otomatis saat belum di cache dan menolak non-DCF."""
+        self._salin_keuangan_sampel("2454")
+        self.assertIsNone(store.muat_valuasi("2454"))
+
+        with mock.patch.object(valuasi_otomatis, "pemicu_hitung_beta_latar", return_value=None):
+            klien = TestClient(main.app)
+            r_html = klien.get("/valuasi/2454?lang=en")
+            self.assertEqual(r_html.status_code, 200)
+            self.assertIn("MediaTek", r_html.text)
+            self.assertIn("2454", store.emiten_tervaluasi())
+
+            r_api = klien.get("/api/valuasi/2454")
+            self.assertEqual(r_api.status_code, 200)
+            payload = r_api.json()
+            self.assertIn("implied_growth", payload)
+            self.assertIn("wacc", payload)
+
+            self.assertEqual(klien.get("/valuasi/2881").status_code, 404)
+            self.assertEqual(klien.get("/api/valuasi/2881").status_code, 404)
+            self.assertEqual(klien.get("/valuasi/..BAD").status_code, 404)
 
 
 if __name__ == "__main__":
