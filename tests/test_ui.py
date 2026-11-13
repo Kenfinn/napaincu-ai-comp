@@ -2,15 +2,36 @@
 
 from __future__ import annotations
 
+import copy
+import json
 import os
 import re
+import tempfile
 import unittest
 import unittest.mock
+from pathlib import Path
 
 from starlette.testclient import TestClient
 
+from app import (
+    config,
+    gold,
+    harga_resmi,
+    indeks_nama,
+    main,
+    pasar,
+    review,
+    tarik,
+    umpan_balik,
+    valuasi_otomatis,
+)
+from app.agent import llm
 from app.main import app, hasil
 from scripts import qa_halaman
+
+ROOT = Path(__file__).resolve().parent.parent
+PASAR_SAMPEL = json.loads((ROOT / "tests" / "data" / "pasar_sampel.json").read_text(encoding="utf-8"))
+MANUAL_2330 = json.loads((Path(config.VALUATION_DIR) / "2330.json").read_text(encoding="utf-8"))
 
 
 class TestUI(unittest.TestCase):
@@ -18,16 +39,55 @@ class TestUI(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        cls._tmp = tempfile.TemporaryDirectory()
+        tmp = Path(cls._tmp.name)
+        parsed = tmp / "parsed"  # sengaja tidak dibuat/kosong agar jatuh bersih ke data/fixtures/
+        raw = tmp / "raw" / "openapi"
+        cls._patches = [
+            unittest.mock.patch.object(config, "DATA_DIR", str(tmp)),
+            unittest.mock.patch.object(config, "PARSED_DIR", str(parsed)),
+            unittest.mock.patch.object(config, "TRACE_DIR", str(tmp / "traces")),
+            unittest.mock.patch.object(config, "KODE_AKSES", ""),
+            unittest.mock.patch.object(config, "SERTAKAN_CONTOH", True),
+            unittest.mock.patch.dict(os.environ, {"SENTINEL_SERTAKAN_CONTOH": "1"}, clear=False),
+            unittest.mock.patch.object(tarik, "WATCHLIST_FILE", str(tmp / "watchlist.json")),
+            unittest.mock.patch.object(tarik, "STATUS_FILE", str(tmp / "status_tarik.json")),
+            unittest.mock.patch.object(tarik, "RAW_DIR", str(raw)),
+            unittest.mock.patch.object(tarik, "DETAIL_FILE", str(parsed / "details.json")),
+            unittest.mock.patch.object(tarik, "LIST_FILE", str(parsed / "announcements.json")),
+            unittest.mock.patch.object(review, "KEPUTUSAN_FILE", str(tmp / "keputusan_review.json")),
+            unittest.mock.patch.object(umpan_balik, "FILE", str(tmp / "umpan_balik.json")),
+            unittest.mock.patch.object(pasar, "CACHE_DIR", str(tmp / "pasar")),
+            unittest.mock.patch.object(valuasi_otomatis, "CACHE_DIR", tmp / "valuasi_otomatis"),
+            unittest.mock.patch.object(llm, "CACHE_DIR", str(tmp / "cache_model")),
+            unittest.mock.patch.object(indeks_nama, "BERKAS_INDEKS", str(tmp / "indeks_nama.json")),
+            unittest.mock.patch.object(gold, "ARSIP_DIR", str(raw)),
+            unittest.mock.patch.object(tarik, "_ambil_json", return_value=[]),
+            unittest.mock.patch.object(pasar, "_ambil_json", return_value=[]),
+            unittest.mock.patch.object(pasar, "_finmind", return_value=[]),
+            unittest.mock.patch.object(harga_resmi, "_ambil_json", return_value=None),
+            unittest.mock.patch.object(indeks_nama, "_ambil_url_json", return_value=None),
+            unittest.mock.patch.object(valuasi_otomatis, "pemicu_hitung_beta_latar", return_value=None),
+        ]
+        for p in cls._patches:
+            p.start()
+
+        for nama, isi in PASAR_SAMPEL.items():
+            pasar._tulis_cache(nama, isi)
+        va_2330 = copy.deepcopy(MANUAL_2330)
+        va_2330["otomatis"] = True
+        va_2330["bursa"] = "TWSE"
+        valuasi_otomatis.simpan_cache("2330", va_2330)
+
+        with main._kunci_cache:
+            main._cache = None
         cls.client = TestClient(app, follow_redirects=True)
         daftar = hasil()
-        cls.id_terbit = next(
-            (h["id"] for h in daftar if h.get("status") == "terbit"),
-            daftar[0]["id"],
-        )
-        cls.id_ditahan = next(
-            (h["id"] for h in daftar if h.get("status") == "ditahan"),
-            daftar[0]["id"],
-        )
+        ids = {h["id"]: h.get("status") for h in daftar}
+        cls.id_terbit = "2330-2026-09-18-1"
+        cls.id_ditahan = "2330-2026-09-19-4"
+        assert ids.get(cls.id_terbit) == "terbit", f"Fixture {cls.id_terbit} bukan terbit: {ids}"
+        assert ids.get(cls.id_ditahan) == "ditahan", f"Fixture {cls.id_ditahan} bukan ditahan: {ids}"
         cls.rute_utama = [
             "/",
             "/watchlist",
@@ -47,35 +107,35 @@ class TestUI(unittest.TestCase):
             f"/jejak/{cls.id_terbit}",
         ]
 
+    @classmethod
+    def tearDownClass(cls) -> None:
+        with main._kunci_cache:
+            main._cache = None
+        for p in reversed(cls._patches):
+            p.stop()
+        cls._tmp.cleanup()
+
     def test_semua_halaman_utama_200_dan_tanpa_kunci_mentah(self) -> None:
         """Semua halaman utama mengembalikan HTTP 200 dan bebas dari '⟦' di 3 bahasa."""
-        with unittest.mock.patch("app.tarik._ambil_json", return_value=[]), \
-             unittest.mock.patch("app.pasar._ambil_json", return_value=[]), \
-             unittest.mock.patch("app.harga_resmi._ambil_json", return_value=None), \
-             unittest.mock.patch("app.valuasi_otomatis.pemicu_hitung_beta_latar", return_value=None):
-            for rute in self.rute_utama:
-                for bhs in ("en", "zh", "id"):
-                    with self.subTest(rute=rute, bahasa=bhs):
-                        r = self.client.get(rute, cookies={"bahasa": bhs})
-                        self.assertEqual(r.status_code, 200, f"Gagal {rute} ({bhs})")
-                        self.assertNotIn("⟦", r.text, f"Kunci mentah ⟦ di {rute} ({bhs})")
-                        mentah = qa_halaman.periksa_kunci_mentah(r.text)
-                        self.assertEqual(mentah, [], f"Kunci mentah {mentah} di {rute} ({bhs})")
+        for rute in self.rute_utama:
+            for bhs in ("en", "zh", "id"):
+                with self.subTest(rute=rute, bahasa=bhs):
+                    r = self.client.get(rute, cookies={"bahasa": bhs})
+                    self.assertEqual(r.status_code, 200, f"Gagal {rute} ({bhs})")
+                    self.assertNotIn("⟦", r.text, f"Kunci mentah ⟦ di {rute} ({bhs})")
+                    mentah = qa_halaman.periksa_kunci_mentah(r.text)
+                    self.assertEqual(mentah, [], f"Kunci mentah {mentah} di {rute} ({bhs})")
 
     def test_tidak_ada_kata_beli_jual_di_luar_penafian(self) -> None:
         """Tidak ada label rekomendasi beli/jual/buy/sell di luar blok penafian."""
-        with unittest.mock.patch("app.tarik._ambil_json", return_value=[]), \
-             unittest.mock.patch("app.pasar._ambil_json", return_value=[]), \
-             unittest.mock.patch("app.harga_resmi._ambil_json", return_value=None), \
-             unittest.mock.patch("app.valuasi_otomatis.pemicu_hitung_beta_latar", return_value=None):
-            for rute in self.rute_utama:
-                for bhs in ("en", "zh", "id"):
-                    with self.subTest(rute=rute, bahasa=bhs):
-                        r = self.client.get(rute, cookies={"bahasa": bhs})
-                        temu = qa_halaman.periksa_kata_rekomendasi(r.text)
-                        self.assertEqual(
-                            temu, [], f"Kata rekomendasi terlarang {temu} di {rute} ({bhs})"
-                        )
+        for rute in self.rute_utama:
+            for bhs in ("en", "zh", "id"):
+                with self.subTest(rute=rute, bahasa=bhs):
+                    r = self.client.get(rute, cookies={"bahasa": bhs})
+                    temu = qa_halaman.periksa_kata_rekomendasi(r.text)
+                    self.assertEqual(
+                        temu, [], f"Kata rekomendasi terlarang {temu} di {rute} ({bhs})"
+                    )
 
     def test_panel_chat_tetap_ada_di_base_html(self) -> None:
         """Pastikan {% include \"_panel_chat.html\" %} tidak dihapus dari base.html."""

@@ -2,14 +2,101 @@
 
 from __future__ import annotations
 
+import copy
+import json
 import os
 import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
-from app import chat, config, main, pasar
+from app import (
+    chat,
+    config,
+    gold,
+    harga_resmi,
+    indeks_nama,
+    main,
+    pasar,
+    review,
+    tarik,
+    umpan_balik,
+    valuasi_otomatis,
+)
+from app.agent import llm
+
+ROOT = Path(__file__).resolve().parent.parent
+PASAR_SAMPEL = json.loads((ROOT / "tests" / "data" / "pasar_sampel.json").read_text(encoding="utf-8"))
+MANUAL_2330 = json.loads((Path(config.VALUATION_DIR) / "2330.json").read_text(encoding="utf-8"))
+
+
+def _tolak_jaringan(nama: str):
+    def _gagal(*_args, **_kwargs):
+        raise AssertionError(f"Tes tidak boleh memanggil jaringan ({nama})")
+    return _gagal
+
+
+class _LingkunganTerisolasi(unittest.TestCase):
+    """Isolasi direktori data, cache, status in-memory, dan panggilan jaringan untuk semua skenario."""
+
+    def setUp(self):
+        super().setUp()
+        self._tmp = tempfile.TemporaryDirectory()
+        tmp = Path(self._tmp.name)
+        parsed = tmp / "parsed"  # sengaja tidak diisi agar store jatuh bersih ke data/fixtures/
+        raw = tmp / "raw" / "openapi"
+        self._patches = [
+            patch.object(config, "DATA_DIR", str(tmp)),
+            patch.object(config, "PARSED_DIR", str(parsed)),
+            patch.object(config, "TRACE_DIR", str(tmp / "traces")),
+            patch.object(config, "KODE_AKSES", ""),
+            patch.object(config, "SERTAKAN_CONTOH", True),
+            patch.dict(os.environ, {"SENTINEL_SERTAKAN_CONTOH": "1"}, clear=False),
+            patch.object(tarik, "WATCHLIST_FILE", str(tmp / "watchlist.json")),
+            patch.object(tarik, "STATUS_FILE", str(tmp / "status_tarik.json")),
+            patch.object(tarik, "RAW_DIR", str(raw)),
+            patch.object(tarik, "DETAIL_FILE", str(parsed / "details.json")),
+            patch.object(tarik, "LIST_FILE", str(parsed / "announcements.json")),
+            patch.object(review, "KEPUTUSAN_FILE", str(tmp / "keputusan_review.json")),
+            patch.object(umpan_balik, "FILE", str(tmp / "umpan_balik.json")),
+            patch.object(pasar, "CACHE_DIR", str(tmp / "pasar")),
+            patch.object(valuasi_otomatis, "CACHE_DIR", tmp / "valuasi_otomatis"),
+            patch.object(llm, "CACHE_DIR", str(tmp / "cache_model")),
+            patch.object(indeks_nama, "BERKAS_INDEKS", str(tmp / "indeks_nama.json")),
+            patch.object(gold, "ARSIP_DIR", str(raw)),
+            patch.object(pasar, "_ambil_json", side_effect=_tolak_jaringan("pasar._ambil_json")),
+            patch.object(pasar, "_finmind", side_effect=_tolak_jaringan("pasar._finmind")),
+            patch.object(tarik, "_ambil_json", side_effect=_tolak_jaringan("tarik._ambil_json")),
+            patch.object(harga_resmi, "_ambil_json", side_effect=_tolak_jaringan("harga_resmi._ambil_json")),
+            patch.object(indeks_nama, "_ambil_url_json", side_effect=_tolak_jaringan("indeks_nama._ambil_url_json")),
+            patch.object(valuasi_otomatis, "pemicu_hitung_beta_latar", return_value=None),
+        ]
+        for p in self._patches:
+            p.start()
+
+        for nama, isi in PASAR_SAMPEL.items():
+            pasar._tulis_cache(nama, isi)
+        va_2454 = copy.deepcopy(MANUAL_2330)
+        va_2454["ticker"] = "2454.TW"
+        va_2454["company"] = "MediaTek Inc."
+        va_2454["otomatis"] = True
+        va_2454["bursa"] = "TWSE"
+        valuasi_otomatis.simpan_cache("2454", va_2454)
+
+        chat._jam.clear()
+        with main._kunci_cache:
+            main._cache = None
+
+    def tearDown(self):
+        chat._jam.clear()
+        with main._kunci_cache:
+            main._cache = None
+        for p in reversed(self._patches):
+            p.stop()
+        self._tmp.cleanup()
+        super().tearDown()
 
 
 def _mock_harga(kode: str):
@@ -30,17 +117,7 @@ def _mock_statistik(kode: str):
             "rasio": {"per": 23.87, "pbr": 6.8}}
 
 
-class TestChatPercakapanC1(unittest.TestCase):
-    def setUp(self):
-        self._tmp = tempfile.TemporaryDirectory()
-        self._data_asli = config.DATA_DIR
-        config.DATA_DIR = self._tmp.name
-        os.environ["SENTINEL_SERTAKAN_CONTOH"] = "1"
-        main. Segarkan = getattr(main, "_cache_hasil", None)
-
-    def tearDown(self):
-        config.DATA_DIR = self._data_asli
-        self._tmp.cleanup()
+class TestChatPercakapanC1(_LingkunganTerisolasi):
 
     def test_tanda_sah_diterima_dan_palsu_atau_diubah_dibuang(self):
         id_asli = "20261112T100000-abc123"
@@ -117,17 +194,7 @@ class TestChatPercakapanC1(unittest.TestCase):
         self.assertEqual(tahap_riwayat["dibuang"], 1)
 
 
-class TestChatPercakapanC2(unittest.TestCase):
-    def setUp(self):
-        self._tmp = tempfile.TemporaryDirectory()
-        self._data_asli = config.DATA_DIR
-        config.DATA_DIR = self._tmp.name
-        os.environ["SENTINEL_SERTAKAN_CONTOH"] = "1"
-        chat._jam.clear()
-
-    def tearDown(self):
-        config.DATA_DIR = self._data_asli
-        self._tmp.cleanup()
+class TestChatPercakapanC2(_LingkunganTerisolasi):
 
     @patch.object(chat.llm, "tersedia", return_value=False)
     def test_lanjutan_pakai_konteks_kode_untuk_valuasi(self, *_):
@@ -179,19 +246,7 @@ class TestChatPercakapanC2(unittest.TestCase):
         self.assertIn("• What is the price of 2330?", h_recap["jawaban"])
 
 
-class TestChatPercakapanC3(unittest.TestCase):
-    def setUp(self):
-        self._tmp = tempfile.TemporaryDirectory()
-        self._data_asli = config.DATA_DIR
-        config.DATA_DIR = self._tmp.name
-        os.environ["SENTINEL_SERTAKAN_CONTOH"] = "1"
-        chat._jam.clear()
-        with main._kunci_cache:
-            main._cache = None
-
-    def tearDown(self):
-        config.DATA_DIR = self._data_asli
-        self._tmp.cleanup()
+class TestChatPercakapanC3(_LingkunganTerisolasi):
 
     def _snapshot_data_dir(self) -> dict[str, bytes]:
         snap = {}
@@ -207,7 +262,8 @@ class TestChatPercakapanC3(unittest.TestCase):
     def test_semua_alat_menu_dengan_data_fixture_dan_tanpa_mengubah_data_dir(self, *_):
         semua = main.hasil()
         self.assertTrue(len(semua) >= 4)
-        id_contoh = semua[0]["id"]
+        id_contoh = "2330-2026-09-18-1"
+        self.assertIn(id_contoh, {h["id"] for h in semua})
 
         # Ambil snapshot DATA_DIR setelah cache pipeline siap
         sebelum = self._snapshot_data_dir()
@@ -307,22 +363,14 @@ class TestChatPercakapanC3(unittest.TestCase):
         self.assertEqual(res["jenis"], "pejabat")
 
 
-class TestChatPercakapanC4(unittest.TestCase):
+class TestChatPercakapanC4(_LingkunganTerisolasi):
     def setUp(self):
-        self._tmp = tempfile.TemporaryDirectory()
-        self._data_asli = config.DATA_DIR
-        config.DATA_DIR = self._tmp.name
-        os.environ["SENTINEL_SERTAKAN_CONTOH"] = "1"
-        with main._kunci_cache:
-            main._cache = None
+        super().setUp()
         self.klien = TestClient(main.app)
 
-    def tearDown(self):
-        config.DATA_DIR = self._data_asli
-        self._tmp.cleanup()
-
     def test_panel_hadir_di_semua_halaman_kecuali_tanya(self):
-        id_contoh = main.hasil()[0]["id"]
+        id_contoh = "2330-2026-09-18-1"
+        self.assertIn(id_contoh, {h["id"] for h in main.hasil()})
         for jalur, hal, kode, id_p in [
             ("/", "feed", "", ""),
             ("/saham/2330", "saham", "2330", ""),
@@ -343,19 +391,7 @@ class TestChatPercakapanC4(unittest.TestCase):
         self.assertIn('id="cp-halaman-akar"', r_tanya.text)
 
 
-class TestChatPercakapanC5Keamanan(unittest.TestCase):
-    def setUp(self):
-        self._tmp = tempfile.TemporaryDirectory()
-        self._data_asli = config.DATA_DIR
-        config.DATA_DIR = self._tmp.name
-        os.environ["SENTINEL_SERTAKAN_CONTOH"] = "1"
-        chat._jam.clear()
-        with main._kunci_cache:
-            main._cache = None
-
-    def tearDown(self):
-        config.DATA_DIR = self._data_asli
-        self._tmp.cleanup()
+class TestChatPercakapanC5Keamanan(_LingkunganTerisolasi):
 
     @patch.object(chat.llm, "tersedia", return_value=False)
     @patch.object(pasar, "harga", side_effect=_mock_harga)
@@ -466,21 +502,7 @@ class TestChatPercakapanC5Keamanan(unittest.TestCase):
             self.assertNotIn("姓名", teks)
 
 
-class TestChatPercakapanC6Evaluasi(unittest.TestCase):
-    def setUp(self):
-        self._tmp = tempfile.TemporaryDirectory()
-        self._data_asli = config.DATA_DIR
-        config.DATA_DIR = self._tmp.name
-        os.environ["SENTINEL_SERTAKAN_CONTOH"] = "1"
-        chat._jam.clear()
-        with main._kunci_cache:
-            main._cache = None
-
-    def tearDown(self):
-        config.DATA_DIR = self._data_asli
-        with main._kunci_cache:
-            main._cache = None
-        self._tmp.cleanup()
+class TestChatPercakapanC6Evaluasi(_LingkunganTerisolasi):
 
     @patch.object(chat.llm, "tersedia", return_value=False)
     @patch.object(pasar, "harga", side_effect=_mock_harga)
