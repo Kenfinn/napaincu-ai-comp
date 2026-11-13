@@ -16,7 +16,7 @@ penolakan verifier adalah elemen terpenting di seluruh rancangan.
 Dipakai untuk dua hal:
 
 1. **Rapat tim.** Tanpa warna dan tipografi, orang berdebat soal struktur — dan itu
-   perdebatan yang berguna. Ferry dan PDK bisa menolak susunan tanpa merasa sedang
+   perdebatan yang berguna. Anggota tim keuangan bisa menolak susunan tanpa merasa sedang
    mengkritik selera.
 2. **Dokumen 16 Oktober.** Penilaian tahap pertama adalah tinjauan dokumen, bukan uji
    sistem. Catatan bernomor ini adalah alasan rancangan yang tidak terbaca dari mockup.

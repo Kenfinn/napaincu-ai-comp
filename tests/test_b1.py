@@ -83,7 +83,7 @@ class TestPenjaminan(_Terisolasi):
         self.assertEqual(len(s["penerima"]), 2)
         self.assertAlmostEqual(s["penerima"][0]["baru_juta"], 1152.025)
         self.assertAlmostEqual(s["saldo_total_juta"], 100663.762)
-        self.assertAlmostEqual(s["pemakaian_limit"], 100663762 / 185566638)       # ±54%, contoh Patrice
+        self.assertAlmostEqual(s["pemakaian_limit"], 100663762 / 185566638)       # ±54%, contoh tim keuangan
         self.assertAlmostEqual(s["rasio_ekuitas"], 1.0849)
         self.assertTrue(s["penerima"][0]["terkait"])
         self.assertFalse(s["penerima"][1]["terkait"])

@@ -7,8 +7,8 @@ mengirimnya ke /api/impor. Server memvalidasi ulang, membuang data pribadi lagi,
 dan menggabungkan tanpa duplikat — mengirim dua kali aman.
 
 Pakai:
-    python3 scripts/kirim_riwayat.py --server https://feaf.afinzaki.my.id
-    python3 scripts/kirim_riwayat.py --server https://feaf.afinzaki.my.id --berkas data/parsed/details.json
+    python3 scripts/kirim_riwayat.py --server https://feaf.example.com
+    python3 scripts/kirim_riwayat.py --server https://feaf.example.com --berkas data/parsed/details.json
 
 Kode akses (SENTINEL_KODE_AKSES di server) ditanyakan tanpa tampil di layar, atau
 diambil dari environment FEAF_KODE_AKSES. Jangan menulisnya di perintah.
@@ -42,7 +42,7 @@ def kirim(server: str, kode: str, potong: list[dict]) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--server", required=True, help="mis. https://feaf.afinzaki.my.id")
+    ap.add_argument("--server", required=True, help="mis. https://feaf.example.com")
     ap.add_argument("--berkas", default=os.path.join(ROOT, "data", "parsed", "details.json"))
     a = ap.parse_args()
 

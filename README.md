@@ -179,7 +179,7 @@ baseline the evaluation compares against. The screen and the trace always say wh
 
 ### Lanes by clause
 
-The clause list and thresholds were set with the team's finance members (Ferry, Patrice).
+The clause list and thresholds were set with the team's finance members.
 Full mapping and the reasoning behind each decision: [`docs/pemetaan-pasal.md`](docs/pemetaan-pasal.md).
 
 | Clause | Lane | What happens |

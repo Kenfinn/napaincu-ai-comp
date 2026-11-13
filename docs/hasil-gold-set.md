@@ -1,12 +1,12 @@
 # Hasil gold set (11 Nov 2026)
 
-Pelabel: Patrice, 46 pengumuman asli 9 Nov (sekitar 7 per jenis). Berkas jawaban:
-`docs/untuk-tim/gold-set-FEAF-jawaban-patrice.xlsx`, versi CSV di `eval/gold.csv`.
+Pelabel: anggota tim keuangan, 46 pengumuman asli 9 Nov (sekitar 7 per jenis). Berkas jawaban:
+berkas Excel jawaban tim keuangan di `docs/untuk-tim/`, versi CSV di `eval/gold.csv`.
 Evaluasi dijalankan tanpa model (penalar aturan), dengan data pasar dari OpenAPI TWSE/TPEx.
 
 ## Angka resmi untuk deck dan README
 
-Angka ini diambil **sebelum** agent disetel ulang dari jawaban Patrice. Ini angka yang jujur
+Angka ini diambil **sebelum** agent disetel ulang dari jawaban tim keuangan. Ini angka yang jujur
 untuk dilaporkan.
 
 | Metrik | Agent FEAF | Tanpa pemeriksa |
@@ -18,7 +18,7 @@ untuk dilaporkan.
 
 Laporan lengkap: `eval/hasil/evaluasi-20261111T084547Z.md`.
 
-Baseline kerja manual dari Patrice: **20–30 menit per pengumuman** (dipakai 25). Untuk 46
+Baseline kerja manual dari tim keuangan: **20–30 menit per pengumuman** (dipakai 25). Untuk 46
 pengumuman itu setara sekitar 1.150 menit kerja analis. Agent memprosesnya dalam hitungan
 milidetik per pengumuman tanpa model.
 
@@ -26,14 +26,14 @@ milidetik per pengumuman tanpa model.
 
 1. **Bug: rugi terbaca laba.** Laporan Taiwan menulis angka negatif dalam kurung, misalnya
    `(339,123)`. Pengurai membacanya positif, jadi 29 dari 177 laporan kuartal yang rugi
-   tampil sebagai laba. Ditemukan Patrice lewat kasus 6535.
+   tampil sebagai laba. Ditemukan anggota tim keuangan lewat kasus 6535.
 2. **Bug: jumlah saham dalam 仟股 tidak terbaca**, begitu juga label saham privat (私募股數)
    dan opsi karyawan (認股權行使…新股總數).
-3. Ambang rasio utang laporan kuartal terlalu longgar: Patrice menandai 55–58%.
-4. Pinjaman dana pasal 23 di 47% ekuitas ditandai Patrice. Batas regulasinya sekitar 40%.
-5. Transaksi pasal 20 dengan anak perusahaan 100% diarsipkan Patrice: kas tidak keluar grup.
+3. Ambang rasio utang laporan kuartal terlalu longgar: tim keuangan menandai 55–58%.
+4. Pinjaman dana pasal 23 di 47% ekuitas ditandai tim keuangan. Batas regulasinya sekitar 40%.
+5. Transaksi pasal 20 dengan anak perusahaan 100% diarsipkan tim keuangan: kas tidak keluar grup.
 
-## Kalibrasi yang dipasang (disetujui Afinzaki, 11 Nov)
+## Kalibrasi yang dipasang (disetujui ketua tim, 11 Nov)
 
 | | Perubahan | Berkas |
 |---|---|---|
@@ -49,9 +49,9 @@ Sesudah kalibrasi, pada 46 pengumuman yang sama: keputusan 43/46, tingkat 29/29
 pada data yang dipakai untuk menyetel. Jangan dilaporkan sebagai akurasi. Untuk angka uji
 yang bersih perlu 15–20 pengumuman baru yang dilabeli tanpa melihat hasil agent.
 
-Sisa selisih: 4749 (beli tanah, Patrice: terbit) ditahan karena emiten belum punya model
+Sisa selisih: 4749 (beli tanah, tim keuangan: terbit) ditahan karena emiten belum punya model
 valuasi; 2072 (akhir sewa dengan pihak terkait) dan 6830 (mesin anak perusahaan) ditahan,
-Patrice mengarsipkan.
+tim keuangan mengarsipkan.
 
 Dampak ke 578 pengumuman lokal: 79 laporan kuartal kini "perlu diperhatikan", 9 transaksi
 antar-grup diarsipkan, yang ditahan turun dari 65 ke 49.

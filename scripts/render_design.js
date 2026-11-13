@@ -1,7 +1,7 @@
 /**
  * Render tiap artboard .dc.html jadi PNG 2x di design/export/.
  *
- * Dipakai supaya Ferry dan PDK tidak perlu buka canvas — dan supaya
+ * Dipakai supaya anggota tim keuangan tidak perlu buka canvas — dan supaya
  * layar-layar ini bisa diseret ke Figma / ditempel ke deck.
  *
  *   node scripts/render_design.js            # folder design/

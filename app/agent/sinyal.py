@@ -5,8 +5,8 @@ Keputusan tim (docs/pemetaan-pasal.md, "Keputusan tim"):
     11, 35   perubahan modal, obligasi, pembelian kembali → sinyal; DCF berbasis kas
     31       laporan keuangan kuartal → ringkasan angka; memicu pembaruan valuasi
     1, 3, 40 gagal bayar, penghentian produksi, suspensi → selalu ke manusia
-    7        pergantian auditor eksternal → sinyal tata kelola (Patrice 11 Nov)
-    8        pergantian pejabat kunci → sinyal tata kelola (Patrice 11 Nov)
+    7        pergantian auditor eksternal → sinyal tata kelola (tim keuangan 11 Nov)
+    8        pergantian pejabat kunci → sinyal tata kelola (tim keuangan 11 Nov)
 
 Pasal 7 dan 8 memuat nama orang (akuntan, pejabat). Butir yang labelnya memuat 姓名
 tidak pernah dikutip, dan teks bebas 異動原因 tidak diambil karena bisa memuat nama.
@@ -27,7 +27,7 @@ ANGKA = re.compile(r"-?\d[\d,]*(?:\.\d+)?")
 
 # Angka akuntansi negatif ditulis dalam kurung: "(339,123)" = rugi 339.123. Sebelum 11 Nov
 # ini terbaca positif, sehingga 29 dari 177 laporan kuartal rugi tampil sebagai laba
-# (ditemukan Patrice di gold set, kasus 6535).
+# (ditemukan tim keuangan di gold set, kasus 6535).
 KURUNG = re.compile(r"^\s*[（(]\s*(\d[\d,]*(?:\.\d+)?)\s*[)）]")
 
 

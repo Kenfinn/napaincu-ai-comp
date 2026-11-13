@@ -1,4 +1,4 @@
-"""Pasal 7 (auditor) dan 8 (pejabat kunci): sinyal tata kelola tanpa nama orang (Patrice 11 Nov)."""
+"""Pasal 7 (auditor) dan 8 (pejabat kunci): sinyal tata kelola tanpa nama orang (tim keuangan 11 Nov)."""
 import json
 import unittest
 

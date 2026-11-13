@@ -1,6 +1,6 @@
 # Tugas A — Agent & Data (28 Sep – 8 Okt)
 
-Turunan dari [`rekap.md`](./rekap.md) untuk jalur A (Afinzaki). Rencana awal ada di
+Turunan dari [`rekap.md`](./rekap.md) untuk jalur A (ketua tim). Rencana awal ada di
 [`rencana-kerja.md`](./rencana-kerja.md), catatan teknis sumber data di
 [`akses-data.md`](./akses-data.md). **Kalau berkas ini dan `rekap.md` berbeda, ikuti `rekap.md`.**
 

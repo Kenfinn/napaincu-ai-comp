@@ -13,7 +13,7 @@ Pembagian kerja sama dengan agent pengumuman:
     Pemeriksa   KODE   — paragraf ditolak bila memuat angka yang tidak ada di fakta, atau
                          kata beli/jual. Bila ditolak, yang tampil versi template.
 
-AMBANG di bawah adalah aturan kerja sementara. Ferry/PDK wajib memverifikasinya sebelum
+AMBANG di bawah adalah aturan kerja sementara. Anggota tim keuangan wajib memverifikasinya sebelum
 dipakai di deck (sama seperti daftar pasal di agent/screen.py).
 """
 

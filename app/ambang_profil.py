@@ -10,7 +10,7 @@ Cara pakai:
   "serius", dan profil paling longgar ambangnya (konservatif) untuk materialitas, supaya
   tidak ada pengumuman yang diarsipkan padahal masih relevan bagi profil mana pun.
 
-Angka moderat: jawaban Patrice. Konservatif dan agresif: usulan Claude, menunggu cek tim.
+Angka moderat: jawaban tim keuangan. Konservatif dan agresif: usulan Claude, menunggu cek tim.
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ AMBANG: dict[str, dict[str, float | str]] = {
 URUT = {"info": 0, "perhatian": 1, "serius": 2}
 
 # Pinjaman dana (pasal 23): batas regulasi total pinjaman ±40% ekuitas, jauh di bawah penjaminan.
-# Gold set Patrice (11 Nov): 47% ekuitas = perlu diperhatikan. Sama untuk semua profil.
+# Gold set tim keuangan (11 Nov): 47% ekuitas = perlu diperhatikan. Sama untuk semua profil.
 PINJAMAN_PERHATIAN = 0.40
 
 
@@ -81,7 +81,7 @@ def tingkat(sinyal: dict | None, profil: str | None) -> dict | None:
         else:
             ps, pk = sinyal.get("persen_saham"), sinyal.get("persen_kapitalisasi")
             if sub == "saham_baru" and ps is None and pk is None:
-                # Jumlah tidak terbaca: jangan diremehkan (gold set Patrice: saham baru = perhatian).
+                # Jumlah tidak terbaca: jangan diremehkan (gold set tim keuangan: saham baru = perhatian).
                 t = "perhatian"
                 alasan.append(("tg.saham_tak_terbaca", {}))
             elif (ps is not None and ps >= a["saham"]) or (pk is not None and pk >= a["uang"]):
@@ -98,7 +98,7 @@ def tingkat(sinyal: dict | None, profil: str | None) -> dict | None:
             t = "perhatian"
             alasan.append(("tg.utang", {"nilai": round(ru * 100, 1), "ambang": round(a["utang"] * 100)}))
     elif jenis == "auditor":
-        # Pasal 7 (Patrice): ganti auditor eksternal jarang terjadi, jadi selalu diberi tahu.
+        # Pasal 7 (tim keuangan): ganti auditor eksternal jarang terjadi, jadi selalu diberi tahu.
         if sinyal.get("auditor_mundur") or sinyal.get("beda_pendapat"):
             t = "serius"
             if sinyal.get("auditor_mundur"):
@@ -111,7 +111,7 @@ def tingkat(sinyal: dict | None, profil: str | None) -> dict | None:
         else:
             alasan.append(("tg.rotasi", {}))
     elif jenis == "pejabat":
-        # Pasal 8 (Patrice: penting). Jabatan kunci yang keluar mendadak = perlu diperhatikan.
+        # Pasal 8 (tim keuangan: penting). Jabatan kunci yang keluar mendadak = perlu diperhatikan.
         if sinyal.get("kunci") and sinyal.get("keluar"):
             t = "perhatian"
             alasan.append(("tg.pejabat_keluar", {}))

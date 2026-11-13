@@ -82,7 +82,7 @@ masih kosong dan menunggu diisi sebagai layer asli.
 
 Catatan penting soal bentuk impor: berkas SVG gabungan di bawah menanam PNG sebagai
 data URI, jadi **semua artboard masuk Figma sebagai gambar rata**, termasuk kedua
-diagram. Untuk diagram, layer yang bisa diedit jauh lebih berguna — Ferry dan PDK perlu
+diagram. Untuk diagram, layer yang bisa diedit jauh lebih berguna — anggota tim keuangan perlu
 mengoreksi label dan panah tanpa lewat build ulang. Itu dikerjakan lewat Figma MCP,
 bukan lewat berkas SVG ini.
 

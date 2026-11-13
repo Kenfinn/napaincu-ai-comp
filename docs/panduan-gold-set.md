@@ -1,11 +1,11 @@
 # Panduan gold set
 
-Versi untuk Ferry & Patrice ada di [`untuk-tim/Panduan-Gold-Set-FEAF.pdf`](./untuk-tim/Panduan-Gold-Set-FEAF.pdf)
+Versi untuk tim keuangan ada di [`untuk-tim/Panduan-Gold-Set-FEAF.pdf`](./untuk-tim/Panduan-Gold-Set-FEAF.pdf)
 (sumbernya `untuk-tim/gold-set.html`), dikirim bersama [`untuk-tim/gold-set-FEAF.xlsx`](./untuk-tim/gold-set-FEAF.xlsx).
 Isinya: kolom yang diisi, aturan per jenis pengumuman yang sudah disepakati, konversi satuan,
 contoh, dan kolom `menit` untuk baseline kerja manual.
 
-Berkas ini catatan teknis untuk Afinzaki dan Claude.
+Berkas ini catatan teknis untuk ketua tim dan Claude.
 
 ## Membuat paket
 

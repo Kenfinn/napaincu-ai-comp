@@ -53,7 +53,7 @@ def _ada_label_capex(detail: dict) -> bool:
 
 
 # Transaksi dengan anak perusahaan yang dimiliki 100%: kas tidak keluar dari grup, jadi tidak
-# mengubah DCF konsolidasi (keputusan 11 Nov dari gold set Patrice). Hanya dicari di judul dan
+# mengubah DCF konsolidasi (keputusan 11 Nov dari gold set tim keuangan). Hanya dicari di judul dan
 # butir pihak lawan/hubungan, bukan di seluruh teks.
 _ANTAR_GRUP = re.compile(r"(100|百分之百)\s*[%％]?\s*(直接|間接)?\s*(持有|持股)?\s*之?\s*子公司"
                          r"|持股\s*100\s*[%％]\s*之?\s*子公司")

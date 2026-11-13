@@ -6,7 +6,7 @@ MOPS **hanya bisa diakses dari jaringan Taiwan**. Jadi: laptop di Taiwan menarik
 lalu mengirim hasilnya ke server.
 
 ```
-Laptop (wifi kampus / hotspot kartu Taiwan)          Server (feaf.afinzaki.my.id)
+Laptop (wifi kampus / hotspot kartu Taiwan)          Server (feaf.example.com)
   spike_mops.py   → daftar pengumuman
   parse_mops.py   → alamat tiap pengumuman
   fetch_details.py→ isi lengkap (data pribadi dibuang)
@@ -61,7 +61,7 @@ tengah jalan, jalankan lagi; yang sudah ada dilewati.
 ## 4. Kirim ke server (±1 menit)
 
 ```bash
-python3 scripts/kirim_riwayat.py --server https://feaf.afinzaki.my.id
+python3 scripts/kirim_riwayat.py --server https://feaf.example.com
 ```
 
 Skrip menanyakan **kode akses** (isi `SENTINEL_KODE_AKSES` di Dokploy). Kode tidak
@@ -74,7 +74,7 @@ Mengirim dua kali aman: yang sudah ada di server dilewati.
 
 ## 5. Cek di web
 
-Buka `https://feaf.afinzaki.my.id/?lang=en`. Riwayat muncul di **Alerts** dan di tab
+Buka `https://feaf.example.com/?lang=en`. Riwayat muncul di **Alerts** dan di tab
 **Stream** setiap halaman saham. Untuk pengumuman yang lolos saringan pasal, agent
 memanggil Gemini **sekali per pengumuman**. Hasilnya disimpan, jadi pemeriksaan
 berkala berikutnya tidak memanggil model lagi.

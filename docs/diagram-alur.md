@@ -31,7 +31,7 @@ flowchart LR
     KR["kirim_riwayat.py"]:::inti
   end
 
-  subgraph SERVER["Server Dokploy · feaf.afinzaki.my.id"]
+  subgraph SERVER["Server Dokploy · feaf.example.com"]
     PM["Pemantau otomatis<br/>tiap 10 menit"]:::inti
     CN["Tombol Check now"]:::inti
     TK["Penarik<br/>validasi bentuk · buang data pribadi<br/>watchlist (semua emiten setelah D-a)"]:::inti

@@ -1,4 +1,4 @@
-"""Kalibrasi 11 Nov dari gold set Patrice: rugi dalam kurung, satuan 仟股, ambang a–d."""
+"""Kalibrasi 11 Nov dari gold set tim keuangan: rugi dalam kurung, satuan 仟股, ambang a–d."""
 import unittest
 
 from app import ambang_profil

@@ -1027,7 +1027,7 @@ class TestKandidatGold(unittest.TestCase):
             f.write(self.gold.csv_kandidat(self.gold.pilih(self.rek)))
         self.assertEqual(evaluasi.muat_gold(p), {})            # belum dilabeli → dilewati, bukan galat
         with open(p, "a", encoding="utf-8") as f:
-            f.write("u#risiko,2330,,,22,,,ya,risiko,,,FR,penjaminan 49% ekuitas\n")
+            f.write("u#risiko,2330,,,22,,,ya,risiko,,,A1,penjaminan 49% ekuitas\n")
         g = evaluasi.muat_gold(p)
         self.assertTrue(g["u#risiko"]["risiko"])
         self.assertNotIn("發言人", open(p, encoding="utf-8").read())

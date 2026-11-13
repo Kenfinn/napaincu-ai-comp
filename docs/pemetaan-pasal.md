@@ -1,6 +1,6 @@
 # Draf pemetaan pasal 重大訊息 → aksi agent
 
-**Status: DRAF, menunggu verifikasi Ferry & Patrice.** Disusun Claude, 10 Nov 2026.
+**Status: DRAF, menunggu verifikasi tim keuangan.** Disusun Claude, 10 Nov 2026.
 Setelah disetujui, isinya dipindah ke `app/agent/screen.py` (`KLAUSA_RELEVAN`) dan label
 butirnya ke `app/agent/extract.py` (`LABEL_SAH`).
 
@@ -54,7 +54,7 @@ Empat jenis aksi:
 | 16, 17, 18, 21, 36, 43, 44, 47, 52 | RUPS, izin non-kompetisi, donasi, keberatan direktur independen, dll. | dilewati | Dilewati | — | — |
 | 2 | (tidak muncul di data) | debt, cash | **Hapus** | Dugaan awal "cek kosong" tidak terbukti | — |
 
-## Pertanyaan untuk Ferry & Patrice
+## Pertanyaan untuk tim keuangan
 
 Jawab langsung di dokumen ini atau di chat tim. Cukup "setuju" atau koreksinya.
 
@@ -79,9 +79,9 @@ Jawab langsung di dokumen ini atau di chat tim. Cukup "setuju" atau koreksinya.
    data 10 Nov, 7 dari 55 pengumuman pasal 20 jatuh ke "remeh" (sewa ruang beberapa
    juta NTD). Batas ini wajar menurut kalian?
 
-## Keputusan tim (jawaban Patrice, 11 Nov)
+## Keputusan tim (jawaban tim keuangan, 11 Nov)
 
-Sumber: jawaban Patrice atas PDF `docs/untuk-tim/Pertanyaan-Pasal-11-22-FEAF.pdf`
+Sumber: jawaban tim keuangan atas PDF `docs/untuk-tim/Pertanyaan-Pasal-11-22-FEAF.pdf`
 (Q1–Q9) dan pertanyaan susulannya. Bagian ini menjadi spesifikasi B1. Bila bertentangan
 dengan tabel "Usulan" di atas, bagian ini yang berlaku.
 
@@ -119,7 +119,7 @@ sekarang ada ditampilkan sebagai skenario "bila terealisasi", tidak sebagai valu
 Terpasang di `app/agent/screen.py` (jalur per pasal), `app/agent/sinyal.py` (pengurai),
 `app/ambang_profil.py` (ambang per profil risiko), `app/agent/pipeline.py` (keputusan),
 `app/templates/_sinyal.html` (tampilan). Ambang dipilih lewat profil risiko (konservatif /
-moderat / agresif); moderat = jawaban Patrice, dua lainnya usulan Claude yang menunggu cek tim:
+moderat / agresif); moderat = jawaban tim keuangan, dua lainnya usulan Claude yang menunggu cek tim:
 
 | Ambang | Konservatif | Moderat | Agresif |
 |---|---|---|---|
@@ -131,7 +131,7 @@ moderat / agresif); moderat = jawaban Patrice, dua lainnya usulan Claude yang me
 | Rasio utang laporan kuartal (liabilitas ÷ aset), kalibrasi 11 Nov | ≥ 40% | ≥ 50% | ≥ 65% |
 | Pinjaman dana pasal 23 ÷ ekuitas = perlu diperhatikan, kalibrasi 11 Nov | ≥ 40% | ≥ 40% | ≥ 40% |
 
-Kalibrasi 11 Nov dari gold set Patrice: lihat [`hasil-gold-set.md`](./hasil-gold-set.md).
+Kalibrasi 11 Nov dari gold set tim keuangan: lihat [`hasil-gold-set.md`](./hasil-gold-set.md).
 Juga: saham baru yang jumlahnya tidak terbaca = perlu diperhatikan; pasal 20 dengan anak
 perusahaan 100% = arsip.
 
@@ -141,7 +141,7 @@ longgar (konservatif). Pilihan sementara Claude sambil menunggu tim:
 - Pasal 23 memakai ambang serius yang sama dengan pasal 22, ditambah "perlu diperhatikan" mulai 40% ekuitas (batas regulasi).
 - Pasal 1, 3, 40 → selalu HELD (boleh disetujui setelah ditinjau). Butir nama di pasal 1
   (公司名稱(或負責人姓名)) tidak diambil karena bisa nama orang.
-- Pasal 51/53, 6, 10, 26, 28 → dilewati. Pasal 7/8 → sinyal tata kelola (jawaban Patrice 11 Nov).
+- Pasal 51/53, 6, 10, 26, 28 → dilewati. Pasal 7/8 → sinyal tata kelola (jawaban tim keuangan 11 Nov).
 - Pasal 31 → ringkasan angka dari isi pengumuman (pendapatan, laba, EPS, aset, liabilitas,
   ekuitas YTD), lalu valuasi otomatis emiten watchlist dibangun ulang.
 
@@ -149,7 +149,7 @@ Hasil pada 578 pengumuman asli 10 Nov (tanpa model): 177 laporan, 38 sinyal penj
 pinjaman, dan 26 sinyal modal terbit; 6 risiko serius dan 4 kejadian berat ditahan untuk
 manusia; 783 halaman sinyal tampil di tiga bahasa tanpa galat.
 
-### Jawaban lanjutan Patrice (11 Nov siang) dan implementasinya
+### Jawaban lanjutan tim keuangan (11 Nov siang) dan implementasinya
 
 | Pasal | Jawaban | Implementasi |
 |---|---|---|
@@ -159,14 +159,14 @@ manusia; 783 halaman sinyal tampil di tiga bahasa tanpa galat.
 | 8 (pejabat) | Penting, perlu info | Sinyal tata kelola. Jabatan kunci (keuangan, akuntansi, audit internal, CEO/direktur utama/presiden/COO, ketua direksi) yang keluar (辭職/資遣/解任/死亡) = Perlu diperhatikan. Jabatan kunci lain = Info (konservatif: Perlu diperhatikan). Jabatan lain = Info |
 
 Nama akuntan dan pejabat tidak diambil: butir berlabel 姓名 tidak dikutip dan teks bebas
-異動原因 tidak dipakai. Usulan tingkat di atas dari Claude, perlu dicek Patrice.
+異動原因 tidak dipakai. Usulan tingkat di atas dari Claude, perlu dicek tim keuangan.
 
 ### Masih terbuka
 
 - Pengurangan modal tunai (現金減資): saham turun sekaligus kas keluar ke pemegang saham. Belum ditanyakan secara khusus.
 - Pasal 23: setahu Claude regulasi membatasi total pinjaman dana sekitar 40% ekuitas (jauh di bawah penjaminan). Perlu dicek dengan teks resmi sebelum ambang 80% dipakai untuk pasal 23.
 - Pasal 51/53 belum dijawab (sekarang dilewati).
-- Pertanyaan 1, 4–9 di bagian "Pertanyaan untuk Ferry & Patrice" di atas (pasal 31, 1/3/40, 51/53, 6/7/8, teks regulasi, semantik transaksi pasal 20, batas materialitas triase). Pertanyaan 8 sebagian terjawab oleh prinsip berbasis kas.
+- Pertanyaan 1, 4–9 di bagian "Pertanyaan untuk tim keuangan" di atas (pasal 31, 1/3/40, 51/53, 6/7/8, teks regulasi, semantik transaksi pasal 20, batas materialitas triase). Pertanyaan 8 sebagian terjawab oleh prinsip berbasis kas.
 
 ## Bukti: statistik pengumuman asli 9 Nov
 

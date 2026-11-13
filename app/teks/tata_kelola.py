@@ -1,4 +1,4 @@
-"""Teks sinyal tata kelola: pasal 7 (auditor) dan 8 (pejabat kunci). Keputusan Patrice 11 Nov."""
+"""Teks sinyal tata kelola: pasal 7 (auditor) dan 8 (pejabat kunci). Keputusan tim keuangan 11 Nov."""
 
 T = {
     "jalur.tata_kelola": ("governance signal", "公司治理訊號", "sinyal tata kelola"),

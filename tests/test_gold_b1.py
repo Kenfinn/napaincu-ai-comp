@@ -28,8 +28,8 @@ class TestGoldB1(unittest.TestCase):
         with open(p, "w", encoding="utf-8") as f:
             f.write(
                 "source_url,kode,harus_terbit,input,nilai_juta_ntd,butir_no,pelabel,catatan\n"
-                "http://u1,2330,ya,capex,1200000,3,FR,ok\n"
-                "http://u2,2454,tidak,,,,,FR,lewat\n"
+                "http://u1,2330,ya,capex,1200000,3,A1,ok\n"
+                "http://u2,2454,tidak,,,,,A1,lewat\n"
             )
         data = evaluasi.muat_gold(p)
         self.assertEqual(len(data), 2)
@@ -45,7 +45,7 @@ class TestGoldB1(unittest.TestCase):
         with open(p, "w", encoding="utf-8") as f:
             f.write(
                 "source_url,kode,harus_terbit,keputusan,tingkat,input,nilai_juta_ntd,butir_no,pelabel,catatan\n"
-                "http://u1,2330,ya,arsip,,capex,1200000,3,FR,bentrok\n"
+                "http://u1,2330,ya,arsip,,capex,1200000,3,A1,bentrok\n"
             )
         with self.assertRaises(ValueError) as ctx:
             evaluasi.muat_gold(p)
@@ -59,7 +59,7 @@ class TestGoldB1(unittest.TestCase):
         with open(p, "w", encoding="utf-8") as f:
             f.write(
                 "source_url,kode,harus_terbit,keputusan,tingkat,input,nilai_juta_ntd,butir_no,pelabel,catatan\n"
-                "http://u_berat,2330,,tahan,serius,berat,,,PDK,kejadian pasal 1\n"
+                "http://u_berat,2330,,tahan,serius,berat,,,A2,kejadian pasal 1\n"
             )
         data = evaluasi.muat_gold(p)
         self.assertIn("http://u_berat", data)
@@ -123,9 +123,9 @@ class TestGoldB1(unittest.TestCase):
         with open(p, "w", encoding="utf-8") as f:
             f.write(
                 "source_url,kode,harus_terbit,keputusan,tingkat,input,nilai_juta_ntd,butir_no,pelabel,catatan\n"
-                "http://u_mod,2330,,terbit,perhatian,modal,,,FR,buyback\n"
-                "http://u_lap,2330,,terbit,info,laporan,,,FR,q3\n"
-                "http://u_gov,2330,,terbit,info,tata_kelola,,,FR,ganti auditor\n"
+                "http://u_mod,2330,,terbit,perhatian,modal,,,A1,buyback\n"
+                "http://u_lap,2330,,terbit,info,laporan,,,A1,q3\n"
+                "http://u_gov,2330,,terbit,info,tata_kelola,,,A1,ganti auditor\n"
             )
         data = evaluasi.muat_gold(p)
         self.assertEqual(len(data), 3)
