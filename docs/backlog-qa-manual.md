@@ -18,9 +18,9 @@ action plan di tiap item, dan patuhi batas berkasnya. Setelah tiap item: tes, co
 | QA-1 | Review feed: lencana jumlah, alasan teknis, arsip mendominasi, kotak cari, tombol, penafian | Selesai (`a565ac0`) |
 | QA-2 | Narasi AI tab ringkasan tidak muncul untuk profil konservatif dan agresif | Selesai (`cadb9e0`) |
 | QA-3 | Detail peringatan: kotak "Why it was held" sulit dibaca pemula (cek diulang, istilah teknis, lencana ganda) | Selesai (`da040df`) |
-| QA-4 | De-identifikasi: nama anggota tim di kode, README, dan dokumen yang diserahkan | Belum |
-| QA-5 | 4 tes gagal di mesin lain: tes chat/UI baru bergantung pada data lokal | Belum |
-| QA-6 | Menu samping kurang lebar untuk isinya, tampilan tidak responsif di ponsel | Belum |
+| QA-4 | De-identifikasi: nama anggota tim di kode, README, dan dokumen yang diserahkan | Selesai (`ddd5d2d`) |
+| QA-5 | 4 tes gagal di mesin lain: tes chat/UI baru bergantung pada data lokal | Selesai (`4dbc425`) |
+| QA-6 | Menu samping kurang lebar untuk isinya, tampilan tidak responsif di ponsel | Selesai (`3179254`) |
 
 ---
 
