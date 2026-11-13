@@ -19,6 +19,8 @@ action plan di tiap item, dan patuhi batas berkasnya. Setelah tiap item: tes, co
 | QA-2 | Narasi AI tab ringkasan tidak muncul untuk profil konservatif dan agresif | Selesai (`cadb9e0`) |
 | QA-3 | Detail peringatan: kotak "Why it was held" sulit dibaca pemula (cek diulang, istilah teknis, lencana ganda) | Selesai (`da040df`) |
 | QA-4 | De-identifikasi: nama anggota tim di kode, README, dan dokumen yang diserahkan | Belum |
+| QA-5 | 4 tes gagal di mesin lain: tes chat/UI baru bergantung pada data lokal | Belum |
+| QA-6 | Menu samping kurang lebar untuk isinya, tampilan tidak responsif di ponsel | Belum |
 
 ---
 
@@ -170,3 +172,63 @@ data pribadi yang belum di-deidentifikasi di dokumen maupun kode.
 4. Tes semua + QA halaman lulus.
 
 Commit: `Docs: QA-4 de-identifikasi nama anggota tim`.
+
+## QA-5 · Tes bergantung pada data lokal mesin
+
+**Gejala** (13 Nov, `python3 -m unittest discover -s tests` di mesin Claude, data lokal berbeda):
+4 gagal, lulus di laptop Antigravity.
+- `test_chat_percakapan.TestChatPercakapanC3.test_semua_alat_menu_dengan_data_fixture_dan_tanpa_mengubah_data_dir` (False is not true)
+- `test_chat_percakapan.TestChatPercakapanC4.test_panel_hadir_di_semua_halaman_kecuali_tanya`
+  (mengharapkan `data-kode="2330"`, halaman yang terbuka milik 3432 karena urutan data lokal)
+- `test_chat_percakapan.TestChatPercakapanC6Evaluasi.test_evaluasi_percakapan_12_skenario_3_bahasa` (30 != 36)
+- `test_ui.TestUI.test_alasan_ditahan_bahasa_polos` (404: id pengumuman yang dipakai tidak ada)
+
+**Penyebab.** Tes memakai `config.DATA_DIR` asli (watchlist, `data/parsed`, cache) dan memilih
+pengumuman "pertama" dari data yang ada, bukan fixture tetap.
+
+**Action plan** (hanya berkas tes; jangan ubah kode aplikasi kecuali ada bug sungguhan):
+1. Setiap kelas tes di `tests/test_chat_percakapan.py` dan `tests/test_ui.py` memakai DATA_DIR
+   sementara (`tempfile.TemporaryDirectory`) yang hanya berisi fixture (`data/fixtures/`), dengan pola
+   yang sama seperti `tests/test_agent.py` (setUpClass: simpan nilai config asli, arahkan
+   `config.DATA_DIR`, `PARSED_DIR`, `TRACE_DIR`, `tarik.WATCHLIST_FILE`, cache valuasi/pasar ke folder
+   sementara; reset `main._cache = None`; tearDownClass mengembalikan semuanya).
+2. Id pengumuman dan kode saham di tes ditulis tetap dari fixture (mis. `2330-2026-09-18-1`), tidak
+   diambil dari "data pertama".
+3. Tidak ada tes yang menyentuh jaringan (patch `pasar`, FinMind, Gemini).
+4. Bukti: jalankan tes dua kali, sekali dengan `SENTINEL_DATA_DIR` menunjuk folder kosong baru dan
+   sekali dengan data lokal penuh; keduanya harus lulus semua.
+
+Commit: `Test: QA-5 tes chat/UI terisolasi dari data lokal`.
+
+## QA-6 · Menu samping kurang lebar dan tampilan ponsel
+
+**Gejala** (QA manual Afinzaki, 13 Nov): menu samping terlalu sempit untuk isinya; tampilan tidak
+responsif di ponsel.
+
+**Kondisi kode.** `app/static/app.css`: `.rail { width: 240px }`; di bawah 900 px rail menjadi laci
+(`.rail.buka`), plus beberapa media query per komponen. Belum ada pemeriksaan otomatis untuk
+luapan horizontal.
+
+**Action plan** (batas: `app/templates/base.html` kecuali baris include panel chat,
+`app/static/app.css`, `app/static/ui.js`, `scripts/qa_halaman.py`, `tests/test_ui.py`):
+1. Ambil foto layar semua halaman utama (/, /watchlist, /review, /ambang, /tanya,
+   /peringatan/<terbit>, /peringatan/<ditahan>, /jejak/<id>, /saham/2330 enam tab, /valuasi/2330)
+   di lebar 390, 768, 1024, 1440, tiga bahasa, ke `docs/ui/qa6-sebelum/`. Catat setiap masalah.
+2. Menu samping desktop: lebar 264–280 px; nama emiten, label menu, dan teks status tidak terpotong
+   atau bertumpuk di tiga bahasa (中文 dan Bahasa Indonesia paling panjang). Isi menu bisa digulir
+   sendiri bila tinggi layar kecil; kotak status tetap terbaca.
+3. Ponsel (< 900 px): bilah atas tetap terlihat; tombol ☰ membuka laci yang bisa ditutup dengan ✕,
+   klik latar, dan tombol Esc; body tidak ikut tergulir saat laci terbuka; target sentuh ≥ 40 px.
+4. Tidak boleh ada luapan horizontal halaman di 390 px: tabel lebar (keuangan, sensitivitas, ambang,
+   watchlist) digeser di dalam kartunya (`overflow-x: auto`), tab saham bisa digeser, kartu
+   ringkasan dan dua kolom menjadi satu kolom, tombol membungkus ke baris baru, teks panjang
+   (judul pengumuman Mandarin, URL sumber) dibungkus.
+5. Panel chat (milik putaran chat, jangan ubah berkasnya) tidak boleh tertutup elemen lain;
+   cek di 390 px bahwa tombol bulat dan panel layar penuh tetap bisa dipakai.
+6. Tambah pemeriksaan otomatis: skrip Playwright `scripts/qa_responsif.py` yang membuka halaman di
+   atas pada 390 dan 1440 px dan gagal bila `document.documentElement.scrollWidth > innerWidth + 1`
+   atau ada label menu yang terpotong (`scrollWidth > clientWidth` pada `.nav a`, `.daftar-saham a`).
+   Jalankan dengan server lokal `SENTINEL_SERTAKAN_CONTOH=1`.
+7. Foto layar sesudah ke `docs/ui/qa6-sesudah/`, tes + `qa_halaman.py` + `qa_responsif.py` lulus.
+
+Commit: `UI: QA-6 menu lebih lebar dan tampilan ponsel responsif`.
