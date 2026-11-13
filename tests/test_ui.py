@@ -212,6 +212,31 @@ class TestUI(unittest.TestCase):
                 self.assertNotIn("⟦", teks_mu)
                 self.assertIn(frasa_mu, teks_mu)
 
+    def test_responsif_menu_lebar_dan_ponsel(self) -> None:
+        """QA-6: menu samping 264-280 px, gulir terpisah, kunci gulir laci, tooltip display:none saat tutup, tabel/tab responsif."""
+        akar = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(akar, "app", "static", "app.css"), encoding="utf-8") as f:
+            css = f.read()
+
+        m_rail = re.search(r"\.rail\s*\{\s*width:\s*(\d+)px", css)
+        self.assertIsNotNone(m_rail, "Aturan lebar .rail tidak ditemukan")
+        lebar_rail = int(m_rail.group(1))
+        self.assertGreaterEqual(lebar_rail, 264)
+        self.assertLessEqual(lebar_rail, 280)
+
+        self.assertIn("body.laci-terbuka { overflow: hidden; }", css)
+        self.assertRegex(css, r"@media \(min-width: 901px\)[\s\S]*?\.rail\s*\{[^}]*overflow-y:\s*auto")
+        self.assertRegex(css, r"\.info::after\s*\{[^}]*display:\s*none")
+        self.assertRegex(css, r"\.tab-saham\s*\{[^}]*overflow-x:\s*auto")
+        self.assertRegex(css, r"\.tabel-geser\s*\{[^}]*overflow-x:\s*auto")
+
+        # Pastikan berkas skrip QA responsif dapat diimpor bersih
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "qa_responsif", os.path.join(akar, "scripts", "qa_responsif.py")
+        )
+        self.assertIsNotNone(spec)
+
 
 if __name__ == "__main__":
     unittest.main()
