@@ -343,12 +343,12 @@ _T: dict[str, tuple[str, str, str]] = {
     "jj.sebab.tanpa_kunci": ("no API key set", "未設定 API 金鑰", "tidak ada kunci API"),
     "jj.berkas": (
         "The raw JSON of this trace is in <span class=\"mono\">data/traces/{id}.json</span> and at "
-        "<a href=\"/api/jejak/{id}\" class=\"mono\">/api/jejak/{id}</a>. It is written during normal use, "
+        "<a href=\"/api/traces/{id}\" class=\"mono\">/api/traces/{id}</a>. It is written during normal use, "
         "not assembled before a deadline.",
         "此軌跡的原始 JSON 位於 <span class=\"mono\">data/traces/{id}.json</span>，亦可透過 "
-        "<a href=\"/api/jejak/{id}\" class=\"mono\">/api/jejak/{id}</a> 取得。它在日常使用中自動寫入，而非在截止前拼湊。",
+        "<a href=\"/api/traces/{id}\" class=\"mono\">/api/traces/{id}</a> 取得。它在日常使用中自動寫入，而非在截止前拼湊。",
         "Berkas JSON mentah jejak ini ada di <span class=\"mono\">data/traces/{id}.json</span>, dan tersedia "
-        "lewat <a href=\"/api/jejak/{id}\" class=\"mono\">/api/jejak/{id}</a>. Ditulis sebagai bagian dari "
+        "lewat <a href=\"/api/traces/{id}\" class=\"mono\">/api/traces/{id}</a>. Ditulis sebagai bagian dari "
         "pemakaian biasa, bukan dikarang menjelang tenggat."),
     "jst.lolos": ("passed", "通過", "lolos"),
     "jst.berhenti": ("stopped", "停止", "berhenti"),

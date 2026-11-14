@@ -48,7 +48,7 @@
       {% if s.startswith('http') or s.startswith('/') %}<a href="{{ s }}" target="_blank" rel="noopener">{{ s }}</a>{% else %}{{ s }}{% endif %}<br>
     {% endfor %}</span></div>
   {% endif %}
-  <div class="kv"><span class="k"><a href="/api/tanya/jejak/{{ jw.id }}">{{ t('ch.jejak') }}</a></span>
+  <div class="kv"><span class="k"><a href="/api/ask/traces/{{ jw.id }}">{{ t('ch.jejak') }}</a></span>
     <span class="v">{{ t('ch.ringkas', alat=jw.panggilan_alat, model=jw.panggilan_model, ms=jw.durasi_ms) }}</span></div>
 </div>
 {% endif %}

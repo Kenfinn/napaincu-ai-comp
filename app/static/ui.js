@@ -186,7 +186,7 @@
         return;
       }
       timer = setTimeout(function () {
-        fetch("/api/cari?q=" + encodeURIComponent(q))
+        fetch("/api/search?q=" + encodeURIComponent(q))
           .then(function (r) { return r.ok ? r.json() : []; })
           .then(function (daftar) {
             hasilTerakhir = Array.isArray(daftar) ? daftar : [];
@@ -234,7 +234,7 @@
           return;
         }
         e.preventDefault();
-        fetch("/api/cari?q=" + encodeURIComponent(v))
+        fetch("/api/search?q=" + encodeURIComponent(v))
           .then(function (r) { return r.ok ? r.json() : []; })
           .then(function (d) {
             if (Array.isArray(d) && d.length > 0 && d[0].kode) {

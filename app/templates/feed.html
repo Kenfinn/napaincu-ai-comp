@@ -12,7 +12,7 @@
       <a href="/?segarkan=1{{ '&lingkup=' ~ lingkup if lingkup == 'semua' else '' }}" class="tombol sekunder kecil" title="{{ t('ui.feed.info_proses_ulang') }}">{{ t('tombol.proses_ulang') }}</a>
       <span class="info" tabindex="0" role="button" aria-label="{{ t('tombol.proses_ulang') }}" data-info="{{ t('ui.feed.info_proses_ulang') }}">i</span>
     </span>
-    <form method="post" action="/periksa" class="grup-tombol-info">
+    <form method="post" action="/check" class="grup-tombol-info">
       <input type="hidden" name="kembali" value="/{{ '?lingkup=semua' if lingkup == 'semua' else '' }}">
       <button class="tombol" type="submit" title="{{ t('ui.feed.info_periksa') }}">{{ t('tombol.periksa') }}</button>
       <span class="info" tabindex="0" role="button" aria-label="{{ t('tombol.periksa') }}" data-info="{{ t('ui.feed.info_periksa') }}">i</span>
@@ -162,7 +162,7 @@
     <div>{{ t('ui.feed.kosong_isi') }}</div>
     <div class="baris-tombol">
       <a href="/watchlist" class="tombol sekunder">{{ t('ui.feed.tambah_wl') }}</a>
-      <form method="post" action="/periksa">
+      <form method="post" action="/check">
         <input type="hidden" name="kembali" value="/">
         <button class="tombol" type="submit">{{ t('tombol.periksa') }}</button>
       </form>
@@ -174,7 +174,7 @@
   <div>{{ t('ui.feed.kosong_isi') }}</div>
   <div class="baris-tombol">
     <a href="/watchlist" class="tombol sekunder">{{ t('ui.feed.tambah_wl') }}</a>
-    <form method="post" action="/periksa">
+    <form method="post" action="/check">
       <input type="hidden" name="kembali" value="/">
       <button class="tombol" type="submit">{{ t('tombol.periksa') }}</button>
     </form>

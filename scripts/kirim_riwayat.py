@@ -3,7 +3,7 @@
 
 Riwayat lama hanya bisa ditarik dari jaringan Taiwan, sedangkan server berjalan di
 tempat lain. Skrip ini membaca data/parsed/details.json hasil fetch_details.py dan
-mengirimnya ke /api/impor. Server memvalidasi ulang, membuang data pribadi lagi,
+mengirimnya ke /api/import. Server memvalidasi ulang, membuang data pribadi lagi,
 dan menggabungkan tanpa duplikat — mengirim dua kali aman.
 
 Pakai:
@@ -30,9 +30,9 @@ PER_KIRIM = 300
 
 def kirim(server: str, kode: str, potong: list[dict]) -> dict:
     req = urllib.request.Request(
-        server.rstrip("/") + "/api/impor",
+        server.rstrip("/") + "/api/import",
         data=json.dumps(potong, ensure_ascii=False).encode("utf-8"),
-        headers={"Content-Type": "application/json", "X-Kode-Akses": kode,
+        headers={"Content-Type": "application/json", "X-Access-Code": kode,
                  "User-Agent": "FEAF-kirim-riwayat/1.0"},
         method="POST",
     )

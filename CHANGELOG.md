@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.2.0 · 14 Nov 2026
+
+- English API paths: `/health`, `/check`, `/api/alerts`, `/api/traces/{id}`,
+  `/api/valuation/{code}`, `/api/stocks/{code}/financials`, `/api/thresholds`, `/api/search`,
+  `/api/ask`, `/api/ask/traces/{id}`, `/api/import`. The old Indonesian paths (`/sehat`,
+  `/periksa`, `/api/peringatan`, `/api/jejak`, `/api/valuasi`, `/api/saham/.../keuangan`,
+  `/api/ambang`, `/api/cari`, `/api/tanya`, `/api/impor`) stay as hidden aliases, so nothing
+  breaks. JSON field names are unchanged.
+- `/docs` (OpenAPI) is now in English and lists only the JSON API; HTML pages are hidden from it.
+  API error messages are in English.
+- `POST /api/ask` accepts English body fields (`question`, `language`, `history`, `context`,
+  `type`) next to the old ones; `POST /api/import` accepts header `X-Access-Code` next to
+  `X-Kode-Akses`.
+- Pages, `chat.js`, `ui.js`, the Docker health check and `scripts/kirim_riwayat.py` use the new
+  paths.
+- README rewritten (architecture diagrams, API reference with examples, tech stack) in English,
+  with translations in 繁體中文 (`README.zh-TW.md`), Bahasa Indonesia (`README.id.md`) and
+  Tiếng Việt (`README.vi.md`).
+- Tests: `tests/test_api_inggris.py` (new paths, legacy aliases, English OpenAPI); 301 tests.
+
 ## 1.1.0 · 13 Nov 2026
 
 - Ask FEAF slide-over panel on every page (`_panel_chat.html`, `app/static/chat.js`,

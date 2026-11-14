@@ -94,7 +94,7 @@
 
         if (item.id) {
           var tautJejak = document.createElement("a");
-          tautJejak.href = "/api/tanya/jejak/" + encodeURIComponent(item.id);
+          tautJejak.href = "/api/ask/traces/" + encodeURIComponent(item.id);
           tautJejak.target = "_blank";
           tautJejak.rel = "noopener";
           tautJejak.textContent = (label.jejak || "Trace") + " #" + String(item.id).slice(-6);
@@ -205,7 +205,7 @@
         payload.jenis = jenisKhusus;
       }
 
-      window.fetch("/api/tanya", {
+      window.fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

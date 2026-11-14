@@ -145,8 +145,11 @@ async def lifespan(_app):
 app = FastAPI(
     lifespan=lifespan,
     title="FEAF · Agentic AI Investment Assistant",
-    description="Agent pemantau pengumuman MOPS yang menghitung ulang valuasi "
-                "dan menolak angka yang tidak bisa ditelusuri ke dokumen sumbernya.",
+    description="Agent that watches official Taiwan exchange filings (MOPS), recalculates the "
+                "valuation when a filing changes an input, and refuses to publish any number that "
+                "cannot be traced back to its source document. Read-only JSON API; legacy "
+                "Indonesian paths (`/api/peringatan`, `/sehat`, ...) still work but are hidden "
+                "here.",
     version=_versi.VERSI,
 )
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -172,7 +175,7 @@ def pct(ctx, x, desimal: int = 2):
 @pass_context
 def jejak_bahasa(ctx, obj, alasan_akhir=None):
     """JSON mentah di halaman jejak: pesan agent ({kode, param, teks} dan pasangan X / X_i18n)
-    ditampilkan dalam bahasa halaman. /api/jejak tetap memberi data apa adanya."""
+    ditampilkan dalam bahasa halaman. /api/traces tetap memberi data apa adanya."""
     bahasa = ctx.get("bahasa", i18n.BAWAAN)
 
     def ubah(o):
@@ -332,7 +335,7 @@ def konteks(request: Request, halaman: str, **tambahan) -> dict:
     return dasar
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
 def feed(request: Request, segarkan: int = 0):
     daftar = hasil(bool(segarkan))
     lingkup = request.query_params.get("lingkup", "watchlist")
@@ -421,10 +424,10 @@ async def kunci_baca_middleware(request: Request, call_next):
         path = request.url.path
         jalur_terbuka = (
             path == "/akses"
-            or path == "/sehat"
+            or path in ("/health", "/sehat")
             or path.startswith("/static/")
             or path.startswith("/bahasa/")
-            or path == "/api/impor"
+            or path in ("/api/import", "/api/impor")
         )
         if not jalur_terbuka and not _boleh_ubah(request):
             if path.startswith("/api/"):
@@ -491,6 +494,7 @@ def _hitung_versi_kode() -> str:
 VERSI_KODE = _hitung_versi_kode()
 
 
+@app.get("/health", summary="Health check: filing count, last run, model in use, code version")
 @app.get("/sehat", include_in_schema=False)
 def sehat():
     """Untuk health check Dokploy/Docker: server hidup dan data terbaca."""
@@ -525,7 +529,8 @@ def sehat():
             "agent": agent}
 
 
-@app.post("/periksa", summary="Tarik pengumuman terbaru untuk watchlist, lalu proses ulang")
+@app.post("/check", summary="Pull the latest filings for the watchlist, then reprocess (form post, redirects)")
+@app.post("/periksa", include_in_schema=False)
 async def periksa(request: Request):
     f = await _form(request)
     if not _boleh_ubah(request):
@@ -538,7 +543,7 @@ async def periksa(request: Request):
     return _balik(ke if ke.startswith("/") and not ke.startswith("//") else "/", pesan, ok)
 
 
-@app.get("/watchlist", response_class=HTMLResponse)
+@app.get("/watchlist", response_class=HTMLResponse, include_in_schema=False)
 def watchlist(request: Request):
     detail, _ = store.muat_detail()
     tervaluasi = set(store.emiten_tervaluasi())
@@ -560,7 +565,7 @@ def watchlist(request: Request):
         context=konteks(request, "watchlist", baris=baris))
 
 
-@app.post("/watchlist/tambah")
+@app.post("/watchlist/tambah", include_in_schema=False)
 async def watchlist_tambah(request: Request):
     if not _boleh_ubah(request):
         return _tolak_akses("/watchlist")
@@ -570,7 +575,7 @@ async def watchlist_tambah(request: Request):
     return _balik(ke if ke.startswith("/") and not ke.startswith("//") else "/watchlist", pesan, ok)
 
 
-@app.post("/watchlist/hapus/{kode}")
+@app.post("/watchlist/hapus/{kode}", include_in_schema=False)
 def watchlist_hapus(request: Request, kode: str):
     if not _boleh_ubah(request):
         return _tolak_akses("/watchlist")
@@ -578,7 +583,7 @@ def watchlist_hapus(request: Request, kode: str):
     return _balik("/watchlist", i18n.pesan("msg.dihapus", kode=kode))
 
 
-@app.get("/bahasa/{kode}")
+@app.get("/bahasa/{kode}", include_in_schema=False)
 def ganti_bahasa(kode: str, ke: str = "/"):
     """Simpan pilihan bahasa di cookie, lalu kembali ke halaman semula."""
     tujuan = ke if ke.startswith("/") and not ke.startswith("//") else "/"
@@ -639,19 +644,19 @@ def _siapkan_valuasi_dcf(kode: str) -> tuple[str, dict]:
     """Normalisasi kode dan muat/bangun data valuasi yang siap untuk dcf.compute()."""
     kode_bersih = kode.strip().upper()
     if not tarik.KODE_SAH.match(kode_bersih):
-        raise HTTPException(404, "Kode saham tidak dikenal")
+        raise HTTPException(404, "Unknown stock code")
     d = _muat_atau_bangun_valuasi(kode_bersih, butuh_layak_dcf=True)
     if d is None:
-        raise HTTPException(404, f"Belum ada berkas valuasi untuk {kode_bersih}")
+        raise HTTPException(404, f"No valuation file yet for {kode_bersih}")
     return kode_bersih, d
 
 
-@app.get("/saham/{kode}", response_class=HTMLResponse)
+@app.get("/saham/{kode}", response_class=HTMLResponse, include_in_schema=False)
 def saham(request: Request, kode: str, tab: str = "ringkasan", lap: str = "lr",
           per: str = "q", mode: str = "nilai", risiko: str = ""):
     kode = kode.strip().upper()
     if not tarik.KODE_SAH.match(kode):
-        raise HTTPException(404, "Kode saham tidak dikenal")
+        raise HTTPException(404, "Unknown stock code")
     tab = tab if tab in TAB_SAHAM else "ringkasan"
     risiko = risiko if risiko in ringkasan.PROFIL_RISIKO else (
         request.cookies.get("risiko") if request.cookies.get("risiko") in ringkasan.PROFIL_RISIKO else "moderat")
@@ -686,31 +691,37 @@ def saham(request: Request, kode: str, tab: str = "ringkasan", lap: str = "lr",
     return r
 
 
-@app.get("/api/saham/{kode}/keuangan", summary="Tabel laporan keuangan (lr | neraca | arus)")
-def api_keuangan(kode: str, lap: str = "lr", per: str = "q", mode: str = "nilai"):
+@app.get("/api/stocks/{code}/financials",
+         summary="Financial statement table (lap = lr income | neraca balance sheet | arus cash flow)")
+@app.get("/api/saham/{code}/keuangan", include_in_schema=False)
+def api_keuangan(code: str, lap: str = "lr", per: str = "q", mode: str = "nilai"):
+    kode = code
     if not tarik.KODE_SAH.match(kode.upper()) or lap not in pasar.LAPORAN:
-        raise HTTPException(404, "Kode atau jenis laporan tidak dikenal")
+        raise HTTPException(404, "Unknown stock code or statement type")
     return JSONResponse(pasar.tabel(kode.upper(), lap, "y" if per == "y" else "q",
                                     "yoy" if mode == "yoy" else "nilai"))
 
 
-@app.post("/api/impor", summary="Impor riwayat pengumuman MOPS dari laptop di jaringan Taiwan")
+@app.post("/api/import", summary="Import MOPS filing history pulled from a laptop on a Taiwan network "
+                                 "(header X-Access-Code required)")
+@app.post("/api/impor", include_in_schema=False)
 async def api_impor(request: Request):
-    """Dipakai scripts/kirim_riwayat.py. Wajib header X-Kode-Akses = SENTINEL_KODE_AKSES.
+    """Dipakai scripts/kirim_riwayat.py. Wajib header X-Access-Code (atau X-Kode-Akses lama)
+    = SENTINEL_KODE_AKSES.
 
     Tanpa SENTINEL_KODE_AKSES di server, impor ditutup sama sekali: endpoint yang
     menulis data tidak boleh terbuka untuk siapa pun yang tahu alamatnya.
     """
-    kode = request.headers.get("x-kode-akses", "")
+    kode = request.headers.get("x-access-code") or request.headers.get("x-kode-akses", "")
     if not config.KODE_AKSES or not hmac.compare_digest(kode, config.KODE_AKSES):
-        raise HTTPException(403, "Kode akses salah atau impor belum diaktifkan")
+        raise HTTPException(403, "Wrong access code, or import is not enabled on this server")
     badan = await request.body()
     if len(badan) > 25 * 1024 * 1024:
-        raise HTTPException(413, "Kiriman terlalu besar (maks 25 MB); kirim bertahap")
+        raise HTTPException(413, "Payload too large (max 25 MB); send it in batches")
     try:
         data = json.loads(badan.decode("utf-8"))
     except (UnicodeDecodeError, ValueError):
-        raise HTTPException(400, "Badan bukan JSON")
+        raise HTTPException(400, "Body is not valid JSON")
     diterima, tolak = tarik.bersihkan_impor(data)
     baru = tarik.gabung(diterima) if diterima else 0
     if baru:
@@ -719,7 +730,7 @@ async def api_impor(request: Request):
 
 
 # --- antrean review manusia (HELD FOR REVIEW) -----------------------------
-@app.get("/review", response_class=HTMLResponse)
+@app.get("/review", response_class=HTMLResponse, include_in_schema=False)
 def halaman_review(request: Request):
     semua = hasil()
     lingkup = request.query_params.get("lingkup", "watchlist")
@@ -740,7 +751,7 @@ def halaman_review(request: Request):
                                                 lingkup=lingkup, total_menunggu=len(menunggu_semua)))
 
 
-@app.post("/review/{pengenal}")
+@app.post("/review/{pengenal}", include_in_schema=False)
 async def putuskan_review(request: Request, pengenal: str):
     if not _boleh_ubah(request):
         return _tolak_akses("/review")
@@ -760,7 +771,7 @@ async def putuskan_review(request: Request, pengenal: str):
                                         keputusan=keputusan))
 
 
-@app.get("/api/review", summary="Antrean HELD FOR REVIEW dan riwayat keputusan manusia")
+@app.get("/api/review", summary="HELD FOR REVIEW queue and the history of human decisions")
 def api_review():
     return JSONResponse({
         "menunggu": [{"id": h["id"], "emiten": h["emiten"], "judul": h["judul"], "alasan": h["alasan"],
@@ -775,7 +786,7 @@ def _aman(ke: str | None, cadangan: str) -> str:
     return ke if ke and ke.startswith("/") and not ke.startswith("//") else cadangan
 
 
-@app.post("/umpan-balik/{pengenal}")
+@app.post("/umpan-balik/{pengenal}", include_in_schema=False)
 async def beri_umpan_balik(request: Request, pengenal: str):
     f = await _form(request)
     ke = _aman(f.get("kembali"), f"/peringatan/{pengenal}")
@@ -805,7 +816,7 @@ def _simpan_cookie_risiko(resp, request: Request, valid: tuple[str, ...] = amban
         resp.set_cookie("risiko", risiko, max_age=60 * 60 * 24 * 365, samesite="lax")
 
 
-@app.get("/ambang", response_class=HTMLResponse)
+@app.get("/ambang", response_class=HTMLResponse, include_in_schema=False)
 def halaman_ambang(request: Request):
     data = umpan_balik.semua(_pasal_terlihat())
     per_id = {h["id"]: h for h in hasil()}
@@ -817,7 +828,7 @@ def halaman_ambang(request: Request):
     return resp
 
 
-@app.post("/ambang/{pasal}/{aksi}")
+@app.post("/ambang/{pasal}/{aksi}", include_in_schema=False)
 async def ubah_ambang(request: Request, pasal: str, aksi: str):
     if not _boleh_ubah(request):
         return _tolak_akses("/ambang")
@@ -828,7 +839,8 @@ async def ubah_ambang(request: Request, pasal: str, aksi: str):
     return _balik("/ambang", i18n.pesan("msg.ambang_ok", k=pasal, dari=ubah["dari"], ke=ubah["ke"]))
 
 
-@app.get("/api/ambang", summary="Ambang triase per pasal, asal-usulnya (👍/👎), dan riwayat perubahan")
+@app.get("/api/thresholds", summary="Triage threshold per clause, where it came from (👍/👎), and its change history")
+@app.get("/api/ambang", include_in_schema=False)
 def api_ambang():
     return JSONResponse(umpan_balik.semua(_pasal_terlihat()))
 
@@ -846,12 +858,12 @@ def ekspor_kandidat_gold(request: Request, per_pasal: int = 4):
                     headers={"Content-Disposition": "attachment; filename=kandidat-gold.csv"})
 
 
-@app.get("/api/watchlist", summary="Daftar kode saham yang dipantau")
+@app.get("/api/watchlist", summary="Watched stock codes and the status of the last pull")
 def api_watchlist():
     return JSONResponse({"kode": tarik.baca_watchlist(), "status_tarik": tarik.baca_status()})
 
 
-@app.get("/peringatan/{pengenal}", response_class=HTMLResponse)
+@app.get("/peringatan/{pengenal}", response_class=HTMLResponse, include_in_schema=False)
 def peringatan(request: Request, pengenal: str):
     h = next((x for x in hasil() if x["id"] == pengenal), None)
     if h is None:
@@ -868,17 +880,17 @@ def peringatan(request: Request, pengenal: str):
     return r
 
 
-@app.get("/jejak/{pengenal}", response_class=HTMLResponse)
+@app.get("/jejak/{pengenal}", response_class=HTMLResponse, include_in_schema=False)
 def jejak(request: Request, pengenal: str):
     h = pipeline.muat_jejak(pengenal) or next((x for x in hasil() if x["id"] == pengenal), None)
     if h is None:
-        raise HTTPException(404, "Jejak tidak ditemukan")
+        raise HTTPException(404, "Trace not found")
     return tpl.TemplateResponse(
         request=request, name="jejak.html",
         context=konteks(request, "feed", h=h))
 
 
-@app.get("/valuasi/{kode}", response_class=HTMLResponse)
+@app.get("/valuasi/{kode}", response_class=HTMLResponse, include_in_schema=False)
 def valuasi(request: Request, kode: str):
     kode, d = _siapkan_valuasi_dcf(kode)
     g = d.get("assumptions", {}).get("terminal_growth_ceiling")
@@ -890,7 +902,8 @@ def valuasi(request: Request, kode: str):
 
 
 # --- API JSON — sekalian jadi dokumentasi antarmuka di /docs -------------
-@app.get("/api/peringatan", summary="Daftar hasil pemrosesan seluruh pengumuman")
+@app.get("/api/alerts", summary="Processing result of every filing (published, held, archived)")
+@app.get("/api/peringatan", include_in_schema=False)
 def api_daftar():
     return JSONResponse([{
         "id": h["id"], "status": h["status"], "emiten": h["emiten"],
@@ -900,21 +913,24 @@ def api_daftar():
     } for h in hasil()])
 
 
-@app.get("/api/jejak/{pengenal}", summary="Operation trace satu pengumuman")
-def api_jejak(pengenal: str):
-    h = pipeline.muat_jejak(pengenal)
+@app.get("/api/traces/{id}", summary="Operation trace of one filing")
+@app.get("/api/jejak/{id}", include_in_schema=False)
+def api_jejak(id: str):
+    h = pipeline.muat_jejak(id)
     if h is None:
-        raise HTTPException(404, "Jejak tidak ditemukan")
+        raise HTTPException(404, "Trace not found")
     return JSONResponse(h)
 
 
-@app.get("/api/valuasi/{kode}", summary="Keluaran kalkulator DCF untuk satu emiten")
-def api_valuasi(kode: str):
-    _, d = _siapkan_valuasi_dcf(kode)
+@app.get("/api/valuation/{code}", summary="DCF calculator output for one issuer")
+@app.get("/api/valuasi/{code}", include_in_schema=False)
+def api_valuasi(code: str):
+    _, d = _siapkan_valuasi_dcf(code)
     return JSONResponse(dcf.compute(d, forward_g=d.get("assumptions", {}).get("terminal_growth_ceiling")))
 
 
-@app.get("/api/cari", summary="Cari emiten berdasarkan kode angka atau nama")
+@app.get("/api/search", summary="Search issuers by numeric code or name")
+@app.get("/api/cari", include_in_schema=False)
 def api_cari(q: str = ""):
     return JSONResponse(indeks_nama.cari(q, limit=10))
 

@@ -1211,7 +1211,7 @@ def muat(pengenal: str) -> dict | None:
 
 
 # --------------------------------------------------------------------------- routes
-@router.get("/tanya", response_class=HTMLResponse)
+@router.get("/tanya", response_class=HTMLResponse, include_in_schema=False)
 def halaman_tanya(request: Request, id: str = "", kode: str = ""):
     from .main import konteks, tpl
     h = muat(id) if id else None
@@ -1219,7 +1219,7 @@ def halaman_tanya(request: Request, id: str = "", kode: str = ""):
                                 context=konteks(request, "tanya", jw=h, kode_awal=kode.strip().upper()[:6]))
 
 
-@router.post("/tanya")
+@router.post("/tanya", include_in_schema=False)
 async def kirim_tanya(request: Request):
     from .main import _form, bahasa_dari
     f = await _form(request)
@@ -1227,14 +1227,21 @@ async def kirim_tanya(request: Request):
     return RedirectResponse(f"/tanya?id={urllib.parse.quote(h['id'])}", status_code=303)
 
 
-@router.post("/api/tanya", summary="Ask FEAF: answer from tools, every number checked against tool results")
+@router.post("/api/ask", summary="Ask FEAF: answer from tools, every number checked against tool results")
+@router.post("/api/tanya", include_in_schema=False)
 async def api_tanya(request: Request):
     try:
         badan = json.loads((await request.body()).decode("utf-8") or "{}")
     except (UnicodeDecodeError, ValueError):
-        raise HTTPException(400, "Body must be JSON: {\"pertanyaan\": ..., \"bahasa\": \"en|zh|id\"}")
+        raise HTTPException(400, "Body must be JSON: {\"question\": ..., \"language\": \"en|zh|id\"}")
     if not isinstance(badan, dict):
         raise HTTPException(400, "Body must be a JSON object")
+    # Nama field Inggris (question, language, history, context, type) dan nama lama
+    # (pertanyaan, bahasa, riwayat, konteks, jenis) sama-sama diterima.
+    for en, lama in (("question", "pertanyaan"), ("language", "bahasa"), ("history", "riwayat"),
+                     ("context", "konteks"), ("type", "jenis")):
+        if en in badan and lama not in badan:
+            badan[lama] = badan[en]
     riwayat = badan.get("riwayat") if isinstance(badan.get("riwayat"), list) else None
     konteks = badan.get("konteks") if isinstance(badan.get("konteks"), dict) else None
     jenis = str(badan.get("jenis") or "") or None
@@ -1251,9 +1258,10 @@ async def api_tanya(request: Request):
                                             "panggilan_alat")})
 
 
-@router.get("/api/tanya/jejak/{pengenal}", summary="Trace of one Ask FEAF answer")
-def api_jejak_tanya(pengenal: str):
-    h = muat(pengenal)
+@router.get("/api/ask/traces/{id}", summary="Trace of one Ask FEAF answer")
+@router.get("/api/tanya/jejak/{id}", include_in_schema=False)
+def api_jejak_tanya(id: str):
+    h = muat(id)
     if h is None:
         raise HTTPException(404, "Trace not found")
     return JSONResponse(h)
