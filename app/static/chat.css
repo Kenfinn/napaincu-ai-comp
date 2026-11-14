@@ -47,6 +47,13 @@
   inset: 0;
   background: rgba(15, 23, 42, 0.28);
   z-index: 1000;
+  opacity: 0;
+  transition: opacity var(--gerak-cepat, 150ms) var(--kurva-keluar, ease-in);
+}
+
+.cp-latar.cp-buka {
+  opacity: 1;
+  transition: opacity var(--gerak-sedang, 220ms) var(--kurva-masuk, cubic-bezier(.2, .8, .2, 1));
 }
 
 .cp-latar[hidden] {
@@ -68,6 +75,22 @@
   z-index: 1001;
   font-family: var(--font-sans, system-ui, sans-serif);
   color: var(--text-1, #0f172a);
+  transform: translateX(100%);
+  opacity: 0;
+  transition: transform var(--gerak-cepat, 150ms) var(--kurva-keluar, ease-in),
+              opacity var(--gerak-cepat, 150ms) var(--kurva-keluar, ease-in);
+}
+
+.cp-panel.cp-buka {
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform var(--gerak-sedang, 220ms) var(--kurva-masuk, cubic-bezier(.2, .8, .2, 1)),
+              opacity var(--gerak-sedang, 220ms) var(--kurva-masuk, cubic-bezier(.2, .8, .2, 1));
+}
+
+.cp-panel.cp-tanpa-animasi,
+.cp-latar.cp-tanpa-animasi {
+  transition: none !important;
 }
 
 .cp-panel[hidden] {
@@ -79,6 +102,10 @@
     width: 100vw;
     left: 0;
     border-left: none;
+    transform: translateY(16px);
+  }
+  .cp-panel.cp-buka {
+    transform: translateY(0);
   }
 }
 
@@ -359,3 +386,86 @@
   margin-bottom: 10px;
   flex-wrap: wrap;
 }
+
+.cp-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes cp-ketik {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.cp-mengetik {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 18px;
+  padding: 2px;
+}
+
+.cp-mengetik span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--abu, #5f6b78);
+  opacity: 0.55;
+  animation: cp-ketik 900ms ease-in-out infinite;
+}
+
+.cp-mengetik span:nth-child(2) {
+  animation-delay: 150ms;
+}
+
+.cp-mengetik span:nth-child(3) {
+  animation-delay: 300ms;
+}
+
+@keyframes cp-pesan-masuk {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cp-pesan-masuk {
+  animation: cp-pesan-masuk var(--gerak-sedang, 220ms) var(--kurva-masuk, cubic-bezier(.2, .8, .2, 1)) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-fab,
+  .cp-latar,
+  .cp-panel,
+  .cp-pesan,
+  .cp-pesan-masuk,
+  .cp-chip,
+  .cp-btn-kecil,
+  .cp-btn-tutup,
+  .cp-pil-tautan {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
+  .cp-mengetik span {
+    animation: none !important;
+    opacity: 0.75;
+  }
+}
+

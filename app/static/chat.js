@@ -139,7 +139,7 @@
     var elBaru = akar.querySelector(".cp-aksi-baru");
     var chips = akar.querySelectorAll(".cp-chip");
 
-    function renderDaftar() {
+    function renderDaftar(animasiTerakhir) {
       if (!elDaftar) return;
       while (elDaftar.firstChild) {
         elDaftar.removeChild(elDaftar.firstChild);
@@ -153,7 +153,11 @@
         return;
       }
       for (var i = 0; i < riwayat.length; i++) {
-        elDaftar.appendChild(buatElemenPesan(riwayat[i], label));
+        var elPesan = buatElemenPesan(riwayat[i], label);
+        if (animasiTerakhir && i === riwayat.length - 1) {
+          elPesan.classList.add("cp-pesan-masuk");
+        }
+        elDaftar.appendChild(elPesan);
       }
       elDaftar.scrollTop = elDaftar.scrollHeight;
     }
@@ -177,14 +181,23 @@
         daftarSekarang.push({ peran: "user", teks: teksTampil });
         simpanRiwayat(daftarSekarang);
       }
-      renderDaftar();
+      renderDaftar(jenisKhusus !== "recap");
 
       var elMemuat = document.createElement("div");
-      elMemuat.className = "cp-pesan cp-pesan-asisten";
-      var teksMemuat = document.createElement("div");
-      teksMemuat.className = "cp-pesan-teks";
-      teksMemuat.textContent = "\u2026 " + label.memuat;
-      elMemuat.appendChild(teksMemuat);
+      elMemuat.className = "cp-pesan cp-pesan-asisten cp-pesan-masuk";
+      elMemuat.setAttribute("role", "status");
+      elMemuat.setAttribute("aria-label", label.memuat);
+      var titik = document.createElement("div");
+      titik.className = "cp-mengetik";
+      titik.setAttribute("aria-hidden", "true");
+      for (var d = 0; d < 3; d++) {
+        titik.appendChild(document.createElement("span"));
+      }
+      var teksSr = document.createElement("span");
+      teksSr.className = "cp-sr-only";
+      teksSr.textContent = "\u2026 " + label.memuat;
+      elMemuat.appendChild(titik);
+      elMemuat.appendChild(teksSr);
       if (elDaftar) {
         elDaftar.appendChild(elMemuat);
         elDaftar.scrollTop = elDaftar.scrollHeight;
@@ -235,14 +248,18 @@
               elMemuat.parentNode.removeChild(elMemuat);
             }
             if (elDaftar) {
-              elDaftar.appendChild(buatElemenPesan({ peran: "user", teks: teksTampil }, label));
-              elDaftar.appendChild(buatElemenPesan(itemAsisten, label));
+              var elU = buatElemenPesan({ peran: "user", teks: teksTampil }, label);
+              var elA = buatElemenPesan(itemAsisten, label);
+              elU.classList.add("cp-pesan-masuk");
+              elA.classList.add("cp-pesan-masuk");
+              elDaftar.appendChild(elU);
+              elDaftar.appendChild(elA);
               elDaftar.scrollTop = elDaftar.scrollHeight;
             }
           } else {
             daftarSekarang.push(itemAsisten);
             simpanRiwayat(daftarSekarang);
-            renderDaftar();
+            renderDaftar(true);
           }
         })
         .catch(function (err) {
@@ -252,7 +269,9 @@
           }
           var pesanGalat = err && err.kode === 401 ? label.galatAkses : label.galatJaringan;
           if (elDaftar) {
-            elDaftar.appendChild(buatElemenPesan({ peran: "asisten", teks: pesanGalat }, label));
+            var elG = buatElemenPesan({ peran: "asisten", teks: pesanGalat }, label);
+            elG.classList.add("cp-pesan-masuk");
+            elDaftar.appendChild(elG);
             elDaftar.scrollTop = elDaftar.scrollHeight;
           }
         });
@@ -307,11 +326,62 @@
       var panel = document.getElementById("cp-panel");
       var latar = document.getElementById("cp-latar");
       var tutup = document.getElementById("cp-tutup");
+      var tutupTimer = null;
+      var tutupHandler = null;
+      var bukaFrame = null;
 
-      function bukaPanel(fokusInput) {
+      function kurangiGerak() {
+        return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      }
+
+      function batalkanBuka() {
+        if (bukaFrame !== null) {
+          if (window.cancelAnimationFrame) {
+            window.cancelAnimationFrame(bukaFrame);
+          } else {
+            window.clearTimeout(bukaFrame);
+          }
+          bukaFrame = null;
+        }
+      }
+
+      function batalkanTutup() {
+        if (tutupTimer !== null) {
+          window.clearTimeout(tutupTimer);
+          tutupTimer = null;
+        }
+        if (panel && tutupHandler) {
+          panel.removeEventListener("transitionend", tutupHandler);
+          tutupHandler = null;
+        }
+      }
+
+      function bukaPanel(fokusInput, langsung) {
         if (!panel) return;
-        panel.hidden = false;
-        if (latar) latar.hidden = false;
+        batalkanBuka();
+        batalkanTutup();
+        var tanpaAnimasi = Boolean(langsung) || kurangiGerak();
+        if (tanpaAnimasi) {
+          panel.classList.add("cp-tanpa-animasi", "cp-buka");
+          if (latar) latar.classList.add("cp-tanpa-animasi", "cp-buka");
+          panel.hidden = false;
+          if (latar) latar.hidden = false;
+          void panel.offsetWidth;
+          panel.classList.remove("cp-tanpa-animasi");
+          if (latar) latar.classList.remove("cp-tanpa-animasi");
+        } else {
+          panel.classList.remove("cp-buka");
+          if (latar) latar.classList.remove("cp-buka");
+          panel.hidden = false;
+          if (latar) latar.hidden = false;
+          void panel.offsetWidth;
+          var jadwalkan = window.requestAnimationFrame || function (fn) { return window.setTimeout(fn, 16); };
+          bukaFrame = jadwalkan(function () {
+            bukaFrame = null;
+            panel.classList.add("cp-buka");
+            if (latar) latar.classList.add("cp-buka");
+          });
+        }
         if (fab) fab.setAttribute("aria-expanded", "true");
         try {
           window.sessionStorage.setItem(KUNCI_BUKA, "1");
@@ -324,24 +394,46 @@
 
       function tutupPanel(fokusFab) {
         if (!panel) return;
-        panel.hidden = true;
-        if (latar) latar.hidden = true;
+        batalkanBuka();
+        batalkanTutup();
         if (fab) fab.setAttribute("aria-expanded", "false");
         try {
           window.sessionStorage.removeItem(KUNCI_BUKA);
         } catch (_e) {}
-        if (fokusFab && fab) {
-          fab.focus();
+
+        function selesaiTutup() {
+          batalkanTutup();
+          panel.hidden = true;
+          if (latar) latar.hidden = true;
+          if (fokusFab && fab) {
+            fab.focus();
+          }
         }
+
+        if (panel.hidden || kurangiGerak()) {
+          panel.classList.remove("cp-buka");
+          if (latar) latar.classList.remove("cp-buka");
+          selesaiTutup();
+          return;
+        }
+
+        panel.classList.remove("cp-buka");
+        if (latar) latar.classList.remove("cp-buka");
+        tutupHandler = function (ev) {
+          if (ev.target !== panel) return;
+          selesaiTutup();
+        };
+        panel.addEventListener("transitionend", tutupHandler);
+        tutupTimer = window.setTimeout(selesaiTutup, 300);
       }
 
       if (fab) {
         fab.addEventListener("click", function (ev) {
           ev.preventDefault();
-          if (panel && !panel.hidden) {
+          if (panel && !panel.hidden && panel.classList.contains("cp-buka")) {
             tutupPanel(true);
           } else {
-            bukaPanel(true);
+            bukaPanel(true, false);
           }
         });
       }
@@ -365,7 +457,7 @@
 
       try {
         if (window.sessionStorage.getItem(KUNCI_BUKA) === "1") {
-          bukaPanel(false);
+          bukaPanel(false, true);
         }
       } catch (_e) {}
     }

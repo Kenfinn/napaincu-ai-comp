@@ -262,4 +262,72 @@
       e.preventDefault();
     }
   });
+
+  /* 8. Status loading pada form aksi dan tautan segarkan (A1.2a) */
+  function tandaiMemuat(btn) {
+    if (!btn) return;
+    btn.classList.add("sedang-memuat");
+    btn.setAttribute("aria-busy", "true");
+    if (btn.tagName === "A") {
+      btn.setAttribute("aria-disabled", "true");
+    }
+  }
+
+  function bersihkanMemuat() {
+    document.querySelectorAll("form[data-sedang-kirim]").forEach(function (f) {
+      delete f.dataset.sedangKirim;
+    });
+    document.querySelectorAll(".sedang-memuat").forEach(function (el) {
+      el.classList.remove("sedang-memuat");
+      el.removeAttribute("aria-busy");
+      el.removeAttribute("aria-disabled");
+      if ("disabled" in el) el.disabled = false;
+    });
+    document.querySelectorAll("button[data-dinonaktifkan-kirim]").forEach(function (b) {
+      delete b.dataset.dinonaktifkanKirim;
+      b.disabled = false;
+    });
+  }
+
+  document.addEventListener("submit", function (e) {
+    var form = e.target.closest("form");
+    if (!form || e.defaultPrevented || form.classList.contains("cp-form")) return;
+    var metode = (form.getAttribute("method") || "get").toLowerCase();
+    if (metode !== "post") return;
+    if (form.dataset.sedangKirim === "1") {
+      e.preventDefault();
+      return;
+    }
+    form.dataset.sedangKirim = "1";
+    var btn = e.submitter || form.querySelector('button[type="submit"], button:not([type])');
+    tandaiMemuat(btn);
+    /* Tunda disabled ke giliran berikutnya agar name/value tombol submitter tetap terkirim. */
+    var daftarBtn = form.querySelectorAll('button[type="submit"], button:not([type])');
+    window.setTimeout(function () {
+      if (form.dataset.sedangKirim !== "1") return;
+      daftarBtn.forEach(function (b) {
+        if (!b.disabled) {
+          b.dataset.dinonaktifkanKirim = "1";
+          b.disabled = true;
+        }
+      });
+    }, 0);
+  });
+
+  document.addEventListener("click", function (e) {
+    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    var tautan = e.target.closest('a[href*="segarkan=1"]');
+    if (!tautan) return;
+    if (tautan.classList.contains("sedang-memuat")) {
+      e.preventDefault();
+      return;
+    }
+    tandaiMemuat(tautan);
+  });
+
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted || document.querySelector(".sedang-memuat")) {
+      bersihkanMemuat();
+    }
+  });
 })();

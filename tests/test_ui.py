@@ -237,6 +237,26 @@ class TestUI(unittest.TestCase):
         )
         self.assertIsNotNone(spec)
 
+    def test_animasi_a1_css_js_dan_form_check(self) -> None:
+        """A1.5: View Transitions, reduced motion, token gerak, pageshow, dan action='/check' 3 bahasa."""
+        akar = Path(__file__).resolve().parent.parent
+        app_css = (akar / "app" / "static" / "app.css").read_text(encoding="utf-8")
+        chat_css = (akar / "app" / "static" / "chat.css").read_text(encoding="utf-8")
+        ui_js = (akar / "app" / "static" / "ui.js").read_text(encoding="utf-8")
+
+        self.assertIn("@view-transition", app_css)
+        self.assertIn("prefers-reduced-motion", app_css)
+        self.assertIn("--gerak-sedang", app_css)
+        self.assertIn("prefers-reduced-motion", chat_css)
+        self.assertIn("pageshow", ui_js)
+
+        for rute in ("/", "/watchlist"):
+            for bhs in ("en", "zh", "id"):
+                with self.subTest(rute=rute, bahasa=bhs):
+                    r = self.client.get(rute, cookies={"bahasa": bhs})
+                    self.assertEqual(r.status_code, 200)
+                    self.assertIn('action="/check"', r.text)
+
 
 if __name__ == "__main__":
     unittest.main()

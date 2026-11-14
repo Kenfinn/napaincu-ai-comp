@@ -300,7 +300,7 @@ def _cek_panel_chat(page, url: str) -> list[str]:
 
     if page.locator("#cp-panel").is_hidden():
         fab.click()
-        page.wait_for_timeout(200)
+        page.wait_for_timeout(400)
 
     if not page.locator("#cp-panel").is_visible():
         masalah.append("#cp-panel gagal terbuka setelah klik #cp-fab")
@@ -317,9 +317,13 @@ def _cek_panel_chat(page, url: str) -> list[str]:
     tutup = page.locator("#cp-tutup")
     if tutup.count() > 0 and tutup.is_visible():
         tutup.click()
-        page.wait_for_timeout(180)
-        if not page.locator("#cp-panel").is_hidden():
-            masalah.append("#cp-tutup tidak menutup #cp-panel")
+        page.wait_for_timeout(400)
+        panel_loc = page.locator("#cp-panel")
+        if not panel_loc.is_hidden() or panel_loc.get_attribute("hidden") is None:
+            masalah.append("#cp-tutup tidak menutup #cp-panel (hidden tidak terpasang)")
+        sw_tutup = page.evaluate("() => document.documentElement.scrollWidth")
+        if sw_tutup > vw + 1:
+            masalah.append(f"overflow horizontal setelah #cp-panel ditutup: {sw_tutup} > {vw}")
 
     return masalah
 
