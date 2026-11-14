@@ -257,6 +257,23 @@ class TestUI(unittest.TestCase):
                     self.assertEqual(r.status_code, 200)
                     self.assertIn('action="/check"', r.text)
 
+    def test_animasi_a2_tombol_active_dan_lipat(self) -> None:
+        """A2: app.css memuat aturan :active .tombol, transisi .lipat::before (bukan none), dan garis tab."""
+        akar = Path(__file__).resolve().parent.parent
+        app_css = (akar / "app" / "static" / "app.css").read_text(encoding="utf-8")
+
+        self.assertRegex(app_css, r"\.tombol:active\s*\{[^}]*transform:\s*scale\(")
+        self.assertRegex(
+            app_css,
+            r"\.lipat\s*>\s*summary::before\s*\{[^}]*transition:\s*(?!none\b)[^}]+\}",
+        )
+        self.assertNotRegex(
+            app_css,
+            r"\.lipat\s*>\s*summary::before\s*\{[^}]*transition:\s*none\b",
+        )
+        self.assertIn("view-transition-name: garis-tab", app_css)
+        self.assertIn("[hidden] { display: none !important; }", app_css)
+
 
 if __name__ == "__main__":
     unittest.main()

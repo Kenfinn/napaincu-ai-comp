@@ -3,6 +3,65 @@
 (function () {
   "use strict";
 
+  function kurangiGerak() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
+  function jadwalkanFrame(fn) {
+    return window.requestAnimationFrame ? window.requestAnimationFrame(fn) : window.setTimeout(fn, 16);
+  }
+
+  function batalkanFrame(id) {
+    if (id === null || id === undefined) return;
+    if (window.cancelAnimationFrame) {
+      window.cancelAnimationFrame(id);
+    } else {
+      window.clearTimeout(id);
+    }
+  }
+
+  /* Fade keluar (120 ms) sebelum [hidden], dan fade masuk setelah [hidden] dilepas. */
+  function aturTampilFilter(el, tampil, langsung) {
+    if (!el) return;
+    if (el._feafTutupTimer) {
+      window.clearTimeout(el._feafTutupTimer);
+      el._feafTutupTimer = null;
+    }
+    if (el._feafFrame !== undefined && el._feafFrame !== null) {
+      batalkanFrame(el._feafFrame);
+      el._feafFrame = null;
+    }
+    if (langsung || kurangiGerak()) {
+      el.classList.remove("sedang-sembunyi");
+      el.hidden = !tampil;
+      return;
+    }
+    if (tampil) {
+      if (!el.hidden) {
+        el.classList.remove("sedang-sembunyi");
+        return;
+      }
+      el.classList.add("sedang-sembunyi");
+      el.hidden = false;
+      void el.offsetWidth;
+      el._feafFrame = jadwalkanFrame(function () {
+        el._feafFrame = null;
+        el.classList.remove("sedang-sembunyi");
+      });
+    } else {
+      if (el.hidden) {
+        el.classList.remove("sedang-sembunyi");
+        return;
+      }
+      el.classList.add("sedang-sembunyi");
+      el._feafTutupTimer = window.setTimeout(function () {
+        el._feafTutupTimer = null;
+        el.hidden = true;
+        el.classList.remove("sedang-sembunyi");
+      }, 130);
+    }
+  }
+
   /* 1. Laci navigasi ponsel (< 900px) */
   var rail = document.querySelector(".rail");
   var latar = document.querySelector(".latar-laci");
@@ -58,7 +117,7 @@
     var jnAktif = params.get("jenis") || "semua";
     var tampilArsip = params.get("arsip") === "1" || stAktif === "dilewati";
 
-    function terapkanFilterFeed() {
+    function terapkanFilterFeed(langsung) {
       var tampil = 0;
       barisFeed.forEach(function (b) {
         var stBaris = b.getAttribute("data-status");
@@ -70,12 +129,15 @@
         }
         var cocokJn = jnAktif === "semua" || b.getAttribute("data-jenis-grup") === jnAktif;
         var ok = cocokSt && cocokJn;
-        b.hidden = !ok;
+        b._feafCocok = ok;
+        aturTampilFilter(b, ok, langsung);
         if (ok) tampil += 1;
       });
       document.querySelectorAll(".kelompok-tanggal").forEach(function (g) {
-        var ada = g.querySelectorAll(".baris[data-status]:not([hidden])").length > 0;
-        g.hidden = !ada;
+        var ada = Array.prototype.some.call(g.querySelectorAll(".baris[data-status]"), function (b) {
+          return !!b._feafCocok;
+        });
+        aturTampilFilter(g, ada, langsung);
       });
       document.querySelectorAll("[data-filter-status]").forEach(function (el) {
         var on = el.getAttribute("data-filter-status") === stAktif;
@@ -93,7 +155,7 @@
         el.setAttribute("aria-pressed", aktifArsip ? "true" : "false");
       });
       var kosongFilter = document.getElementById("feed-kosong-filter");
-      if (kosongFilter) kosongFilter.hidden = tampil > 0;
+      if (kosongFilter) aturTampilFilter(kosongFilter, tampil === 0, langsung);
 
       var u = new URL(window.location.href);
       if (stAktif && stAktif !== "semua") u.searchParams.set("status", stAktif);
@@ -137,7 +199,7 @@
       }
     });
 
-    terapkanFilterFeed();
+    terapkanFilterFeed(true);
   }
 
   /* 5. Filter sisi klien di halaman Review (jenis sebab) */
@@ -151,7 +213,7 @@
       var pilih = chip.getAttribute("data-filter-sebab");
       sebabAktif = sebabAktif === pilih && pilih !== "semua" ? "semua" : pilih;
       kartuReview.forEach(function (k) {
-        k.hidden = !(sebabAktif === "semua" || k.getAttribute("data-sebab-review") === sebabAktif);
+        aturTampilFilter(k, sebabAktif === "semua" || k.getAttribute("data-sebab-review") === sebabAktif, false);
       });
       document.querySelectorAll("[data-filter-sebab]").forEach(function (c) {
         var on = c.getAttribute("data-filter-sebab") === sebabAktif;
@@ -171,10 +233,53 @@
     bungkus.appendChild(kotak);
     var timer = null;
     var hasilTerakhir = [];
+    var saranTutupTimer = null;
+    var saranFrame = null;
 
-    function tutupSaran() {
-      kotak.hidden = true;
-      kotak.innerHTML = "";
+    function batalkanAnimSaran() {
+      if (saranTutupTimer) {
+        window.clearTimeout(saranTutupTimer);
+        saranTutupTimer = null;
+      }
+      if (saranFrame !== null) {
+        batalkanFrame(saranFrame);
+        saranFrame = null;
+      }
+    }
+
+    function bukaSaran() {
+      batalkanAnimSaran();
+      if (kurangiGerak()) {
+        kotak.classList.add("terbuka");
+        kotak.hidden = false;
+        return;
+      }
+      if (!kotak.hidden) {
+        kotak.classList.add("terbuka");
+        return;
+      }
+      kotak.classList.remove("terbuka");
+      kotak.hidden = false;
+      void kotak.offsetWidth;
+      saranFrame = jadwalkanFrame(function () {
+        saranFrame = null;
+        kotak.classList.add("terbuka");
+      });
+    }
+
+    function tutupSaran(langsung) {
+      batalkanAnimSaran();
+      kotak.classList.remove("terbuka");
+      if (langsung || kurangiGerak() || kotak.hidden) {
+        kotak.hidden = true;
+        kotak.innerHTML = "";
+        return;
+      }
+      saranTutupTimer = window.setTimeout(function () {
+        saranTutupTimer = null;
+        kotak.hidden = true;
+        kotak.innerHTML = "";
+      }, 160);
     }
 
     input.addEventListener("input", function () {
@@ -218,7 +323,7 @@
               });
               kotak.appendChild(btn);
             });
-            kotak.hidden = false;
+            bukaSaran();
           })
           .catch(function () { tutupSaran(); });
       }, 140);
