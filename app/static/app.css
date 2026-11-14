@@ -45,6 +45,7 @@
 
 /* fokus keyboard selalu terlihat */
 :focus-visible { outline: 2px solid var(--fokus); outline-offset: 2px; border-radius: var(--r-1); }
+[hidden] { display: none !important; }
 
 /* --- tombol: utama (bawaan), .sekunder, .bahaya --- */
 .tombol { display: inline-flex; align-items: center; justify-content: center; gap: var(--j-2);

@@ -11,26 +11,28 @@
 
 <div class="kartu">
   <p style="margin-top:0; font-size:13.5px; color:var(--abu);">{{ t('sh.pilih_emiten') }}</p>
-  <table class="wl">
-    <thead>
-      <tr>
-        <th>{{ t('wl.k_kode') }}</th>
-        <th>{{ t('wl.k_nama') }}</th>
-        <th>English</th>
-        <th>Exchange</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in hasil %}
-      <tr>
-        <td class="mono" style="font-weight:600;"><a href="/saham/{{ item.kode }}">{{ item.kode }}</a></td>
-        <td><a href="/saham/{{ item.kode }}">{{ item.nama }}</a></td>
-        <td>{{ item.nama_en or '—' }}</td>
-        <td><span class="mono tag" style="font-size:11px; padding:2px 6px; border-radius:4px; background:var(--latar-2);">{{ item.bursa }}</span></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="tabel-geser">
+    <table class="wl">
+      <thead>
+        <tr>
+          <th>{{ t('wl.k_kode') }}</th>
+          <th>{{ t('wl.k_nama') }}</th>
+          <th>{{ t('pf.en') }}</th>
+          <th>{{ t('pf.bursa') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in hasil %}
+        <tr>
+          <td class="mono" style="font-weight:600;"><a href="/saham/{{ item.kode }}">{{ item.kode }}</a></td>
+          <td><a href="/saham/{{ item.kode }}">{{ item.nama }}</a></td>
+          <td>{{ item.nama_en or '—' }}</td>
+          <td><span class="mono tag" style="font-size:11px; padding:2px 6px; border-radius:4px; background:var(--netral-100);">{{ item.bursa }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 {% endblock %}

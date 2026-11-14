@@ -340,6 +340,7 @@ _T: dict[str, tuple[str, str, str]] = {
         "penyari memakai jalur deterministik. Jalur ini sekaligus <b>baseline</b> pembanding yang diminta "
         "Appendix 2 — jadi angka di atas tetap sah sebagai bahan evaluasi."),
     "jj.cadangan_sebab": ("fallback: {sebab}", "備援：{sebab}", "cadangan: {sebab}"),
+    "jj.sebab.tanpa_kunci": ("no API key set", "未設定 API 金鑰", "tidak ada kunci API"),
     "jj.berkas": (
         "The raw JSON of this trace is in <span class=\"mono\">data/traces/{id}.json</span> and at "
         "<a href=\"/api/jejak/{id}\" class=\"mono\">/api/jejak/{id}</a>. It is written during normal use, "

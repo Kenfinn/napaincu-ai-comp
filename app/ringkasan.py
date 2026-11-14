@@ -274,11 +274,29 @@ def _angka_dalam(teks: str, bahasa: str) -> set[str]:
     return keluar
 
 
-def periksa_narasi(teks: str, hasil: dict) -> tuple[bool, str]:
+def _muat_kata_terlarang(teks: str) -> str | None:
     rendah = teks.lower()
     for k in KATA_TERLARANG:
-        if k.lower() in rendah:
-            return False, f"memuat kata terlarang: {k}"
+        kl = k.lower()
+        if not k.isascii():
+            if k in teks:
+                return k
+            continue
+        if kl == "buy":
+            pola = r"\bbuy\b(?![\s-]?backs?\b)"
+        elif kl == "beli":
+            pola = r"\bbeli\b(?!\s+kembali\b)"
+        else:
+            pola = rf"\b{re.escape(kl)}\b"
+        if re.search(pola, rendah):
+            return k
+    return None
+
+
+def periksa_narasi(teks: str, hasil: dict) -> tuple[bool, str]:
+    terlarang = _muat_kata_terlarang(teks)
+    if terlarang:
+        return False, f"memuat kata terlarang: {terlarang}"
     sumber = " ".join([f["teks"] for f in hasil["fakta"]] + [hasil["kesimpulan"], hasil["kecocokan"], hasil["kode"]])
     boleh = _angka_dalam(sumber, hasil["bahasa"])
     asing = _angka_dalam(teks, hasil["bahasa"]) - boleh

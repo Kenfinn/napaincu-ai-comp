@@ -51,7 +51,7 @@
       {% if l.meta and l.meta.model %}
       <div class="mono" style="font-size:11px; color:var(--abu); margin-top:4px;">
         {{ l.meta.model }} · prompt {{ l.meta.versi_prompt }}
-        {%- if l.meta.cadangan %} · {{ t('jj.cadangan_sebab', sebab=l.meta.sebab_cadangan) }}{% endif %}
+        {%- if l.meta.cadangan %} · {{ t('jj.cadangan_sebab', sebab=(l.meta.sebab_cadangan | sebab_bahasa)) }}{% endif %}
       </div>
       {% endif %}
       <details class="data-jejak" style="margin-top:6px;">

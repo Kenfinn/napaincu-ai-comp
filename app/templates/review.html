@@ -26,7 +26,7 @@
 
 {% if menunggu %}
 <div class="baris-chip" role="region" aria-label="Filter reason">
-  <button type="button" class="chip aktif" data-filter-sebab="semua" aria-pressed="true">{{ t('ui.rv.filter_semua') }}</button>
+  <button type="button" class="chip on" data-filter-sebab="semua" aria-pressed="true">{{ t('ui.rv.filter_semua') }}</button>
   {% for j in ['verifikasi', 'keyakinan', 'tanpa_angka', 'risiko_berat', 'risiko_serius'] %}
   <button type="button" class="chip" data-filter-sebab="{{ j }}" aria-pressed="false">{{ t('rv.jenis.' ~ j) }}</button>
   {% endfor %}
@@ -47,9 +47,9 @@
           <a href="/peringatan/{{ h.id }}" style="color:var(--tinta); text-decoration:none;">{{ h.judul }}</a>
         </div>
       </div>
-      <div style="display:flex; gap:6px; align-items:center;">
+      <div style="display:flex; gap:8px; align-items:center;">
         <span class="lencana l-ditahan">{{ t('st.ditahan') }}</span>
-        <span class="lencana l-dilewati mono">HELD</span>
+        <span class="mono" style="font-size:11.5px; color:var(--abu);">{{ (h.state | state) if h.state else 'HELD' }}</span>
       </div>
     </div>
 

@@ -18,10 +18,12 @@ cadangan** sampai ke layar.
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import os
 import re
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -58,17 +60,23 @@ def tersedia() -> bool:
 
 # Model yang benar-benar dipakai. Bisa berbeda dari config.MODEL bila nama itu sudah
 # tidak tersedia (Google memensiunkan model secara berkala; 404 di generateContent).
+_kunci_model = threading.RLock()
+_lokal = threading.local()
 _model_aktif: str | None = None
 
 
-# Model untuk SATU panggilan saat model utama sibuk (lihat _tanya_model). Tidak lengket:
-# panggilan berikutnya kembali ke model utama.
+# Model untuk SATU panggilan saat model utama sibuk (lihat _tanya_model). Disimpan per-thread
+# di _lokal supaya panggilan konkuren tidak saling menimpa.
 _model_sementara: str | None = None
 KODE_SIBUK = (429, 500, 502, 503, 504)
 
 
 def model_dipakai() -> str:
-    return _model_sementara or _model_aktif or config.MODEL
+    sementara = getattr(_lokal, "model_sementara", None)
+    if sementara:
+        return sementara
+    with _kunci_model:
+        return _model_sementara or _model_aktif or config.MODEL
 
 
 def nama_model() -> str:
@@ -85,6 +93,12 @@ def _versi(nama: str) -> tuple:
 # pada gemini-2.5-flash, 10 Nov), jadi daftar saja tidak cukup.
 _gagal_404: set[str] = set()
 GANTI_MAKS = 3
+
+
+def tandai_404(model: str) -> None:
+    """Tandai model sebagai tidak tersedia (404) secara aman terhadap thread."""
+    with _kunci_model:
+        _gagal_404.add(model)
 
 
 def pilih_model(daftar: list[str], diminta: str, kecuali: set[str] | frozenset = frozenset()) -> str | None:
@@ -129,21 +143,25 @@ def _cari_pengganti() -> str | None:
     except urllib.error.HTTPError as e:
         try:
             isi = json.loads(e.read().decode("utf-8")).get("error", {})
-            _galat_pengganti = f"ListModels HTTP {e.code} {isi.get('status', '')}: {str(isi.get('message', ''))[:160]}"
+            msg = f"ListModels HTTP {e.code} {isi.get('status', '')}: {str(isi.get('message', ''))[:160]}"
         except (ValueError, AttributeError):
-            _galat_pengganti = f"ListModels HTTP {e.code}"
+            msg = f"ListModels HTTP {e.code}"
+        with _kunci_model:
+            _galat_pengganti = msg
         return None
     except (urllib.error.URLError, ValueError, KeyError, TimeoutError) as e:
-        _galat_pengganti = f"ListModels gagal: {type(e).__name__}: {e}"[:200]
+        with _kunci_model:
+            _galat_pengganti = f"ListModels gagal: {type(e).__name__}: {e}"[:200]
         return None
-    pilihan = pilih_model(daftar, config.MODEL, _gagal_404)
-    if pilihan:
-        _model_aktif = pilihan
-        _galat_pengganti = None
-    else:
-        _galat_pengganti = (f"ListModels berisi {len(daftar)} model, tanpa flash yang belum dicoba"
-                            + (f"; contoh: {', '.join(daftar[:5])}" if daftar else ""))
-    return pilihan
+    with _kunci_model:
+        pilihan = pilih_model(daftar, config.MODEL, set(_gagal_404))
+        if pilihan:
+            _model_aktif = pilihan
+            _galat_pengganti = None
+        else:
+            _galat_pengganti = (f"ListModels berisi {len(daftar)} model, tanpa flash yang belum dicoba"
+                                + (f"; contoh: {', '.join(daftar[:5])}" if daftar else ""))
+        return pilihan
 
 
 # Harga tier berbayar Gemini Developer API, USD per 1 juta token (masuk, keluar termasuk token
@@ -241,16 +259,10 @@ def _baca_cache(kunci: str) -> dict | None:
 
 def _tulis_cache(kunci: str, jawaban: dict, meta: dict) -> None:
     os.makedirs(CACHE_DIR, exist_ok=True)
-    tmp = os.path.join(CACHE_DIR, f"{kunci}.json.tmp")
+    tmp = os.path.join(CACHE_DIR, f"{kunci}.{os.getpid()}.{threading.get_ident()}.tmp")
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump({"jawaban": jawaban, "meta_asli": meta}, f, ensure_ascii=False)
     os.replace(tmp, os.path.join(CACHE_DIR, f"{kunci}.json"))
-
-
-import contextlib
-import threading
-
-_lokal = threading.local()
 
 # Pemutus per jalan: model yang sibuk atau mati tidak boleh membuat satu kali proses
 # berjalan bermenit-menit (halaman menunggu hasilnya). Setelah GAGAL_BERUNTUN_MAKS
@@ -373,13 +385,16 @@ def _tanya_model(instruksi: str, dokumen: str) -> tuple[dict, dict]:
                 # itu, cari pengganti, coba lagi tanpa memakan jatah retry.
                 ganti += 1
                 gagal = model_dipakai()
-                _gagal_404.add(gagal)
+                tandai_404(gagal)
                 pengganti = _cari_pengganti()
-                if pengganti and pengganti not in _gagal_404:
+                with _kunci_model:
+                    sah = bool(pengganti and pengganti not in _gagal_404)
+                    catatan_ganti = _galat_pengganti
+                if sah:
                     galat.append(f"model {gagal} tidak tersedia (404), diganti {pengganti}")
                     continue
                 raise GagalModel("; ".join(galat + ["tidak ada model flash pengganti"
-                                                    + (f" ({_galat_pengganti})" if _galat_pengganti else "")])) from e
+                                                    + (f" ({catatan_ganti})" if catatan_ganti else "")])) from e
             if e.code == 404:
                 raise GagalModel("; ".join(galat + [f"{GANTI_MAKS} model berturut-turut 404"])) from e
             if e.code == 402:
@@ -394,12 +409,13 @@ def _tanya_model(instruksi: str, dokumen: str) -> tuple[dict, dict]:
         percobaan += 1
 
     # Model utama sibuk terus: coba tiap model cadangan sekali sebelum menyerah.
-    global _model_sementara
     utama = model_dipakai()
+    with _kunci_model:
+        sudah_404 = set(_gagal_404)
     for cad in config.MODEL_CADANGAN:
-        if cad == utama or cad in _gagal_404:
+        if cad == utama or cad in sudah_404:
             continue
-        _model_sementara = cad
+        _lokal.model_sementara = cad
         try:
             hasil, meta = _panggil_gemini(instruksi, dokumen)
             meta.update({
@@ -411,12 +427,12 @@ def _tanya_model(instruksi: str, dokumen: str) -> tuple[dict, dict]:
             return hasil, meta
         except urllib.error.HTTPError as e:
             if e.code == 404:
-                _gagal_404.add(cad)
+                tandai_404(cad)
             galat.append(f"cadangan {cad}: {e}")
         except (urllib.error.URLError, TimeoutError, GagalModel) as e:
             galat.append(f"cadangan {cad}: {e}")
         finally:
-            _model_sementara = None
+            _lokal.model_sementara = None
 
     raise GagalModel("; ".join(galat))
 

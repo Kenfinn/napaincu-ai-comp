@@ -1,39 +1,56 @@
-{% extends "base.html" %}
-{% block judul %}{{ t('kunci.judul') }} · FEAF{% endblock %}
-{% block isi %}
-
-<div class="kepala">
-  <div>
-    <div class="kicker">{{ t('kunci.kicker') }}</div>
-    <h1>{{ t('kunci.judul') }}</h1>
-  </div>
-</div>
-
-<div class="kartu" style="max-width:480px; margin-top:20px;">
-  <p style="margin-top:0; color:var(--abu-2); font-size:13.5px; line-height:1.5;">
-    {{ t('kunci.penjelasan') }}
-  </p>
-  <form method="get" action="/akses">
-    <div style="display:flex; flex-direction:column; gap:8px;">
-      <label for="input-kode" style="font-size:12px; font-weight:600; color:var(--teks);">
-        {{ t('kunci.label_kode') }}
-      </label>
-      <input
-        id="input-kode"
-        type="text"
-        name="kode"
-        placeholder="{{ t('kunci.placeholder') }}"
-        autocomplete="off"
-        autofocus
-        required
-        class="mono"
-        style="padding:10px 12px; border:1px solid var(--garis); border-radius:6px; font-size:14px;"
-      >
-      <div style="margin-top:10px;">
-        <button class="tombol" type="submit">{{ t('kunci.tombol') }}</button>
-      </div>
+<!doctype html>
+<html lang="{{ {'en':'en','zh':'zh-Hant-TW','id':'id'}[bahasa] }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ t('kunci.judul') }} · FEAF</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body style="background:var(--ground); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:var(--j-4);">
+<main style="width:100%; max-width:460px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--j-3);">
+    <div style="font-weight:700; font-size:18px; color:var(--navy);">FEAF <span style="font-weight:400; font-size:13px; color:var(--abu);">· {{ t('merek.sub') }}</span></div>
+    <div style="display:flex; gap:8px; font-size:13px;">
+      {% for kode_b, nama_b in daftar_bahasa.items() %}
+      <a href="/bahasa/{{ kode_b }}?ke={{ path_sekarang | urlencode }}" style="text-decoration:none; color:{{ 'var(--navy)' if bahasa == kode_b else 'var(--abu)' }}; font-weight:{{ '700' if bahasa == kode_b else '500' }};">{{ nama_b }}</a>
+      {% endfor %}
     </div>
-  </form>
-</div>
+  </div>
 
-{% endblock %}
+  {% if pesan %}
+  <div class="pita {{ 'err' if not pesan_ok }}" style="margin-bottom:var(--j-3);"><div>{{ pesan }}</div></div>
+  {% endif %}
+
+  <div class="kartu" style="margin-bottom:0;">
+    <div class="kicker">{{ t('kunci.kicker') }}</div>
+    <h1 style="margin:4px 0 var(--j-2); font-size:var(--h-judul);">{{ t('kunci.judul') }}</h1>
+    <p style="margin:0 0 var(--j-4); color:var(--abu-2); font-size:13.5px; line-height:1.5;">
+      {{ t('kunci.penjelasan') }}
+    </p>
+    <form method="post" action="/akses">
+      <input type="hidden" name="kembali" value="{{ path_sekarang }}">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <label for="input-kode" style="font-size:12px; font-weight:600; color:var(--tinta);">
+          {{ t('kunci.label_kode') }}
+        </label>
+        <input
+          id="input-kode"
+          type="password"
+          name="kode"
+          placeholder="{{ t('kunci.placeholder') }}"
+          autocomplete="current-password"
+          autofocus
+          required
+          class="mono"
+          style="padding:10px 12px; border:1px solid var(--garis); border-radius:6px; font-size:14px;"
+        >
+        <div style="margin-top:10px;">
+          <button class="tombol" type="submit">{{ t('kunci.tombol') }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
+</body>
+</html>

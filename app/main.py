@@ -14,6 +14,7 @@ Jalankan:
 
 from __future__ import annotations
 
+import hashlib
 import hmac
 import json
 import os
@@ -205,8 +206,22 @@ def jejak_bahasa(ctx, obj, alasan_akhir=None):
 
 # Jejak yang tersimpan sebelum 11 Nov memakai akhiran Indonesia pada label state.
 _STATE_LAMA = {"VERIFIED · sumber": "VERIFIED · source", "VERIFIED · hitungan": "VERIFIED · arithmetic"}
+_SEBAB_CADANGAN_KUNCI = {"tidak ada kunci API": "jj.sebab.tanpa_kunci"}
+
+
+@pass_context
+def sebab_bahasa(ctx, sebab: str | None) -> str:
+    """Terjemahkan label sebab_cadangan baku ke bahasa halaman tanpa mengubah API mentah."""
+    if not sebab:
+        return ""
+    kunci = _SEBAB_CADANGAN_KUNCI.get(sebab)
+    if kunci:
+        return i18n.t(kunci, ctx.get("bahasa", i18n.BAWAAN))
+    return sebab
+
 
 tpl.env.filters["jejak_bahasa"] = jejak_bahasa
+tpl.env.filters["sebab_bahasa"] = sebab_bahasa
 tpl.env.filters["state"] = lambda s: _STATE_LAMA.get(s, s)
 tpl.env.filters["rb"] = rb
 tpl.env.filters["pct"] = pct
@@ -277,13 +292,7 @@ def _saham_samping() -> list[dict]:
 def konteks(request: Request, halaman: str, **tambahan) -> dict:
     _, sumber = store.muat_detail()
     bhs = bahasa_dari(request)
-    pesan_kilat, pesan_ok = None, True
-    if request.query_params.get("pesan"):
-        try:
-            p = json.loads(request.query_params["pesan"])
-            pesan_kilat, pesan_ok = i18n.tr(p, bhs), bool(p.get("ok", True))
-        except (ValueError, AttributeError):
-            pesan_kilat = None
+    pesan_kilat, pesan_ok = _baca_pesan(request, bhs)
     wl_set = set(tarik.baca_watchlist())
     profil = request.query_params.get("risiko") or request.cookies.get("risiko")
     profil = ambang_profil.normal(profil)
@@ -362,11 +371,43 @@ def _ringkas_status(st: dict) -> tuple[dict, bool]:
     return i18n.pesan("msg.tarik_ok", n=st["cocok_watchlist"], baru=st["baru"]), True
 
 
+def _token_akses() -> str:
+    """Digest HMAC atas KODE_AKSES agar rahasia mentah tidak disimpan di cookie browser."""
+    kunci = str(getattr(config, "CHAT_RAHASIA", "") or "feaf-akses-hmac").encode("utf-8")
+    return hmac.new(kunci, config.KODE_AKSES.encode("utf-8"), hashlib.sha256).hexdigest()
+
+
+def _baca_pesan(request: Request, bahasa: str) -> tuple[str | None, bool]:
+    if not request.query_params.get("pesan"):
+        return None, True
+    try:
+        p = json.loads(request.query_params["pesan"])
+        return i18n.tr(p, bahasa), bool(p.get("ok", True))
+    except (ValueError, AttributeError):
+        return None, True
+
+
+def _konteks_kunci(request: Request) -> dict:
+    """Konteks minimal halaman 401 — tidak memuat watchlist, status queue, atau statistik."""
+    bhs = bahasa_dari(request)
+    pesan_kilat, pesan_ok = _baca_pesan(request, bhs)
+    return {
+        "bahasa": bhs,
+        "daftar_bahasa": i18n.BAHASA,
+        "t": lambda *a, **p: i18n.t(a[0], bhs, **p),
+        "path_sekarang": request.url.path,
+        "pesan": pesan_kilat,
+        "pesan_ok": pesan_ok,
+        "request": request,
+    }
+
+
 def _boleh_ubah(request: Request) -> bool:
-    """Tanpa SENTINEL_KODE_AKSES semua boleh. Dengan itu, perlu cookie dari /akses."""
+    """Tanpa SENTINEL_KODE_AKSES semua boleh. Dengan itu, perlu cookie bertanda dari /akses."""
     if not config.KODE_AKSES:
         return True
-    return hmac.compare_digest(request.cookies.get("akses", ""), config.KODE_AKSES)
+    cookie = request.cookies.get("akses", "")
+    return bool(cookie) and hmac.compare_digest(cookie, _token_akses())
 
 
 def _tolak_akses(ke: str) -> RedirectResponse:
@@ -391,20 +432,32 @@ async def kunci_baca_middleware(request: Request, call_next):
             return tpl.TemplateResponse(
                 request=request,
                 name="kunci.html",
-                context=konteks(request, "kunci"),
+                context=_konteks_kunci(request),
                 status_code=401,
             )
     return await call_next(request)
 
 
-@app.get("/akses", include_in_schema=False)
-def akses(kode: str = ""):
-    """Buka tombol ubah untuk browser ini: /akses?kode=<SENTINEL_KODE_AKSES>."""
+def _proses_akses(kode: str, kembali: str = "/") -> RedirectResponse:
+    tujuan = kembali if kembali.startswith("/") and not kembali.startswith("//") else "/"
     if config.KODE_AKSES and hmac.compare_digest(kode, config.KODE_AKSES):
-        r = _balik("/", i18n.pesan("msg.akses_ok"))
-        r.set_cookie("akses", kode, max_age=60 * 60 * 24 * 30, httponly=True, samesite="lax")
+        r = _balik(tujuan, i18n.pesan("msg.akses_ok"))
+        r.set_cookie("akses", _token_akses(), max_age=60 * 60 * 24 * 30, httponly=True, samesite="lax")
         return r
-    return _balik("/", i18n.pesan("msg.akses_salah"), ok=False)
+    return _balik(tujuan, i18n.pesan("msg.akses_salah"), ok=False)
+
+
+@app.get("/akses", include_in_schema=False)
+def akses(kode: str = "", kembali: str = "/"):
+    """Buka akses via query parameter untuk tautan cepat dan pengujian."""
+    return _proses_akses(kode, kembali)
+
+
+@app.post("/akses", include_in_schema=False)
+async def akses_post(request: Request):
+    """Buka akses melalui POST form agar kode akses tidak muncul di URL atau log server."""
+    f = await _form(request)
+    return _proses_akses(f.get("kode", ""), f.get("kembali", "/"))
 
 
 def _sebab_cadangan(h: list[dict]) -> dict[str, int]:
@@ -492,10 +545,12 @@ def watchlist(request: Request):
     baris = []
     for k in tarik.baca_watchlist():
         punya = [d for d in detail if d.get("code") == k]
+        harga_cache = pasar.harga_dari_cache(k) or {}
         baris.append({
             "kode": k,
-            "nama": (pasar.harga_dari_cache(k) or {}).get("nama")
+            "nama": harga_cache.get("nama")
                     or next((d.get("name") for d in punya if d.get("name")), None),
+            "harga": harga_cache.get("tutup"),
             "valuasi": k in tervaluasi,
             "jumlah": len(punya),
             "terakhir": max((f"{d.get('date')} {d.get('time')}" for d in punya), default=None),
@@ -744,14 +799,22 @@ def _pasal_terlihat() -> list[str]:
     return sorted({h["triase"]["pasal"] for h in hasil() if h.get("triase")})
 
 
+def _simpan_cookie_risiko(resp, request: Request, valid: tuple[str, ...] = ambang_profil.PROFIL) -> None:
+    risiko = request.query_params.get("risiko")
+    if risiko in valid:
+        resp.set_cookie("risiko", risiko, max_age=60 * 60 * 24 * 365, samesite="lax")
+
+
 @app.get("/ambang", response_class=HTMLResponse)
 def halaman_ambang(request: Request):
     data = umpan_balik.semua(_pasal_terlihat())
     per_id = {h["id"]: h for h in hasil()}
     for r in data["riwayat"]:
         r["h"] = per_id.get(r.get("id"))
-    return tpl.TemplateResponse(request=request, name="ambang.html",
+    resp = tpl.TemplateResponse(request=request, name="ambang.html",
                                 context=konteks(request, "ambang", data=data))
+    _simpan_cookie_risiko(resp, request)
+    return resp
 
 
 @app.post("/ambang/{pasal}/{aksi}")
@@ -819,9 +882,11 @@ def jejak(request: Request, pengenal: str):
 def valuasi(request: Request, kode: str):
     kode, d = _siapkan_valuasi_dcf(kode)
     g = d.get("assumptions", {}).get("terminal_growth_ceiling")
-    return tpl.TemplateResponse(
+    resp = tpl.TemplateResponse(
         request=request, name="valuasi.html",
         context=konteks(request, "valuasi", kode=kode, r=dcf.compute(d, forward_g=g), va=d))
+    _simpan_cookie_risiko(resp, request, ringkasan.PROFIL_RISIKO)
+    return resp
 
 
 # --- API JSON — sekalian jadi dokumentasi antarmuka di /docs -------------

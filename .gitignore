@@ -9,6 +9,8 @@ __pycache__/
 # API key ada di source code yang diserahkan.
 .venv/
 .env
+API KEY .txt
+scripts/result.json
 
 # hasil seed canvas — 2,5 MB kode editor, dibuat ulang dari *.dc.html
 design/sentinel-saham-aaic-2026.html

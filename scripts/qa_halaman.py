@@ -257,10 +257,12 @@ def jalankan_qa(
                     if beli_jual:
                         catatan_galat.append(f"Kata rekomendasi: {', '.join(beli_jual)}")
 
-                    # 4. Cek kebocoran bahasa Indonesia (peringatan)
-                    bocor = periksa_kebocoran_bahasa(html, bhs)
-                    if bocor:
-                        catatan_peringatan.append(f"Bocor kata ID: {', '.join(bocor)}")
+                    # 4. Cek kebocoran bahasa Indonesia (peringatan, khusus halaman HTML)
+                    jenis_konten = (resp.headers.get("content-type") or "").lower()
+                    if "html" in jenis_konten:
+                        bocor = periksa_kebocoran_bahasa(html, bhs)
+                        if bocor:
+                            catatan_peringatan.append(f"Bocor kata ID: {', '.join(bocor)}")
 
                 except Exception as e:
                     catatan_galat.append(f"Eksepsi: {e}")

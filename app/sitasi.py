@@ -30,7 +30,7 @@ def program_untuk_jenis(jenis: str) -> str:
 
 def mops_laporan(
     kode: str,
-    tahun_iso: int | str,
+    tahun_iso: int | str | None,
     kuartal: int | str | None = None,
     jenis: str = "neraca",
 ) -> str:
@@ -42,16 +42,24 @@ def mops_laporan(
     - kuartal: Kuartal 1..4 atau 'Q1'..'Q4' (bila None, diparsing dari tahun_iso)
     - jenis: 'neraca', 'lr', atau 'arus'
     """
+    if tahun_iso is None or str(tahun_iso).strip() in ("", "None"):
+        return mops_cadangan(jenis)
+
     kode_bersih = str(kode).strip().upper()
     prog = program_untuk_jenis(jenis)
+    tahun_str = str(tahun_iso).strip()
 
-    if kuartal is None and "-" in str(tahun_iso):
-        parts = str(tahun_iso).split("-")
+    if kuartal is None and "-" in tahun_str:
+        parts = tahun_str.split("-")
+        if not parts[0].isdigit():
+            return mops_cadangan(jenis)
         th = int(parts[0])
-        bl = int(parts[1]) if len(parts) > 1 else 12
+        bl = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 12
         qq = max(1, min(4, bl // 3)) if bl > 0 else 4
     else:
-        th = int(str(tahun_iso)[:4])
+        if len(tahun_str) < 4 or not tahun_str[:4].isdigit():
+            return mops_cadangan(jenis)
+        th = int(tahun_str[:4])
         if kuartal is None:
             qq = 4
         else:

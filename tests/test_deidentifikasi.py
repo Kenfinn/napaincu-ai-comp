@@ -9,17 +9,18 @@ import unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _KATA = ("afin" + "zaki", "fer" + "ry", "pat" + "rice", "pd" + "k")
 LARANGAN = re.compile(r"\b(?:" + "|".join(_KATA) + r")\b", re.IGNORECASE)
-EKSTENSI_TEKS = {".py", ".html", ".css", ".js", ".md", ".txt", ".json", ".svg"}
+EKSTENSI_TEKS = {".py", ".html", ".css", ".js", ".md", ".txt", ".json", ".svg", ".csv"}
 
 
 def _berkas_diperiksa() -> list[str]:
     hasil = [os.path.join(ROOT, "README.md")]
-    for akar, _, berkas in os.walk(os.path.join(ROOT, "app")):
-        if "__pycache__" in akar:
-            continue
-        for nama in berkas:
-            if os.path.splitext(nama)[1].lower() in EKSTENSI_TEKS:
-                hasil.append(os.path.join(akar, nama))
+    for sub in ("app", "eval"):
+        for akar, _, berkas in os.walk(os.path.join(ROOT, sub)):
+            if "__pycache__" in akar:
+                continue
+            for nama in berkas:
+                if os.path.splitext(nama)[1].lower() in EKSTENSI_TEKS:
+                    hasil.append(os.path.join(akar, nama))
     return sorted(hasil)
 
 

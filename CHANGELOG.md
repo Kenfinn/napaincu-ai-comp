@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0 (belum dirilis)
+## 1.1.0 · 13 Nov 2026
 
 - Ask FEAF slide-over panel on every page (`_panel_chat.html`, `app/static/chat.js`,
   `app/static/chat.css`) with page-aware suggestion chips and `sessionStorage` conversation
@@ -19,6 +19,10 @@
   conversation security tests (`tests/test_chat_percakapan.py`).
 - UI and accessibility refinements across feed, stock detail, alert detail, valuation, review,
   thresholds, watchlist, trace, and plain-language hold reasons.
+- QA hardening: offline MOPS citation fallback on empty financials, `[hidden]` CSS visibility
+  guarantee, standalone `401` lock page (`POST /akses` + signed access cookie), thread-safe chat
+  worker offloading and LLM/review locking, word-boundary narration checker, watchlist cached
+  prices, and localized fallback trace labels.
 
 ## 1.0.0 · 12 Nov 2026 · finalist package (AAIC 2026)
 

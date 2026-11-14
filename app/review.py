@@ -18,12 +18,14 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 from datetime import datetime, timezone
 
 from . import config
 
 KEPUTUSAN_FILE = os.path.join(config.DATA_DIR, "keputusan_review.json")
 KEPUTUSAN_SAH = ("setujui", "arsipkan")
+_kunci_berkas = threading.Lock()
 
 # Pemeriksaan yang kegagalannya berarti "ragu", bukan "salah".
 CEK_RAGU = {"cek.mu", "cek.konversi", "cek.besaran"}
@@ -57,15 +59,16 @@ def untuk(pengenal: str, jenis: str | None, semua: dict | None = None) -> dict |
 def simpan(pengenal: str, keputusan: str, catatan: str, jenis: str | None = None) -> dict:
     if keputusan not in KEPUTUSAN_SAH:
         raise ValueError(f"keputusan tidak dikenal: {keputusan}")
-    semua = baca()
-    entri = {"id": pengenal, "jenis": jenis, "keputusan": keputusan, "catatan": catatan.strip()[:500],
-             "waktu": datetime.now(timezone.utc).isoformat(timespec="seconds")}
-    semua[_kunci(pengenal, jenis)] = entri
-    os.makedirs(os.path.dirname(KEPUTUSAN_FILE), exist_ok=True)
-    tmp = KEPUTUSAN_FILE + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(semua, f, ensure_ascii=False, indent=2)
-    os.replace(tmp, KEPUTUSAN_FILE)
+    with _kunci_berkas:
+        semua = baca()
+        entri = {"id": pengenal, "jenis": jenis, "keputusan": keputusan, "catatan": catatan.strip()[:500],
+                 "waktu": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+        semua[_kunci(pengenal, jenis)] = entri
+        os.makedirs(os.path.dirname(KEPUTUSAN_FILE), exist_ok=True)
+        tmp = f"{KEPUTUSAN_FILE}.{os.getpid()}.{threading.get_ident()}.tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(semua, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, KEPUTUSAN_FILE)
     return entri
 
 

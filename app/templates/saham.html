@@ -162,7 +162,7 @@
           {{ (h.ubah | rb(2)) if h else '—' }}</span></div>
         <div class="kv"><span class="k">{{ t('st.rentang') }}</span><span class="v">{{ (h.rendah | rb(2)) ~ ' – ' ~ (h.tinggi | rb(2)) if h else '—' }}</span></div>
         <div class="kv"><span class="k">{{ t('st.volume') }}</span><span class="v">{{ h.volume | rb if h else '—' }}</span></div>
-        <div class="kv"><span class="k">{{ t('st.kapitalisasi') }}</span><span class="v">{{ ((s.kapitalisasi / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.kapitalisasi else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.kapitalisasi') }}</span><span class="v">{{ ((s.kapitalisasi / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.kapitalisasi is not none else '—' }}</span></div>
         <div class="kv"><span class="k">{{ t('st.lembar') }}</span><span class="v">{{ s.lembar | rb if s.lembar else '—' }}</span></div>
         <div class="kv"><span class="k">{{ t('st.per') }}</span><span class="v">{{ r.per | rb(2) if r and r.per else '—' }}</span></div>
         <div class="kv"><span class="k">{{ t('st.pbr') }}</span><span class="v">{{ r.pbr | rb(2) if r and r.pbr else '—' }}</span></div>
@@ -173,8 +173,8 @@
       <h2>{{ t('st.fundamental') }}</h2>
       <div class="kartu">
         {% if s.ttm_sampai %}<div class="kicker" style="margin-bottom:6px;">{{ t('st.ttm', tgl=s.ttm_sampai) }}</div>{% endif %}
-        <div class="kv"><span class="k">{{ t('st.pendapatan') }}</span><span class="v">{{ ((s.pendapatan_ttm / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.pendapatan_ttm else '—' }}</span></div>
-        <div class="kv"><span class="k">{{ t('st.laba') }}</span><span class="v">{{ ((s.laba_bersih_ttm / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.laba_bersih_ttm else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.pendapatan') }}</span><span class="v">{{ ((s.pendapatan_ttm / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.pendapatan_ttm is not none else '—' }}</span></div>
+        <div class="kv"><span class="k">{{ t('st.laba') }}</span><span class="v">{{ ((s.laba_bersih_ttm / 1e6) | rb) ~ ' ' ~ t('al.juta_ntd') if s.laba_bersih_ttm is not none else '—' }}</span></div>
         <div class="kv">
           <span class="k">{{ t('st.eps') }} <button type="button" class="info" data-tip="{{ t('ui.info.eps') }}" aria-label="Info">i</button></span>
           <span class="v">{{ s.eps_ttm | rb(2) if s.eps_ttm is not none else '—' }}</span>
@@ -252,7 +252,7 @@
     <p>{{ t('ui.sh.keu_langkah') }}</p>
     <div class="aksi">
       <a href="{{ url() }}" class="tombol tipis" style="text-decoration:none;">↻</a>
-      <a href="{{ mops_laporan(kode_saham, None, None, lap) }}" target="_blank" rel="noopener noreferrer" class="tombol" style="text-decoration:none;">{{ t('sh.tautan_mops') }}</a>
+      <a href="{{ mops_cadangan(lap) }}" target="_blank" rel="noopener noreferrer" class="tombol" style="text-decoration:none;">{{ t('sh.tautan_mops') }}</a>
     </div>
   </div>
   {% endif %}

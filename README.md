@@ -8,7 +8,7 @@ came from.
 Built for the NAPAI Agentic AI Innovation Competition 2026 (AAIC 2026), SYSTEX track:
 *Investment Intelligence & AI-Powered Stock Selection Agent*.
 
-**Version 1.0.0** (git tag `v1.0.0`, finalist package). Changes: [`CHANGELOG.md`](CHANGELOG.md).
+**Version 1.1.0**. Changes: [`CHANGELOG.md`](CHANGELOG.md).
 `GET /sehat` reports the running version.
 
 > **Not a trading tool.** There is no broker connection and no order execution, and the agent
@@ -28,7 +28,7 @@ Details in [Evaluation](#evaluation).
 Requirements: Python 3.12 or newer, Git, internet access (TWSE/TPEx OpenAPI). No database.
 
 ```bash
-git clone https://github.com/Kenfinn/napaincu-ai-comp.git
+git clone <repository-url> napaincu-ai-comp
 cd napaincu-ai-comp
 python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
@@ -57,7 +57,7 @@ Run the tests with `python -m unittest discover -s tests` (no network needed).
 需求：Python 3.12 以上、Git、可連線至證交所與櫃買中心 OpenAPI。不需要資料庫。
 
 ```bash
-git clone https://github.com/Kenfinn/napaincu-ai-comp.git
+git clone <repository-url> napaincu-ai-comp
 cd napaincu-ai-comp
 python3 -m venv .venv
 source .venv/bin/activate          # Windows：.venv\Scripts\activate
@@ -86,7 +86,7 @@ Windows PowerShell 請改用 `$env:GEMINI_API_KEY="..."`。
 Kebutuhan: Python 3.12 atau lebih baru, Git, akses internet ke OpenAPI TWSE/TPEx. Tanpa database.
 
 ```bash
-git clone https://github.com/Kenfinn/napaincu-ai-comp.git
+git clone <repository-url> napaincu-ai-comp
 cd napaincu-ai-comp
 python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
@@ -146,7 +146,7 @@ survive redeploys. `GET /sehat` is the health check; its `versi_kode` field is a
 python3 -m unittest discover -s tests
 ```
 
-269 tests, no network access needed. They include the attack set, multi-turn chat security, the
+293 tests, no network access needed. They include the attack set, multi-turn chat security, the
 rule that API keys never reach a file, page or trace, and the rule that personal names never
 reach the model or the gold-set export.
 
@@ -475,7 +475,7 @@ filing is held for a person rather than published.
 | `tests/` | Unit and end-to-end tests (no network) |
 | `data/fixtures/` | Four sample filings so the app runs anywhere |
 | `design/`, `wireframe/` | Screen designs and diagrams |
-| `docs/` | Clause mapping, evaluation notes, deploy guide (mostly in Indonesian) |
+| `docs/` | [System design](docs/system-design.md), [flow diagrams](docs/diagram-alur.md), clause mapping, evaluation notes, deploy guide |
 
 ---
 

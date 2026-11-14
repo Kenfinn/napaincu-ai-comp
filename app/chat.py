@@ -22,6 +22,7 @@ rest of the app.
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import hmac
 import json
@@ -677,7 +678,7 @@ def _gemini(contents: list[dict], bahasa: str, pakai_alat: bool = True) -> tuple
         except urllib.error.HTTPError as e:
             galat.append(f"{model}: HTTP {e.code}")
             if e.code == 404:
-                llm._gagal_404.add(model)
+                llm.tandai_404(model)
                 if percobaan == 0 and llm._cari_pengganti() and llm.model_dipakai() not in kandidat:
                     kandidat.insert(1, llm.model_dipakai())
                 continue
@@ -1222,7 +1223,7 @@ def halaman_tanya(request: Request, id: str = "", kode: str = ""):
 async def kirim_tanya(request: Request):
     from .main import _form, bahasa_dari
     f = await _form(request)
-    h = tanya(f.get("pertanyaan", ""), bahasa_dari(request))
+    h = await asyncio.to_thread(tanya, f.get("pertanyaan", ""), bahasa_dari(request))
     return RedirectResponse(f"/tanya?id={urllib.parse.quote(h['id'])}", status_code=303)
 
 
@@ -1237,8 +1238,14 @@ async def api_tanya(request: Request):
     riwayat = badan.get("riwayat") if isinstance(badan.get("riwayat"), list) else None
     konteks = badan.get("konteks") if isinstance(badan.get("konteks"), dict) else None
     jenis = str(badan.get("jenis") or "") or None
-    h = tanya(str(badan.get("pertanyaan", "")), str(badan.get("bahasa", "en")),
-              riwayat=riwayat, konteks=konteks, jenis=jenis)
+    h = await asyncio.to_thread(
+        tanya,
+        str(badan.get("pertanyaan", "")),
+        str(badan.get("bahasa", "en")),
+        riwayat=riwayat,
+        konteks=konteks,
+        jenis=jenis,
+    )
     return JSONResponse({k: h[k] for k in ("id", "jalur", "jawaban", "sumber", "tautan", "tanda",
                                             "periksa", "ditolak", "durasi_ms", "panggilan_model",
                                             "panggilan_alat")})

@@ -3,6 +3,8 @@
 __pycache__
 *.pyc
 .env
+API KEY .txt
+scripts/result.json
 data/*
 !data/fixtures
 design
