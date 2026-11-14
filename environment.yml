@@ -1,0 +1,13 @@
+# Alternatif conda untuk .venv — isi paketnya tetap dari requirements.txt supaya
+# kedua cara memasang versi yang sama.
+#   conda env create -f environment.yml
+#   conda activate sentinel-saham
+#   uvicorn app.main:app --reload
+name: sentinel-saham
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - -r requirements.txt
