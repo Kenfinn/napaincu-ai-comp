@@ -151,6 +151,7 @@ app = FastAPI(
                 "Indonesian paths (`/api/peringatan`, `/sehat`, ...) still work but are hidden "
                 "here.",
     version=_versi.VERSI,
+    docs_url=None, redoc_url=None, openapi_url=None,   # /docs dan /openapi.json dipasang app/api_docs.py
 )
 HERE = os.path.dirname(os.path.abspath(__file__))
 app.mount("/static", StaticFiles(directory=os.path.join(HERE, "static")), name="static")
@@ -939,3 +940,8 @@ def api_cari(q: str = ""):
 from . import chat as _chat  # noqa: E402
 
 app.include_router(_chat.router)
+
+# --- /docs dan /openapi.json berbahasa en/zh/id (?lang=), bawaan Inggris ---
+from . import api_docs as _api_docs  # noqa: E402
+
+_api_docs.install(app)

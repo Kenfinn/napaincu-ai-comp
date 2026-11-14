@@ -10,6 +10,10 @@
   breaks. JSON field names are unchanged.
 - `/docs` (OpenAPI) is now in English and lists only the JSON API; HTML pages are hidden from it.
   API error messages are in English.
+- `/docs` in three languages (`app/api_docs.py`): English by default, 繁體中文 via `?lang=zh`,
+  Bahasa Indonesia via `?lang=id`, with a switcher on the page. Operations are grouped under seven
+  tags, every parameter and request body is described, and handler docstrings no longer leak into
+  the schema. `/redoc` is disabled.
 - `POST /api/ask` accepts English body fields (`question`, `language`, `history`, `context`,
   `type`) next to the old ones; `POST /api/import` accepts header `X-Access-Code` next to
   `X-Kode-Akses`.
@@ -18,7 +22,8 @@
 - README rewritten (architecture diagrams, API reference with examples, tech stack) in English,
   with translations in 繁體中文 (`README.zh-TW.md`), Bahasa Indonesia (`README.id.md`) and
   Tiếng Việt (`README.vi.md`).
-- Tests: `tests/test_api_inggris.py` (new paths, legacy aliases, English OpenAPI); 301 tests.
+- Tests: `tests/test_api_inggris.py` (new paths, legacy aliases, English OpenAPI) and
+  `tests/test_api_docs.py` (three-language `/docs`); 307 tests.
 
 ## 1.1.0 · 13 Nov 2026
 

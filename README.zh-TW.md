@@ -14,7 +14,7 @@
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.38.0-499848)](https://www.uvicorn.org/)
 [![Jinja2](https://img.shields.io/badge/Jinja2-3.1.6-B41717?logo=jinja&logoColor=white)](https://jinja.palletsprojects.com/)
 [![Gemini](https://img.shields.io/badge/Model-Gemini%203.6%20Flash-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-301%20passing-2EA44F)](#95-測試)
+[![Tests](https://img.shields.io/badge/Tests-307%20passing-2EA44F)](#95-測試)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-三語介面)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
 
@@ -243,7 +243,7 @@ erDiagram
 
 ## 5. API 參考
 
-伺服器執行於 `http://127.0.0.1:8000`；互動式 OpenAPI 文件位於 **`/docs`**。自 **v1.2.0** 起，每個端點都有英文路徑。舊的印尼文路徑（`/api/peringatan`、`/api/jejak/{id}`、`/sehat`、`/periksa`、`/api/impor`、`/api/tanya`……）仍以完全相同的方式回應，但不會出現在 `/docs`。JSON 欄位名稱不變。
+伺服器執行於 `http://127.0.0.1:8000`；互動式 OpenAPI 文件位於 **`/docs`**（預設英文；繁體中文為 `/docs?lang=zh`，印尼文為 `/docs?lang=id`，頁面上可切換）。自 **v1.2.0** 起，每個端點都有英文路徑。舊的印尼文路徑（`/api/peringatan`、`/api/jejak/{id}`、`/sehat`、`/periksa`、`/api/impor`、`/api/tanya`……）仍以完全相同的方式回應，但不會出現在 `/docs`。JSON 欄位名稱不變。
 
 | 方法與路徑 | 用途 | 舊路徑 |
 |---|---|---|
@@ -416,7 +416,7 @@ erDiagram
 | **資料來源** | 證交所／櫃買中心 OpenAPI、MOPS、FinMind | 官方交易所資料；財報取自 FinMind |
 | **儲存** | volume 上的 JSON 檔案 | 不需維運資料庫；每筆紀錄皆可直接閱讀以供稽核 |
 | **部署** | Docker / Dokploy | 單一容器、`/data` volume、以 `/health` 做健康檢查 |
-| **測試** | `unittest` + FastAPI `TestClient`（httpx） | 301 項測試，不需網路 |
+| **測試** | `unittest` + FastAPI `TestClient`（httpx） | 307 項測試，不需網路 |
 
 ---
 
@@ -553,7 +553,7 @@ Gemini 3.6 Flash、未使用快取，11 月 11 日：發布錯誤數字 0/46（�
 ### 9.5 測試
 
 ```bash
-python3 -m unittest discover -s tests   # 301 項測試，不需網路
+python3 -m unittest discover -s tests   # 307 項測試，不需網路
 python3 scripts/qa_halaman.py           # 所有頁面 × 3 種語言（84/84）
 ```
 

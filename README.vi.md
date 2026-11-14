@@ -14,7 +14,7 @@
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.38.0-499848)](https://www.uvicorn.org/)
 [![Jinja2](https://img.shields.io/badge/Jinja2-3.1.6-B41717?logo=jinja&logoColor=white)](https://jinja.palletsprojects.com/)
 [![Gemini](https://img.shields.io/badge/Model-Gemini%203.6%20Flash-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-301%20passing-2EA44F)](#95-kiểm-thử)
+[![Tests](https://img.shields.io/badge/Tests-307%20passing-2EA44F)](#95-kiểm-thử)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-giao-diện-ba-ngôn-ngữ)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
 
@@ -243,7 +243,7 @@ erDiagram
 
 ## 5. Tài liệu tham chiếu API
 
-Máy chủ chạy tại `http://127.0.0.1:8000`; tài liệu OpenAPI tương tác ở **`/docs`**. Từ **v1.2.0**, mọi endpoint đều có đường dẫn tiếng Anh. Các đường dẫn cũ bằng tiếng Indonesia (`/api/peringatan`, `/api/jejak/{id}`, `/sehat`, `/periksa`, `/api/impor`, `/api/tanya`, …) vẫn phản hồi y hệt nhưng được ẩn khỏi `/docs`. Tên trường JSON không thay đổi.
+Máy chủ chạy tại `http://127.0.0.1:8000`; tài liệu OpenAPI tương tác ở **`/docs`** (mặc định tiếng Anh; 繁體中文 tại `/docs?lang=zh`, tiếng Indonesia tại `/docs?lang=id`, có nút chuyển ngôn ngữ trên trang). Từ **v1.2.0**, mọi endpoint đều có đường dẫn tiếng Anh. Các đường dẫn cũ bằng tiếng Indonesia (`/api/peringatan`, `/api/jejak/{id}`, `/sehat`, `/periksa`, `/api/impor`, `/api/tanya`, …) vẫn phản hồi y hệt nhưng được ẩn khỏi `/docs`. Tên trường JSON không thay đổi.
 
 | Phương thức và đường dẫn | Mục đích | Đường dẫn cũ |
 |---|---|---|
@@ -416,7 +416,7 @@ Kết quả DCF từ cùng hàm `compute()` mà trang web sử dụng.
 | **Nguồn dữ liệu** | OpenAPI TWSE / TPEx, MOPS, FinMind | Dữ liệu chính thức của sàn; FinMind cho báo cáo tài chính |
 | **Lưu trữ** | Tệp JSON trên volume | Không cần vận hành cơ sở dữ liệu; mọi bản ghi đều đọc được để kiểm toán |
 | **Triển khai** | Docker / Dokploy | Một container, volume `/data`, kiểm tra tình trạng tại `/health` |
-| **Kiểm thử** | `unittest` + FastAPI `TestClient` (httpx) | 301 bài kiểm thử, không cần mạng |
+| **Kiểm thử** | `unittest` + FastAPI `TestClient` (httpx) | 307 bài kiểm thử, không cần mạng |
 
 ---
 
@@ -553,7 +553,7 @@ Vận hành trên 581 công bố thật: 318 qua bộ sàng lọc điều khoả
 ### 9.5 Kiểm thử
 
 ```bash
-python3 -m unittest discover -s tests   # 301 bài kiểm thử, không cần mạng
+python3 -m unittest discover -s tests   # 307 bài kiểm thử, không cần mạng
 python3 scripts/qa_halaman.py           # mọi trang × 3 ngôn ngữ (84/84)
 ```
 

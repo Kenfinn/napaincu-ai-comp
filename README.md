@@ -14,7 +14,7 @@
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.38.0-499848)](https://www.uvicorn.org/)
 [![Jinja2](https://img.shields.io/badge/Jinja2-3.1.6-B41717?logo=jinja&logoColor=white)](https://jinja.palletsprojects.com/)
 [![Gemini](https://img.shields.io/badge/Model-Gemini%203.6%20Flash-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-301%20passing-2EA44F)](#95-tests)
+[![Tests](https://img.shields.io/badge/Tests-307%20passing-2EA44F)](#95-tests)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-three-language-interface)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
 
@@ -243,7 +243,7 @@ erDiagram
 
 ## 5. API Reference
 
-The server runs on `http://127.0.0.1:8000`; interactive OpenAPI docs are at **`/docs`**. Since **v1.2.0** every endpoint has an English path. The old Indonesian paths (`/api/peringatan`, `/api/jejak/{id}`, `/sehat`, `/periksa`, `/api/impor`, `/api/tanya`, …) still answer exactly the same way but are hidden from `/docs`. JSON field names are unchanged.
+The server runs on `http://127.0.0.1:8000`; interactive OpenAPI docs are at **`/docs`** (English; 繁體中文 at `/docs?lang=zh`, Bahasa Indonesia at `/docs?lang=id`, with a switcher on the page). Since **v1.2.0** every endpoint has an English path. The old Indonesian paths (`/api/peringatan`, `/api/jejak/{id}`, `/sehat`, `/periksa`, `/api/impor`, `/api/tanya`, …) still answer exactly the same way but are hidden from `/docs`. JSON field names are unchanged.
 
 | Method & path | Purpose | Legacy path |
 |---|---|---|
@@ -416,7 +416,7 @@ Used by `scripts/kirim_riwayat.py` from a laptop on a Taiwan network. Closed ent
 | **Data sources** | TWSE / TPEx OpenAPI, MOPS, FinMind | Official exchange data; FinMind for financial statements |
 | **Storage** | JSON files on a volume | No database to run; every record is human-readable for audit |
 | **Deploy** | Docker / Dokploy | Single container, `/data` volume, health check on `/health` |
-| **Tests** | `unittest` + FastAPI `TestClient` (httpx) | 301 tests, no network access |
+| **Tests** | `unittest` + FastAPI `TestClient` (httpx) | 307 tests, no network access |
 
 ---
 
@@ -553,7 +553,7 @@ Operations on 581 real filings: 318 passed the clause screen, 241 published, 58 
 ### 9.5 Tests
 
 ```bash
-python3 -m unittest discover -s tests   # 301 tests, no network
+python3 -m unittest discover -s tests   # 307 tests, no network
 python3 scripts/qa_halaman.py           # every page × 3 languages (84/84)
 ```
 

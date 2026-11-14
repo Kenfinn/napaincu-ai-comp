@@ -14,7 +14,7 @@
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-0.38.0-499848)](https://www.uvicorn.org/)
 [![Jinja2](https://img.shields.io/badge/Jinja2-3.1.6-B41717?logo=jinja&logoColor=white)](https://jinja.palletsprojects.com/)
 [![Gemini](https://img.shields.io/badge/Model-Gemini%203.6%20Flash-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Tests-301%20passing-2EA44F)](#95-tes)
+[![Tests](https://img.shields.io/badge/Tests-307%20passing-2EA44F)](#95-tes)
 [![i18n](https://img.shields.io/badge/UI-EN%20%7C%20中文%20%7C%20ID-orange)](#38-antarmuka-tiga-bahasa)
 [![License](https://img.shields.io/badge/License-All%20rights%20reserved-lightgrey)](LICENSE)
 
@@ -243,7 +243,7 @@ erDiagram
 
 ## 5. Referensi API
 
-Server berjalan di `http://127.0.0.1:8000`; dokumentasi OpenAPI interaktif ada di **`/docs`**. Sejak **v1.2.0** setiap endpoint punya path berbahasa Inggris. Path lama berbahasa Indonesia (`/api/peringatan`, `/api/jejak/{id}`, `/sehat`, `/periksa`, `/api/impor`, `/api/tanya`, …) tetap menjawab dengan cara yang sama persis, tetapi disembunyikan dari `/docs`. Nama field JSON tidak berubah.
+Server berjalan di `http://127.0.0.1:8000`; dokumentasi OpenAPI interaktif ada di **`/docs`** (bawaan bahasa Inggris; 繁體中文 di `/docs?lang=zh`, Bahasa Indonesia di `/docs?lang=id`, ada pemilih bahasa di halamannya). Sejak **v1.2.0** setiap endpoint punya path berbahasa Inggris. Path lama berbahasa Indonesia (`/api/peringatan`, `/api/jejak/{id}`, `/sehat`, `/periksa`, `/api/impor`, `/api/tanya`, …) tetap menjawab dengan cara yang sama persis, tetapi disembunyikan dari `/docs`. Nama field JSON tidak berubah.
 
 | Metode dan path | Kegunaan | Path lama |
 |---|---|---|
@@ -416,7 +416,7 @@ Dipakai `scripts/kirim_riwayat.py` dari laptop di jaringan Taiwan. Tertutup sepe
 | **Sumber data** | OpenAPI TWSE / TPEx, MOPS, FinMind | Data resmi bursa; FinMind untuk laporan keuangan |
 | **Penyimpanan** | Berkas JSON di volume | Tidak perlu menjalankan database; setiap catatan bisa dibaca manusia untuk audit |
 | **Deploy** | Docker / Dokploy | Satu container, volume `/data`, health check di `/health` |
-| **Tes** | `unittest` + FastAPI `TestClient` (httpx) | 301 tes, tanpa akses jaringan |
+| **Tes** | `unittest` + FastAPI `TestClient` (httpx) | 307 tes, tanpa akses jaringan |
 
 ---
 
@@ -553,7 +553,7 @@ Operasional pada 581 pengumuman asli: 318 lolos saringan pasal, 241 terbit, 58 d
 ### 9.5 Tes
 
 ```bash
-python3 -m unittest discover -s tests   # 301 tes, tanpa jaringan
+python3 -m unittest discover -s tests   # 307 tes, tanpa jaringan
 python3 scripts/qa_halaman.py           # semua halaman × 3 bahasa (84/84)
 ```
 
