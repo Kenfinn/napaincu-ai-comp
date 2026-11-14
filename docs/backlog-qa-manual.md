@@ -21,6 +21,12 @@ action plan di tiap item, dan patuhi batas berkasnya. Setelah tiap item: tes, co
 | QA-4 | De-identifikasi: nama anggota tim di kode, README, dan dokumen yang diserahkan | Selesai (`ddd5d2d`) |
 | QA-5 | 4 tes gagal di mesin lain: tes chat/UI baru bergantung pada data lokal | Selesai (`4dbc425`) |
 | QA-6 | Menu samping kurang lebar untuk isinya, tampilan tidak responsif di ponsel | Selesai (`3179254`) |
+| QA-7 | QA menyeluruh v1.1.0 (`docs/laporan-qa.md`): K-1 crash tab keuangan kosong, T-1 filter feed `[hidden]`, T-2 halaman 401 bocor + cookie akses mentah, M-1..M-6 | Selesai (`6a0d36f`) |
+| R-1 | `POST /api/tanya` dan `POST /tanya` terbuka saat `SENTINEL_KODE_AKSES` diset dan `KUNCI_BACA=0` | Belum (opsional) |
+| R-2 | Riwayat chat dipotong 1500 karakter setelah verifikasi HMAC; pemeriksaan ulang gagal untuk jawaban panjang | Belum (opsional) |
+| R-3 | `/favicon.ico` membalas 404 (error konsol di setiap sesi baru) | Belum (opsional) |
+
+Rincian QA-7 dan R-1..R-3 (lokasi, akar masalah, verifikasi) ada di `docs/laporan-qa.md` bagian 3.
 
 ---
 

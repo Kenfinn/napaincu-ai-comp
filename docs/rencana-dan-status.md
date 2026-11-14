@@ -1,9 +1,9 @@
 # FEAF: rencana dan status
 
 Berkas ini dipakai tim untuk memantau pekerjaan: rencana awal, yang sudah selesai, yang
-berikutnya, yang menunggu orang lain, dan backlog. Terakhir diperbarui: **11 Nov 2026 sore**.
+berikutnya, yang menunggu orang lain, dan backlog. Terakhir diperbarui: **14 Nov 2026**.
 
-Tenggat paket finalis: **Jumat 13 Nov, 23:59**. Demo final: 21 Nov.
+Paket finalis: tenggat Jumat 13 Nov, 23:59 (lewat). Demo final: **Sabtu 21 Nov** (9 menit, tanpa perangkat sendiri).
 
 Kode status: ✅ selesai · 🔄 sedang dikerjakan · ⏳ menunggu orang lain · ⬜ belum mulai
 
@@ -19,14 +19,14 @@ Rincian dan kriteria QA tiap item ada di [`rencana-finalis.md`](./rencana-finali
 | B1 | Pemetaan pasal dari jawaban Patrice | ✅ terpasang, ditambah pasal 7/8 dan kalibrasi gold set. ⏳ cek ambang profil konservatif/agresif oleh tim |
 | B2 | DCF otomatis semua emiten non-keuangan | ✅ (Antigravity) |
 | B3 | Sitasi MOPS untuk angka laporan keuangan | ✅ (Antigravity). ⏳ uji tautan dari laptop Taiwan |
-| C1 | Chatbot "Tanya FEAF" | ✅ versi awal, tautan menu, filter jenis pengumuman B1, injeksi ditolak di gerbang, penilaian per alat. ⬜ uji dengan Gemini (D5); versi lengkap 21 Nov |
+| C1 | Chatbot "Tanya FEAF" | ✅ versi awal 11 Nov; versi lengkap C1–C7 12 Nov (panel di setiap halaman, percakapan bertingkat HMAC, Recap, alat menu). Chat Gemini 50/52 di server; tanpa model `--chat` 52/52, `--chat-percakapan` 36/36 (13 Nov) |
 | D1 | Kandidat gold set dari arsip server | ✅ |
 | D2 | Gold set 30–50 + baseline menit manual | ✅ 46 baris (Patrice), baseline 20–30 menit per pengumuman. Hasil: [`hasil-gold-set.md`](./hasil-gold-set.md) |
 | D3 | Set uji serangan | ✅ (Antigravity), 0 angka penyerang terbit |
 | D4 | Skrip evaluasi lengkap | ✅ `--operasional`, `--chat`. Akurasi menunggu gold set |
-| D5 | Laporan evaluasi + keamanan + jejak asli dengan model | 🔄 gold tanpa model selesai; draf laporan keamanan ada (`laporan-keamanan.md`). ⬜ evaluasi gold + chat dengan Gemini di server, satu jejak audit asli dengan model, gabung jadi laporan |
-| E1 | README finalis | 🔄 `LICENSE` dan panduan jalan di lokal (EN/中文/ID) sudah. ⬜ bagian lain README masih versi lama ("tanpa login", model 2.5) |
-| E2 | Deck, video, formulir | ⏳ Afinzaki |
+| D5 | Laporan evaluasi + keamanan + jejak asli dengan model | ✅ 11 Nov: `laporan-evaluasi.md` (Gemini 3.6 di server, biaya, latensi, kategori error, jejak contoh), `laporan-keamanan.md` |
+| E1 | README finalis | ✅ 11 Nov (v1.0.0), diperbarui 14 Nov ke v1.1.0: 293 tes, URL repo netral, tautan system design |
+| E2 | Deck, video, formulir | ⏳ Afinzaki. Deck 9 menit dan naskah ada di disk (`slides/Agentic_AI_Investment_Assistant_9min.pptx`, `docs/naskah-presentasi-9-menit.md`), belum di git |
 
 ## 2. Sudah selesai
 
@@ -56,23 +56,31 @@ Rincian dan kriteria QA tiap item ada di [`rencana-finalis.md`](./rencana-finali
 | 11 Nov | Tanya FEAF: filter jenis pengumuman, injeksi ditolak di gerbang; evaluasi chat menilai alat | `f5003cd` |
 | 11 Nov | Gemini 402 ditangani; model bawaan 3.6 dengan cadangan 3.5; LICENSE; panduan lokal tiga bahasa | `6720fa0`, `2ba944a` |
 | 11 Nov | Pasal 7 (auditor) dan 8 (pejabat kunci) jadi sinyal tata kelola, tanpa nama orang (jawaban Patrice) | lihat git log |
+| 12 Nov | Rilis 1.0.0: versi di `/sehat` dan `/docs`, CHANGELOG | `81b2bf2` |
+| 12 Nov | Overhaul UI U1–U8 (Antigravity) | `a9221f0`..`6db4d99`, `docs/laporan-antigravity-4.md` |
+| 12 Nov | Tanya FEAF C1–C7: panel di setiap halaman, riwayat HMAC, Recap, alat menu, tes keamanan, evaluasi percakapan | `ab9f5c1`..`cd2709c`, `docs/laporan-antigravity-5.md` |
+| 13 Nov | Backlog QA-1..QA-6 (feed, pemutus model per thread, alasan ditahan polos, de-identifikasi, isolasi tes, menu dan ponsel) | lihat `backlog-qa-manual.md` |
+| 13 Nov | DCF, strengths, watch-outs ikut profil risiko; DCF cache di watchlist, on-demand di `/valuasi` | `a1575d5`, `63cd07d` |
+| 14 Nov | QA menyeluruh v1.1.0: K-1, T-1, T-2, M-1..M-6, de-identifikasi `eval/gold.csv`, versi 1.1.0 | `6a0d36f`, `docs/laporan-qa.md` |
 
-Tes otomatis: 236, semua lulus, tanpa jaringan.
+Tes otomatis: 293, semua lulus, tanpa jaringan (14 Nov; juga lulus dengan `SENTINEL_DATA_DIR` kosong). QA halaman 84/84.
 
 Hasil evaluasi operasional terbaru (`eval/hasil/operasional-20261111T024832Z.md`, 581
 pengumuman asli 10 Nov, tanpa model): **241 terbit**, 58 ditahan untuk manusia (40 belum ada
 valuasi, 8 tanpa angka, 6 risiko serius, 4 kejadian berat), 282 diarsipkan dengan alasan.
 Sebelum B1 (10 Nov malam): 0 terbit.
 
-## 3. Berikutnya (Claude)
+## 3. Berikutnya (menuju demo 21 Nov)
+
+Pekerjaan 10–11 Nov di bagian ini (deploy, D5, E1, QA akhir) sudah selesai; rinciannya di git log
+dan bagian 2.
 
 | Urutan | Pekerjaan | Selesai bila |
 |---|---|---|
-| 1 | Deploy versi terbaru (Afinzaki), lalu cek `/sehat`: `versi_kode` sama dengan hasil `python3 -c "from app.main import VERSI_KODE; print(VERSI_KODE)"` di repo, `sebab_cadangan` kosong. 11 Nov 09:19 UTC: Gemini jalan tanpa galat (1106 pengumuman, 99 jawaban cache), tapi server **belum** memakai commit kalibrasi b3cc0ee | `versi_kode` cocok, semua pasal 20 pernah dijawab Gemini |
-| 2 | D5 — **selesai 11 Nov** kecuali chat mode Gemini: `docs/laporan-evaluasi.md` (gold di server dengan Gemini 3.6, biaya, latensi, kategori error server, jejak contoh `eval/hasil/jejak-contoh-2330-…json`). Temuan dari jejak: label bernomor dan satuan 佰萬元 (diperbaiki), 59 pengumuman tertahan karena valuasi otomatis hanya untuk watchlist (kini 5 emiten/siklus). Chat Gemini 50/52 (2 positif palsu pemeriksa, diperbaiki 5120113), 27/27 tolak, 0 kata rekomendasi. Opsional: ulang `--chat` setelah deploy | Semua metrik Appendix 2 terisi angka asli |
-| 3 | E1: README finalis — **selesai 11 Nov** (bahasa Inggris, jalankan-lokal tiga bahasa; arsitektur, jalur pasal, model 3.6/3.5, env, akses, aliran data, angka evaluasi resmi, keterbatasan). Sisa: tambah angka Gemini setelah D5 | Bagian wajib lomba lengkap, tidak ada info basi |
-| 4 | QA akhir — **selesai 11 Nov**: lokal 75/75; server tiga bahasa, sampel per jenis alasan keputusan (detail + jejak tiap pengumuman, halaman statis, saham 6 tab) bersih dari kunci mentah, teks rusak, kata rekomendasi, data pribadi. Diperbaiki: JSON mentah /jejak ikut bahasa halaman; label state `VERIFIED · sumber/hitungan` → `source/arithmetic`; pemeriksa QA tidak lagi menghitung nama field JSON sebagai kebocoran | Daftar cek `diagram-alur.md` bagian 3 lolos |
-| 5 | Opsional: set uji baru 15–20 pengumuman untuk angka di luar sampel | Dilabeli tanpa melihat hasil agent |
+| 1 | Deploy `6a0d36f` (v1.1.0) ke server, lalu cek `/sehat`: `versi` = 1.1.0, `versi_kode` sama dengan `python3 -c "from app.main import VERSI_KODE; print(VERSI_KODE)"`, `sebab_cadangan` kosong | `versi_kode` cocok |
+| 2 | Tag `v1.1.0` di commit rilis. Catatan: tag `v1.0.0` di GitHub menunjuk `4ab476c` (sebelum riwayat ditulis ulang), bukan `81b2bf2` di `main` | Tag ada dan menunjuk commit di `main` |
+| 3 | Opsional dari `laporan-qa.md`: R-1 batasi `/api/tanya` saat ada kode akses, R-2 pemotongan riwayat 1500 karakter vs HMAC, R-3 favicon | Tes + QA halaman lulus |
+| 4 | Latihan demo minimal 5 kali dan Q&A; siapkan video cadangan demo | Demo 9 menit lancar tanpa perangkat sendiri |
 
 ## 4. Menunggu orang lain
 
@@ -96,7 +104,7 @@ per server. Beta dari harga resmi bursa. Tidak ada data SYSTEX atau mitra ke Gem
 berbasis kas: pengumuman tanpa pergerakan kas = sinyal atau skenario. Ambang sinyal ikut
 profil risiko; antrean review memakai moderat. README diperbarui paling akhir.
 
-## 6. Backlog (setelah 13 Nov atau bila sempat)
+## 6. Backlog (setelah 21 Nov atau bila sempat)
 
 - Bahasa dasar sistem jadi Inggris. Tampilan bawaan sudah Inggris, tetapi bagian dalam
   masih Indonesia. Urutan yang diusulkan, dari dampak terbesar:
@@ -111,18 +119,9 @@ profil risiko; antrean review memakai moderat. README diperbarui paling akhir.
      atau dalam satu putaran khusus dengan tes sebagai pengaman.
   Dokumen untuk tim (docs/) tetap boleh Indonesia.
 
-- Chatbot versi lengkap untuk demo 21 Nov.
 - Relay real-time dari laptop Taiwan ke `/api/impor`. OpenAPI bursa tertinggal sekitar satu hari.
 - Pasal 51/53 (lain-lain) diserahkan ke triase model (sekarang dilewati).
 - 👍/👎 untuk peringatan sinyal (sekarang hanya peringatan yang lewat triase).
 - Perbandingan laporan pasal 31 dengan periode yang sama tahun lalu.
 - Emiten keuangan TPEx ditandai benar di `pasar.profil` (B2 sudah menangani untuk valuasi).
 - Uji serangan dengan Gemini sungguhan (`scripts/uji_serangan.py --model`).
-- Latihan demo minimal 5 kali dan latihan Q&A.
-
-## 6. Keputusan yang dikunci
-
-Kerja langsung di `main`. Tiga bahasa (English bawaan, 繁體中文, Indonesia). Merah naik,
-hijau turun. Tanpa label beli/jual. Review manusia hanya boleh menyetujui kasus ragu.
-Satu ambang 👍/👎 untuk satu server. Beta dari harga resmi bursa. Tidak ada data
-SYSTEX atau mitra yang dikirim ke Gemini. README diperbarui paling akhir.

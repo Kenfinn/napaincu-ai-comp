@@ -45,10 +45,12 @@ prototipe + umpan balik + perbandingan waktu), alur SYSTEX "pengiriman proaktif"
 
 ## Yang kurang untuk pengumpulan hari ini
 
+Status diperbarui 14 Nov. No.3–9 dikerjakan di luar repo; statusnya belum dicatat di sini.
+
 | No | Item | Siapa | Status |
 |---|---|---|---|
-| 1 | QA-4 de-identifikasi, QA-5 tes lulus semua, QA-6 menu/ponsel | Antigravity | Belum |
-| 2 | Tinjauan Claude atas v1.1 + ulang `evaluasi.py --chat` (52/52) dan `--chat-percakapan` | Claude | Belum |
+| 1 | QA-4 de-identifikasi, QA-5 tes lulus semua, QA-6 menu/ponsel | Antigravity | Selesai (`ddd5d2d`, `4dbc425`, `3179254`) |
+| 2 | Tinjauan Claude atas v1.1 + ulang `evaluasi.py --chat` (52/52) dan `--chat-percakapan` | Claude | Selesai: `docs/laporan-qa.md`, `--chat` 52/52, `--chat-percakapan` 36/36, perbaikan di `6a0d36f` |
 | 3 | Putuskan versi yang diserahkan: v1.1 bila no.1–2 lulus ±18:00, selain itu v1.0 | Afinzaki | Belum |
 | 4 | Link prototipe netral (domain kedua, mis. `feaf.<IP>.sslip.io` di Dokploy) — domain sekarang memuat nama anggota | Afinzaki | Belum |
 | 5 | Kunci akses: `SENTINEL_KODE_AKSES` + `SENTINEL_KUNCI_BACA=1`, kode juri lewat formulir saja | Afinzaki | Belum |
@@ -56,4 +58,4 @@ prototipe + umpan balik + perbandingan waktu), alur SYSTEX "pengiriman proaktif"
 | 7 | Repo untuk juri: akses repo privat atau ZIP sumber (nama pengguna GitHub ikut terlihat di link) | Afinzaki | Belum |
 | 8 | Satu PDF gabungan "Field Requirements & Validation Data" + "Agent Evaluation Data & Operation Traces" (FAQ A4), nama berkas pola penyisihan; bahan: `docs/laporan-evaluasi.md`, `docs/hasil-gold-set.md`, `eval/hasil/jejak-contoh-*.json` | Antigravity/Afinzaki | Belum |
 | 9 | Deck terbaru + kebutuhan demo, formulir pihak ketiga (`docs/pengungkapan-pihak-ketiga.md`: Gemini 3.6/3.5, alat bantu AI), self-assessment | Afinzaki | Belum |
-| 10 | Tag `v1.0.0` (atau `v1.1.0`) di GitHub | Afinzaki | Belum |
+| 10 | Tag `v1.0.0` (atau `v1.1.0`) di GitHub | Afinzaki | `v1.0.0` ada tetapi menunjuk `4ab476c` (sebelum riwayat ditulis ulang, bukan di `main`); `v1.1.0` belum |
